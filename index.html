@@ -6,10 +6,10 @@
     <title>SkillHUB Assistant</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#0f172a">
+    <meta name="theme-color" content="#f0f4f8">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="SkillHUB Assistant">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="SkillHUB">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
@@ -21,7 +21,7 @@
         }
 
         :root {
-            /* Футуристична світла тема */
+            /* Світла футуристична тема */
             --primary: #2563eb; 
             --primary-shadow: #1e3a8a;
             --bg: #f8fafc; 
@@ -32,47 +32,52 @@
             --text-main: #0f172a; 
             --text-muted: #64748b; 
             --border: #cbd5e1;
-            --modal-overlay: rgba(15,23,42,0.7);
-            --nav-bg: rgba(255, 255, 255, 0.85);
+            --modal-overlay: rgba(15,23,42,0.6);
+            --nav-bg: rgba(255, 255, 255, 0.9);
             
-            --clr-support-bg: #fef08a; --clr-support-text: #854d0e; 
-            --clr-ekta-bg: #bbf7d0; --clr-ekta-text: #166534;    
-            --clr-epz-bg: #bae6fd; --clr-epz-text: #0369a1;    
+            /* Брендові кольори для 3D кнопок та тегів */
+            --clr-support: #f59e0b; --clr-support-sh: #a16207; --clr-support-bg: #fef08a; --clr-support-text: #854d0e;
+            --clr-ekta: #22c55e; --clr-ekta-sh: #15803d; --clr-ekta-bg: #bbf7d0; --clr-ekta-text: #166534;
+            --clr-epz: #0ea5e9; --clr-epz-sh: #0369a1; --clr-epz-bg: #bae6fd; --clr-epz-text: #0369a1;
+            --clr-install: #ec4899; --clr-install-sh: #be123c; --clr-install-bg: #fbcfe8; --clr-install-text: #9f1239;
             --clr-settings-bg: #a7f3d0; --clr-settings-text: #065f46; 
-            --clr-install-bg: #fbcfe8; --clr-install-text: #9f1239; 
             --clr-other-bg: #e2e8f0; --clr-other-text: #1e293b;
             
-            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
             --shadow-md: 0 10px 20px rgba(0, 0, 0, 0.05);
             --shadow-lg: 0 20px 40px rgba(0, 0, 0, 0.08);
             --shadow-sm: 0 4px 10px rgba(0,0,0,0.03);
+            --radius-main: 24px;
         }
 
         [data-theme="dark"] {
-            /* Футуристична темна тема */
+            /* Темна футуристична тема (Кіберпанк) */
             --primary: #3b82f6; 
-            --primary-shadow: #1e3a8a;
             --bg: #020617; 
             --card-bg: #0f172a; 
             --box-bg: #1e293b;
-            --input-bg: #0f172a;
+            --input-bg: #020617;
             --feat-bg: #334155;
             --text-main: #f8fafc; 
             --text-muted: #94a3b8; 
             --border: #334155;
             --modal-overlay: rgba(0,0,0,0.85);
-            --nav-bg: rgba(15, 23, 42, 0.85);
+            --nav-bg: rgba(15, 23, 42, 0.95);
             
-            --clr-other-bg: #334155; 
-            --clr-other-text: #f8fafc;
+            --clr-support-bg: #422006; --clr-support-text: #fde047;
+            --clr-ekta-bg: #14532d; --clr-ekta-text: #86efac;
+            --clr-epz-bg: #082f49; --clr-epz-text: #7dd3fc;
+            --clr-install-bg: #881337; --clr-install-text: #f9a8d4;
+            --clr-other-bg: #334155; --clr-other-text: #f8fafc;
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         
         body { 
-            font-family: 'Inter', sans-serif; background: var(--card-bg); color: var(--text-main); 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
+            padding-bottom: 90px; /* Місце для нижнього меню */
         }
 
         /* --- КОНТЕЙНЕР НА ВЕСЬ ЕКРАН --- */
@@ -80,6 +85,7 @@
             position: relative; width: 100%; max-width: 600px; background: var(--card-bg); 
             padding: 24px; padding-bottom: 120px; margin: 0 auto; 
             min-height: 100vh; display: flex; flex-direction: column;
+            border: none; border-radius: 0; box-shadow: none;
         }
 
         /* --- ВКЛАДКИ НАВІГАТОРУ --- */
@@ -103,6 +109,23 @@
         .nav-item.active { color: var(--primary); text-shadow: 0 0 10px rgba(59, 130, 246, 0.4); }
         .nav-item svg { width: 26px; height: 26px; stroke: currentColor; fill: none; transition: 0.3s; stroke-width: 2;}
         .nav-item.active svg { transform: translateY(-3px) scale(1.1); stroke-width: 2.5;}
+        
+        .app-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
+        }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .spinner-box { position: relative; width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .spinner-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%; 
+            border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); 
+            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        .spinner-logo { font-size: 28px; animation: pulseText 1.5s ease-in-out infinite; }
+        .loader-text { font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
 
         /* --- ШАПКА --- */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px;}
@@ -123,17 +146,7 @@
             z-index: 2; pointer-events: none; 
         }
         [data-theme="dark"] .theme-slider { transform: translateX(28px); background: #e2e8f0; box-shadow: inset -4px -2px 0 0 #cbd5e1; }
-        .ts-cloud { position: absolute; background: white; border-radius: 10px; opacity: 0.9; transition: 0.4s; z-index: 1; pointer-events: none; }
-        .ts-c1 { width: 14px; height: 5px; top: 6px; right: 8px; }
-        .ts-c2 { width: 10px; height: 4px; bottom: 6px; right: 18px; }
-        .ts-star { position: absolute; background: white; border-radius: 50%; opacity: 0; transition: 0.4s; z-index: 1; pointer-events: none; }
-        .ts-s1 { width: 2px; height: 2px; top: 8px; left: 12px; }
-        .ts-s2 { width: 3px; height: 3px; top: 16px; left: 18px; }
-        .ts-s3 { width: 2px; height: 2px; bottom: 6px; left: 10px; }
-        [data-theme="dark"] .ts-cloud { opacity: 0; transform: translateX(10px); }
-        [data-theme="dark"] .ts-star { opacity: 1; }
 
-        /* --- СТАТУС --- */
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--box-bg); padding: 14px 20px; border-radius: 20px; border: 1px solid var(--border);}
         .status-wrapper { display: flex; align-items: center; gap: 10px; }
         .status-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
@@ -141,9 +154,9 @@
         .dot-green { background-color: #10b981; animation: pulseGreen 2s infinite; }
         .dot-red { background-color: #ef4444; animation: pulseRed 2s infinite; }
         .dot-loading { background-color: #f59e0b; animation: pulseYellow 2s infinite; }
-        @keyframes pulseGreen { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
-        @keyframes pulseRed { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
-        @keyframes pulseYellow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
+        @keyframes pulseGreen { 0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        @keyframes pulseYellow { 0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } 100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
 
         .refresh-db-btn { background: var(--feat-bg); color: var(--primary); border: 1px solid var(--border); border-radius: 12px; width: 38px; height: 38px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm);}
         .refresh-db-btn:active { transform: scale(0.9); }
@@ -152,12 +165,12 @@
         /* --- ВВОДИ ТА ПОШУК --- */
         .search-wrapper, .price-wrapper { position: relative; margin-bottom: 16px; display: flex; align-items: center; gap: 12px; }
         input, select { 
-            width: 100%; padding: 20px 24px; border: 2px solid var(--border); border-radius: 24px; 
+            width: 100%; padding: 20px 24px; border: 2px solid var(--border); border-radius: var(--radius-main); 
             font-size: 16px; font-weight: 700; font-family: inherit; outline: none; transition: 0.3s ease; 
             background: var(--box-bg); color: var(--text-main); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
             -webkit-appearance: none;
         }
-        input:focus, select:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); background: var(--card-bg); }
+        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); background: var(--card-bg); }
         
         .clear-data-btn, .clear-select-btn { position: absolute; right: 16px; background: #ef4444; color: white; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 900; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; box-shadow: 0 2px 6px rgba(239,68,68,0.4); z-index: 5;}
         .clear-data-btn:active, .clear-select-btn:active { transform: scale(0.9);}
@@ -167,29 +180,52 @@
         .ok-btn { background: var(--gradient-primary); color: white; border: none; padding: 0 28px; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s ease; box-shadow: 0 8px 20px rgba(37,99,235,0.3); height: 62px;}
         .ok-btn:active { transform: scale(0.95); box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: 24px; box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 8px; -webkit-overflow-scrolling: touch; }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--nav-bg); backdrop-filter: blur(20px); border: 1px solid var(--border); border-radius: var(--radius-main); box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 8px; -webkit-overflow-scrolling: touch; }
         .suggestion-item { padding: 16px 20px; cursor: pointer; border-radius: 16px; font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; transition: 0.2s ease; }
         .suggestion-item:active, .suggestion-item:hover { background: var(--feat-bg); color: var(--primary); }
         
-        /* --- КАРТКИ ПОСЛУГ ТА РЕЗЕРВІВ --- */
         .result-box { display: none; border-top: 2px dashed var(--border); padding-top: 24px; margin-top: 10px; animation: fadeIn 0.4s ease; }
+
         .ua-name { font-weight: 900; font-size: 24px; margin-bottom: 6px; color: var(--text-main); line-height: 1.2; letter-spacing: -0.5px;}
         .item-category { font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
-
-        .service-list { display: flex; flex-direction: column; gap: 14px; }
-        .service-card { position: relative; padding: 20px; border-radius: 24px; cursor: pointer; transition: 0.2s; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background: var(--box-bg); display: flex; justify-content: space-between; align-items: center;}
-        .service-card:active { transform: scale(0.98); background: var(--feat-bg); }
         
+        /* КАРТКИ ПОСЛУГ (ТАБ 1 і ТАБ 2) */
+        .service-list { display: flex; flex-direction: column; gap: 14px; }
+        .service-card { position: relative; padding: 20px; border-radius: var(--radius-main); cursor: pointer; transition: 0.2s; border: 1px solid var(--border); box-shadow: var(--shadow-sm); background: var(--box-bg); display: flex; justify-content: space-between; align-items: center;}
+        .service-card:active { transform: scale(0.98); background: var(--feat-bg); }
+        .service-content-left { display: flex; align-items: center; gap: 10px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         .service-title { font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--text-main); }
         .brand-tag { font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--feat-bg); color: var(--text-muted); }
         .price-badge { font-size: 16px; font-weight: 900; background: var(--card-bg); color: var(--primary); padding: 10px 16px; border-radius: 16px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); text-align: center; white-space: nowrap;}
+        [data-theme="dark"] .price-badge { background: var(--input-bg); color: var(--text-main); }
 
-        .rezervy-item { background: var(--box-bg); border-radius: 24px; padding: 20px; margin-bottom: 14px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
-        .rezervy-item:active { background: var(--feat-bg); transform: scale(0.98); }
-        .rezervy-name { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.3;}
-        .rezervy-cat { font-size: 12px; font-weight: 700; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
-        .rezervy-price { font-size: 18px; font-weight: 900; color: var(--text-main); background: var(--card-bg); padding: 10px 16px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm);}
+        /* СПЕЦИФІЧНІ БРЕНДИ (Якщо потрібно, залишив як класи для сумісності з вашим старим кодом) */
+        .service-card.brand-support .brand-tag { background: var(--clr-support-bg); color: var(--clr-support-text); } 
+        .service-card.brand-ekta .brand-tag { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); } 
+        .service-card.brand-epz .brand-tag { background: var(--clr-epz-bg); color: var(--clr-epz-text); } 
+        .service-card.brand-install .brand-tag { background: var(--clr-install-bg); color: var(--clr-install-text); } 
 
+        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 6px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
+        @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
+
+        /* ТЕХ ІНФО */
+        .tech-info { background: transparent; padding: 0; border: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;}
+        .tech-item { display: flex; align-items: center; gap: 14px; background: var(--box-bg); padding: 16px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .icon-circle { width: 44px; height: 44px; min-width: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .bg-complexity { background-color: #fef9c3; color: #854d0e; } 
+        .bg-price { background-color: #dcfce7; color: #166534; } 
+        .bg-garant { background-color: #dbeafe; color: #1e3a8a; } 
+        .bg-negarant { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+        .bg-parts { background-color: #f3e8ff; color: #6b21a8; } 
+        [data-theme="dark"] .bg-complexity { background-color: #422006; color: #fde047; border: 1px solid #713f12; }
+        [data-theme="dark"] .bg-price { background-color: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
+        [data-theme="dark"] .bg-garant { background-color: #1e3a8a; color: #bfdbfe; border: 1px solid #1e40af; }
+        [data-theme="dark"] .bg-negarant { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
+        [data-theme="dark"] .bg-parts { background-color: #3b0764; color: #e9d5ff; border: 1px solid #581c87; }
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 16px; margin-top: 8px; background: var(--gradient-primary); padding: 18px 20px; border-radius: 20px; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); color: #fff;}
+        .tech-photo-wrapper:active { transform: scale(0.97); }
+        .photo-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        
         /* --- 3D КНОПКИ ДЛЯ НАВЧАННЯ (ТАБ 3) --- */
         .btn-3d {
             position: relative; display: flex; align-items: center; justify-content: space-between;
@@ -199,21 +235,17 @@
             margin-bottom: 16px; outline: none;
         }
         .btn-3d:active { transform: translateY(6px); }
-        
         .btn-3d .arrow { font-size: 14px; transition: 0.3s; opacity: 0.8;}
         .btn-3d.open .arrow { transform: rotate(180deg); }
 
-        .btn-support { background: linear-gradient(135deg, #facc15, #ca8a04); box-shadow: 0 8px 0 #854d0e, 0 15px 25px rgba(234, 179, 8, 0.3); }
-        .btn-support:active { box-shadow: 0 0 0 #854d0e, 0 5px 10px rgba(234, 179, 8, 0.3); }
-
-        .btn-ekta { background: linear-gradient(135deg, #4ade80, #16a34a); box-shadow: 0 8px 0 #14532d, 0 15px 25px rgba(34, 197, 94, 0.3); }
-        .btn-ekta:active { box-shadow: 0 0 0 #14532d, 0 5px 10px rgba(34, 197, 94, 0.3); }
-
-        .btn-epz { background: linear-gradient(135deg, #38bdf8, #0284c7); box-shadow: 0 8px 0 #082f49, 0 15px 25px rgba(14, 165, 233, 0.3); }
-        .btn-epz:active { box-shadow: 0 0 0 #082f49, 0 5px 10px rgba(14, 165, 233, 0.3); }
-
-        .btn-install { background: linear-gradient(135deg, #f472b6, #e11d48); box-shadow: 0 8px 0 #881337, 0 15px 25px rgba(244, 63, 94, 0.3); }
-        .btn-install:active { box-shadow: 0 0 0 #881337, 0 5px 10px rgba(244, 63, 94, 0.3); }
+        .btn-support { background: linear-gradient(135deg, var(--clr-support), #ca8a04); box-shadow: 0 8px 0 var(--clr-support-sh), 0 15px 25px rgba(234, 179, 8, 0.3); }
+        .btn-support:active { box-shadow: 0 0 0 var(--clr-support-sh), 0 5px 10px rgba(234, 179, 8, 0.3); }
+        .btn-ekta { background: linear-gradient(135deg, var(--clr-ekta), #16a34a); box-shadow: 0 8px 0 var(--clr-ekta-sh), 0 15px 25px rgba(34, 197, 94, 0.3); }
+        .btn-ekta:active { box-shadow: 0 0 0 var(--clr-ekta-sh), 0 5px 10px rgba(34, 197, 94, 0.3); }
+        .btn-epz { background: linear-gradient(135deg, var(--clr-epz), #0284c7); box-shadow: 0 8px 0 var(--clr-epz-sh), 0 15px 25px rgba(14, 165, 233, 0.3); }
+        .btn-epz:active { box-shadow: 0 0 0 var(--clr-epz-sh), 0 5px 10px rgba(14, 165, 233, 0.3); }
+        .btn-install { background: linear-gradient(135deg, var(--clr-install), #e11d48); box-shadow: 0 8px 0 var(--clr-install-sh), 0 15px 25px rgba(244, 63, 94, 0.3); }
+        .btn-install:active { box-shadow: 0 0 0 var(--clr-install-sh), 0 5px 10px rgba(244, 63, 94, 0.3); }
 
         .catalog-items { display: none; background: var(--box-bg); padding: 12px; border-radius: 24px; border: 1px solid var(--border); margin-bottom: 24px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);}
         .catalog-items.show { display: block; animation: fadeIn 0.3s ease; }
@@ -246,11 +278,6 @@
         .modal-confirm-btn { width: 100%; padding: 20px; border-radius: 20px; border: none; background: var(--text-main); color: var(--card-bg); font-weight: 800; cursor: pointer; font-size: 16px; margin-top: 16px; box-shadow: 0 10px 20px rgba(0,0,0,0.15); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
         .modal-confirm-btn:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
 
-        /* --- ЗАВАНТАЖУВАЧ --- */
-        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--card-bg); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; transition: 0.4s ease; }
-        .app-loader.hidden { opacity: 0; visibility: hidden; }
-        .spinner-ring { width: 60px; height: 60px; border-radius: 50%; border: 5px solid var(--feat-bg); border-top-color: var(--primary); animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
-        
         /* ПОРІВНЯННЯ */
         .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .compare-toggle-btn { background: var(--box-bg); color: var(--primary); border: 1px solid var(--border); padding: 10px 16px; border-radius: 16px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm); transition: 0.2s; }
@@ -279,25 +306,6 @@
         .pwa-alert { background: rgba(37, 99, 235, 0.05); padding: 20px; border-radius: 20px; border: 1px solid var(--border); margin-bottom: 20px;}
         .pwa-device-section { padding: 24px; border-radius: 20px; background: var(--box-bg); border: 1px solid var(--border); margin-bottom: 16px;}
         .pwa-icon-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; margin: 0 6px; box-shadow: var(--shadow-sm);}
-        
-        /* Тех інфо (Довідка) */
-        .tech-info { display: flex; flex-direction: column; gap: 10px; margin-bottom: 24px;}
-        .tech-item { display: flex; align-items: center; gap: 14px; background: var(--box-bg); padding: 16px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
-        .icon-circle { width: 44px; height: 44px; min-width: 44px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
-        .bg-complexity { background-color: #fef9c3; color: #854d0e; } 
-        .bg-price { background-color: #dcfce7; color: #166534; } 
-        .bg-garant { background-color: #dbeafe; color: #1e3a8a; } 
-        .bg-negarant { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
-        .bg-parts { background-color: #f3e8ff; color: #6b21a8; }
-        [data-theme="dark"] .bg-complexity { background-color: #422006; color: #fde047; border: 1px solid #713f12; }
-        [data-theme="dark"] .bg-price { background-color: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
-        [data-theme="dark"] .bg-garant { background-color: #1e3a8a; color: #bfdbfe; border: 1px solid #1e40af; }
-        [data-theme="dark"] .bg-negarant { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
-        [data-theme="dark"] .bg-parts { background-color: #3b0764; color: #e9d5ff; border: 1px solid #581c87; }
-        
-        .tech-photo-wrapper { display: flex; align-items: center; gap: 16px; margin-top: 8px; background: var(--gradient-primary); padding: 18px 20px; border-radius: 20px; cursor: pointer; transition: 0.2s; box-shadow: 0 10px 25px rgba(37, 99, 235, 0.4); color: #fff;}
-        .tech-photo-wrapper:active { transform: scale(0.97); }
-        .photo-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
         
         .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100030; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; touch-action: none; overscroll-behavior: none; }
         .gallery-modal.show { opacity: 1; visibility: visible; }
@@ -376,50 +384,57 @@
 <div id="page-rezervy" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2>📦 Резерви</h2>
+            <h2 style="display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Активні резерви
+            </h2>
         </div>
         
-        <h3>Оберіть магазин:</h3>
-        <div class="search-wrapper" style="margin-bottom: 24px;">
-            <select id="storeFilter" onchange="window.renderRezervyList()">
-                <option value="">-- Всі магазини --</option>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; margin-top: -10px;">Оберіть магазин:</div>
+        <div style="position: relative; margin-bottom: 24px;">
+            <select id="storeFilter" class="montazh-select" onchange="window.renderRezervyList()" style="margin-bottom: 0; padding-right: 46px;">
+                <option value="">-- Список магазинів --</option>
             </select>
-            <button class="clear-select-btn" id="clearStoreBtn" onclick="document.getElementById('storeFilter').value=''; window.renderRezervyList();">✕</button>
+            <button onclick="document.getElementById('storeFilter').value=''; window.renderRezervyList();" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: #fee2e2; color: #ef4444; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">✕</button>
         </div>
         
-        <div id="rezervyList" class="service-list"></div>
+        <div id="rezervyList" class="service-list">
+            </div>
     </div>
 </div>
 
 <div id="page-catalog" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2>🛠️ Перелік сервісів</h2>
+            <h2 style="display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Перелік сервісів
+            </h2>
         </div>
         
-        <h3>Оберіть потрібне:</h3>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px;">Оберіть потрібне:</div>
 
         <div id="catalogList">
-            <button class="btn-3d btn-support" onclick="toggleCatalog('cat-support')">
-                <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:22px;">🛡️</span> SUPPORT</span>
+            <button class="btn-3d btn-support" onclick="window.toggleCatalog('cat-support')">
+                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">🛡️</span> SUPPORT</span>
                 <span class="arrow">▼</span>
             </button>
             <div id="cat-support" class="catalog-items"></div>
 
-            <button class="btn-3d btn-ekta" onclick="toggleCatalog('cat-ekta')">
-                <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:22px;">📱</span> EKTA</span>
+            <button class="btn-3d btn-ekta" onclick="window.toggleCatalog('cat-ekta')">
+                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">📱</span> EKTA</span>
                 <span class="arrow">▼</span>
             </button>
             <div id="cat-ekta" class="catalog-items"></div>
 
-            <button class="btn-3d btn-epz" onclick="toggleCatalog('cat-epz')">
-                <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:22px;">💻</span> ЕПЗ (Windows / Office)</span>
+            <button class="btn-3d btn-epz" onclick="window.toggleCatalog('cat-epz')">
+                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">💻</span> ЕПЗ (Windows/Office)</span>
                 <span class="arrow">▼</span>
             </button>
             <div id="cat-epz" class="catalog-items"></div>
 
-            <button class="btn-3d btn-install" onclick="toggleCatalog('cat-install')">
-                <span style="display:flex; align-items:center; gap:10px;"><span style="font-size:22px;">🔧</span> Монтаж та Встановлення</span>
+            <button class="btn-3d btn-install" onclick="window.toggleCatalog('cat-install')">
+                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">🔧</span> Монтаж та Встановлення</span>
                 <span class="arrow">▼</span>
             </button>
             <div id="cat-install" class="catalog-items"></div>
@@ -428,49 +443,90 @@
 </div>
 
 <div id="page-guide" class="app-page">
-    <div class="container">
-        <div class="header-row">
-            <h2>📱 Встановлення</h2>
+    <div class="container" style="padding:0; overflow:hidden;">
+        <div class="modal-header" style="background: var(--card-bg); padding: 28px 24px 20px 24px; margin-bottom: 0;">
+            <h2 style="font-size: 24px; color: var(--text-main); font-weight: 900; margin:0;">Встановлення додатка</h2>
         </div>
-        
-        <div class="pwa-alert">
+        <div class="modal-body pwa-guide-container" style="padding: 0;">
+          <div class="pwa-alert">
             <div class="pwa-alert-title">
               <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               Відкрито у месенджері?
             </div>
             <div class="pwa-alert-text">
-              Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер.
+              Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
+              <ul>
+                <li><strong>iOS (iPhone):</strong> Натисніть значок компаса 
+                  <span class="pwa-icon-inline">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
+                  </span> 
+                  у правому нижньому куті екрана.
+                </li>
+                <li><strong>Android:</strong> Натисніть три крапки 
+                  <span class="pwa-icon-inline">
+                    <svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
+                  </span> 
+                  у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong> (Chrome).
+                </li>
+              </ul>
             </div>
-        </div>
+          </div>
 
-        <div class="pwa-device-section">
+          <div class="pwa-device-section">
             <div class="pwa-device-title">
               <svg class="color-apple" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-              Для iOS (iPhone)
+              Встановлення на iOS
             </div>
             <ol class="pwa-instructions">
               <li>Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
               <li>Натисніть кнопку <strong>«Поділитися»</strong> 
-                <span class="pwa-icon-inline"><svg class="color-safari-blue" viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></span> 
+                <span class="pwa-icon-inline">
+                  <svg class="color-safari-blue" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
+                    <polyline points="16 6 12 2 8 6"></polyline>
+                    <line x1="12" y1="2" x2="12" y2="15"></line>
+                  </svg>
+                </span> 
               внизу екрана.</li>
-              <li>Прокрутіть меню та виберіть <strong>«На початковий екран»</strong> 
-                <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>.
+              <li>Прокрутіть меню вниз і виберіть <strong>«На початковий екран»</strong> 
+                <span class="pwa-icon-inline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                </span>.
               </li>
-              <li>Натисніть кнопку <strong>«Додати»</strong>.</li>
+              <li>Натисніть кнопку <strong>«Додати»</strong> у правому верхньому куті.</li>
             </ol>
-        </div>
+          </div>
 
-        <div class="pwa-device-section">
+          <div class="pwa-device-section" style="border-bottom: none;">
             <div class="pwa-device-title">
               <svg class="color-android" viewBox="0 0 24 24" fill="#10b981" stroke="none"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.56-.38-.85-.22-.31.16-.42.54-.26.85l1.84 3.18C2.7 11.41 0 15.65 0 20.6h24c0-4.95-2.7-9.19-6.4-11.12zM8.5 16.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-              Для Android
+              Встановлення на Android
             </div>
             <ol class="pwa-instructions">
-              <li>Відкрийте цей сайт у <strong>Google Chrome</strong>.</li>
-              <li>Натисніть на значок <strong>меню (три крапки)</strong>.</li>
-              <li>Виберіть пункт <strong>«Додати на головний екран»</strong>.</li>
-              <li>Підтвердьте дію, натиснувши <strong>«Встановити»</strong>.</li>
+              <li>Відкрийте цей сайт у браузері <strong>Google Chrome</strong>.</li>
+              <li>Натисніть на значок <strong>меню</strong> 
+                <span class="pwa-icon-inline">
+                  <svg class="color-chrome-gray" viewBox="0 0 24 24">
+                    <path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/>
+                  </svg>
+                </span> 
+              (три крапки) у правому верхньому куті.</li>
+              <li>Виберіть пункт <strong>«Додати на головний екран»</strong> 
+                <span class="pwa-icon-inline">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="12" y1="8" x2="12" y2="16"></line>
+                    <line x1="8" y1="12" x2="16" y2="12"></line>
+                  </svg>
+                </span>.
+              </li>
+              <li>Підтвердьте дію, натиснувши <strong>«Встановити»</strong> або <strong>«Додати»</strong>.</li>
             </ol>
+          </div>
         </div>
     </div>
 </div>
@@ -496,7 +552,7 @@
 
 <div id="compareBar" class="compare-action-bar">
     <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.executeCompare()">Порівняти (0/2)</button>
+    <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()">Порівняти (0/2)</button>
 </div>
 
 <div id="compareModal" class="modal" style="z-index: 100020;">
@@ -535,18 +591,10 @@
     </div>
 </div>
 
-<div id="galleryModal" class="gallery-modal" style="z-index: 100030;">
-    <div class="gallery-content" id="galleryContent">
-        <button class="gallery-nav prev" onclick="event.stopPropagation(); window.changePhoto(-1)">❮</button>
-        <img id="galleryImage" src="" alt="Фото">
-        <button class="gallery-nav next" onclick="event.stopPropagation(); window.changePhoto(1)">❯</button>
-    </div>
-    <div id="galleryCounter" class="gallery-counter">1 / 3</div>
-    <button class="gallery-close-text-btn" onclick="window.closeGallery()">Закрити перегляд</button>
-</div>
-
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbz1yUOXHBezmYkZTIaJNkwIThX4thM693uRLR43xZeZ8pB5wiZ9ZMoAtpnJMSbO-mr5/exec';
+    
+    // ВАЖЛИВО: ОНОВИВ КЛЮЧ
     const CACHE_KEY = 'skillhub_v4_futuristic'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
     
@@ -558,7 +606,11 @@
     let compareSelection = [];
     window.lastCalculatedServices = [];
 
-    // --- ЛОГІКА ТЕМИ ТА НАВІГАЦІЇ ---
+    let isModalCompareMode = false;
+    let modalCompareSelection = [];
+    window.lastModalServices = [];
+
+    // --- ЛОГІКА ТЕМИ ---
     let currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
 
@@ -568,6 +620,7 @@
         localStorage.setItem('theme', currentTheme);
     };
 
+    // --- ЛОГІКА НАВІГАЦІЇ (ТАБИ) ---
     window.switchTab = function(pageId, element) {
         document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
@@ -602,15 +655,25 @@
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // ВИПРАВЛЕНА ПОМИЛКА replace(/"/g, '"')
+    // ВИПРАВЛЕНА СИНТАКСИЧНА ПОМИЛКА: replace(/"/g, '"')
     window.escapeHTML = function(str) {
         if (!str) return '';
-        return str.toString().replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
+        return str.toString()
+            .replace(/&/g, "&")
+            .replace(/</g, "<")
+            .replace(/>/g, ">")
+            .replace(/"/g, '"')
+            .replace(/'/g, "'");
     }
 
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return str.toString().replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, "\\n").replace(/\r/g, "");
+        return str.toString()
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'")
+            .replace(/"/g, '\\"')
+            .replace(/\n/g, "\\n")
+            .replace(/\r/g, "");
     }
 
     function normalizeServiceName(s) {
@@ -662,12 +725,8 @@
         if(!valueBox) return; 
         const originalHTML = valueBox.innerHTML;
         valueBox.innerHTML = "✅ Скопійовано!";
-        valueBox.style.color = "#10b981";
-        valueBox.style.background = "var(--feat-bg)";
         setTimeout(() => {
             valueBox.innerHTML = originalHTML;
-            valueBox.style.color = "";
-            valueBox.style.background = "";
         }, 1500);
     }
 
@@ -873,6 +932,8 @@
         let dataForSort = calculateServicesArray(item, p);
         
         requestAnimationFrame(() => {
+            // Передаємо isModalCtx = false, щоб кліки працювали як на головній,
+            // АЛЕ disableCompare = true, щоб не включався режим порівняння.
             listEl.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, true, true)).join('');
         });
     }
@@ -909,7 +970,7 @@
         let html = items.map(t => {
             let safeName = window.escapeForJS(t.service);
             let safeCode = window.escapeForJS(t.code || "");
-            let cleanTitle = t.service; // Без ціни
+            let cleanTitle = t.service.replace(/^\[.*?\]\s*/, ''); // Без бренду в назві
             return `<div class="catalog-item" onclick="window.openModal('${safeName}', '${safeCode}', true)">
                 <span>${cleanTitle}</span>
                 <span style="color:var(--text-muted); font-weight:900;">></span>
@@ -920,7 +981,7 @@
 
     window.toggleCatalog = function(id) {
         let el = document.getElementById(id);
-        let btn = document.querySelector(`button[onclick="toggleCatalog('${id}')"]`);
+        let btn = document.querySelector(`button[onclick="window.toggleCatalog('${id}')"]`);
         if(el.classList.contains('show')) {
             el.classList.remove('show');
             btn.classList.remove('open');
@@ -938,6 +999,7 @@
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
         
+        // Скидаємо результати при очищенні вводу
         if (val.length === 0) {
             elSuggList.style.display = "none"; 
             elPriceWrapper.style.display = "none"; 
@@ -984,131 +1046,9 @@
         renderServices(); 
     }
 
-    // --- ЛОГІКА ГАЛЕРЕЇ ФОТО ТА ЗУМУ ---
-    let currentPhotos = [];
-    let currentPhotoIndex = 0;
-    let scale = 1; let pointX = 0; let pointY = 0; let startX = 0; let startY = 0; let startDistance = 0; let startScale = 1; let panning = false;
-
-    const galleryContent = document.getElementById('galleryContent');
-    const galleryImage = document.getElementById('galleryImage');
-
-    function getDirectImageUrl(url) {
-        if (!url) return "";
-        let driveMatch = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-        if (driveMatch && driveMatch[1]) {
-            return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
-        }
-        return url;
-    }
-
-    window.openGallery = function(photosStr) {
-        currentPhotos = photosStr.split(',').filter(p => p.trim() !== "");
-        if (currentPhotos.length === 0) return;
-
-        if (currentPhotos[0].includes('photos.app.goo.gl') || currentPhotos[0].includes('photos.google.com')) {
-            if(currentPhotos.length === 1) {
-                window.open(currentPhotos[0], '_blank');
-                return;
-            } else {
-                document.getElementById('modalTitle').innerText = "Приклади пошкоджень";
-                let linksHtml = currentPhotos.map((url, i) => `
-                    <a href="${url}" target="_blank" style="display:flex; width:100%; justify-content:center; margin-bottom:10px; text-decoration:none; padding:16px; border-radius:16px; font-size:15px; background:var(--primary); color:#fff; font-weight:800; box-shadow:var(--shadow-sm);">
-                        📸 Відкрити Фото ${i+1}
-                    </a>
-                `).join('');
-                document.getElementById('modalBody').innerHTML = `
-                    <div style="padding:12px; text-align:center; font-size:13px; font-weight:600; margin-bottom:20px; background:var(--feat-bg); border-radius:14px; border:1px solid var(--border); color:var(--text-muted);">
-                        Посилання формату Google Photos відкриваються у новій вкладці
-                    </div>
-                    ${linksHtml}
-                `;
-                
-                toggleBodyScroll(true);
-                document.getElementById('descModal').classList.add('show');
-                return;
-            }
-        }
-
-        currentPhotoIndex = 0;
-        resetZoom();
-        updateGalleryImage();
-        toggleBodyScroll(true);
-        document.getElementById('galleryModal').classList.add('show');
-    };
-
-    window.closeGallery = function() {
-        document.getElementById('galleryModal').classList.remove('show');
-        resetZoom();
-        if (!document.getElementById('descModal').classList.contains('show') && 
-            !document.getElementById('compareModal').classList.contains('show') &&
-            !document.getElementById('rezervItemModal').classList.contains('show')) {
-            toggleBodyScroll(false);
-        }
-    };
-
-    window.changePhoto = function(dir) {
-        currentPhotoIndex += dir;
-        if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
-        if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
-        resetZoom();
-        updateGalleryImage();
-    };
-
-    function updateGalleryImage() {
-        galleryImage.src = getDirectImageUrl(currentPhotos[currentPhotoIndex].trim()); 
-        document.getElementById('galleryCounter').innerText = `${currentPhotoIndex + 1} / ${currentPhotos.length}`;
-        
-        if (currentPhotos.length <= 1) {
-            document.querySelector('.gallery-nav.prev').style.display = 'none';
-            document.querySelector('.gallery-nav.next').style.display = 'none';
-        } else {
-            document.querySelector('.gallery-nav.prev').style.display = 'flex';
-            document.querySelector('.gallery-nav.next').style.display = 'flex';
-        }
-    }
-
-    function resetZoom() {
-        scale = 1; pointX = 0; pointY = 0;
-        galleryImage.style.transform = `translate(0px, 0px) scale(1)`;
-    }
-
-    galleryContent.addEventListener('touchstart', e => {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            startDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            startScale = scale;
-        } else if (e.touches.length === 1 && scale > 1) {
-            e.preventDefault();
-            panning = true;
-            startX = e.touches[0].clientX - pointX;
-            startY = e.touches[0].clientY - pointY;
-        }
-    }, {passive: false});
-
-    galleryContent.addEventListener('touchmove', e => {
-        if (e.touches.length === 2) {
-            e.preventDefault();
-            const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
-            scale = Math.min(Math.max(1, startScale * (currentDistance / startDistance)), 4);
-            galleryImage.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
-        } else if (e.touches.length === 1 && panning && scale > 1) {
-            e.preventDefault();
-            pointX = e.touches[0].clientX - startX;
-            pointY = e.touches[0].clientY - startY;
-            galleryImage.style.transform = `translate(${pointX}px, ${pointY}px) scale(${scale})`;
-        }
-    }, {passive: false});
-
-    galleryContent.addEventListener('touchend', e => {
-        if (e.touches.length < 2) {
-            panning = false;
-            if (scale <= 1) resetZoom();
-        }
-    });
-
     // --- Універсальна функція для побудови TechInfo ---
     function buildTechInfoHTML(item, p) {
-        let techHTML = `<div style="font-size: 11px; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">🛠️ Технічна довідка</div>`;
+        let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
 
         if (item.complexity) {
@@ -1144,25 +1084,6 @@
                 techHTML += `<div class="tech-item ${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:800;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:700;color:var(--text-main);">${f[2]}</span></div></div>`;
             }
         });
-
-        let photosArray = [];
-        if (item.photo1) photosArray.push(item.photo1);
-        if (item.photo2) photosArray.push(item.photo2);
-        if (item.photo3) photosArray.push(item.photo3);
-
-        if (photosArray.length > 0) {
-            hasInfo = true;
-            let photosStr = photosArray.join(',');
-            techHTML += `
-            <div class="tech-photo-wrapper" onclick="window.openGallery('${photosStr}')">
-                <div class="photo-icon">📸</div>
-                <div class="photo-text">
-                    <span class="photo-title">Приклади пошкодженої техніки</span>
-                    <span class="photo-subtitle">Переглянути фото (${photosArray.length})</span>
-                </div>
-                <div class="photo-arrow">❯</div>
-            </div>`;
-        }
 
         return hasInfo ? techHTML : "";
     }
@@ -1438,7 +1359,7 @@
             floatBtnsGroup.style.display = 'none'; 
         } else {
             toggleCompareBtn.classList.remove('active');
-            toggleCompareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Порівняти';
+            toggleCompareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Порівняти';
             compareBar.classList.remove('show');
             floatBtnsGroup.style.display = 'flex';
         }
@@ -1470,7 +1391,7 @@
     window.handleServiceClick = function(name, code, isPackage, forceNoCompare = false) {
         if (isCompareMode && !forceNoCompare) {
             if (isPackage) { 
-                window.openModal(name, code); 
+                window.openModal(name, code, true); 
                 return; 
             }
             let index = compareSelection.indexOf(name);
@@ -1522,7 +1443,7 @@
 
     function updateCompareUI() {
         let count = compareSelection.length;
-        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
+        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси";
         else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
         else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
         
@@ -1533,7 +1454,7 @@
 
     function updateModalCompareUI() {
         let count = modalCompareSelection.length;
-        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
+        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси";
         else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
         else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
         
@@ -1709,6 +1630,7 @@
         let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
             && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС') && !u.includes('ESET') && !u.includes('PARALLELS');
 
+        // Якщо це натискання з каталогу (forceDesc) - пропускаємо модалки вибору
         if (!isStaticEpz && !forceDesc) {
             let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
             if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
@@ -1767,7 +1689,7 @@
             <div class="code-box" onclick="window.copyCode(event, this, '${window.escapeForJS(code)}')">
                 <div>
                     <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.7); margin-bottom:4px;">КОД СЕРВІСУ</div>
-                    <div class="code-value-text" style="font-size:22px; font-weight:900;">${code}</div>
+                    <div class="code-value-text" style="font-size:24px; font-weight:900;">${code}</div>
                 </div>
                 <div style="font-size:24px;">📋</div>
             </div>` : '';
@@ -1838,13 +1760,6 @@
         }
         document.getElementById('modalTitle').innerHTML = "Опис"; 
     }
-    
-    document.getElementById('closeModalBtn').onclick = window.closeModal;
-    elModal.onclick = (e) => { 
-        if(e.target.id === 'descModal') {
-            window.closeModal(); 
-        }
-    };
 
     init();
 
