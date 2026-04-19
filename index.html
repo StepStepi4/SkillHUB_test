@@ -515,7 +515,7 @@
 
 <script>
     // API
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyYy2ttQK9NYhELn_588hHBFoiHM2-qrbKFC2WPW1bvfgrn78ktU-wL_0lEkYlQybU8/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz1yUOXHBezmYkZTIaJNkwIThX4thM693uRLR43xZeZ8pB5wiZ9ZMoAtpnJMSbO-mr5/exec';
     const CACHE_KEY = 'skillhub_v7_neumorphism_fixed'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
     
@@ -576,7 +576,7 @@
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
     // ВИПРАВЛЕНО replace(/"/g, '"') ТА replace(/'/g, "'") ЩОБ НЕ БУЛО ЗАВИСАНЬ
-window.escapeHTML = function(str) {
+    window.escapeHTML = function(str) {
     if (!str) return '';
     return str.toString()
         .replace(/&/g, "&")
@@ -584,9 +584,9 @@ window.escapeHTML = function(str) {
         .replace(/>/g, ">")
         .replace(/"/g, '"') // Исправлено здесь
         .replace(/'/g, "'");
-}
+    }
 
-window.escapeForJS = function(str) {
+    window.escapeForJS = function(str) {
     if (!str) return '';
     return str.toString()
         .replace(/\\/g, "\\\\")
@@ -594,7 +594,7 @@ window.escapeForJS = function(str) {
         .replace(/"/g, '\\"') // Исправлено здесь
         .replace(/\n/g, "\\n")
         .replace(/\r/g, "");
-}
+    }
 
     function normalizeServiceName(s) {
         if (!s) return "";
