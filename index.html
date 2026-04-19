@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -6,10 +7,10 @@
     <title>SkillHUB Assistant</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e6eef4">
+    <meta name="theme-color" content="#E0E5EC">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SkillHUB Assistant">
+    <meta name="apple-mobile-web-app-title" content="SkillHUB">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
@@ -21,43 +22,40 @@
         }
 
         :root {
-            /* СВІТЛА ТЕМА (Neumorphism) */
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #e6eef4; /* Основний колір для неоморфізму */
-            --text-main: #334155; 
-            --text-muted: #94a3b8; 
+            /* Neumorphism Світла Тема */
+            --bg: #E0E5EC;
+            --primary: #0B2B26; /* Ваш колір */
+            --text-main: #0B2B26; 
+            --text-muted: #5c6b73; 
             
-            /* Тіні: випуклість */
-            --neu-out: 8px 8px 16px #c8d5e1, -8px -8px 16px #ffffff;
-            --neu-out-sm: 4px 4px 10px #c8d5e1, -4px -4px 10px #ffffff;
+            /* Тіні для неоморфізму */
+            --neu-out: 8px 8px 16px rgba(163, 177, 198, 0.6), -8px -8px 16px rgba(255, 255, 255, 0.7);
+            --neu-out-sm: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.7);
+            --neu-in: inset 6px 6px 10px rgba(163, 177, 198, 0.6), inset -6px -6px 10px rgba(255, 255, 255, 0.7);
+            --neu-in-sm: inset 3px 3px 6px rgba(163, 177, 198, 0.6), inset -3px -3px 6px rgba(255, 255, 255, 0.7);
             
-            /* Тіні: натиснення / втиснутість */
-            --neu-in: inset 6px 6px 12px #c8d5e1, inset -6px -6px 12px #ffffff;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --radius-sm: 12px;
             
-            --modal-overlay: rgba(230, 238, 244, 0.85);
-            
-            /* Кольори для тегів (м'які) */
-            --clr-support: #f59e0b; 
-            --clr-ekta: #10b981; 
-            --clr-epz: #0ea5e9; 
-            --clr-install: #ec4899; 
-            --clr-settings: #8b5cf6;
+            --modal-overlay: rgba(224, 229, 236, 0.9);
+            --nav-bg: #E0E5EC;
         }
 
         [data-theme="dark"] {
-            /* ТЕМНА ТЕМА (Neumorphism Cyberpunk) */
-            --primary: #6366f1;
-            --primary-hover: #818cf8;
-            --bg: #1e1e24; 
-            --text-main: #f8fafc; 
-            --text-muted: #64748b; 
+            /* Neumorphism Темна Тема (стилізована під #0B2B26) */
+            --bg: #091a18; 
+            --primary: #4ade80; 
+            --text-main: #e2e8f0; 
+            --text-muted: #8b9a96; 
             
-            --neu-out: 8px 8px 16px #131318, -8px -8px 16px #292930;
-            --neu-out-sm: 4px 4px 8px #131318, -4px -4px 8px #292930;
-            --neu-in: inset 6px 6px 12px #131318, inset -6px -6px 12px #292930;
+            --neu-out: 6px 6px 12px rgba(0, 0, 0, 0.8), -6px -6px 12px rgba(20, 50, 45, 0.5);
+            --neu-out-sm: 3px 3px 6px rgba(0, 0, 0, 0.8), -3px -3px 6px rgba(20, 50, 45, 0.5);
+            --neu-in: inset 4px 4px 8px rgba(0, 0, 0, 0.8), inset -4px -4px 8px rgba(20, 50, 45, 0.5);
+            --neu-in-sm: inset 2px 2px 4px rgba(0, 0, 0, 0.8), inset -2px -2px 4px rgba(20, 50, 45, 0.5);
             
-            --modal-overlay: rgba(30, 30, 36, 0.9);
+            --modal-overlay: rgba(9, 26, 24, 0.9);
+            --nav-bg: #091a18;
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
@@ -65,20 +63,19 @@
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
-            min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
-            padding-bottom: 100px;
+            min-height: 100vh; transition: background 0.3s ease, color 0.3s ease; 
+            padding-bottom: 90px;
         }
 
-        /* --- КОНТЕЙНЕР --- */
         .container { 
-            position: relative; width: 100%; max-width: 600px; background: var(--bg); 
-            padding: 24px; margin: 0 auto; min-height: 100vh; display: flex; flex-direction: column;
+            position: relative; width: 100%; max-width: 600px; 
+            padding: 24px; min-height: 100vh; display: flex; flex-direction: column;
         }
 
         /* --- ВКЛАДКИ НАВІГАТОРУ --- */
-        .app-page { display: none; width: 100%; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .app-page { display: none; width: 100%; animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
         .app-page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
         /* --- ЛОАДЕР --- */
         .app-loader {
@@ -87,145 +84,144 @@
             z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease; padding: 20px;
         }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner-box { 
-            width: 80px; height: 80px; border-radius: 50%; box-shadow: var(--neu-out);
-            display: flex; justify-content: center; align-items: center; margin-bottom: 30px;
-        }
-        .spinner-ring {
-            width: 50px; height: 50px; border-radius: 50%; 
-            border: 4px solid transparent; border-top-color: var(--primary); 
-            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        }
-        .loader-text { font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.6; }
+        
+        .spinner-box { width: 80px; height: 80px; border-radius: 50%; box-shadow: var(--neu-out); display: flex; justify-content: center; align-items: center; margin-bottom: 24px; }
+        .spinner-ring { width: 50px; height: 50px; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary); animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
+        .loader-text { font-size: 14px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.5; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- ШАПКА ТА СТАТУС --- */
+        /* --- ШАПКА --- */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px;}
-        h2 { color: var(--text-main); margin: 0; font-size: 28px; font-weight: 900; letter-spacing: -1px; text-shadow: 2px 2px 4px rgba(0,0,0,0.05);}
-        h3 { color: var(--text-muted); margin: 0; font-size: 16px; font-weight: 600; margin-bottom: 20px;}
+        h2 { color: var(--text-main); margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -1px;}
 
-        /* Кнопки перемикання теми (Neumorphic) */
+        /* Кнопка теми Neumorphism */
         .theme-switch {
             width: 60px; height: 32px; border-radius: 32px; box-shadow: var(--neu-in);
-            cursor: pointer; display: flex; align-items: center; position: relative; padding: 4px;
+            cursor: pointer; position: relative; display: flex; align-items: center; padding: 4px;
         }
         .theme-slider {
-            width: 24px; height: 24px; border-radius: 50%; background: var(--bg); box-shadow: var(--neu-out-sm);
-            transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center;
+            width: 24px; height: 24px; background: var(--bg); border-radius: 50%; box-shadow: var(--neu-out-sm);
+            transition: 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); display: flex; align-items: center; justify-content: center;
         }
         .theme-slider::after { content: '☀️'; font-size: 12px; }
         [data-theme="dark"] .theme-slider { transform: translateX(28px); }
         [data-theme="dark"] .theme-slider::after { content: '🌙'; }
 
-        /* Статус бар */
-        .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--bg); padding: 14px 20px; border-radius: 20px; box-shadow: var(--neu-out-sm);}
-        .status-wrapper { display: flex; align-items: center; gap: 10px; }
-        .status-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
-        .pulse-dot { width: 12px; height: 12px; border-radius: 50%; box-shadow: var(--neu-in); }
+        /* --- СТАТУС --- */
+        .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding: 16px 20px; border-radius: var(--radius-lg); box-shadow: var(--neu-out);}
+        .status-wrapper { display: flex; align-items: center; gap: 12px; }
+        .status-text { font-size: 12px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; }
+        .pulse-dot { width: 14px; height: 14px; border-radius: 50%; box-shadow: var(--neu-in); }
         .dot-green { background-color: #10b981; }
         .dot-red { background-color: #ef4444; }
-        .dot-loading { background-color: #f59e0b; animation: pulseYellow 1.5s infinite alternate; }
-        @keyframes pulseYellow { 0% { opacity: 0.5; } 100% { opacity: 1; box-shadow: 0 0 10px #f59e0b; } }
+        .dot-loading { background-color: #f59e0b; animation: pulseYellow 1s alternate infinite;}
+        @keyframes pulseYellow { 0% { opacity: 0.5;} 100% { opacity: 1;} }
 
-        .refresh-db-btn { background: var(--bg); color: var(--primary); border: none; border-radius: 50%; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: var(--neu-out);}
-        .refresh-db-btn:active { box-shadow: var(--neu-in); transform: scale(0.95); }
+        .refresh-db-btn { background: var(--bg); color: var(--primary); border: none; border-radius: 50%; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: var(--neu-out);}
+        .refresh-db-btn:active { box-shadow: var(--neu-in); transform: scale(0.95); color: var(--text-main);}
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
 
-        /* --- ВВОДИ (NEUMORPHISM) --- */
+        /* --- ПОЛЯ ВВОДУ ТА КНОПКИ (Neumorphism) --- */
         .search-wrapper, .price-wrapper { position: relative; margin-bottom: 20px; display: flex; align-items: center; gap: 12px; }
+        
         input, select { 
-            width: 100%; padding: 20px 24px; border: none; border-radius: 24px; 
+            width: 100%; padding: 20px 24px; border: none; border-radius: var(--radius-lg); 
             font-size: 16px; font-weight: 700; font-family: inherit; outline: none; transition: 0.3s ease; 
             background: var(--bg); color: var(--text-main); box-shadow: var(--neu-in);
             -webkit-appearance: none;
         }
-        input:focus, select:focus { box-shadow: var(--neu-in), 0 0 0 2px var(--primary); }
+        input:focus, select:focus { box-shadow: var(--neu-in-sm), 0 0 0 2px var(--primary); }
+        input::placeholder { color: var(--text-muted); font-weight: 500; }
         
         .clear-data-btn, .clear-select-btn { position: absolute; right: 16px; background: var(--bg); color: #ef4444; border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 14px; font-weight: 900; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; box-shadow: var(--neu-out-sm); z-index: 5;}
         .clear-data-btn:active, .clear-select-btn:active { box-shadow: var(--neu-in); transform: scale(0.95);}
 
         .price-wrapper { display: none; margin-bottom: 24px; animation: fadeIn 0.3s ease; }
-        .ok-btn { background: var(--primary); color: white; border: none; padding: 0 30px; border-radius: 20px; font-weight: 800; font-size: 16px; cursor: pointer; transition: 0.2s ease; box-shadow: var(--neu-out); height: 62px;}
+        .ok-btn { background: var(--bg); color: var(--primary); border: none; padding: 0 30px; border-radius: var(--radius-lg); font-weight: 900; font-size: 16px; cursor: pointer; transition: 0.2s ease; box-shadow: var(--neu-out); height: 62px;}
         .ok-btn:active { box-shadow: var(--neu-in); transform: scale(0.95); }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border-radius: 24px; box-shadow: var(--neu-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 12px; -webkit-overflow-scrolling: touch; }
-        .suggestion-item { padding: 16px 20px; cursor: pointer; border-radius: 16px; font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; transition: 0.2s ease; box-shadow: var(--neu-out-sm);}
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border-radius: var(--radius-lg); box-shadow: var(--neu-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 12px; }
+        .suggestion-item { padding: 16px 20px; cursor: pointer; border-radius: var(--radius-sm); font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; transition: 0.2s ease; box-shadow: var(--neu-out-sm);}
         .suggestion-item:active { box-shadow: var(--neu-in); color: var(--primary); }
         
-        /* --- КАРТКИ ПОСЛУГ (NEUMORPHISM) --- */
-        .result-box { display: none; padding-top: 24px; margin-top: 10px; animation: fadeIn 0.4s ease; }
-        .ua-name { font-weight: 900; font-size: 24px; margin-bottom: 6px; color: var(--text-main); line-height: 1.2;}
-        .item-category { font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        /* --- РЕЗУЛЬТАТИ ПОШУКУ --- */
+        .result-box { display: none; padding-top: 24px; margin-top: 10px; animation: fadeIn 0.4s ease; border-top: 2px dashed var(--text-muted); }
+        .ua-name { font-weight: 900; font-size: 22px; margin-bottom: 6px; color: var(--text-main); line-height: 1.2;}
+        .item-category { font-size: 12px; color: var(--text-muted); font-weight: 800; margin-bottom: 24px; text-transform: uppercase; letter-spacing: 1px; }
 
-        .service-list { display: flex; flex-direction: column; gap: 18px; }
+        /* Картки послуг (Оригінальна логіка, але в дизайні Neumorphism) */
+        .service-list { display: flex; flex-direction: column; gap: 16px; }
         .service-card { 
-            position: relative; padding: 20px; border-radius: 24px; cursor: pointer; transition: 0.2s; 
-            background: var(--bg); display: flex; justify-content: space-between; align-items: center;
-            box-shadow: var(--neu-out);
+            position: relative; padding: 20px; border-radius: var(--radius-lg); cursor: pointer; transition: 0.2s; 
+            background: var(--bg); display: flex; justify-content: space-between; align-items: center; box-shadow: var(--neu-out);
         }
         .service-card:active { box-shadow: var(--neu-in); }
-        
+        .service-content-left { display: flex; align-items: center; gap: 12px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         .service-title { font-size: 15px; font-weight: 700; line-height: 1.3; color: var(--text-main); }
-        .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--primary); box-shadow: var(--neu-in);}
         
-        .price-badge { font-size: 16px; font-weight: 900; color: var(--primary); background: var(--bg); padding: 10px 16px; border-radius: 16px; box-shadow: var(--neu-in); text-align: center; white-space: nowrap;}
-
+        .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 8px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--primary); box-shadow: var(--neu-in-sm);}
+        .price-badge { font-size: 16px; font-weight: 900; color: var(--primary); background: var(--bg); padding: 12px 18px; border-radius: 16px; box-shadow: var(--neu-in); text-align: center; white-space: nowrap;}
+        
         .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
         @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         /* ТЕХ ІНФО */
-        .tech-info { display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px;}
-        .tech-item { display: flex; align-items: center; gap: 16px; background: var(--bg); padding: 16px; border-radius: 20px; box-shadow: var(--neu-out-sm); }
-        .icon-circle { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; box-shadow: var(--neu-in);}
-        
-        /* --- АКОРДЕОН НАВЧАННЯ (ТАБ 3) --- */
-        .btn-3d {
-            position: relative; display: flex; align-items: center; justify-content: space-between;
-            width: 100%; padding: 22px 24px; border-radius: 24px; border: none;
-            font-weight: 900; font-size: 16px; color: var(--text-main); cursor: pointer;
-            transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 16px; outline: none; background: var(--bg); box-shadow: var(--neu-out);
-        }
-        .btn-3d:active, .btn-3d.open { box-shadow: var(--neu-in); color: var(--primary); }
-        .btn-3d .arrow { font-size: 14px; transition: 0.3s; opacity: 0.8;}
-        .btn-3d.open .arrow { transform: rotate(180deg); }
+        .tech-info { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;}
+        .tech-item { display: flex; align-items: center; gap: 16px; background: var(--bg); padding: 18px; border-radius: var(--radius-lg); box-shadow: var(--neu-in); }
+        .icon-circle { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: var(--bg); box-shadow: var(--neu-out); display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-        .catalog-items { display: none; background: var(--bg); padding: 16px; border-radius: 24px; box-shadow: var(--neu-in); margin-bottom: 24px;}
+        /* --- КАТАЛОГ (НАВЧАННЯ - ТАБ 3) --- */
+        .catalog-brand { background: var(--bg); border-radius: var(--radius-lg); margin-bottom: 20px; box-shadow: var(--neu-out); overflow: hidden; }
+        .catalog-header { padding: 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s;}
+        .catalog-header:active { box-shadow: var(--neu-in); }
+        .catalog-title { font-size: 16px; font-weight: 900; display: flex; align-items: center; gap: 16px; color: var(--text-main); text-transform: uppercase; letter-spacing: 0.5px;}
+        .catalog-icon { width: 48px; height: 48px; border-radius: 16px; background: var(--bg); box-shadow: var(--neu-in); display: flex; align-items: center; justify-content: center; font-size: 24px; }
+        .catalog-header .arrow { transition: transform 0.3s ease; color: var(--text-muted); font-size: 14px; font-weight: 900;}
+        .catalog-header .arrow.up { transform: rotate(180deg); color: var(--primary); }
+        
+        .catalog-items { display: none; padding: 16px; border-top: 2px dashed rgba(0,0,0,0.05);}
         .catalog-items.show { display: block; animation: fadeIn 0.3s ease; }
-        .catalog-item { background: var(--bg); margin-bottom: 12px; padding: 18px 20px; border-radius: 16px; font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--neu-out-sm);}
-        .catalog-item:active { box-shadow: var(--neu-in); color: var(--primary); }
+        .catalog-item { background: var(--bg); margin-bottom: 12px; padding: 20px; border-radius: var(--radius-md); font-size: 14px; font-weight: 700; color: var(--text-main); cursor: pointer; transition: 0.2s; box-shadow: var(--neu-out-sm); display: flex; justify-content: space-between; align-items: center;}
+        .catalog-item:active { box-shadow: var(--neu-in); color: var(--primary); transform: scale(0.98);}
         .catalog-item:last-child { margin-bottom: 0; }
 
-        /* --- ФУТУРИСТИЧНІ МОДАЛКИ (NEUMORPHISM) --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; z-index: 99999; overscroll-behavior: contain; opacity: 0; transition: opacity 0.3s ease; padding: 20px;}
+        /* --- РЕЗЕРВИ (ТАБ 2) --- */
+        .rezervy-item { background: var(--bg); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--neu-out); }
+        .rezervy-item:active { box-shadow: var(--neu-in); transform: scale(0.98); }
+        .rezervy-name { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.3;}
+        .rezervy-cat { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
+        .rezervy-price { font-size: 18px; font-weight: 900; color: var(--primary); background: var(--bg); padding: 12px 18px; border-radius: 16px; box-shadow: var(--neu-in);}
+
+        /* --- МОДАЛЬНІ ВІКНА --- */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: center; justify-content: center; z-index: 99999; padding: 20px; opacity: 0; transition: 0.3s ease; }
         .modal.show { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg); width: 100%; max-width: 500px; border-radius: 36px; padding: 24px; display: flex; flex-direction: column; max-height: 85vh; transform: scale(0.95); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); box-shadow: 0 20px 50px rgba(0,0,0,0.3);}
+        .modal-content { background: var(--bg); width: 100%; max-width: 500px; border-radius: 36px; padding: 24px; display: flex; flex-direction: column; max-height: 85vh; transform: scale(0.95); transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); box-shadow: var(--neu-out);}
         .modal.show .modal-content { transform: scale(1); }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; flex-shrink: 0; border-bottom: 2px dashed var(--border);}
-        .modal-header h3 { font-size: 20px; font-weight: 900; color: var(--text-main); margin: 0; line-height: 1.3;}
-        .close-btn { background: var(--bg); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--text-muted); font-weight: bold; transition: 0.2s; box-shadow: var(--neu-out-sm);}
-        .close-btn:active { box-shadow: var(--neu-in); color: #ef4444;}
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-bottom: 16px; border-bottom: 2px dashed rgba(0,0,0,0.1); flex-shrink: 0; }
+        .modal-header h3 { font-size: 22px; font-weight: 900; color: var(--text-main); margin: 0; line-height: 1.3;}
+        .close-btn { background: var(--bg); border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 18px; color: var(--primary); font-weight: bold; transition: 0.2s; box-shadow: var(--neu-out-sm);}
+        .close-btn:active { box-shadow: var(--neu-in); transform: scale(0.95);}
         
         .modal-body { overflow-y: auto; flex-grow: 1; margin: 0 -10px; padding: 0 10px; }
 
-        /* Картки всередині опису */
-        .desc-card { background: var(--bg); border-radius: 20px; padding: 18px; margin-bottom: 16px; box-shadow: var(--neu-out-sm); display: flex; gap: 16px; align-items: flex-start; }
-        .desc-icon { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: var(--neu-in); }
-        .desc-text { font-size: 14px; line-height: 1.5; color: var(--text-main); font-weight: 600; padding-top: 4px;}
+        /* Описи всередині модалок */
+        .desc-card { background: var(--bg); border-radius: var(--radius-lg); padding: 20px; margin-bottom: 16px; box-shadow: var(--neu-in-sm); display: flex; gap: 16px; align-items: center; }
+        .desc-icon { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: var(--bg); box-shadow: var(--neu-out-sm); display: flex; align-items: center; justify-content: center; font-size: 22px; }
+        .desc-text { font-size: 14px; line-height: 1.5; color: var(--text-main); font-weight: 600;}
         .desc-header { font-size: 12px; font-weight: 900; color: var(--primary); text-transform: uppercase; margin: 24px 0 12px 8px; letter-spacing: 1px;}
         
-        .code-box { background: var(--bg); color: var(--primary); border-radius: 24px; padding: 20px 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: var(--neu-out); transition: 0.2s;}
-        .code-box:active { box-shadow: var(--neu-in); }
+        .code-box { background: var(--bg); color: var(--primary); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; box-shadow: var(--neu-out); transition: 0.2s;}
+        .code-box:active { box-shadow: var(--neu-in); transform: scale(0.98);}
 
-        .modal-confirm-btn { width: 100%; padding: 20px; border-radius: 20px; border: none; background: var(--bg); color: var(--primary); font-weight: 900; cursor: pointer; font-size: 16px; margin-top: 20px; box-shadow: var(--neu-out); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
-        .modal-confirm-btn:active { box-shadow: var(--neu-in); }
+        .modal-confirm-btn { width: 100%; padding: 22px; border-radius: var(--radius-lg); border: none; background: var(--bg); color: var(--primary); font-weight: 900; cursor: pointer; font-size: 16px; margin-top: 20px; box-shadow: var(--neu-out); transition: 0.2s; text-transform: uppercase; letter-spacing: 1px;}
+        .modal-confirm-btn:active { box-shadow: var(--neu-in); transform: scale(0.98);}
 
-        /* --- НИЖНЯ НАВІГАЦІЯ (ПЛАВАЮЧА) --- */
+        /* --- НИЖНЯ НАВІГАЦІЯ --- */
         .bottom-nav {
-            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px;
+            position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px;
             height: 75px; background: var(--bg); display: flex; justify-content: space-around;
-            align-items: center; border-radius: 30px; z-index: 9998; box-shadow: var(--neu-out);
+            align-items: center; border-radius: 36px; z-index: 9998; box-shadow: var(--neu-out);
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
@@ -237,23 +233,29 @@
         .nav-item.active svg { transform: translateY(-2px); stroke-width: 2.5;}
 
         /* ПОРІВНЯННЯ */
-        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .compare-toggle-btn { background: var(--bg); color: var(--primary); border: none; padding: 12px 20px; border-radius: 16px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--neu-out-sm); transition: 0.2s; }
         .compare-toggle-btn.active { box-shadow: var(--neu-in); color: #ef4444; }
         
-        .compare-action-bar { position: fixed; bottom: 110px; left: 50%; width: 90%; max-width: 460px; background: var(--bg); padding: 16px 24px; box-shadow: var(--neu-out); display: flex; justify-content: space-between; align-items: center; transform: translateX(-50%) translateY(200%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9997; border-radius: 30px; }
+        .compare-action-bar { position: fixed; bottom: 110px; left: 50%; width: 90%; max-width: 460px; background: var(--bg); padding: 20px; box-shadow: var(--neu-out); display: flex; justify-content: space-between; align-items: center; transform: translateX(-50%) translateY(200%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9997; border-radius: 36px; }
         .compare-action-bar.show { transform: translateX(-50%) translateY(0); }
         .compare-status-text { font-size: 15px; font-weight: 800; color: var(--text-main); }
-        .compare-execute-btn { background: var(--bg); color: var(--text-muted); border: none; padding: 14px 28px; border-radius: 20px; font-size: 15px; font-weight: 800; cursor: not-allowed; transition: 0.2s; box-shadow: var(--neu-in); }
+        .compare-execute-btn { background: var(--bg); color: var(--text-muted); border: none; padding: 16px 28px; border-radius: 24px; font-size: 15px; font-weight: 900; cursor: not-allowed; transition: 0.2s; box-shadow: var(--neu-in); }
         .compare-execute-btn.ready { color: var(--primary); cursor: pointer; box-shadow: var(--neu-out);}
-        .compare-execute-btn.ready:active { box-shadow: var(--neu-in); }
+        .compare-execute-btn.ready:active { box-shadow: var(--neu-in); transform: scale(0.96); }
 
-        .service-card.compare-mode { padding-left: 60px; }
+        .service-card.compare-mode { padding-left: 64px; }
         .compare-checkbox { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); width: 28px; height: 28px; border-radius: 50%; box-shadow: var(--neu-in); background: var(--bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
-        .service-card.compare-mode .compare-checkbox { left: 16px; }
+        .service-card.compare-mode .compare-checkbox { left: 20px; }
         .service-card.selected-for-compare { box-shadow: var(--neu-in); }
         .service-card.selected-for-compare .compare-checkbox { box-shadow: var(--neu-out); color: var(--primary); }
         .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; font-weight: 900; font-size: 16px; }
+
+        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 20px; box-shadow: var(--neu-in); max-height: 60vh; background: var(--bg); padding: 10px;}
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+        .compare-table th { padding: 16px 12px; border-bottom: 2px dashed rgba(0,0,0,0.1); background: var(--bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
+        .compare-table td { padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-main); font-weight: 600; line-height: 1.4; text-align: left;}
+        .compare-table tr:last-child td { border-bottom: none; }
 
         /* ІНШЕ */
         .footer { margin-top: auto; text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; padding: 40px 0 20px 0;}
@@ -273,8 +275,6 @@
             <h2>SkillHUB Assistant</h2>
             <div class="header-controls">
                 <div id="themeToggle" class="theme-switch" title="Змінити тему">
-                    <div class="ts-cloud ts-c1"></div><div class="ts-cloud ts-c2"></div>
-                    <div class="ts-star ts-s1"></div><div class="ts-star ts-s2"></div><div class="ts-star ts-s3"></div>
                     <div class="theme-slider"></div>
                 </div>
             </div>
@@ -316,25 +316,20 @@
             <div id="serviceList" class="service-list"></div>
         </div>
         
-        <div class="footer">
-            🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
-        </div>
+        <div class="footer">🇺🇦 ROZETKA KHARKIV REGION • 2026</div>
     </div>
 </div>
 
 <div id="page-rezervy" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2 style="display:flex; align-items:center; gap:10px;">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
-                Активні резерви
-            </h2>
+            <h2>📦 Активні резерви</h2>
         </div>
         
-        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; margin-top: -10px;">Оберіть магазин:</div>
-        <div class="search-wrapper" style="margin-bottom: 24px;">
-            <select id="storeFilter" onchange="window.renderRezervyList()" style="margin-bottom: 0;">
-                <option value="">-- Список магазинів --</option>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 12px;">Оберіть магазин:</div>
+        <div class="search-wrapper" style="margin-bottom: 30px;">
+            <select id="storeFilter" onchange="window.renderRezervyList()">
+                <option value="">-- Всі магазини --</option>
             </select>
             <button class="clear-select-btn" id="clearStoreBtn" onclick="document.getElementById('storeFilter').value=''; window.renderRezervyList();">✕</button>
         </div>
@@ -346,38 +341,43 @@
 <div id="page-catalog" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2 style="display:flex; align-items:center; gap:10px;">
-                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                Перелік сервісів
-            </h2>
+            <h2>📚 Перелік сервісів</h2>
         </div>
         
-        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 24px;">Оберіть потрібне:</div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 24px;">Оберіть бренд для навчання:</div>
 
         <div id="catalogList">
-            <button class="btn-3d" onclick="window.toggleCatalog('cat-support')">
-                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">🛡️</span> SUPPORT</span>
-                <span class="arrow">▼</span>
-            </button>
-            <div id="cat-support" class="catalog-items"></div>
+            <div class="catalog-brand">
+                <div class="catalog-header" onclick="window.toggleCatalog('cat-support')">
+                    <div class="catalog-title"><div class="catalog-icon">🛡️</div> SUPPORT</div>
+                    <div class="arrow">▼</div>
+                </div>
+                <div id="cat-support" class="catalog-items"></div>
+            </div>
 
-            <button class="btn-3d" onclick="window.toggleCatalog('cat-ekta')">
-                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">📱</span> EKTA</span>
-                <span class="arrow">▼</span>
-            </button>
-            <div id="cat-ekta" class="catalog-items"></div>
+            <div class="catalog-brand">
+                <div class="catalog-header" onclick="window.toggleCatalog('cat-ekta')">
+                    <div class="catalog-title"><div class="catalog-icon">📱</div> EKTA</div>
+                    <div class="arrow">▼</div>
+                </div>
+                <div id="cat-ekta" class="catalog-items"></div>
+            </div>
 
-            <button class="btn-3d" onclick="window.toggleCatalog('cat-epz')">
-                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">💻</span> ЕПЗ (Windows/Office)</span>
-                <span class="arrow">▼</span>
-            </button>
-            <div id="cat-epz" class="catalog-items"></div>
+            <div class="catalog-brand">
+                <div class="catalog-header" onclick="window.toggleCatalog('cat-epz')">
+                    <div class="catalog-title"><div class="catalog-icon">💻</div> ЕПЗ (Windows/Office)</div>
+                    <div class="arrow">▼</div>
+                </div>
+                <div id="cat-epz" class="catalog-items"></div>
+            </div>
 
-            <button class="btn-3d" onclick="window.toggleCatalog('cat-install')">
-                <span style="display:flex; align-items:center; gap:12px;"><span style="font-size:24px;">🔧</span> Монтаж</span>
-                <span class="arrow">▼</span>
-            </button>
-            <div id="cat-install" class="catalog-items"></div>
+            <div class="catalog-brand">
+                <div class="catalog-header" onclick="window.toggleCatalog('cat-install')">
+                    <div class="catalog-title"><div class="catalog-icon">🔧</div> Монтаж та Встановлення</div>
+                    <div class="arrow">▼</div>
+                </div>
+                <div id="cat-install" class="catalog-items"></div>
+            </div>
         </div>
     </div>
 </div>
@@ -385,19 +385,19 @@
 <div id="page-guide" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2 style="font-size: 26px; margin:0;">Встановлення</h2>
+            <h2>📱 Встановлення</h2>
         </div>
-
-        <div style="background: var(--bg); box-shadow: var(--neu-in); padding: 20px; border-radius: 20px; margin-bottom: 24px; text-align: center;">
-            <b style="color:var(--primary); font-size:16px; display:block; margin-bottom:10px;">Відкрито у месенджері?</b>
-            <span style="font-size:14px; line-height:1.5; font-weight:600; color:var(--text-muted);">Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер.</span>
+        
+        <div class="desc-card" style="flex-direction:column; background:var(--bg); box-shadow:var(--neu-in); align-items:center; text-align:center;">
+            <b style="color:#ef4444; font-size:16px;">Відкрито у месенджері?</b>
+            <span style="font-size:14px;">Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер.</span>
         </div>
 
         <div class="desc-header" style="font-size: 16px;">🍎 Для iOS (iPhone)</div>
         <div class="desc-card">
             <div class="desc-text" style="font-size: 15px;">
                 1. Відкрийте цей сайт у <b>Safari</b>.<br><br>
-                2. Натисніть кнопку <b>«Поділитися»</b> (квадрат зі стрілкою) внизу екрана.<br><br>
+                2. Натисніть кнопку <b>«Поділитися»</b> (квадрат зі стрілкою).<br><br>
                 3. Прокрутіть меню та виберіть <b>«На початковий екран»</b>.<br><br>
                 4. Натисніть <b>«Додати»</b>.
             </div>
@@ -407,9 +407,9 @@
         <div class="desc-card">
             <div class="desc-text" style="font-size: 15px;">
                 1. Відкрийте цей сайт у <b>Google Chrome</b>.<br><br>
-                2. Натисніть на значок <b>меню (три крапки)</b> у верхньому куті.<br><br>
+                2. Натисніть на значок <b>меню (три крапки)</b>.<br><br>
                 3. Виберіть пункт <b>«Додати на головний екран»</b>.<br><br>
-                4. Підтвердьте дію, натиснувши <b>«Встановити»</b>.
+                4. Натисніть <b>«Встановити»</b>.
             </div>
         </div>
     </div>
@@ -426,11 +426,11 @@
     </div>
     <div class="nav-item" onclick="window.switchTab('page-catalog', this)">
         <svg viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-        Сервіси
+        Навчання
     </div>
     <div class="nav-item" onclick="window.switchTab('page-guide', this)">
         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
-        Допомога
+        Інструкція
     </div>
 </nav>
 
@@ -442,7 +442,7 @@
 <div id="compareModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 style="margin:0;">Результат порівняння</h3>
+            <h3>Результат порівняння</h3>
             <button onclick="window.closeCompareModal()" class="close-btn">✕</button>
         </div>
         <div id="compareModalBody" class="modal-body"></div>
@@ -453,7 +453,7 @@
 <div id="descModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="modalTitle" style="margin:0;">Опис</h3>
+            <h3 id="modalTitle">Опис</h3>
             <button onclick="window.closeModal()" class="close-btn">✕</button>
         </div>
         <div id="modalBody" class="modal-body"></div>
@@ -464,7 +464,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <h3 id="rezervItemTitle" style="margin:0;"></h3>
+            <h3 id="rezervItemTitle"></h3>
             <button onclick="window.closeRezervItemModal()" class="close-btn">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -478,7 +478,7 @@
 <script>
     // НОВИЙ API
     const API_URL = 'https://script.google.com/macros/s/AKfycbyYy2ttQK9NYhELn_588hHBFoiHM2-qrbKFC2WPW1bvfgrn78ktU-wL_0lEkYlQybU8/exec';
-    const CACHE_KEY = 'skillhub_v5_neumorphism'; 
+    const CACHE_KEY = 'skillhub_v6_neumorphism_fixed'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: [], serviceCodes: {}, rezervyData: [] };
@@ -641,7 +641,7 @@
             try {
                 db = JSON.parse(cached); 
                 enableUI(); window.populateStoreFilter(); window.buildTrainingCatalog(); window.renderRezervyList();
-                setAppStatus('ok', 'Працюю офлайн (З кешу)');
+                setAppStatus('ok', 'Працюю офлайн');
                 refreshData(); 
             } catch(e) {
                 await refreshData(true);
@@ -655,6 +655,8 @@
         setAppStatus('loading', 'Синхронізація...');
         try {
             const response = await fetch(API_URL + '?nocache=' + Date.now());
+            if (!response.ok) throw new Error("HTTP_ERROR");
+            
             const dataStr = await response.text();
             
             // Якщо Google повертає HTML (форму логіну), кидаємо помилку
@@ -687,12 +689,6 @@
                     if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
                 }, 1000);
             } 
-            else if (db.appVersion && savedVersion !== db.appVersion) {
-                if (savedVersion !== null) {
-                    setTimeout(() => window.showChangelogModal(db.appVersion, db.changelog), 1000); 
-                }
-                localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
-            }
 
             if (first) {
                 enableUI(); window.populateStoreFilter(); window.buildTrainingCatalog(); window.renderRezervyList();
@@ -731,10 +727,6 @@
 
     function enableUI() { 
         elCatInput.disabled = false; 
-        if (db.appVersion) {
-            elAppVersion.innerHTML = `ВЕРСІЯ v${db.appVersion}`;
-            elAppVersion.style.display = 'inline-block';
-        }
         if (elLoader) {
             elLoader.classList.add('hidden');
         }
@@ -870,7 +862,7 @@
             let cleanTitle = t.service.replace(/^\[.*?\]\s*/, ''); // Без бренду в назві
             return `<div class="catalog-item" onclick="window.openModal('${safeName}', '${safeCode}', true)">
                 <span>${cleanTitle}</span>
-                <span style="color:var(--text-muted); font-weight:900;">></span>
+                <span style="color:var(--primary); font-weight:900;">></span>
             </div>`;
         }).join('');
         document.getElementById(containerId).innerHTML = html;
@@ -878,16 +870,18 @@
 
     window.toggleCatalog = function(id) {
         let el = document.getElementById(id);
-        let btn = document.querySelector(`button[onclick="window.toggleCatalog('${id}')"]`);
+        let parentBrand = el.closest('.catalog-brand');
+        let arrow = parentBrand.querySelector('.arrow');
+        
         if(el.classList.contains('show')) {
             el.classList.remove('show');
-            btn.classList.remove('open');
+            arrow.classList.remove('up');
         } else {
             // Закрити інші
             document.querySelectorAll('.catalog-items').forEach(e => e.classList.remove('show'));
-            document.querySelectorAll('.btn-3d').forEach(b => b.classList.remove('open'));
+            document.querySelectorAll('.catalog-header .arrow').forEach(b => b.classList.remove('up'));
             el.classList.add('show');
-            btn.classList.add('open');
+            arrow.classList.add('up');
         }
     }
 
@@ -1034,35 +1028,6 @@
         return html;
     }
 
-    function generateDescToggleHTML(descE, codeF) {
-        let descText = "";
-        let raw = descE ? descE.toString().trim() : "";
-        if (raw && raw !== "Опис відсутній...") { 
-            descText = parseDescriptionLines(raw); 
-        }
-        
-        let codeHtml = codeF ? `
-            <div class="code-box" onclick="window.copyCode(event, this, '${window.escapeForJS(codeF)}')">
-                <div>
-                    <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.7); margin-bottom:4px;">КОД СЕРВІСУ</div>
-                    <div class="code-value-text" style="font-size:24px; font-weight:900;">${codeF}</div>
-                </div>
-                <div style="font-size:24px;">📋</div>
-            </div>` : '';
-
-        if (!descText && !codeHtml) return '';
-
-        return `
-            <div class="desc-toggle" onclick="const c = this.nextElementSibling; const a = this.querySelector('.arrow'); if(c.style.display==='none'){c.style.display='block'; a.innerHTML='▲';}else{c.style.display='none'; a.innerHTML='▼';}">
-                Детальний опис <span class="arrow" style="font-size:10px;">▼</span>
-            </div>
-            <div class="desc-content" style="display: none;">
-                ${codeHtml}
-                ${descText}
-            </div>
-        `;
-    }
-
     function calculateServicesArray(item, p) {
         const focusList = item.focusServices ? item.focusServices.split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = item.service.split('|').map(s => s.trim()).filter(s => s);
@@ -1198,14 +1163,14 @@
             ${checkboxHtml}
             
             <div style="display:flex; justify-content:space-between; align-items:center; width:100%; position:relative; z-index:2;">
-                <div class="service-content-left">
+                <div class="service-content-left" style="flex:1; padding-right:10px;">
                     ${focusHtml}
                     <div>
                         ${brandHtml}
                         <div class="service-title">${s.title}</div>
                     </div>
                 </div>
-                <div class="price-badge">${s.label || s.priceText}</div>
+                <div class="price-badge" style="flex-shrink:0;">${s.label || s.priceText}</div>
             </div>
             
             ${availHtml}
@@ -1256,10 +1221,12 @@
             toggleCompareBtn.classList.add('active');
             toggleCompareBtn.innerHTML = '<span style="font-size: 16px;">✕</span> Скасувати';
             compareBar.classList.add('show');
+            floatBtnsGroup.style.display = 'none'; 
         } else {
             toggleCompareBtn.classList.remove('active');
             toggleCompareBtn.innerHTML = '<svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg> Порівняти';
             compareBar.classList.remove('show');
+            floatBtnsGroup.style.display = 'flex';
         }
         updateCompareUI();
         renderServices(); 
@@ -1281,6 +1248,9 @@
             compareBar.classList.remove('show');
         }
         updateModalCompareUI();
+        
+        if (document.getElementById('montazhCity')) window.updateMontazhResults();
+        else window.updateSetupResults(); 
     }
 
     window.handleServiceClick = function(name, code, isPackage, forceNoCompare = false) {
@@ -1306,36 +1276,9 @@
         }
     }
 
-    window.handleModalServiceClick = function(e, name, isPackage, code) {
-        let target = e.target;
-        if (target.closest('.desc-toggle') || target.closest('.code-block-wrapper') || target.closest('.desc-content')) { 
-            return; 
-        }
-        if (isModalCompareMode) {
-            if (isPackage) { 
-                alert("Пакети не порівнюються."); 
-                return; 
-            }
-            let index = modalCompareSelection.indexOf(name);
-            if (index > -1) {
-                modalCompareSelection.splice(index, 1); 
-            } else {
-                if (modalCompareSelection.length < 2) modalCompareSelection.push(name); 
-                else {
-                    compareBar.style.transform = 'translateX(-50%) translateY(-10px)';
-                    setTimeout(() => { compareBar.style.transform = 'translateX(-50%) translateY(0)'; }, 150);
-                }
-            }
-            updateModalCompareUI();
-        } else {
-            let toggle = e.currentTarget.querySelector('.desc-toggle');
-            if(toggle) toggle.click();
-        }
-    }
-
     function updateCompareUI() {
         let count = compareSelection.length;
-        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси";
+        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
         else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
         else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
         
@@ -1346,7 +1289,7 @@
 
     function updateModalCompareUI() {
         let count = modalCompareSelection.length;
-        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси";
+        if (count === 0) document.getElementById('compareStatusText').innerText = "Оберіть 2 сервіси для порівняння";
         else if (count === 1) document.getElementById('compareStatusText').innerText = "Оберіть ще 1 сервіс";
         else document.getElementById('compareStatusText').innerText = "Готово до порівняння!";
         
@@ -1451,10 +1394,6 @@
         return html;
     }
 
-    window.handleExecuteCompare = function() {
-        if (isModalCompareMode) window.executeModalCompare(); else window.executeCompare();
-    }
-
     window.executeCompare = function() {
         if (compareSelection.length !== 2) return;
         let sA = window.lastCalculatedServices.find(s => s.name === compareSelection[0]);
@@ -1495,6 +1434,10 @@
         window.showCompareModal(html);
     };
 
+    window.handleExecuteCompare = function() {
+        if (isModalCompareMode) window.executeModalCompare(); else window.executeCompare();
+    }
+
     window.showCompareModal = function(html) {
         toggleBodyScroll(true);
         document.getElementById('compareModalBody').innerHTML = html;
@@ -1515,6 +1458,20 @@
         isModalCompareMode = false;
         modalCompareSelection = [];
         document.getElementById('compareBar').classList.remove('show');
+        
+        let nameClean = normalizeServiceName(name);
+        let u = name.toUpperCase(); 
+
+        let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
+            && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС') && !u.includes('ESET') && !u.includes('PARALLELS');
+
+        // Якщо це не примусовий показ опису (з Каталогу), запускаємо стару логіку модалок
+        if (!isStaticEpz && !forceDesc) {
+            let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
+                // Код старої модалки монтажу (замінено викликом опису)
+            }
+        }
 
         let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
         document.getElementById('modalTitle').innerText = title;
@@ -1543,76 +1500,14 @@
         document.getElementById('descModal').classList.add('show'); 
     }
 
-    window.parseChangelogLines = function(text) {
-        if (!text) return '<div style="text-align:center; color:var(--text-muted);">Опис змін відсутній...</div>';
-        
-        let lines = text.split('\n');
-        let html = '<div style="display:flex; flex-direction:column; gap:10px;">';
-        
-        lines.forEach(line => {
-            const l = line.trim();
-            if (l) {
-                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                let prefix = hasEmoji ? "" : "<span style='color:var(--primary); font-weight:bold; margin-right:8px;'>•</span>";
-                
-                html += `
-                <div style="display:flex; align-items:flex-start; font-size:14px; line-height:1.4; color:var(--text-main); font-weight:500;">
-                    ${prefix}<span style="flex:1;">${l}</span>
-                </div>`;
-            }
-        });
-        
-        html += '</div>';
-        return html;
-    }
-
-    window.showChangelogModal = function(version, changelogText) {
-        toggleBodyScroll(true);
-        
-        document.getElementById('modalTitle').innerHTML = `<div class="update-title-wrapper"><div class="update-icon-circle">🚀</div><div class="update-text-wrapper"><span class="update-title">Додаток оновлено!</span><span class="update-version">Версія v${version}</span></div></div>`;
-        
-        let html = `
-        <div style="text-align: center; margin-bottom: 20px;">
-            <span style="font-size: 40px;">🎉</span>
-            <h3 style="margin: 15px 0 5px 0; color: var(--text-main); font-weight: 800;">Ось що нового у цій версії:</h3>
-        </div>
-        <div class="changelog-panel">
-            ${window.parseChangelogLines(changelogText)}
-        </div>
-        <div style="text-align: center; margin-top: 20px; font-size: 12px; color: var(--text-muted); font-weight: 600;">
-            Вдалих продажів! 💙
-        </div>
-        `;
-        
-        document.getElementById('modalBody').innerHTML = html;
-        document.getElementById('descModal').classList.add('show');
-    };
-
     window.closeModal = function() { 
         document.getElementById('descModal').classList.remove('show');
-        
-        if (isModalCompareMode) {
-            isModalCompareMode = false;
-            document.getElementById('compareBar').classList.remove('show');
-            modalCompareSelection = []; 
-        }
-        
-        if (!document.getElementById('compareModal').classList.contains('show') && 
-            !document.getElementById('galleryModal').classList.contains('show') && 
-            !document.getElementById('rezervyModal').classList.contains('show') &&
-            !document.getElementById('rezervItemModal').classList.contains('show')) {
+        if (!document.getElementById('rezervItemModal').classList.contains('show')) {
             toggleBodyScroll(false);
         }
-        document.getElementById('modalTitle').innerHTML = "Опис"; 
     }
 
     init();
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-            navigator.serviceWorker.register('./sw.js').catch(console.error);
-        });
-    }
 </script>
 </body>
 </html>
