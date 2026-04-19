@@ -1,11 +1,11 @@
 {
-  "name": "SkillHUB Assistant",
-  "short_name": "SkillHUB",
-  "description": "Розумний асистент з техніки",
+  "name": "SkillHUB TEST",
+  "short_name": "SH Test",
+  "description": "Тестовий асистент з техніки",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f2f2f7",
-  "theme_color": "#2563eb",
+  "theme_color": "#eab308", 
   "icons": [
     {
       "src": "icon-192.png",
