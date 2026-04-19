@@ -6,21 +6,14 @@
     <title>SkillHUB Assistant</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#f2f2f7">
+    <meta name="theme-color" content="#f0f4f8">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SkillHUB">
+    <meta name="apple-mobile-web-app-title" content="SkillHUB Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
-        /* --- iOS SYSTEM FONT --- */
-        @supports (font: -apple-system-body) {
-            html { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
-        }
-        @supports not (font: -apple-system-body) {
-            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-            html { font-family: 'Inter', sans-serif; }
-        }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         *, *::before, *::after { 
             box-sizing: border-box; 
@@ -28,364 +21,379 @@
         }
 
         :root {
-            /* Світла тема iOS */
-            --primary: #007AFF; 
-            --bg: #F2F2F7; 
-            --card-bg: #FFFFFF; 
-            --box-bg: #FFFFFF;
-            --input-bg: #e3e3e8;
-            --feat-bg: #f8fafc;
-            --text-main: #000000; 
-            --text-muted: #8E8E93; 
-            --border: #E5E5EA;
-            --modal-overlay: rgba(0,0,0,0.5);
-            --nav-bg: rgba(255,255,255,0.85);
+            /* Світла тема */
+            --primary: #2563eb; 
+            --bg: #f0f4f8; 
+            --card-bg: #ffffff; 
+            --box-bg: #ffffff;
+            --input-bg: #f8fafc;
+            --feat-bg: #f1f5f9;
+            --text-main: #0f172a; 
+            --text-muted: #475569; 
+            --border: #e2e8f0;
+            --modal-overlay: rgba(15,23,42,0.6);
+            --nav-bg: rgba(255, 255, 255, 0.95);
             
-            --clr-support-bg: #fde047; --clr-support-text: #854d0e; 
-            --clr-ekta-bg: #34C759; --clr-ekta-text: #ffffff;    
-            --clr-epz-bg: #5856D6; --clr-epz-text: #ffffff;    
-            --clr-settings-bg: #34C759; --clr-settings-text: #ffffff; 
-            --clr-install-bg: #AF52DE; --clr-install-text: #ffffff; 
-            --clr-other-bg: #e2e2e8; --clr-other-text: #1e293b;
+            --clr-support-bg: #fef08a; --clr-support-text: #854d0e; 
+            --clr-ekta-bg: #3b82f6; --clr-ekta-text: #ffffff;    
+            --clr-epz-bg: #8b5cf6; --clr-epz-text: #ffffff;    
+            --clr-settings-bg: #10b981; --clr-settings-text: #ffffff; 
+            --clr-install-bg: #f43f5e; --clr-install-text: #ffffff; 
+            --clr-other-bg: #e2e8f0; --clr-other-text: #1e293b;
             
-            --gradient-primary: linear-gradient(135deg, #007AFF 0%, #0056b3 100%);
+            --gradient-primary: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
             --shadow-sm: 0 2px 8px rgba(0,0,0,0.04);
         }
 
         [data-theme="dark"] {
-            /* Темна тема iOS */
-            --primary: #0A84FF; 
-            --bg: #000000; 
-            --card-bg: #1C1C1E; 
-            --box-bg: #1C1C1E;
-            --input-bg: #2C2C2E;
-            --feat-bg: #2C2C2E;
-            --text-main: #FFFFFF; 
-            --text-muted: #8E8E93; 
-            --border: #38383A;
-            --modal-overlay: rgba(0,0,0,0.7);
-            --nav-bg: rgba(28,28,30,0.85);
+            /* Темна тема */
+            --bg: #020617; 
+            --card-bg: #0f172a; 
+            --box-bg: #1e293b;
+            --input-bg: #1e293b;
+            --feat-bg: #334155;
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --border: #334155;
+            --modal-overlay: rgba(0,0,0,0.8);
+            --nav-bg: rgba(15, 23, 42, 0.95);
             
             --clr-support-bg: #422006; --clr-support-text: #fde047;
-            --clr-ekta-bg: #34C759; --clr-ekta-text: #ffffff;    
-            --clr-epz-bg: #5856D6; --clr-epz-text: #ffffff; 
-            --clr-other-bg: #2C2C2E; --clr-other-text: #f8fafc;
+            --clr-other-bg: #334155; --clr-other-text: #f8fafc;
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         
         body { 
-            background: var(--bg); color: var(--text-main); 
+            font-family: 'Inter', sans-serif; background: var(--card-bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
-            padding-bottom: 90px; /* Місце для Bottom Nav */
         }
 
-        /* --- ВКЛАДКИ (ТАБИ) --- */
-        .app-page { display: none; width: 100%; animation: fadeIn 0.2s ease; }
-        .app-page.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+        /* --- КОНТЕЙНЕР НА ВЕСЬ ЕКРАН --- */
+        .container { 
+            position: relative; width: 100%; max-width: 600px; background: var(--card-bg); 
+            padding: 24px; padding-bottom: 120px; margin: 0 auto; 
+            min-height: 100vh; display: flex; flex-direction: column;
+            border: none; border-radius: 0; box-shadow: none;
+        }
 
-        /* --- НИЖНЯ НАВІГАЦІЯ --- */
+        /* --- ВКЛАДКИ НАВІГАТОРУ --- */
+        .app-page { display: none; width: 100%; animation: fadeIn 0.3s ease; }
+        .app-page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* НИЖНЯ НАВІГАЦІЯ */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; height: 80px;
             background: var(--nav-bg); display: flex; justify-content: space-around;
-            align-items: center; border-top: 0.5px solid var(--border);
+            align-items: center; border-top: 1px solid var(--border);
             padding-bottom: env(safe-area-inset-bottom); z-index: 9998;
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
         }
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            color: var(--text-muted); font-size: 10px; font-weight: 600;
-            cursor: pointer; flex: 1; height: 100%; gap: 4px; transition: 0.2s;
+            color: var(--text-muted); font-size: 11px; font-weight: 700;
+            cursor: pointer; transition: 0.2s; flex: 1; height: 100%; gap: 5px;
         }
         .nav-item.active { color: var(--primary); }
-        .nav-item svg { width: 26px; height: 26px; stroke: currentColor; fill: none; transition: 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .nav-item.active svg { transform: scale(1.1); }
+        .nav-item svg { width: 26px; height: 26px; stroke: currentColor; fill: none; transition: 0.2s; }
+        .nav-item.active svg { transform: translateY(-2px) scale(1.05); }
+
+        /* --- ДИЗАЙН КАТАЛОГУ (ТАБ 3) --- */
+        .catalog-group { background: var(--box-bg); border-radius: 20px; border: 1px solid var(--border); margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow-sm); }
+        .catalog-header { padding: 18px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; user-select: none; }
+        .catalog-header:active { filter: brightness(0.95); }
+        .catalog-header .arrow { transition: transform 0.3s ease; color: var(--text-main); font-weight: bold; font-size: 14px;}
+        .catalog-header .arrow.up { transform: rotate(180deg); }
+        .catalog-items { display: none; background: var(--card-bg); border-top: 1px solid var(--border); }
+        .catalog-items.show { display: block; animation: fadeIn 0.3s ease; }
+        .catalog-item { padding: 16px 20px; border-bottom: 1px solid var(--border); font-size: 15px; font-weight: 600; color: var(--text-main); cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; }
+        .catalog-item:last-child { border-bottom: none; }
+        .catalog-item:active { background: var(--feat-bg); }
+
+        /* --- ДИЗАЙН ОПИСУ В МОДАЛЦІ --- */
+        .ios-desc-group { background: var(--box-bg); border-radius: 16px; padding: 8px 0; margin-bottom: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .ios-desc-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .ios-desc-row:last-child { border-bottom: none; }
+        .ios-desc-icon { width: 38px; height: 38px; min-width: 38px; border-radius: 12px; background: var(--feat-bg); display: flex; align-items: center; justify-content: center; font-size: 20px; border: 1px solid var(--border); }
+        .ios-desc-text { font-size: 14px; line-height: 1.4; color: var(--text-main); font-weight: 600; }
         
-        .container { 
-            position: relative; width: 94%; max-width: 480px; background: var(--card-bg); 
-            padding: 24px; border-radius: 24px; box-shadow: var(--shadow-sm); 
-            margin-top: 3vh; margin-bottom: 20px; transform: translateZ(0); 
-            border: 0.5px solid var(--border); transition: background 0.3s, border 0.3s; 
-            min-height: 75vh; display: flex; flex-direction: column; margin-left: auto; margin-right: auto;
+        .app-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--card-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
         }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .spinner-box { position: relative; width: 70px; height: 70px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
+        .spinner-ring {
+            position: absolute; width: 100%; height: 100%; border-radius: 50%; 
+            border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); 
+            animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+        }
+        .spinner-ring::before {
+            content: ''; position: absolute; top: 8px; left: 8px; right: 8px; bottom: 8px; 
+            border-radius: 50%; border: 4px solid transparent; border-left-color: #7dd3fc; 
+            border-right-color: #7dd3fc; animation: spin 0.8s ease-in-out infinite reverse;
+        }
+        .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px; line-height: 1.4; }
+        
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
         
         /* --- ШАПКА --- */
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px;}
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; padding-top: 10px;}
+        h2 { color: var(--text-main); margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -0.5px;}
 
         .header-controls { display: flex; align-items: center; gap: 8px; }
 
         .theme-switch {
-            position: relative; width: 50px; height: 28px; background: #60a5fa; border-radius: 32px;
+            position: relative; width: 56px; height: 30px; background: #60a5fa; border-radius: 32px;
             cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); transition: background 0.4s ease;
-            overflow: hidden; border: 0.5px solid rgba(0,0,0,0.05); flex-shrink: 0; pointer-events: auto;
+            overflow: hidden; border: 1px solid rgba(0,0,0,0.05); flex-shrink: 0; pointer-events: auto;
         }
         [data-theme="dark"] .theme-switch { background: #1e293b; border-color: #334155; }
         .theme-slider {
-            position: absolute; top: 2px; left: 3px; width: 22px; height: 22px; background: #fcd34d; 
+            position: absolute; top: 2px; left: 3px; width: 24px; height: 24px; background: #fcd34d; 
             border-radius: 50%; box-shadow: 0 2px 5px rgba(0,0,0,0.2); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.4s;
             z-index: 2; pointer-events: none; 
         }
-        [data-theme="dark"] .theme-slider { transform: translateX(21px); background: #e2e8f0; box-shadow: inset -4px -2px 0 0 #cbd5e1; }
+        [data-theme="dark"] .theme-slider { transform: translateX(24px); background: #e2e8f0; box-shadow: inset -4px -2px 0 0 #cbd5e1; }
         .ts-cloud { position: absolute; background: white; border-radius: 10px; opacity: 0.9; transition: 0.4s; z-index: 1; pointer-events: none; }
-        .ts-c1 { width: 12px; height: 4px; top: 5px; right: 6px; }
-        .ts-c2 { width: 8px; height: 3px; bottom: 5px; right: 14px; }
+        .ts-c1 { width: 14px; height: 5px; top: 6px; right: 8px; }
+        .ts-c2 { width: 10px; height: 4px; bottom: 6px; right: 18px; }
         .ts-star { position: absolute; background: white; border-radius: 50%; opacity: 0; transition: 0.4s; z-index: 1; pointer-events: none; }
-        .ts-s1 { width: 2px; height: 2px; top: 6px; left: 10px; }
-        .ts-s2 { width: 3px; height: 3px; top: 14px; left: 16px; }
-        .ts-s3 { width: 2px; height: 2px; bottom: 5px; left: 8px; }
+        .ts-s1 { width: 2px; height: 2px; top: 8px; left: 12px; }
+        .ts-s2 { width: 3px; height: 3px; top: 16px; left: 18px; }
+        .ts-s3 { width: 2px; height: 2px; bottom: 6px; left: 10px; }
         [data-theme="dark"] .ts-cloud { opacity: 0; transform: translateX(10px); }
         [data-theme="dark"] .ts-star { opacity: 1; }
-
-        .app-loader {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 999999; transition: opacity 0.4s ease, visibility 0.4s ease;
-        }
-        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner-box { position: relative; width: 50px; height: 50px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; }
-        .spinner-ring {
-            position: absolute; width: 100%; height: 100%; border-radius: 50%; 
-            border: 4px solid transparent; border-top-color: var(--primary); border-bottom-color: var(--primary); 
-            animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-        }
-        .spinner-logo { font-size: 20px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 13px; font-weight: 600; color: var(--text-muted); letter-spacing: 0.5px; text-align: center; }
-        
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
 
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .status-wrapper { display: flex; align-items: center; gap: 8px; }
         .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .pulse-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .dot-green { background-color: #34C759; box-shadow: 0 0 8px rgba(52, 199, 89, 0.6); }
-        .dot-red { background-color: #FF3B30; box-shadow: 0 0 8px rgba(255, 59, 48, 0.6); }
-        .dot-loading { background-color: #FF9500; animation: pulseYellow 2s infinite; }
-        @keyframes pulseYellow { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+        .dot-green { background-color: #10b981; animation: pulseGreen 2s infinite; }
+        .dot-red { background-color: #ef4444; animation: pulseRed 2s infinite; }
+        .dot-loading { background-color: #f59e0b; animation: pulseYellow 2s infinite; }
+        @keyframes pulseGreen { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); } }
+        @keyframes pulseRed { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        @keyframes pulseYellow { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(245, 158, 11, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); } }
 
-        .refresh-db-btn { background: var(--input-bg); color: var(--text-main); border: none; border-radius: 12px; width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .refresh-db-btn:active { transform: scale(0.9); }
+        .refresh-db-btn { background: var(--box-bg); color: var(--primary); border: 1px solid var(--border); border-radius: 12px; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm); }
+        .refresh-db-btn:active { transform: scale(0.9); background: var(--feat-bg); }
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
 
         .search-wrapper { position: relative; margin-bottom: 12px; display: flex; align-items: center; }
-        input { width: 100%; padding: 16px 45px 16px 18px; border: 0.5px solid var(--border); border-radius: 16px; font-size: 16px; font-family: inherit; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); }
-        input:focus { box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.2); border-color: var(--primary); }
-        .clear-data-btn { position: absolute; right: 14px; background: #8E8E93; color: white; border: none; width: 22px; height: 22px; border-radius: 50%; font-size: 12px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; z-index: 5;}
-        .clear-data-btn:active { transform: scale(0.9);}
+        input { width: 100%; padding: 18px 45px 18px 20px; border: 1px solid var(--border); border-radius: 20px; font-size: 16px; font-family: inherit; font-weight: 600; outline: none; transition: 0.2s ease; background: var(--input-bg); color: var(--text-main); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        input:focus { box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15); border-color: var(--primary); background: var(--box-bg); }
+        .clear-data-btn { position: absolute; right: 14px; background: #fee2e2; color: #ef4444; border: none; width: 28px; height: 28px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; z-index: 5;}
+        .clear-data-btn:active { background: #fca5a5; transform: scale(0.9);}
 
-        .price-wrapper { display: none; gap: 8px; margin-bottom: 15px; align-items: stretch; animation: fadeIn 0.3s ease; }
-        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 700; background: var(--input-bg); border: 0.5px solid var(--border); }
-        #devicePrice::placeholder { color: var(--text-muted); opacity: 0.8; font-weight: 500; }
-        .ok-btn { background: var(--primary); color: white; border: none; padding: 0 20px; border-radius: 14px; font-weight: 700; font-size: 15px; cursor: pointer; transition: 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0, 122, 255, 0.3); }
-        .ok-btn:active { transform: scale(0.95); }
+        .price-wrapper { display: none; gap: 10px; margin-bottom: 20px; align-items: stretch; animation: fadeIn 0.3s ease; }
+        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; background: var(--box-bg); border: 2px solid var(--primary); }
+        #devicePrice::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 600; }
+        .ok-btn { background: var(--primary); color: white; border: none; padding: 0 24px; border-radius: 18px; font-weight: 800; font-size: 15px; cursor: pointer; transition: transform 0.1s ease, opacity 0.1s ease; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
+        .ok-btn:active { transform: scale(0.95); opacity: 0.9; }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--nav-bg); border: 0.5px solid var(--border); border-radius: 16px; box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 5px; backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); -webkit-overflow-scrolling: touch; }
-        .suggestion-item { padding: 14px; cursor: pointer; border-radius: 10px; font-size: 15px; font-weight: 500; color: var(--text-main); margin-bottom: 2px; transition: background 0.2s ease; border-bottom: 0.5px solid var(--border);}
-        .suggestion-item:last-child { border-bottom: none; }
-        .suggestion-item:active { background: var(--input-bg); }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--box-bg); border: 1px solid var(--border); border-radius: 20px; box-shadow: var(--shadow-lg); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 8px; -webkit-overflow-scrolling: touch; }
+        .suggestion-item { padding: 16px; cursor: pointer; border-radius: 14px; font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 2px; transition: background 0.2s ease; }
+        .suggestion-item:active, .suggestion-item:hover { background: var(--feat-bg); color: var(--primary); }
         
-        .result-box { display: none; border-top: 0.5px solid var(--border); padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
+        .result-box { display: none; border-top: 1px solid var(--border); padding-top: 20px; margin-top: 10px; animation: fadeIn 0.4s ease; }
 
-        .ua-name { font-weight: 800; font-size: 20px; margin-bottom: 5px; color: var(--text-main); }
-        .item-category { font-size: 12px; color: var(--text-muted); font-weight: 500; margin-bottom: 15px; }
+        .ua-name { font-weight: 900; font-size: 22px; margin-bottom: 6px; color: var(--text-main); line-height: 1.2;}
+        .item-category { font-size: 12px; color: var(--primary); font-weight: 800; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .tech-info { background: transparent; padding: 0; border: none; display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px;}
-        .tech-item { display: flex; align-items: center; gap: 12px; background: var(--card-bg); padding: 12px; border-radius: 16px; border: 0.5px solid var(--border); box-shadow: var(--shadow-sm); }
-        .icon-circle { width: 34px; height: 34px; min-width: 34px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+        .tech-info { background: transparent; padding: 0; border: none; display: flex; flex-direction: column; gap: 10px; margin-bottom: 25px;}
+        .tech-item { display: flex; align-items: center; gap: 14px; background: var(--box-bg); padding: 14px; border-radius: 20px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); transform: translateZ(0); }
+        .icon-circle { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
         
-        .bg-complexity { background-color: #FFF5E5; color: #FF9500; } 
-        .bg-price { background-color: #E8F8F5; color: #34C759; } 
-        .bg-garant { background-color: #E5F0FF; color: #007AFF; } 
-        .bg-negarant { background-color: #FFEBEE; color: #FF3B30; }
-        .bg-parts { background-color: #F4E8FA; color: #AF52DE; } 
+        .bg-complexity { background-color: #fef9c3; color: #854d0e; } 
+        .bg-price { background-color: #dcfce7; color: #166534; } 
+        .bg-garant { background-color: #dbeafe; color: #1e3a8a; } 
+        .bg-negarant { background-color: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; }
+        .bg-parts { background-color: #f3e8ff; color: #6b21a8; } 
 
-        [data-theme="dark"] .bg-complexity { background-color: #3A260B; color: #FFD60A; }
-        [data-theme="dark"] .bg-price { background-color: #0E361D; color: #32D74B; }
-        [data-theme="dark"] .bg-garant { background-color: #0B254E; color: #0A84FF; }
-        [data-theme="dark"] .bg-negarant { background-color: #3B0E0E; color: #FF453A; }
-        [data-theme="dark"] .bg-parts { background-color: #2D1445; color: #BF5AF2; }
+        [data-theme="dark"] .bg-complexity { background-color: #422006; color: #fde047; border: 1px solid #713f12; }
+        [data-theme="dark"] .bg-price { background-color: #064e3b; color: #6ee7b7; border: 1px solid #065f46; }
+        [data-theme="dark"] .bg-garant { background-color: #1e3a8a; color: #bfdbfe; border: 1px solid #1e40af; }
+        [data-theme="dark"] .bg-negarant { background-color: #450a0a; color: #fecaca; border: 1px solid #7f1d1d; }
+        [data-theme="dark"] .bg-parts { background-color: #3b0764; color: #e9d5ff; border: 1px solid #581c87; }
 
-        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 6px; background: var(--card-bg); padding: 14px 16px; border-radius: 16px; border: 0.5px solid var(--border); cursor: pointer; transition: 0.2s; box-shadow: var(--shadow-sm); }
-        .tech-photo-wrapper:active { transform: scale(0.97); background: var(--input-bg); }
-        .photo-icon { font-size: 24px; }
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 16px; margin-top: 8px; background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%); padding: 16px 20px; border-radius: 20px; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.25); color: #fff;}
+        .tech-photo-wrapper:active { transform: scale(0.97); }
+        .photo-icon { font-size: 28px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
         .photo-text { flex: 1; display: flex; flex-direction: column; }
-        .photo-title { font-size: 15px; font-weight: 600; color: var(--text-main); }
-        .photo-subtitle { font-size: 12px; font-weight: 500; color: var(--primary); margin-top: 2px; }
-        .photo-arrow { color: var(--text-muted); font-weight: 700; font-size: 16px; }
+        .photo-title { font-size: 15px; font-weight: 800; color: #fff; }
+        .photo-subtitle { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); margin-top: 2px; }
+        .photo-arrow { color: #fff; font-weight: 900; font-size: 18px; }
 
-        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100030; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; touch-action: none; overscroll-behavior: none; }
+        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.92); z-index: 100030; display: flex; flex-direction: column; align-items: center; justify-content: center; opacity: 0; visibility: hidden; transition: opacity 0.3s; backdrop-filter: blur(10px); touch-action: none; overscroll-behavior: none; }
         .gallery-modal.show { opacity: 1; visibility: visible; }
         .gallery-content { position: relative; width: 100%; height: 75vh; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 0; box-sizing: border-box; overflow: hidden; }
         .gallery-content img { max-width: 100%; max-height: 100%; border-radius: 8px; object-fit: contain; transform-origin: center; will-change: transform; pointer-events: auto; }
-        .gallery-nav { background: rgba(255,255,255,0.2); color: white; border: none; border-radius: 50%; width: 44px; height: 44px; font-size: 20px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);}
-        .gallery-nav:active { background: rgba(255,255,255,0.4); transform: translateY(-50%) scale(0.9); }
-        .gallery-nav.prev { left: 15px; }
-        .gallery-nav.next { right: 15px; }
-        .gallery-counter { color: white; font-size: 14px; font-weight: 600; margin-top: 15px; letter-spacing: 1px; background: rgba(255,255,255,0.2); padding: 6px 16px; border-radius: 20px; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);}
-        .gallery-close-text-btn { margin-top: 20px; background: rgba(255,255,255,0.2); border: none; color: #fff; padding: 12px 30px; border-radius: 16px; font-size: 15px; font-weight: 600; cursor: pointer; backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); transition: 0.2s; z-index: 50; }
-        .gallery-close-text-btn:active { background: rgba(255,255,255,0.4); transform: scale(0.95); }
+        .gallery-nav { background: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); border-radius: 50%; width: 50px; height: 50px; font-size: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; top: 50%; transform: translateY(-50%); z-index: 50; backdrop-filter: blur(5px);}
+        .gallery-nav:active { background: rgba(255,255,255,0.3); transform: translateY(-50%) scale(0.9); }
+        .gallery-nav.prev { left: 20px; }
+        .gallery-nav.next { right: 20px; }
+        .gallery-counter { color: white; font-size: 15px; font-weight: 800; margin-top: 20px; letter-spacing: 2px; background: rgba(255,255,255,0.15); padding: 8px 20px; border-radius: 20px; backdrop-filter: blur(5px);}
+        .gallery-close-text-btn { margin-top: 25px; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: #fff; padding: 14px 34px; border-radius: 18px; font-size: 16px; font-weight: 800; cursor: pointer; backdrop-filter: blur(5px); transition: 0.2s; z-index: 50; }
+        .gallery-close-text-btn:active { background: rgba(255,255,255,0.3); transform: scale(0.95); }
 
-        .service-list { display: flex; flex-direction: column; gap: 10px; }
+        .service-list { display: flex; flex-direction: column; gap: 14px; }
         
-        .service-card { position: relative; padding: 14px 16px; border-radius: 16px; cursor: pointer; transition: 0.2s; border: 0.5px solid var(--border); box-shadow: var(--shadow-sm); background: var(--card-bg);}
-        .service-card:active { transform: scale(0.98); background: var(--input-bg); }
-        .service-content-left { display: flex; align-items: center; gap: 8px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
+        .service-card { position: relative; padding: 18px; border-radius: 24px; cursor: pointer; transition: transform 0.15s ease, box-shadow 0.15s ease, padding-left 0.3s ease; border: 1px solid var(--border); box-shadow: var(--shadow-sm); will-change: transform; transform: translateZ(0); overflow: hidden; background: var(--box-bg);}
+        .service-card:active { transform: scale(0.97); box-shadow: inset 0 2px 4px rgba(0,0,0,0.05); }
+        .service-content-left { display: flex; align-items: center; gap: 10px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         
         .service-card.brand-support:not(.selected-for-compare) { background: var(--clr-support-bg); color: var(--clr-support-text); border:none;}
         .service-card.brand-ekta:not(.selected-for-compare) { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); border:none;}
         .service-card.brand-epz:not(.selected-for-compare) { background: var(--clr-epz-bg); color: var(--clr-epz-text); border:none;}
         .service-card.brand-settings:not(.selected-for-compare) { background: var(--clr-settings-bg); color: var(--clr-settings-text); border:none;}
-        .service-card.brand-install:not(.selected-for-compare) { background: var(--clr-install-bg); color: var(--clr-install-text); border:none;}
-        .service-card.brand-other:not(.selected-for-compare) { background: var(--card-bg); color: var(--text-main); }
+        .service-card.brand-install:not(.selected-for-compare) { background: var(--clr-install-bg); color: var(--clr-install-text); box-shadow: 0 6px 20px rgba(244, 63, 94, 0.3); border:none;}
+        .service-card.brand-other:not(.selected-for-compare) { background: var(--box-bg); color: var(--text-main); }
 
-        .service-title { font-size: 14px; font-weight: 600; line-height: 1.3; color: inherit; }
+        .service-title { font-size: 15px; font-weight: 800; line-height: 1.3; color: inherit; }
 
-        .service-card .brand-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; margin-bottom: 4px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; }
-        .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.5); } 
-        .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.2); color: transparent; width: 30px; height: 6px; border-radius: 10px; padding: 0; margin-bottom: 6px; }
+        .service-card .brand-tag { font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 6px 10px; border-radius: 8px; margin-bottom: 8px; display: inline-block; background: rgba(255,255,255,0.3); color: inherit; box-shadow: none; }
+        .service-card.brand-support .brand-tag { background: rgba(255,255,255,0.6); } 
+        .service-card.brand-install .brand-tag { background: rgba(255,255,255,0.25) !important; color: transparent !important; width: 36px; height: 8px; border-radius: 10px; padding: 0 !important; margin-bottom: 8px !important; }
 
-        .price-badge { font-size: 14px; font-weight: 700; background: rgba(255,255,255,0.95); color: #000; padding: 6px 12px; border-radius: 12px; min-width: 80px; text-align: center; pointer-events: none; box-shadow: 0 2px 5px rgba(0,0,0,0.1); z-index: 2;}
+        .price-badge { font-size: 15px; font-weight: 900; background: rgba(255,255,255,0.95); color: #1e293b; padding: 10px 16px; border-radius: 16px; min-width: 100px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: 0 4px 10px rgba(0,0,0,0.08); z-index: 2;}
         .service-card.brand-support .price-badge { color: #854d0e; }
-        .service-card.brand-install .price-badge { background: rgba(255,255,255,0.25); color: #ffffff; box-shadow: none; font-size: 12px; }
+        .service-card.brand-install .price-badge { background: rgba(255,255,255,0.25); color: #ffffff; box-shadow: none; font-size: 13px; }
         
-        [data-theme="dark"] .price-badge { background: #1C1C1E; color: #FFF; }
-        [data-theme="dark"] .service-card.brand-support .price-badge { background: #FFF; color: #422006;}
+        [data-theme="dark"] .price-badge { background: var(--input-bg); color: var(--text-main); }
+        [data-theme="dark"] .service-card.brand-support .price-badge { background: #fff; color: #422006;}
 
-        .focus-icon { font-size: 18px; margin-left: -2px; }
+        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 6px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
+        @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         /* --- СТИЛІ ВИБОРУ ДЛЯ ПОРІВНЯННЯ --- */
-        .service-card.compare-mode { padding-left: 45px; }
-        .compare-checkbox { position: absolute; left: -30px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; border-radius: 50%; border: 2px solid var(--text-muted); background: var(--card-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
-        .service-card.compare-mode .compare-checkbox { left: 12px; }
+        .service-card.compare-mode { padding-left: 50px; }
+        .compare-checkbox { position: absolute; left: -40px; top: 50%; transform: translateY(-50%); width: 26px; height: 26px; border-radius: 50%; border: 2.5px solid var(--text-muted); background: var(--box-bg); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
+        .service-card.compare-mode .compare-checkbox { left: 16px; }
         
-        .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: rgba(0, 122, 255, 0.05) !important; }
+        .service-card.selected-for-compare { border: 2px solid var(--primary) !important; background-color: rgba(37, 99, 235, 0.08) !important; }
         .service-card.selected-for-compare .compare-checkbox { border-color: var(--primary); background: var(--primary); }
-        .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-size: 14px; font-weight: 900; }
+        .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-size: 16px; font-weight: 900; }
         
         .service-card.selected-for-compare .service-title { color: var(--text-main); }
-        .service-card.selected-for-compare .brand-tag { color: var(--text-main); background: var(--input-bg) !important; }
-        .service-card.selected-for-compare .price-badge { color: var(--text-main); background: var(--card-bg); }
+        .service-card.selected-for-compare .brand-tag { color: var(--text-main); background: var(--border) !important; }
+        .service-card.selected-for-compare .price-badge { color: var(--text-main); background: var(--box-bg); }
 
-        .modal-body .brand-tag, .montazh-card .brand-tag { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; margin-bottom: 5px; display: inline-block; }
+        .modal-body .brand-tag, .montazh-card .brand-tag { font-size: 11px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; box-shadow: var(--shadow-sm); }
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .brand-epz { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
 
-        /* Модалки (iOS Bottom Sheet) */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 99999; overscroll-behavior: contain; opacity: 0; transition: opacity 0.3s ease; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 99999; overscroll-behavior: contain; opacity: 0; transition: opacity 0.3s ease; }
         .modal.show { display: flex; opacity: 1; }
-        .modal-content { background: var(--card-bg); width: 100%; max-width: 500px; border-radius: 24px 24px 0 0; padding: 24px; padding-bottom: max(24px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -10px 40px rgba(0,0,0,0.15);}
+        .modal-content { background: var(--card-bg); width: 100%; max-width: 600px; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: max(40px, env(safe-area-inset-bottom)); display: flex; flex-direction: column; max-height: 92vh; min-height: 50vh; transform: translateY(100%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -10px 50px rgba(0,0,0,0.2);}
         .modal.show .modal-content { transform: translateY(0); }
         
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; border-bottom: 0.5px solid var(--border); padding-bottom: 12px; flex-shrink: 0; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 16px; flex-shrink: 0; }
         .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 5px; color: var(--text-main);}
         
-        .modal-section-title { font-size: 16px; font-weight: 700; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
-        .modal-cost-header { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 0.5px;}
-        .modal-divider { height: 1px; background: var(--border); margin: 12px 0; border-radius: 1px; width: 100%; opacity: 0.8;}
+        .modal-section-title { font-size: 16px; font-weight: 800; color: var(--primary); margin: 18px 0 10px 0; line-height: 1.3;}
+        .modal-cost-header { font-size: 11px; font-weight: 900; color: var(--primary); text-transform: uppercase; margin: 14px 0 8px 5px; letter-spacing: 1px;}
+        .modal-divider { height: 2px; background: var(--border); margin: 16px 0; border-radius: 2px; width: 100%; opacity: 0.6;}
         
-        .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; background: var(--input-bg); padding: 12px; border-radius: 16px; }
-        .modal-icon-circle { width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--card-bg); box-shadow: var(--shadow-sm); border: 0.5px solid var(--border);}
-        .modal-text { font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; }
+        .modal-item { display: flex; align-items: center; gap: 14px; margin-bottom: 10px; background: var(--input-bg); padding: 12px; border-radius: 18px; border: 1px solid var(--border); }
+        .modal-icon-circle { width: 40px; height: 40px; min-width: 40px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--card-bg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);}
+        .modal-text { font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 600; }
         
-        .code-block-wrapper { background: var(--input-bg); border-radius: 16px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: 0.2s; }
-        .code-block-wrapper:active { transform: scale(0.97); }
-        .code-label-text { font-size: 13px; font-weight: 600; color: var(--text-muted); }
-        .code-value-text { font-size: 16px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; background: var(--card-bg); padding: 6px 12px; border-radius: 10px; box-shadow: var(--shadow-sm); transition: 0.2s; }
+        .code-block-wrapper { background: var(--input-bg); border: 2px dashed var(--border); border-radius: 20px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
+        .code-block-wrapper:active { transform: scale(0.97); border-color: var(--primary); background: var(--feat-bg);}
+        .code-label-text { font-size: 15px; font-weight: 800; color: var(--text-muted); }
+        .code-value-text { font-size: 18px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 10px; background: var(--card-bg); padding: 8px 16px; border-radius: 14px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); transition: 0.2s ease; }
 
-        .montazh-label { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; display: block; font-weight: 500; text-align: left; padding-left: 8px; }
-        .montazh-select { width: 100%; padding: 16px 20px; border-radius: 16px; background: var(--input-bg); border: 0.5px solid var(--border); font-size: 16px; font-weight: 600; color: var(--text-main); margin-bottom: 20px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; -webkit-appearance: none;}
-        .montazh-select:focus { border-color: var(--primary); background: var(--card-bg);}
+        .montazh-label { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; display: block; font-weight: 700; text-align: left; padding-left: 8px; }
+        .montazh-select { width: 100%; padding: 18px 24px; border-radius: 20px; background: var(--input-bg); border: 1px solid var(--border); font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; text-align: left; cursor: pointer; outline: none; transition: 0.2s; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); -webkit-appearance: none;}
+        .montazh-select:focus { border-color: var(--primary); background: var(--box-bg); box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.15);}
 
-        .availability-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 10px; border-radius: 10px; font-size: 11px; font-weight: 600; text-transform: uppercase; margin-top: 8px; line-height: 1; background: var(--input-bg);}
-        .status-city-limit { color: #FF3B30; }
-        .status-fee-zone { color: #FF9500; }
-        .status-full-coverage { color: #34C759; }
+        .availability-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 10px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: 1px solid var(--border); background: var(--input-bg);}
+        .status-city-limit { background-color: #fee2e2; color: #991b1b; border-color: #fca5a5;}
+        .status-fee-zone { background-color: #fef08a; color: #854d0e; border-color: #fde047;}
+        .status-full-coverage { background-color: #dcfce7; color: #166534; border-color: #86efac;}
         
-        .desc-toggle { font-size: 13px; font-weight: 600; color: var(--primary); margin-top: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding-top: 12px; border-top: 0.5px solid var(--border); width: 100%; transition: 0.2s; user-select: none;}
+        .desc-toggle { font-size: 14px; font-weight: 800; color: var(--primary); margin-top: 14px; cursor: pointer; display: flex; align-items: center; gap: 8px; padding-top: 14px; border-top: 1px dashed var(--border); width: 100%; transition: 0.2s; user-select: none;}
         .desc-toggle:active { opacity: 0.6; }
-        .desc-content { margin-top: 10px; padding: 14px; background: var(--input-bg); border-radius: 16px; }
+        .desc-content { margin-top: 12px; padding: 16px; background: var(--input-bg); border-radius: 18px; border: 1px solid var(--border); }
         
         /* СТИЛІ ДЛЯ РЕЗЕРВІВ */
-        .rezervy-item { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px; border: 0.5px solid var(--border); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
+        .rezervy-item { background: var(--box-bg); border-radius: 20px; padding: 18px; margin-bottom: 14px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-sm); }
         .rezervy-item:active { background: var(--input-bg); transform: scale(0.98); }
-        .rezervy-name { font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 4px; line-height: 1.3;}
-        .rezervy-cat { font-size: 11px; font-weight: 500; color: var(--text-muted); text-transform: uppercase; }
-        .rezervy-price { font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; }
+        .rezervy-name { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.3;}
+        .rezervy-cat { font-size: 11px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
+        .rezervy-price { font-size: 18px; font-weight: 900; color: var(--text-main); white-space: nowrap; background: var(--input-bg); padding: 8px 14px; border-radius: 14px;}
 
-        /* --- КАТАЛОГ ПОСЛУГ --- */
-        .catalog-group { background: var(--card-bg); border-radius: 16px; border: 0.5px solid var(--border); margin-bottom: 12px; overflow: hidden; box-shadow: var(--shadow-sm); }
-        .catalog-header { padding: 16px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; transition: 0.2s; font-weight: 600; font-size: 16px;}
-        .catalog-header:active { background: var(--input-bg); }
-        .catalog-header .arrow { transition: transform 0.3s ease; color: var(--text-muted); }
-        .catalog-header .arrow.up { transform: rotate(180deg); }
-        .catalog-items { display: none; background: var(--card-bg); border-top: 0.5px solid var(--border); }
-        .catalog-items.show { display: block; }
-        .catalog-item { padding: 14px 16px; border-bottom: 0.5px solid var(--border); font-size: 14px; font-weight: 500; color: var(--text-main); cursor: pointer; transition: 0.2s;}
-        .catalog-item:last-child { border-bottom: none; }
-        .catalog-item:active { background: var(--input-bg); }
+        /* ФУТЕР І ВЕРСІЯ */
+        .footer { margin-top: auto; text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 700; line-height: 1.5; padding-bottom: 10px; padding-top: 40px;}
+        .app-version { display: inline-block; font-size: 12px; font-weight: 800; margin-top: 8px; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--input-bg); border-radius: 14px; transition: 0.2s; border: 1px solid var(--border); text-decoration: none;}
+        .app-version:active { transform: scale(0.95); background: var(--feat-bg);}
 
-        .footer { margin-top: auto; text-align: center; font-size: 10px; color: var(--text-muted); font-weight: 500; line-height: 1.5; padding-bottom: 10px; padding-top: 30px;}
-        .app-version { display: inline-block; font-size: 11px; font-weight: 700; margin-top: 6px; color: var(--text-muted); cursor: pointer; padding: 6px 12px; background: var(--input-bg); border-radius: 12px; transition: 0.2s; text-decoration: none;}
-        .app-version:active { transform: scale(0.95); opacity: 0.8;}
-
-        /* ПЛАВАЮЧІ КНОПКИ */
-        .floating-btns { position: fixed; bottom: 100px; right: 20px; display: flex; flex-direction: column; gap: 12px; z-index: 9997; transform: translateZ(0); pointer-events: none; }
-        .float-btn { width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; pointer-events: auto; border: 0.5px solid var(--border); box-shadow: var(--shadow-lg); transition: 0.2s; background: var(--card-bg); color: var(--primary);}
+        /* ПЛАВАЮЧІ КНОПКИ ЗНИЗУ */
+        .floating-btns { position: fixed; bottom: 100px; right: 24px; display: flex; flex-direction: column; gap: 16px; z-index: 9997; transform: translateZ(0); pointer-events: none; }
+        
+        .float-btn { width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; text-decoration: none; outline: none; pointer-events: auto; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.1); transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275); background: var(--card-bg); color: var(--primary);}
         
         #scrollTopBtn { opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.8); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
         #scrollTopBtn:active { transform: scale(0.92); background: var(--input-bg); }
         
-        .update-title-wrapper { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left;}
-        .update-icon-circle { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 24px; background: var(--input-bg); }
-        .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
-        .update-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 2px;}
-        .update-version { font-size: 12px; font-weight: 600; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
-        .changelog-panel { background: var(--input-bg); border-radius: 16px; padding: 16px; margin-bottom: 20px;}
-        
-        .modal-confirm-btn { width: 100%; padding: 16px; border-radius: 16px; border: none; background: var(--primary); color: #fff; font-weight: 600; cursor: pointer; font-size: 16px; margin-top: 10px; transition: 0.2s ease; }
-        .modal-confirm-btn:active { transform: scale(0.98); opacity:0.9;}
+        .float-btn.primary { background: var(--primary); color: #ffffff; border: none; box-shadow: 0 8px 25px rgba(37, 99, 235, 0.4); }
+        .float-btn.primary:active { transform: scale(0.92); box-shadow: 0 4px 15px rgba(37, 99, 235, 0.3); }
 
-        /* СТИЛІ ПОРІВНЯННЯ */
-        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .compare-toggle-btn { background: var(--input-bg); color: var(--primary); border: none; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: 0.2s; }
-        .compare-toggle-btn.active { background: rgba(255, 59, 48, 0.1); color: #FF3B30; }
-        [data-theme="dark"] .compare-toggle-btn.active { background: rgba(255, 69, 58, 0.2); color: #FF453A; }
+        /* КРАСИВЕ МОДАЛЬНЕ ОКНО ОНОВЛЕННЯ */
+        .update-title-wrapper { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;}
+        .update-icon-circle { width: 48px; height: 48px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: var(--input-bg); border: 1px solid var(--border); box-shadow: var(--shadow-sm); }
+        .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
+        .update-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin-bottom: 2px;}
+        .update-version { font-size: 13px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
+        .changelog-panel { background: var(--input-bg); border-radius: 20px; padding: 20px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); margin-bottom: 24px;}
         
-        .compare-action-bar { position: fixed; bottom: 85px; left: 50%; transform: translateX(-50%) translateY(200%); background: var(--nav-bg); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 12px 20px; box-shadow: var(--shadow-lg); display: flex; justify-content: space-between; align-items: center; transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9997; border-radius: 30px; border: 0.5px solid var(--border); width: 90%; max-width: 400px; }
+        .modal-confirm-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--primary); color: #fff; font-weight: 800; cursor: pointer; font-size: 17px; margin-top: 15px; box-shadow: 0 8px 20px rgba(37,99,235,0.3); transition: 0.2s ease; }
+        .modal-confirm-btn:active { transform: scale(0.97); box-shadow: 0 4px 10px rgba(37,99,235,0.2); }
+
+        /* СТИЛІ ДЛЯ ПОРІВНЯННЯ */
+        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .compare-toggle-btn { background: var(--input-bg); color: var(--primary); border: 1px solid var(--border); padding: 10px 16px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm); transition: 0.2s; }
+        .compare-toggle-btn.active { background: #fee2e2; color: #ef4444; border-color: #fca5a5; }
+        [data-theme="dark"] .compare-toggle-btn.active { background: rgba(239, 68, 68, 0.15); color: #fca5a5; border-color: #7f1d1d; }
+        
+        .compare-action-bar { position: fixed; bottom: 90px; left: 50%; width: 90%; max-width: 440px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); padding: 16px 24px; box-shadow: 0 10px 40px rgba(0,0,0,0.15); display: flex; justify-content: space-between; align-items: center; transform: translateX(-50%) translateY(200%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 9997; border-radius: 30px; border: 1px solid var(--border); }
+        [data-theme="dark"] .compare-action-bar { background: rgba(30, 41, 59, 0.9); border-color: rgba(255,255,255,0.1); }
         .compare-action-bar.show { transform: translateX(-50%) translateY(0); }
-        .compare-status-text { font-size: 14px; font-weight: 600; color: var(--text-main); }
-        .compare-execute-btn { background: var(--input-bg); color: var(--text-muted); border: none; padding: 10px 20px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: not-allowed; transition: 0.2s; }
-        .compare-execute-btn.ready { background: var(--primary); color: #ffffff; cursor: pointer; }
+        .compare-status-text { font-size: 15px; font-weight: 800; color: var(--text-main); }
+        .compare-execute-btn { background: var(--input-bg); border: 1px solid var(--border); color: var(--text-muted); padding: 12px 24px; border-radius: 20px; font-size: 15px; font-weight: 800; cursor: not-allowed; transition: 0.2s; }
+        .compare-execute-btn.ready { background: var(--primary); color: #ffffff; cursor: pointer; border: none; box-shadow: 0 4px 15px rgba(37,99,235,0.3); }
         .compare-execute-btn.ready:active { transform: scale(0.96); }
-        
-        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 16px; border: 0.5px solid var(--border); max-height: 60vh; background: var(--card-bg); }
-        .compare-table { width: 100%; border-collapse: collapse; font-size: 12px; text-align: center; }
-        .compare-table th { padding: 16px 12px; border-bottom: 1px solid var(--border); background: var(--input-bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
-        .compare-table td { padding: 14px 12px; border-bottom: 0.5px solid var(--border); color: var(--text-main); font-weight: 500; line-height: 1.4; text-align: left;}
+        .compare-wrapper { overflow-x: auto; margin-top: 10px; border-radius: 16px; border: 1px solid var(--border); max-height: 65vh; background: var(--box-bg); }
+        .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
+        .compare-table th { padding: 18px 14px; border-bottom: 2px solid var(--border); background: var(--input-bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
+        .compare-table td { padding: 16px 14px; border-bottom: 1px solid var(--border); color: var(--text-main); font-weight: 600; line-height: 1.5; text-align: left;}
         .compare-table tr:last-child td { border-bottom: none; }
         
         /* СТИЛІ ІНСТРУКЦІЇ PWA */
-        .pwa-guide-container { color: var(--text-main); }
-        .pwa-alert { background: rgba(0, 122, 255, 0.05); padding: 16px 20px; border-left: 4px solid var(--primary); border-bottom: 0.5px solid var(--border); }
-        .pwa-alert-title { display: flex; align-items: center; font-size: 15px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
-        .pwa-alert-title svg { width: 18px; height: 18px; margin-right: 8px; fill: var(--primary); }
-        .pwa-alert-text { margin: 0; font-size: 13px; line-height: 1.5; color: var(--text-main); }
-        .pwa-alert-text ul { margin: 10px 0 0 0; padding-left: 20px; }
-        .pwa-alert-text li { margin-bottom: 6px; }
-        .pwa-device-section { padding: 20px; border-bottom: 0.5px solid var(--border); }
-        .pwa-device-title { display: flex; align-items: center; font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--text-main);}
-        .pwa-device-title svg { margin-right: 10px; width: 20px; height: 20px; }
-        .pwa-instructions { margin: 0; padding-left: 20px; line-height: 1.5; font-size: 13px; color: var(--text-main); font-weight: 500;}
-        .pwa-instructions li { margin-bottom: 10px; }
-        .pwa-icon-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; background: var(--input-bg); border-radius: 6px; padding: 4px; margin: 0 4px; }
-        .pwa-icon-inline svg { width: 16px; height: 16px; }
+        .pwa-guide-container { color: var(--text-main); background: var(--box-bg); }
+        .pwa-alert { background: rgba(37, 99, 235, 0.05); padding: 18px 24px; border-left: 5px solid var(--primary); border-bottom: 1px solid var(--border); }
+        .pwa-alert-title { display: flex; align-items: center; font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 10px; }
+        .pwa-alert-title svg { width: 20px; height: 20px; margin-right: 10px; fill: var(--primary); }
+        .pwa-alert-text { margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-main); font-weight: 500;}
+        .pwa-alert-text ul { margin: 12px 0 0 0; padding-left: 24px; }
+        .pwa-alert-text li { margin-bottom: 8px; }
+        .pwa-device-section { padding: 24px; border-bottom: 1px solid var(--border); background: var(--box-bg); }
+        .pwa-device-title { display: flex; align-items: center; font-size: 18px; font-weight: 800; margin-bottom: 16px; color: var(--text-main);}
+        .pwa-device-title svg { margin-right: 12px; width: 24px; height: 24px; }
+        .pwa-instructions { margin: 0; padding-left: 24px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600;}
+        .pwa-instructions li { margin-bottom: 12px; }
+        .pwa-icon-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; padding: 6px; margin: 0 6px; box-shadow: var(--shadow-sm);}
+        .pwa-icon-inline svg { width: 18px; height: 18px; }
         .color-apple { fill: var(--text-main); }
         .color-android { fill: #34C759; }
         .color-safari-blue { stroke: #007AFF; }
@@ -399,13 +407,14 @@
         <div class="spinner-ring"></div>
         <div class="spinner-logo">⚡</div>
     </div>
-    <div class="loader-text">Завантаження SkillHUB...</div>
+    <div class="loader-text">Завантаження даних ...</div>
 </div>
 
 <div id="page-home" class="app-page active">
     <div class="container">
+        
         <div class="header-row">
-            <h2>Пошук сервісів</h2>
+            <h2>SkillHUB Assistant</h2>
             <div class="header-controls">
                 <div id="themeToggle" class="theme-switch" title="Змінити тему">
                     <div class="ts-cloud ts-c1"></div>
@@ -424,7 +433,7 @@
                 <div id="statusText" class="status-text">Синхронізація...</div>
             </div>
             <button id="forceUpdateBtn" class="refresh-db-btn" title="Оновити базу">
-                <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
+                <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" fill="none"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
             </button>
         </div>
         
@@ -447,9 +456,9 @@
             <div id="techInfo" class="tech-info"></div>
             
             <div class="compare-header">
-                <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
+                <span style="font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px;">Доступні сервіси</span>
                 <button id="toggleCompareBtn" onclick="window.toggleCompareMode()" class="compare-toggle-btn" style="display: none;">
-                    <span style="font-size: 14px;">⚖️</span> Порівняти
+                    <span style="font-size: 16px;">⚖️</span> Порівняти
                 </button>
             </div>
             
@@ -466,12 +475,19 @@
 <div id="page-rezervy" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2>📦 Активні резерви</h2>
+            <h2 style="display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Активні резерви
+            </h2>
         </div>
         
-        <select id="storeFilter" class="montazh-select" onchange="window.renderRezervyList()">
-            <option value="">-- Оберіть магазин --</option>
-        </select>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 10px; margin-top: -10px;">Оберіть магазин:</div>
+        <div style="position: relative; margin-bottom: 24px;">
+            <select id="storeFilter" class="montazh-select" onchange="window.renderRezervyList()" style="margin-bottom: 0; padding-right: 46px;">
+                <option value="">-- Список магазинів --</option>
+            </select>
+            <button onclick="document.getElementById('storeFilter').value=''; window.renderRezervyList();" style="position: absolute; right: 14px; top: 50%; transform: translateY(-50%); background: #fee2e2; color: #ef4444; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s;">✕</button>
+        </div>
         
         <div id="rezervyList" class="service-list"></div>
     </div>
@@ -480,12 +496,13 @@
 <div id="page-catalog" class="app-page">
     <div class="container">
         <div class="header-row">
-            <h2>🛠️ Каталог послуг</h2>
+            <h2 style="display:flex; align-items:center; gap:10px;">
+                <svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+                Перелік сервісів
+            </h2>
         </div>
         
-        <div style="font-size:13px; color:var(--text-muted); margin-bottom:15px; font-weight:500;">
-            Оберіть бренд, щоб переглянути повний перелік сервісів та їх детальний опис.
-        </div>
+        <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); margin-bottom: 16px;">Оберіть потрібне:</div>
 
         <div id="catalogList">
             </div>
@@ -494,8 +511,8 @@
 
 <div id="page-guide" class="app-page">
     <div class="container" style="padding:0; overflow:hidden;">
-        <div class="modal-header" style="background: var(--card-bg); padding: 24px 24px 16px 24px; margin-bottom: 0;">
-            <h2 style="font-size: 22px; color: var(--primary); font-weight: 900; margin:0;">Встановлення додатка</h2>
+        <div class="modal-header" style="background: var(--card-bg); padding: 28px 24px 20px 24px; margin-bottom: 0;">
+            <h2 style="font-size: 24px; color: var(--text-main); font-weight: 900; margin:0;">Встановлення додатка</h2>
         </div>
         <div class="modal-body pwa-guide-container" style="padding: 0;">
           <div class="pwa-alert">
@@ -608,8 +625,8 @@
 <div id="compareModal" class="modal" style="z-index: 100020;">
     <div class="modal-content">
         <div class="modal-header">
-            <b style="font-size: 20px; color: var(--text-main); font-weight: 900;">Результат порівняння</b>
-            <button onclick="window.closeCompareModal()" style="border:none; background:var(--box-bg); border: 1px solid var(--border); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
+            <b style="font-size: 22px; color: var(--text-main); font-weight: 900;">Порівняння</b>
+            <button onclick="window.closeCompareModal()" style="border:none; background:var(--input-bg); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s;">✕</button>
         </div>
         <div id="compareModalBody" class="modal-body"></div>
         <button onclick="window.closeCompareModal()" class="modal-confirm-btn">Зрозуміло</button>
@@ -619,8 +636,8 @@
 <div id="descModal" class="modal" style="z-index: 100002;">
     <div class="modal-content">
         <div class="modal-header">
-            <b id="modalTitle" style="font-size: 18px; color: var(--text-main); font-weight: 800; line-height: 1.2;">Опис</b>
-            <button id="closeModalBtn" onclick="window.closeModal()" style="border:none; background:var(--input-bg); border-radius: 50%; width: 32px; height: 32px; cursor:pointer; font-size:16px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left:10px;">✕</button>
+            <b id="modalTitle" style="font-size: 22px; color: var(--text-main); font-weight: 900; line-height: 1.2;">Опис</b>
+            <button id="closeModalBtn" onclick="window.closeModal()" style="border:none; background:var(--input-bg); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 10px;">✕</button>
         </div>
         <div id="modalBody" class="modal-body"></div>
         <button onclick="window.closeModal()" class="modal-confirm-btn">Готово</button>
@@ -630,12 +647,12 @@
 <div id="rezervItemModal" class="modal" style="z-index: 100001;">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="flex-shrink: 0; align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 16px; color: var(--text-main); font-weight: 900; line-height: 1.3;"></b>
-            <button onclick="window.closeRezervItemModal()" style="border:none; background:var(--input-bg); border-radius: 50%; width: 32px; height: 32px; cursor:pointer; font-size:16px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 15px;">✕</button>
+            <b id="rezervItemTitle" style="font-size: 18px; color: var(--text-main); font-weight: 900; line-height: 1.3;"></b>
+            <button onclick="window.closeRezervItemModal()" style="border:none; background:var(--input-bg); border-radius: 50%; width: 36px; height: 36px; cursor:pointer; font-size:18px; color: var(--text-muted); transition: 0.2s; flex-shrink: 0; margin-left: 15px;">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo" style="margin-bottom:20px; display:none; flex-direction:column; gap:8px;"></div>
-            <span style="font-size: 10px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; display: block;">Рекомендовані сервіси</span>
+            <span style="font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 12px; display: block;">Рекомендовані сервіси</span>
             <div id="rezervServiceList" class="service-list"></div>
         </div>
     </div>
@@ -653,13 +670,13 @@
 
 <div class="floating-btns" id="floatBtnsGroup">
     <button id="scrollTopBtn" class="float-btn" title="Вгору">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" stroke-width="2.5">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="28" height="28" stroke-width="3">
             <polyline points="18 15 12 9 6 15"></polyline>
         </svg>
     </button>
     
     <a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" class="float-btn primary" title="Зворотній зв'язок">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" stroke-width="2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" width="26" height="26" stroke-width="2.5">
             <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
             <path d="M8 10h8"></path>
             <path d="M8 14h4"></path>
@@ -670,7 +687,7 @@
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbz1yUOXHBezmYkZTIaJNkwIThX4thM693uRLR43xZeZ8pB5wiZ9ZMoAtpnJMSbO-mr5/exec';
     
-    const CACHE_KEY = 'skillhub_test_v1'; // Оновлено для тесту
+    const CACHE_KEY = 'skillhub_v2000_redesign'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: [], serviceCodes: {}, rezervyData: [] };
@@ -738,17 +755,21 @@
         }
     });
 
+    scrollTopBtn.onclick = () => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // ВИПРАВЛЕНО: Замінено """ на '&quot;' для уникнення SyntaxError
+    // ВИПРАВЛЕНА СИНТАКСИЧНА ПОМИЛКА: replace(/"/g, '"')
     window.escapeHTML = function(str) {
         if (!str) return '';
         return str.toString()
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
+            .replace(/&/g, "&")
+            .replace(/</g, "<")
+            .replace(/>/g, ">")
+            .replace(/"/g, '"')
+            .replace(/'/g, "'");
     }
 
     window.escapeForJS = function(str) {
@@ -756,7 +777,7 @@
         return str.toString()
             .replace(/\\/g, "\\\\")
             .replace(/'/g, "\\'")
-            .replace(/"/g, "\\\"")
+            .replace(/"/g, '\\"')
             .replace(/\n/g, "\\n")
             .replace(/\r/g, "");
     }
@@ -835,12 +856,21 @@
         txt.innerText = text;
     }
 
+    // --- БЕЗПЕЧНЕ БЛОКУВАННЯ СКРОЛУ ---
+    function toggleBodyScroll(disable) {
+        if(disable) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+    }
+
     async function init() {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) { 
             try {
                 db = JSON.parse(cached); 
-                enableUI(); window.populateStoreFilter(); window.renderCatalog(); window.renderRezervyList();
+                enableUI(); window.populateStoreFilter(); window.renderCatalog();
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
                 refreshData(); 
             } catch(e) {
@@ -888,15 +918,15 @@
             }
 
             if (first) {
-                enableUI(); window.populateStoreFilter(); window.renderCatalog(); window.renderRezervyList();
+                enableUI(); window.populateStoreFilter(); window.renderCatalog();
             } else {
-                enableUI(); window.populateStoreFilter(); window.renderCatalog(); window.renderRezervyList();
+                enableUI(); window.populateStoreFilter(); window.renderCatalog();
             }
         } catch (e) { 
             console.error(e);
             if (localStorage.getItem(CACHE_KEY)) {
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
-                if (first) { enableUI(); window.populateStoreFilter(); window.renderCatalog(); window.renderRezervyList(); }
+                if (first) { enableUI(); window.populateStoreFilter(); window.renderCatalog(); }
             } else { 
                 setAppStatus('error', 'Помилка (немає даних)');
                 if (first && elLoader) {
@@ -926,7 +956,7 @@
         }
     }
 
-    // --- ЛОГІКА РЕЗЕРВІВ (ТАБ 2) ---
+    // --- ЛОГІКА РЕЗЕРВІВ ---
     window.populateStoreFilter = function() {
         if (!db.rezervyData || db.rezervyData.length === 0) return;
         const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
@@ -983,13 +1013,8 @@
 
         if (foundItem) {
             document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
-            
-            // ВАЖЛИВО ДЛЯ БЕЗЗАВИСАННЯ МОДАЛОК
-            scrollPos = window.pageYOffset;
-            document.body.style.top = `-${scrollPos}px`;
-            document.body.classList.add('modal-open');
-            
             document.getElementById('rezervItemModal').classList.add('show');
+            toggleBodyScroll(true);
             renderRezervItemServices(foundItem, price);
         } else {
             alert(`Увага! Категорію "${catName}" не знайдено в базі сервісів.`);
@@ -998,9 +1023,7 @@
 
     window.closeRezervItemModal = function() {
         document.getElementById('rezervItemModal').classList.remove('show');
-        document.body.classList.remove('modal-open');
-        document.body.style.top = '';
-        window.scrollTo(0, scrollPos);
+        toggleBodyScroll(false);
     }
 
     function renderRezervItemServices(item, p) {
@@ -1029,55 +1052,64 @@
             'SUPPORT': [],
             'EKTA': [],
             'Електронні ліцензії (EPZ)': [],
-            'Монтаж та встановлення': [],
-            'Антивіруси': [],
+            'Монтаж та Встановлення': [],
+            'Антивірусний захист': [],
             'Інші налаштування': []
         };
 
-        // Витягуємо унікальні сервіси
-        let uniqueTariffs = [];
         let seen = new Set();
-        if(!db.tariffs) return;
-        db.tariffs.forEach(t => {
-            let n = normalizeServiceName(t.service);
-            if(!seen.has(n)) {
-                seen.add(n);
-                uniqueTariffs.push(t);
-            }
-        });
+        if(db.tariffs) {
+            db.tariffs.forEach(t => {
+                let nClean = normalizeServiceName(t.service);
+                if(!seen.has(nClean)) {
+                    seen.add(nClean);
+                    
+                    let u = t.service.toUpperCase();
+                    let c = t.cat ? t.cat.toUpperCase() : "";
+                    let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС') && !u.includes('ESET') && !u.includes('PARALLELS');
 
-        uniqueTariffs.forEach(t => {
-            let u = t.service.toUpperCase();
-            let c = t.cat ? t.cat.toUpperCase() : "";
-            let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС') && !u.includes('ESET') && !u.includes('PARALLELS');
-
-            if (u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) groups['SUPPORT'].push(t);
-            else if (u.includes('EKTA') || u.includes('ЕКТА')) groups['EKTA'].push(t);
-            else if (u.includes('EPZ') || u.includes('ЕПЗ') || isStaticEpz) groups['Електронні ліцензії (EPZ)'].push(t);
-            else if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) groups['Монтаж та встановлення'].push(t);
-            else if (u.includes('АНТИВІРУС') || u.includes('ESET') || c.includes('АНТИВІРУС')) groups['Антивіруси'].push(t);
-            else groups['Інші налаштування'].push(t);
-        });
+                    if (u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) groups['SUPPORT'].push(t);
+                    else if (u.includes('EKTA') || u.includes('ЕКТА')) groups['EKTA'].push(t);
+                    else if (u.includes('EPZ') || u.includes('ЕПЗ') || isStaticEpz) groups['Електронні ліцензії (EPZ)'].push(t);
+                    else if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) groups['Монтаж та Встановлення'].push(t);
+                    else if (u.includes('АНТИВІРУС') || u.includes('ESET') || c.includes('АНТИВІРУС')) groups['Антивірусний захист'].push(t);
+                    else groups['Інші налаштування'].push(t);
+                }
+            });
+        }
 
         let html = '';
         for(let brand in groups) {
             if(groups[brand].length === 0) continue;
-            let brandClass = brand.includes('SUPPORT') ? 'brand-support' : (brand.includes('EKTA') ? 'brand-ekta' : (brand.includes('ЕПЗ') ? 'brand-epz' : 'brand-other'));
             
-            // Сортування за алфавітом
+            let icon = '🔹';
+            let bg = 'var(--feat-bg)';
+            if(brand === 'SUPPORT') { icon = '🛡️'; bg = 'var(--clr-support-bg)'; }
+            if(brand === 'EKTA') { icon = '📱'; bg = 'var(--clr-ekta-bg)'; }
+            if(brand === 'Електронні ліцензії (EPZ)') { icon = '💻'; bg = 'var(--clr-epz-bg)'; }
+            if(brand === 'Монтаж та Встановлення') { icon = '🛠️'; bg = '#f3e8ff'; }
+            if(brand === 'Антивірусний захист') { icon = '🛡️'; bg = '#dcfce7'; }
+
             groups[brand].sort((a,b) => a.service.localeCompare(b.service));
 
             let itemsHtml = groups[brand].map(t => {
-                return `<div class="catalog-item" onclick="window.openModal('${window.escapeForJS(t.service)}', '${window.escapeForJS(t.code||'')}', true)">
-                    ${t.service}
+                let safeName = window.escapeForJS(t.service);
+                let safeCode = window.escapeForJS(t.code || "");
+                let cleanTitle = t.service.replace(/^\[.*?\]\s*/, '');
+                return `<div class="catalog-item" onclick="window.openModal('${safeName}', '${safeCode}', true)">
+                    ${cleanTitle}
                 </div>`;
             }).join('');
 
             html += `
                 <div class="catalog-group">
-                    <div class="catalog-header ${brandClass}" onclick="this.nextElementSibling.classList.toggle('show'); this.querySelector('.arrow').classList.toggle('up');">
-                        <span>${brand}</span>
-                        <span class="arrow" style="display:inline-block; font-size:12px; transition:0.3s;">▼</span>
+                    <div class="catalog-header" style="background:${bg};" onclick="this.nextElementSibling.classList.toggle('show'); this.querySelector('.arrow').classList.toggle('up');">
+                        <div style="display:flex; align-items:center; gap:12px;">
+                            <span style="font-size:18px;">${icon}</span>
+                            <b style="font-size:15px; color:var(--text-main);">${brand}</b>
+                            <span style="background:rgba(255,255,255,0.5); padding:2px 8px; border-radius:10px; font-size:11px; font-weight:800; color:var(--text-main);">${groups[brand].length}</span>
+                        </div>
+                        <span class="arrow" style="font-size:12px; transition:0.3s; color:var(--text-main);">▼</span>
                     </div>
                     <div class="catalog-items">
                         ${itemsHtml}
@@ -1088,7 +1120,7 @@
         document.getElementById('catalogList').innerHTML = html;
     }
 
-    // --- ПОШУК ТА ГОЛОВНИЙ ЕКРАН ---
+    // --- ПОШУК (ТАБ 1) ---
     elCatInput.addEventListener('input', debounce(() => {
         const val = normalize(elCatInput.value); 
         elClearBtn.style.display = val.length > 0 ? 'flex' : 'none';
@@ -1178,11 +1210,7 @@
                     ${linksHtml}
                 `;
                 
-                if (!document.body.classList.contains('modal-open')) {
-                    scrollPos = window.pageYOffset;
-                    document.body.style.top = `-${scrollPos}px`;
-                    document.body.classList.add('modal-open');
-                }
+                toggleBodyScroll(true);
                 document.getElementById('descModal').classList.add('show');
                 return;
             }
@@ -1191,26 +1219,17 @@
         currentPhotoIndex = 0;
         resetZoom();
         updateGalleryImage();
-        
-        if (!document.body.classList.contains('modal-open')) {
-            scrollPos = window.pageYOffset; 
-            document.body.style.top = `-${scrollPos}px`; 
-            document.body.classList.add('modal-open');
-        }
-        
+        toggleBodyScroll(true);
         document.getElementById('galleryModal').classList.add('show');
     };
 
     window.closeGallery = function() {
         document.getElementById('galleryModal').classList.remove('show');
         resetZoom();
-        
         if (!document.getElementById('descModal').classList.contains('show') && 
             !document.getElementById('compareModal').classList.contains('show') &&
             !document.getElementById('rezervItemModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
+            toggleBodyScroll(false);
         }
     };
 
@@ -1274,9 +1293,8 @@
         }
     });
 
-    // --- Універсальна функція для побудови TechInfo ---
     function buildTechInfoHTML(item, p) {
-        let techHTML = `<div style="font-size: 10px; font-weight: 800; color: var(--primary); text-transform: uppercase;">🛠️ Технічна довідка</div>`;
+        let techHTML = `<div style="font-size: 11px; font-weight: 900; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;">🛠️ Технічна довідка</div>`;
         let hasInfo = false;
 
         if (item.complexity) {
@@ -1343,17 +1361,32 @@
         elTechInfo.style.display = html ? 'flex' : 'none';
     }
 
+    // НОВИЙ ПАРСЕР ДЛЯ КРАСИВИХ IOS МОДАЛОК
     function parseDescriptionLines(descE) {
         if (!descE) return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
         let raw = descE.toString().trim();
         if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
 
-        return raw.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
+        let html = `<div class="ios-desc-group">`;
+        let lines = raw.replace(/\|/g, '\n').split(/\r?\n/);
+        
+        lines.forEach((line, index) => {
             const l = line.trim(); 
-            if (!l) return '';
-            if (l.startsWith('+')) return `<div class="modal-section-title">${l.substring(1).trim()}</div>`;
-            if (l.startsWith('=')) return `<div class="modal-cost-header">${l.substring(1).trim() || 'Вартість:'}</div>`;
-            if (l.includes('---')) return `<div class="modal-divider"></div>`;
+            if (!l) return;
+            
+            if (l.startsWith('+')) {
+                if(index !== 0) html += `</div><div class="ios-desc-group">`; // Start new group
+                html += `<div class="modal-section-title" style="padding:0 16px;">${l.substring(1).trim()}</div>`;
+                return;
+            }
+            if (l.startsWith('=')) {
+                html += `<div class="modal-cost-header" style="padding:0 16px;">${l.substring(1).trim() || 'Вартість:'}</div>`;
+                return;
+            }
+            if (l.includes('---')) {
+                html += `<div class="modal-divider"></div>`;
+                return;
+            }
             
             let match = l.match(emojiRegex); 
             let e = match ? match[0] : "";
@@ -1370,11 +1403,15 @@
                 else e = '🔹';
             }
             
-            return `
-            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px; background: var(--feat-bg); padding: 8px 10px; border-radius: 14px; border: 1px solid var(--border);">${e ? `<div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--box-bg); box-shadow: var(--shadow-sm); border: 1px solid var(--border);">${e}</div>` : ''}
-                <div style="font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 500;">${t}</div>
+            html += `
+            <div class="ios-desc-row">
+                ${e ? `<div class="ios-desc-icon">${e}</div>` : ''}
+                <div class="ios-desc-text">${t}</div>
             </div>`;
-        }).join('');
+        });
+        
+        html += `</div>`;
+        return html;
     }
 
     function generateDescToggleHTML(descE, codeF) {
@@ -1387,7 +1424,7 @@
         let codeHtml = codeF ? `
             <div class="code-block-wrapper" onclick="window.copyCode(event, this, '${window.escapeForJS(codeF)}')">
                 <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${codeF} <span style="font-size:16px;">📋</span></span>
+                <span class="code-value-text">${codeF} <span style="font-size:18px;">📋</span></span>
             </div>` : '';
 
         if (!descText && !codeHtml) return '';
@@ -1456,7 +1493,7 @@
             }
             
             let numCost = 0;
-            let label = "Дізнатись<br>вартість";
+            let label = "Дізнатись вартість";
             let serviceCode = t && t.code ? t.code : findInDb(db.serviceCodes, name); 
             
             if (isPackage) {
@@ -1594,13 +1631,13 @@
         
         if (isCompareMode) {
             toggleCompareBtn.classList.add('active');
-            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
+            toggleCompareBtn.innerHTML = '<span style="font-size: 16px;">✕</span> Скасувати';
             compareBar.classList.add('show');
             compareBar.style.zIndex = '9998'; 
             floatBtnsGroup.style.display = 'none'; 
         } else {
             toggleCompareBtn.classList.remove('active');
-            toggleCompareBtn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
+            toggleCompareBtn.innerHTML = '<span style="font-size: 16px;">⚖️</span> Порівняти';
             compareBar.classList.remove('show');
             floatBtnsGroup.style.display = 'flex';
         }
@@ -1617,7 +1654,7 @@
             btn.classList.add('active');
             btn.innerHTML = '<span style="font-size: 14px;">✕</span> Скасувати';
             compareBar.classList.add('show');
-            compareBar.style.zIndex = '100015'; // Поверх descModal
+            compareBar.style.zIndex = '100015';
         } else {
             btn.classList.remove('active');
             btn.innerHTML = '<span style="font-size: 14px;">⚖️</span> Порівняти';
@@ -1632,7 +1669,7 @@
     window.handleServiceClick = function(name, code, isPackage, forceNoCompare = false) {
         if (isCompareMode && !forceNoCompare) {
             if (isPackage) { 
-                window.openModal(name, code); 
+                window.openModal(name, code, true); 
                 return; 
             }
             let index = compareSelection.indexOf(name);
@@ -1641,8 +1678,8 @@
             } else {
                 if (compareSelection.length < 2) compareSelection.push(name); 
                 else {
-                    compareBar.style.transform = 'translateY(-10px)';
-                    setTimeout(() => { compareBar.style.transform = 'translateY(0)'; }, 150);
+                    compareBar.style.transform = 'translateX(-50%) translateY(-10px)';
+                    setTimeout(() => { compareBar.style.transform = 'translateX(-50%) translateY(0)'; }, 150);
                 }
             }
             updateCompareUI();
@@ -1668,8 +1705,8 @@
             } else {
                 if (modalCompareSelection.length < 2) modalCompareSelection.push(name); 
                 else {
-                    compareBar.style.transform = 'translateY(-10px)';
-                    setTimeout(() => { compareBar.style.transform = 'translateY(0)'; }, 150);
+                    compareBar.style.transform = 'translateX(-50%) translateY(-10px)';
+                    setTimeout(() => { compareBar.style.transform = 'translateX(-50%) translateY(0)'; }, 150);
                 }
             }
             updateModalCompareUI();
@@ -1845,27 +1882,21 @@
     };
 
     window.showCompareModal = function(html) {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
+        toggleBodyScroll(true);
         document.getElementById('compareModalBody').innerHTML = html;
         document.getElementById('compareModal').classList.add('show');
     }
 
     window.closeCompareModal = function() {
         document.getElementById('compareModal').classList.remove('show');
-        
         if (!document.getElementById('descModal').classList.contains('show') && !document.getElementById('rezervItemModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
+            toggleBodyScroll(false);
         }
     }
 
-    window.openModal = function(name, code = "", bypassStaticCheck = false) {
-        scrollPos = window.pageYOffset; 
-        document.body.style.top = `-${scrollPos}px`; 
-        document.body.classList.add('modal-open');
+    // --- ОПИС (МОДАЛКА) ТА СПЕЦІАЛЬНІ ФУНКЦІЇ ---
+    window.openModal = function(name, code = "", forceDesc = false) {
+        toggleBodyScroll(true);
         
         isModalCompareMode = false;
         modalCompareSelection = [];
@@ -1874,21 +1905,51 @@
         let nameClean = normalizeServiceName(name);
         let u = name.toUpperCase(); 
 
-        let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
-
         let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('OFFICE 365') || u.includes('OFFICE 2024') || u.includes('ESD') || u.includes('[ESD]')) 
-            && !u.includes('НАЛАШТУВАННЯ') 
-            && !u.includes('ВСТАНОВЛЕННЯ') 
-            && !u.includes('АНТИВІРУС') 
-            && !u.includes('ESET')
-            && !u.includes('PARALLELS');
+            && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС') && !u.includes('ESET') && !u.includes('PARALLELS');
 
-        if (!isStaticEpz && !bypassStaticCheck) {
+        // Якщо це не примусовий показ опису (з Каталогу), запускаємо стару логіку модалок
+        if (!isStaticEpz && !forceDesc) {
+            let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
             if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
-                // ...
+                document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
+                window.renderMontazhModal();
+                document.getElementById('descModal').classList.add('show');
+                return;
+            } 
+            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) {
+                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі";
+                window.renderDirectListModal(["перевірка", "піксел"]);
+                document.getElementById('descModal').classList.add('show');
+                return;
+            } 
+            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) {
+                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок";
+                window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]);
+                document.getElementById('descModal').classList.add('show');
+                return;
+            }
+            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) {
+                document.getElementById('modalTitle').innerText = "Антивіруси";
+                window.renderSetupModal(name, "antivirus");
+                document.getElementById('descModal').classList.add('show');
+                return;
+            }
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
+                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
+                window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
+                document.getElementById('descModal').classList.add('show');
+                return;
+            }
+            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) {
+                document.getElementById('modalTitle').innerText = "Налаштування та сервіси";
+                window.renderSetupModal(name, "setup");
+                document.getElementById('descModal').classList.add('show');
+                return;
             }
         }
 
+        // Логіка показу опису
         let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
         document.getElementById('modalTitle').innerText = title;
         
@@ -1906,11 +1967,490 @@
         let codeBlock = isValidCode ? `
             <div class="code-block-wrapper" onclick="window.copyCode(event, this, '${window.escapeForJS(code)}')">
                 <span class="code-label-text">Код сервісу:</span>
-                <span class="code-value-text">${code} <span style="font-size:16px;">📋</span></span>
+                <span class="code-value-text">${code} <span style="font-size:20px;">📋</span></span>
             </div>` : '';
             
         document.getElementById('modalBody').innerHTML = codeBlock + parseDescriptionLines(raw);
         document.getElementById('descModal').classList.add('show'); 
+    }
+
+    // --- МОНТАЖ ТА ІНШІ МОДАЛКИ (Стара логіка повністю збережена) ---
+    window.renderMontazhModal = function() {
+        if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) {
+            elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`;
+            return;
+        }
+
+        const cities = db.montazhData.cities.sort((a, b) => a.localeCompare(b));
+        const services = db.montazhData.services;
+
+        window.cityStatusMap = new Map();
+        cities.forEach(city => {
+            let hasAny = services.some(s => {
+                let avail = s.availability[city];
+                return avail && avail !== "-" && avail !== "✖" && !avail.toLowerCase().includes("немає");
+            });
+            window.cityStatusMap.set(city, hasAny);
+        });
+
+        const categories = [...new Set(services.map(s => s.cat).filter(Boolean))];
+
+        elModalBody.innerHTML = `
+            <div style="margin-bottom: 20px;">
+                <span class="montazh-label">В якому місті шукаємо?</span>
+                <select id="montazhCity" class="montazh-select">
+                    <option value="">-- Оберіть місто --</option>
+                    ${cities.map(c => {
+                        let emoji = window.cityStatusMap.get(c) ? "🟢" : "🔴";
+                        return `<option value="${c}">${emoji} ${c}</option>`;
+                    }).join('')}
+                </select>
+            </div>
+            <div style="margin-bottom: 20px;">
+                <span class="montazh-label">Яку техніку потрібно встановити?</span>
+                <select id="montazhCat" class="montazh-select">
+                    <option value="">-- Оберіть категорію --</option>
+                    ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+            </div>
+            <div id="montazhSubCatWrapper" style="display:none; margin-bottom: 20px;">
+                <span class="montazh-label">Виберіть підкатегорію:</span>
+                <select id="montazhSubCat" class="montazh-select"></select>
+            </div>
+            
+            <div class="compare-header">
+                <span>Доступні послуги</span>
+                <button id="modalCompareBtn" onclick="window.toggleModalCompareMode()" class="compare-toggle-btn" style="display: none;">
+                    <span style="font-size: 14px;">⚖️</span> Порівняти
+                </button>
+            </div>
+            
+            <div id="montazhResults" class="service-list"></div>
+        `;
+
+        let catSelect = document.getElementById('montazhCat');
+        if (currentCategoryData && currentCategoryData.category) {
+            let targetCat = currentCategoryData.category.toLowerCase();
+            for (let i = 0; i < catSelect.options.length; i++) {
+                if (catSelect.options[i].value.toLowerCase().includes(targetCat) || targetCat.includes(catSelect.options[i].value.toLowerCase())) {
+                    catSelect.selectedIndex = i;
+                    setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50);
+                    break;
+                }
+            }
+        }
+
+        document.getElementById('montazhCity').addEventListener('change', window.updateMontazhResults);
+        
+        document.getElementById('montazhCat').addEventListener('change', (e) => {
+            const cat = e.target.value;
+            const subCatSelect = document.getElementById('montazhSubCat');
+            const subCatWrapper = document.getElementById('montazhSubCatWrapper');
+            
+            const subcats = [...new Set(services.filter(s => s.cat === cat).map(s => s.subcat).filter(c => c && c.trim() !== ""))];
+            
+            if (subcats.length > 0) {
+                subCatSelect.innerHTML = `<option value="">-- Всі послуги --</option>` + subcats.map(sc => `<option value="${sc}">${sc}</option>`).join('');
+                subCatWrapper.style.display = 'block';
+            } else {
+                subCatSelect.innerHTML = '';
+                subCatWrapper.style.display = 'none';
+            }
+            window.updateMontazhResults();
+        });
+        
+        document.getElementById('montazhSubCat').addEventListener('change', window.updateMontazhResults);
+    }
+
+    window.updateMontazhResults = function() {
+        const city = document.getElementById('montazhCity').value;
+        const cat = document.getElementById('montazhCat').value;
+        const subcatWrapper = document.getElementById('montazhSubCatWrapper');
+        const subcat = subcatWrapper.style.display !== 'none' ? document.getElementById('montazhSubCat').value : "";
+        const resultsContainer = document.getElementById('montazhResults');
+        
+        if (!city || !cat) {
+            resultsContainer.innerHTML = "";
+            return;
+        }
+
+        const matches = db.montazhData.services.filter(s => s.cat === cat && (!subcatWrapper.style.display || subcatWrapper.style.display === 'none' || !subcat || s.subcat === subcat));
+
+        if (matches.length === 0) {
+            resultsContainer.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
+            return;
+        }
+
+        let renderItems = [];
+
+        matches.forEach(s => {
+             let availability = s.availability[city] || "";
+             let isUnavailable = (!availability || availability.toLowerCase().includes("немає") || availability === "-" || availability === "✖");
+
+             let displayProv = "";
+             let matchProv = s.name.match(/^\[(.*?)\]/);
+             if (matchProv) {
+                 displayProv = matchProv[1].trim(); 
+             }
+
+             let price = s.price;
+             if (!price) {
+                 let nameClean = normalizeServiceName(s.name);
+                 const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean));
+                 if (t && t.cost) price = t.cost;
+             }
+             
+             let cleanCost = price.toString().replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+             let priceVal = parseFloat(cleanCost) || 0;
+             let priceText = isNaN(priceVal) || cleanCost === '' ? price : priceVal.toLocaleString('uk-UA') + " ₴";
+             
+             let descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, s.name), findInDb(db.serviceCodes, s.name));
+             
+             renderItems.push({
+                 isUnavailable: isUnavailable,
+                 priceVal: priceVal,
+                 displayProv: displayProv,
+                 serviceName: s.name,
+                 priceText: priceText,
+                 descToggleHTML: descToggleHTML,
+                 availability: availability,
+                 code: s.code
+             });
+        });
+
+        renderItems.sort((a, b) => {
+            if (a.isUnavailable !== b.isUnavailable) return a.isUnavailable ? 1 : -1; 
+            return b.priceVal - a.priceVal; 
+        });
+
+        window.lastModalServices = renderItems.map(item => {
+            let cls = 'brand-other';
+            let pUpper = item.displayProv.toUpperCase();
+            if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; 
+            else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
+            
+            return { 
+                name: item.serviceName, 
+                title: item.serviceName.replace(/^\[.*?\]\s*/, ''), 
+                brand: item.displayProv, 
+                cls: cls, 
+                priceText: item.priceText,
+                code: item.code
+            };
+        });
+
+        let modalCompBtn = document.getElementById('modalCompareBtn');
+        let availableCount = renderItems.filter(item => !item.isUnavailable).length;
+        if (modalCompBtn) {
+            if (availableCount >= 2) {
+                modalCompBtn.style.display = 'flex';
+            } else {
+                modalCompBtn.style.display = 'none';
+                if (isModalCompareMode) window.toggleModalCompareMode();
+            }
+        }
+
+        let resultsHTML = "";
+        let seenUnavailable = new Set(); 
+
+        renderItems.forEach(item => {
+            let cls = 'brand-other';
+            let pUpper = item.displayProv.toUpperCase();
+            if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; 
+            else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
+            
+            let obj = { 
+                name: item.serviceName, 
+                title: item.serviceName.replace(/^\[.*?\]\s*/, ''), 
+                brand: item.displayProv, 
+                cls: cls, 
+                label: item.priceText, 
+                descToggleHTML: item.descToggleHTML,
+                isPackage: false,
+                code: item.code
+            };
+            
+            if (item.isUnavailable) {
+                if (!seenUnavailable.has(pUpper) && item.displayProv) {
+                    seenUnavailable.add(pUpper);
+                    resultsHTML += `
+                    <div class="service-card" style="border:1px solid var(--border); margin-bottom:14px; cursor:default; display:block;">
+                        <div class="brand-tag ${cls}" style="display:inline-block; padding:4px 8px; border-radius:8px; font-size:10px; font-weight:900; margin-bottom:6px;">${item.displayProv}</div>
+                        <div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-top: 5px;">На жаль, в цьому місті неможливий монтаж підрядником ${item.displayProv}</div>
+                    </div>`; 
+                }
+            } else {
+                 let text = item.availability;
+                 let availLower = text.toLowerCase();
+                 let displayText = text;
+                 
+                 if (availLower === "так" || availLower === "+") {
+                     displayText = "В межах міста";
+                 }
+                 
+                 let extraInfoHTML = "";
+                 if (text && availLower !== "так" && availLower !== "+") {
+                     let badgeClass = "availability-badge brand-other";
+                     if (availLower.includes("тільки місто") || availLower.includes("до 20 км")) {
+                         badgeClass = "availability-badge status-city-limit";
+                     } else if (availLower.includes("передмістя") || availLower.includes("платно")) {
+                         badgeClass = "availability-badge status-fee-zone";
+                     } else if (availLower.includes("в межах міста")) {
+                         badgeClass = "availability-badge status-full-coverage";
+                     }
+                     extraInfoHTML = `<div class="${badgeClass}" style="margin-top:10px;"><span style="font-size: 14px;">📍</span> ${displayText}</div>`;
+                 }
+
+                 obj.availabilityHTML = extraInfoHTML; 
+                 
+                 resultsHTML += generateServiceCardHTML(obj, true); 
+            }
+        });
+
+        resultsContainer.innerHTML = resultsHTML;
+    }
+
+    window.renderDirectListModal = function(targetCategories) {
+        if (!Array.isArray(targetCategories)) targetCategories = [targetCategories];
+        
+        let matches = db.tariffs.filter(t => {
+            let c = t.cat ? normalizeServiceName(t.cat) : "";
+            let sName = t.service ? normalizeServiceName(t.service) : "";
+            return targetCategories.some(tc => {
+                let ntc = normalizeServiceName(tc);
+                return c.includes(ntc) || sName.includes(ntc);
+            });
+        });
+        
+        if(matches.length === 0) {
+             elModalBody.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
+             return;
+        }
+        
+        const p = parseFloat(elPriceInput.value) || 0; 
+        
+        let processedMatches = matches.map(m => {
+            let numCost = 0;
+            let priceText = "Дізнатись вартість";
+            
+            if (m.cost) {
+                let rawCost = m.cost.toString().trim();
+                if (rawCost.includes('%')) {
+                    if (p > 0) {
+                        numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
+                        priceText = numCost.toLocaleString('uk-UA') + " ₴";
+                    } else {
+                        priceText = rawCost;
+                    }
+                } else {
+                    let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+                    if (cleanCost === '') {
+                        priceText = rawCost;
+                    } else {
+                        numCost = parseFloat(cleanCost);
+                        priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
+                    }
+                }
+            }
+            
+            let cls = 'brand-settings';
+            let uName = m.service.toUpperCase();
+            if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) {
+                cls = 'brand-support'; 
+            } else if (uName.includes('EKTA') || uName.includes('ЕКТА')) {
+                cls = 'brand-ekta'; 
+            } else if (uName.includes('EPZ') || uName.includes('ЕПЗ')) {
+                cls = 'brand-epz'; 
+            }
+
+            return { name: m.service, title: m.service.replace(/^\[.*?\]\s*/, ''), numCost, priceText, cls: cls, code: m.code, isPackage: false };
+        });
+
+        processedMatches.sort((a, b) => b.numCost - a.numCost);
+        window.lastModalServices = processedMatches;
+        
+        let headerHtml = `
+        <div class="compare-header">
+            <span>Доступні послуги</span>
+            <button id="modalCompareBtn" onclick="window.toggleModalCompareMode()" class="compare-toggle-btn" style="display: ${processedMatches.length >= 2 ? 'flex' : 'none'};">
+                <span style="font-size: 14px;">⚖️</span> Порівняти
+            </button>
+        </div>`;
+
+        let html = processedMatches.map(m => {
+             m.label = m.priceText; 
+             m.descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, m.name), m.code);
+             return generateServiceCardHTML(m, true);
+        }).join('');
+        
+        elModalBody.innerHTML = headerHtml + `<div id="setupResults" class="service-list" style="margin-top: 5px;">${html}</div>`;
+    }
+
+    window.renderSetupModal = function(targetName, mode = "setup") {
+        let setupCats = [...new Set(db.tariffs.filter(t => {
+            if (!t.cat) return false;
+            let c = t.cat.toLowerCase();
+            
+            if (mode === "antivirus") {
+                return c.includes('антивірус') || c.includes('eset');
+            } else {
+                return !c.includes('монтаж') && 
+                       !c.includes('кухонна') && 
+                       !c.includes('перевірка') && 
+                       !c.includes('поклейка') && 
+                       !c.includes('скло') && 
+                       !c.includes('антивірус') && 
+                       !c.includes('eset') && 
+                       !c.includes('кінотеатр') && 
+                       !c.includes('sweet') && 
+                       !c.includes('сервіси support') && 
+                       !c.includes('сервіси екта');
+            }
+        }).map(t => t.cat))];
+        
+        let labelText = mode === "antivirus" ? "Оберіть тип антивірусу:" : "Оберіть тип сервісу:";
+
+        elModalBody.innerHTML = `
+            <div style="margin-bottom: 20px;">
+                <span class="montazh-label">${labelText}</span>
+                <select id="setupCat" class="montazh-select">
+                    <option value="">-- Оберіть категорію --</option>
+                    ${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}
+                </select>
+            </div>
+            
+            <div class="compare-header">
+                <span>Доступні послуги</span>
+                <button id="modalCompareBtn" onclick="window.toggleModalCompareMode()" class="compare-toggle-btn" style="display: none;">
+                    <span style="font-size: 14px;">⚖️</span> Порівняти
+                </button>
+            </div>
+            
+            <div id="setupResults" class="service-list"></div>
+        `;
+        
+        let catSelect = document.getElementById('setupCat');
+        let targetClean = normalizeServiceName(targetName);
+        
+        let targetTariff = db.tariffs.find(t => normalizeServiceName(t.service) === targetClean || (t.serviceRu && normalizeServiceName(t.serviceRu) === targetClean));
+        let catToSelect = targetName;
+        
+        if (targetTariff && targetTariff.cat) {
+            catToSelect = targetTariff.cat;
+        }
+
+        let cleanCatToSelect = normalizeServiceName(catToSelect);
+
+        for (let i = 0; i < catSelect.options.length; i++) {
+            let optClean = normalizeServiceName(catSelect.options[i].value);
+            if (optClean === cleanCatToSelect || optClean.includes(cleanCatToSelect) || cleanCatToSelect.includes(optClean)) {
+                catSelect.selectedIndex = i;
+                setTimeout(() => catSelect.dispatchEvent(new Event('change')), 50);
+                break;
+            }
+        }
+        
+        catSelect.addEventListener('change', window.updateSetupResults);
+    }
+    
+    window.updateSetupResults = function() {
+        let catInput = document.getElementById('setupCat');
+        let container = document.getElementById('setupResults');
+        if(!container) return;
+
+        if (!catInput) {
+            let modalCompBtn = document.getElementById('modalCompareBtn');
+            if (modalCompBtn) {
+                if (window.lastModalServices.length >= 2) {
+                    modalCompBtn.style.display = 'flex';
+                } else {
+                    modalCompBtn.style.display = 'none';
+                    if (isModalCompareMode) window.toggleModalCompareMode();
+                }
+            }
+
+            let html = window.lastModalServices.map(m => {
+                 m.label = m.priceText;
+                 m.descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, m.name), m.code);
+                 return generateServiceCardHTML(m, true);
+            }).join('');
+            container.innerHTML = html;
+            return;
+        }
+        
+        let cat = catInput.value;
+        if(!cat) {
+            container.innerHTML = "";
+            return;
+        }
+        
+        let matches = db.tariffs.filter(t => t.cat === cat);
+        if(matches.length === 0) {
+             container.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Послуг не знайдено</div>`;
+             return;
+        }
+        
+        const p = parseFloat(elPriceInput.value) || 0; 
+        
+        let processedMatches = matches.map(m => {
+            let numCost = 0;
+            let priceText = "Дізнатись вартість";
+            
+            if (m.cost) {
+                let rawCost = m.cost.toString().trim();
+                if (rawCost.includes('%')) {
+                    if (p > 0) {
+                        numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
+                        priceText = numCost.toLocaleString('uk-UA') + " ₴";
+                    } else {
+                        priceText = rawCost;
+                    }
+                } else {
+                    let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+                    if (cleanCost === '') {
+                        priceText = rawCost;
+                    } else {
+                        numCost = parseFloat(cleanCost);
+                        priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
+                    }
+                }
+            }
+            
+            let cls = 'brand-settings';
+            let uName = m.service.toUpperCase();
+            if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) {
+                cls = 'brand-support'; 
+            } else if (uName.includes('EKTA') || uName.includes('ЕКТА')) {
+                cls = 'brand-ekta'; 
+            } else if (uName.includes('EPZ') || uName.includes('ЕПЗ')) {
+                cls = 'brand-epz'; 
+            }
+
+            return { name: m.service, title: m.service.replace(/^\[.*?\]\s*/, ''), numCost, priceText, cls: cls, code: m.code, isPackage: false };
+        });
+
+        processedMatches.sort((a, b) => b.numCost - a.numCost);
+        window.lastModalServices = processedMatches;
+
+        let modalCompBtn = document.getElementById('modalCompareBtn');
+        if (modalCompBtn) {
+            if (processedMatches.length >= 2) {
+                modalCompBtn.style.display = 'flex';
+            } else {
+                modalCompBtn.style.display = 'none';
+                if (isModalCompareMode) {
+                    window.toggleModalCompareMode();
+                }
+            }
+        }
+        
+        let html = processedMatches.map(m => {
+             m.label = m.priceText;
+             m.descToggleHTML = generateDescToggleHTML(findInDb(db.descriptions, m.name), m.code);
+             return generateServiceCardHTML(m, true);
+        }).join('');
+        
+        container.innerHTML = html;
     }
 
     window.parseChangelogLines = function(text) {
@@ -1974,9 +2514,7 @@
             !document.getElementById('rezervyModal').classList.contains('show') &&
             !document.getElementById('guideModal').classList.contains('show') &&
             !document.getElementById('rezervItemModal').classList.contains('show')) {
-            document.body.classList.remove('modal-open');
-            document.body.style.top = '';
-            window.scrollTo(0, scrollPos);
+            toggleBodyScroll(false);
         }
         document.getElementById('modalTitle').innerHTML = "Опис"; 
     }
