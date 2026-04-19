@@ -576,15 +576,25 @@
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
     // ВИПРАВЛЕНО replace(/"/g, '"') ТА replace(/'/g, "'") ЩОБ НЕ БУЛО ЗАВИСАНЬ
-    window.escapeHTML = function(str) {
-        if (!str) return '';
-        return str.toString().replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, '"').replace(/'/g, "'");
-    }
+window.escapeHTML = function(str) {
+    if (!str) return '';
+    return str.toString()
+        .replace(/&/g, "&")
+        .replace(/</g, "<")
+        .replace(/>/g, ">")
+        .replace(/"/g, '"') // Исправлено здесь
+        .replace(/'/g, "'");
+}
 
-    window.escapeForJS = function(str) {
-        if (!str) return '';
-        return str.toString().replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, "\\n").replace(/\r/g, "");
-    }
+window.escapeForJS = function(str) {
+    if (!str) return '';
+    return str.toString()
+        .replace(/\\/g, "\\\\")
+        .replace(/'/g, "\\'")
+        .replace(/"/g, '\\"') // Исправлено здесь
+        .replace(/\n/g, "\\n")
+        .replace(/\r/g, "");
+}
 
     function normalizeServiceName(s) {
         if (!s) return "";
