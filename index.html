@@ -6,7 +6,7 @@
     <title>SkillHUB Assistant</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e0e5ec">
+    <meta name="theme-color" content="#f0f4f8">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SkillHUB Assistant">
@@ -21,270 +21,260 @@
         }
 
         :root {
-            /* Neumorphism Світла тема */
-            --bg-color: #e0e5ec;
-            --text-main: #31344b;
-            --text-muted: #8a92a5;
-            --primary: #3b82f6;
-            --modal-overlay: rgba(224, 229, 236, 0.9);
+            --primary: #2563eb; 
+            --bg: #f0f4f8; 
+            --card-bg: #f0f4f8; 
+            --box-bg: #ffffff;
+            --input-bg: #ffffff;
+            --feat-bg: #f8fafc;
+            --text-main: #0f172a; 
+            --text-muted: #475569; 
+            --border: #e2e8f0;
+            --modal-overlay: rgba(15,23,42,0.5);
             
-            --shadow-light: #ffffff;
-            --shadow-dark: #a3b1c6;
+            --clr-support-bg: #fde047; --clr-support-text: #854d0e; 
+            --clr-ekta-bg: #3b82f6; --clr-ekta-text: #ffffff;    
+            --clr-epz-bg: #7dd3fc; --clr-epz-text: #0369a1;    
+            --clr-settings-bg: #4ade80; --clr-settings-text: #064e3b; 
+            --clr-install-bg: #a78bfa; --clr-install-text: #ffffff; 
             
-            --neu-out: 8px 8px 16px var(--shadow-dark), -8px -8px 16px var(--shadow-light);
-            --neu-in: inset 6px 6px 10px 0 var(--shadow-dark), inset -6px -6px 10px 0 var(--shadow-light);
-            --neu-btn-active: inset 4px 4px 8px var(--shadow-dark), inset -4px -4px 8px var(--shadow-light);
-            
-            /* М'які пастельні кольори */
-            --clr-support-bg: #fef9c3; --clr-support-text: #854d0e; 
-            --clr-ekta-bg: #eff6ff; --clr-ekta-text: #1e40af;    
-            --clr-epz-bg: #f0f9ff; --clr-epz-text: #075985;    
-            --clr-settings-bg: #f0fdf4; --clr-settings-text: #166534; 
-            --clr-install-bg: #faf5ff; --clr-install-text: #6b21a8; 
-            --clr-other-bg: var(--bg-color); --clr-other-text: var(--text-main);
+            --shadow-sm: 0 2px 5px rgba(0,0,0,0.03);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
         }
 
         [data-theme="dark"] {
-            /* Neumorphism Темна тема */
-            --bg-color: #262833;
-            --text-main: #e4e5e8;
-            --text-muted: #8a92a5;
-            --primary: #60a5fa;
-            --modal-overlay: rgba(38, 40, 51, 0.95);
-            --shadow-light: #323543;
-            --shadow-dark: #1a1c23;
-            
-            --neu-out: 7px 7px 14px var(--shadow-dark), -7px -7px 14px var(--shadow-light);
-            --neu-in: inset 5px 5px 10px var(--shadow-dark), inset -5px -5px 10px var(--shadow-light);
-            --neu-btn-active: inset 3px 3px 6px var(--shadow-dark), inset -3px -3px 6px var(--shadow-light);
-            
-            --clr-support-bg: #422006; --clr-support-text: #fde047;
-            --clr-ekta-bg: #1e3a8a; --clr-ekta-text: #bfdbfe;
-            --clr-epz-bg: #0c4a6e; --clr-epz-text: #bae6fd;
-            --clr-settings-bg: #064e3b; --clr-settings-text: #6ee7b7;
-            --clr-install-bg: #4c1d95; --clr-install-text: #e9d5ff;
+            --bg: #020617; 
+            --card-bg: #020617; 
+            --box-bg: #1e293b;
+            --input-bg: #0f172a;
+            --feat-bg: #334155;
+            --text-main: #f8fafc; 
+            --text-muted: #94a3b8; 
+            --border: #334155;
+            --modal-overlay: rgba(0,0,0,0.8);
         }
 
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
-        body { font-family: 'Inter', sans-serif; background: var(--bg-color); color: var(--text-main); margin: 0; padding: 0; min-height: 100vh; -webkit-font-smoothing: antialiased; }
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
+            margin: 0; padding: 0; min-height: 100vh; transition: background 0.3s ease;
+        }
         
-        .app-loader { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); display: flex; flex-direction: column; justify-content: center; align-items: center; z-index: 999999; transition: opacity 0.4s ease; }
+        .app-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--box-bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 999999; transition: opacity 0.4s ease;
+        }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner-box { width: 80px; height: 80px; display: flex; justify-content: center; align-items: center; margin-bottom: 25px; box-shadow: var(--neu-out); border-radius: 50%; }
-        .spinner-logo { font-size: 30px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 14px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; text-align: center; }
 
-        @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
+        .container { 
+            width: 100%; max-width: 480px; margin: 0 auto;
+            padding: 20px 16px 120px 16px; 
+        }
 
-        .container { width: 92%; max-width: 480px; padding: 20px 10px; margin: 2vh auto 180px auto; }
-        .page { display: none; }
-        .page.active { display: block; animation: fadeIn 0.4s ease; }
+        /* Сторінки */
+        .page { display: none; animation: fadeIn 0.3s ease; }
+        .page.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .neu-card { background: var(--bg-color); border-radius: 24px; box-shadow: var(--neu-out); padding: 20px; margin-bottom: 24px; }
-        .neu-input { width: 100%; padding: 18px 20px; border-radius: 18px; font-size: 16px; background: var(--bg-color); color: var(--text-main); border: none; outline: none; box-shadow: var(--neu-in); font-family: inherit; font-weight: 600; }
-        .neu-btn { background: var(--bg-color); color: var(--primary); border: none; border-radius: 18px; padding: 16px; font-weight: 800; font-size: 15px; cursor: pointer; box-shadow: var(--neu-out); display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; transition: 0.2s; }
-        .neu-btn:active { box-shadow: var(--neu-btn-active); transform: scale(0.98); }
-        .neu-btn-primary { background: var(--primary); color: white; box-shadow: 0 5px 15px rgba(37,99,235,0.3); }
-
-        /* Нижня Навігація */
+        /* Нижня навігація */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; right: 0; 
-            height: calc(75px + env(safe-area-inset-bottom)); 
+            background: var(--box-bg); border-top: 1px solid var(--border);
+            display: flex; justify-content: space-around; align-items: center;
+            height: calc(70px + env(safe-area-inset-bottom));
             padding-bottom: env(safe-area-inset-bottom);
-            background: var(--bg-color); border-radius: 30px 30px 0 0;
-            box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-evenly; align-items: center; z-index: 10000;
+            z-index: 1000; box-shadow: 0 -5px 15px rgba(0,0,0,0.05);
         }
-        .nav-item { width: 54px; height: 54px; border-radius: 18px; box-shadow: var(--neu-out); display: flex; justify-content: center; align-items: center; font-size: 22px; cursor: pointer; color: var(--text-muted); transition: 0.2s; }
-        .nav-item.active-nav { box-shadow: var(--neu-in); color: var(--primary); }
+        .nav-item {
+            flex: 1; display: flex; flex-direction: column; align-items: center;
+            justify-content: center; color: var(--text-muted); cursor: pointer; gap: 4px;
+            transition: 0.2s; font-size: 10px; font-weight: 700; text-transform: uppercase;
+        }
+        .nav-item.active { color: var(--primary); }
+        .nav-item svg { width: 24px; height: 24px; }
+        .nav-item.main-btn { transform: translateY(-15px); }
+        .nav-item.main-btn .icon-circle {
+            width: 56px; height: 56px; background: var(--primary); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: white;
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.4); border: 4px solid var(--bg);
+        }
 
         /* Пошук */
-        .search-wrapper { position: relative; margin-bottom: 20px; }
-        .clear-data-btn { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); background: var(--bg-color); color: #ef4444; border: none; width: 34px; height: 34px; border-radius: 50%; font-size: 14px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; box-shadow: var(--neu-out); z-index: 5;}
-        .suggestions-list { position: absolute; top: 110%; left: 0; right: 0; background: var(--bg-color); border-radius: 20px; box-shadow: var(--neu-out); max-height: 250px; overflow-y: auto; z-index: 100; padding: 10px; display: none; }
-        .suggestion-item { padding: 14px 18px; cursor: pointer; border-radius: 14px; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 8px; box-shadow: var(--neu-out); }
+        .search-wrapper { position: relative; margin-bottom: 12px; }
+        input { width: 100%; padding: 16px; border: 1px solid var(--border); border-radius: 18px; font-size: 16px; background: var(--input-bg); color: var(--text-main); outline: none; box-shadow: var(--shadow-sm); }
+        .price-wrapper { display: none; gap: 8px; margin-bottom: 15px; }
 
-        .price-wrapper { display: none; gap: 12px; margin-bottom: 24px; align-items: stretch; animation: fadeIn 0.3s ease; }
-        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; }
-        
-        /* Сервіси */
-        .service-list { display: flex; flex-direction: column; gap: 18px; }
-        .service-card { position: relative; padding: 20px; border-radius: 24px; cursor: pointer; box-shadow: var(--neu-out); transition: 0.2s; background: var(--bg-color); overflow: hidden; }
-        .service-card.selected-for-compare { border: 2px solid var(--primary); }
-        .compare-checkbox { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%; background: var(--bg-color); box-shadow: var(--neu-in); display: none; align-items: center; justify-content: center; }
-        .service-card.compare-mode { padding-left: 55px; }
-        .service-card.compare-mode .compare-checkbox { display: flex; }
-        .service-card.selected-for-compare .compare-checkbox { background: var(--primary); }
-        .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: #fff; font-weight: 900; }
-
-        .price-badge { font-size: 14px; font-weight: 900; padding: 8px 14px; border-radius: 12px; box-shadow: var(--neu-in); background: var(--bg-color); min-width: 95px; text-align: center; }
-        .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 5px 10px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: rgba(255,255,255,0.4); box-shadow: var(--neu-out); }
-
-        /* Панель порівняння */
-        .compare-action-bar { 
-            position: fixed; bottom: calc(85px + env(safe-area-inset-bottom)); 
-            left: 5%; width: 90%; background: var(--bg-color); 
-            padding: 16px 20px; box-shadow: var(--neu-out); 
-            display: flex; justify-content: space-between; align-items: center; 
-            transform: translateY(200%); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); 
-            z-index: 9999; border-radius: 20px;
+        /* Картки Навчання */
+        .training-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .training-card { 
+            background: var(--box-bg); padding: 20px; border-radius: 20px; 
+            border: 1px solid var(--border); text-align: center; cursor: pointer;
+            box-shadow: var(--shadow-sm); transition: 0.2s;
         }
-        .compare-action-bar.show { transform: translateY(0); }
-        .compare-execute-btn { background: var(--bg-color); border: none; color: var(--text-muted); padding: 12px 20px; border-radius: 14px; font-size: 14px; font-weight: 800; box-shadow: var(--neu-in); }
-        .compare-execute-btn.ready { background: var(--primary); color: #fff; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); cursor: pointer; }
+        .training-card:active { transform: scale(0.95); }
+        .training-card.full { grid-column: span 2; }
+        .training-icon { font-size: 32px; margin-bottom: 8px; display: block; }
+        .training-title { font-weight: 800; font-size: 14px; }
 
-        /* Модалки */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(10px); display: none; align-items: flex-end; justify-content: center; z-index: 100020; opacity: 0; transition: opacity 0.3s; }
-        .modal.show { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg-color); width: 100%; max-width: 480px; border-radius: 35px 35px 0 0; padding: 30px 24px; max-height: 92vh; overflow-y: auto; box-shadow: 0 -20px 50px rgba(0,0,0,0.1); transform: translateY(100%); transition: 0.3s; }
-        .modal.show .modal-content { transform: translateY(0); }
-        .modal-close { width: 44px; height: 44px; border-radius: 50%; box-shadow: var(--neu-out); display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 900; cursor: pointer; border: none; background: var(--bg-color); color: var(--text-muted); }
+        /* Інші стилі з вашого коду */
+        .ua-name { font-weight: 800; font-size: 19px; margin-bottom: 5px; border-left: 5px solid var(--primary); padding-left: 12px; }
+        .service-list { display: flex; flex-direction: column; gap: 12px; margin-top: 15px; }
+        .service-card { padding: 16px; border-radius: 20px; box-shadow: var(--shadow-md); cursor: pointer; }
         
-        .gallery-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100030; display: none; flex-direction: column; align-items: center; justify-content: center; backdrop-filter: blur(10px); }
-        .gallery-content img { max-width: 90%; max-height: 75vh; border-radius: 15px; box-shadow: 0 0 30px rgba(0,0,0,0.5); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Модалки */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(4px); display: none; align-items: flex-end; justify-content: center; z-index: 9999; }
+        .modal.show { display: flex; }
+        .modal-content { background: var(--box-bg); width: 100%; max-width: 480px; border-radius: 24px 24px 0 0; padding: 24px; max-height: 90vh; overflow-y: auto; transform: translateY(100%); transition: 0.3s ease; }
+        .modal.show .modal-content { transform: translateY(0); }
+        
+        /* Кнопка оновлення бази (в налаштуваннях) */
+        .refresh-db-row { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--feat-bg); border-radius: 15px; margin-bottom: 20px; }
     </style>
 </head>
 <body>
 
 <div id="appLoader" class="app-loader">
-    <div class="spinner-box"><div class="spinner-logo">⚡</div></div>
-    <div class="loader-text">Синхронізація ...</div>
+    <div class="spinner-logo" style="font-size: 50px;">⚡</div>
+    <div class="loader-text">Синхронізація SkillHUB...</div>
 </div>
 
 <div class="container">
-    <div class="header-row">
-        <h2>SkillHUB</h2>
-        <div class="status-wrapper"><div id="statusDot" class="pulse-dot dot-loading"></div></div>
-    </div>
+    
+    <section id="page-reserves" class="page">
+        <h2 style="margin-bottom: 20px;">📦 Резерви магазинів</h2>
+        <select id="storeFilter" class="neu-input" onchange="window.renderRezervyList()" style="width:100%; padding:15px; border-radius:15px; border:1px solid var(--border); margin-bottom:20px;">
+            <option value="">-- Оберіть магазин --</option>
+        </select>
+        <div id="rezervyList"></div>
+    </section>
 
-    <div id="page-search" class="page active">
+    <section id="page-search" class="page active">
+        <h2 style="margin-bottom: 20px;">🔍 Пошук послуг</h2>
         <div class="search-wrapper">
-            <input type="text" id="catInput" class="neu-input" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
-            <button id="clearAllBtn" class="clear-data-btn">✕</button>
-            <div id="customSuggestions" class="suggestions-list"><div id="matchesContainer"></div></div>
+            <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+            <div id="customSuggestions" class="suggestions-list" style="position:absolute; width:100%; background:var(--box-bg); z-index:100; border-radius:15px; box-shadow:var(--shadow-lg); display:none; margin-top:5px; padding:10px;">
+                <div id="matchesContainer"></div>
+            </div>
         </div>
         <div class="price-wrapper" id="priceWrapper">
-            <input type="number" id="devicePrice" class="neu-input" placeholder="Вартість техніки ₴" inputmode="numeric">
-            <button class="neu-btn" id="okBtn" style="width: 80px;">ОК</button>
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
+            <button class="ok-btn" id="okBtn" style="background:var(--primary); color:white; border:none; border-radius:12px; padding:0 20px; font-weight:800;">ОК</button>
         </div>
         <div id="result" class="result-box">
-            <div class="neu-card">
-                <div class="ua-name" id="uaTitle"></div>
-                <div id="itemCategory" class="item-category"></div>
-                <div id="techInfo" class="tech-info"></div>
-            </div>
-            <div class="compare-header">
-                <span style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase;">Послуги</span>
-                <button id="toggleCompareBtn" onclick="window.toggleCompareMode()" class="compare-toggle-btn" style="display: none;">⚖️ Порівняти</button>
-            </div>
+            <div class="ua-name" id="uaTitle"></div>
+            <div id="techInfo" class="tech-info" style="margin-top:10px;"></div>
             <div id="serviceList" class="service-list"></div>
         </div>
-    </div>
+    </section>
 
-    <div id="page-reserves" class="page">
-        <div class="neu-card">
-            <h3 style="margin:0 0 15px 0; font-weight:800;">📦 Магазини</h3>
-            <select id="storeFilter" class="neu-input" onchange="window.renderRezervyList()">
-                <option value="">-- Оберіть магазин --</option>
-            </select>
-        </div>
-        <div id="rezervyList"></div>
-    </div>
-
-    <div id="page-training" class="page">
+    <section id="page-training" class="page">
+        <h2 style="margin-bottom: 20px;">🎓 База знань</h2>
         <div class="training-grid">
-            <div class="training-card" onclick="window.openTrainingCategory('support')"><div class="training-icon">🛡️</div><div class="training-title">Support</div></div>
-            <div class="training-card" onclick="window.openTrainingCategory('ekta')"><div class="training-icon">🛡️</div><div class="training-title">ЕКТА</div></div>
-            <div class="training-card" onclick="window.openTrainingCategory('epz')"><div class="training-icon">💻</div><div class="training-title">ЕПЗ</div></div>
-            <div class="training-card" onclick="window.openTrainingCategory('settings')"><div class="training-icon">⚙️</div><div class="training-title">Налаштування</div></div>
-            <div class="training-card full-width" onclick="window.openTrainingCategory('montazh')"><div class="training-icon">🛠️</div><div class="training-title">Монтаж</div></div>
+            <div class="training-card" onclick="window.filterTraining('support')">
+                <span class="training-icon">🛡️</span>
+                <div class="training-title">Support</div>
+            </div>
+            <div class="training-card" onclick="window.filterTraining('ekta')">
+                <span class="training-icon">🔵</span>
+                <div class="training-title">Екта</div>
+            </div>
+            <div class="training-card" onclick="window.filterTraining('epz')">
+                <span class="training-icon">💻</span>
+                <div class="training-title">ЕПЗ / ПЗ</div>
+            </div>
+            <div class="training-card" onclick="window.filterTraining('settings')">
+                <span class="training-icon">⚙️</span>
+                <div class="training-title">Налаштування</div>
+            </div>
+            <div class="training-card full" onclick="window.filterTraining('install')">
+                <span class="training-icon">🛠️</span>
+                <div class="training-title">Монтаж та Встановлення</div>
+            </div>
         </div>
-    </div>
+    </section>
 
-    <div id="page-settings" class="page">
-        <div class="neu-card" style="text-align: center;">
-            <div style="font-size: 40px; margin-bottom: 10px;">🇺🇦</div>
-            <h3 style="margin:0; font-weight: 900;">ROZETKA KHARKIV REGION</h3>
-            <p id="appVersionDisp" style="margin: 5px 0 0 0; font-size: 12px; color: var(--text-muted); font-weight: 700;">Версія: v1.0</p>
+    <section id="page-settings" class="page">
+        <h2 style="margin-bottom: 20px;">⚙️ Налаштування</h2>
+        
+        <div class="refresh-db-row">
+            <span style="font-weight:700;">База даних</span>
+            <button id="forceUpdateBtn" class="refresh-db-btn" style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:10px; font-weight:700;">Оновити</button>
         </div>
-        <div class="neu-card">
-            <div class="settings-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span style="font-weight: 700;">Темна тема</span>
-                <div id="themeToggle" class="neu-switch" style="width:60px; height:30px; background:var(--bg-color); box-shadow:var(--neu-in); border-radius:20px; position:relative; cursor:pointer; padding:3px;">
-                    <div class="neu-switch-thumb" style="width:24px; height:24px; background:var(--primary); border-radius:50%; box-shadow:var(--neu-out); transition: 0.3s; transform:translateX(0);"></div>
-                </div>
-            </div>
-            <div style="margin-top: 15px;">
-                <span style="font-weight: 700; display: block; margin-bottom: 10px;">Магазин за замовчуванням</span>
-                <select id="defaultStoreSettings" class="neu-input" onchange="window.saveDefaultStore(this.value)">
-                    <option value="">-- Не обрано --</option>
-                </select>
-            </div>
+
+        <div class="refresh-db-row" onclick="document.getElementById('themeToggle').click()">
+            <span style="font-weight:700;">Змінити тему</span>
+            <div id="themeToggle" style="cursor:pointer; font-size:20px;">🌓</div>
         </div>
-        <button id="forceUpdateBtn" class="neu-btn">🔄 Оновити базу даних</button>
-    </div>
+
+        <div class="pwa-guide-container" style="margin-top:30px;">
+             <button onclick="window.openGuideModal()" class="neu-btn" style="width:100%; padding:15px; border-radius:15px; border:1px solid var(--border); background:var(--box-bg); font-weight:800;">📖 Як встановити додаток</button>
+        </div>
+        
+        <div class="footer" style="text-align:center; margin-top:40px; font-size:12px; color:var(--text-muted);">
+            🇺🇦 ROZETKA KHARKIV REGION<br><span id="appVersionDisp">v1.0</span>
+        </div>
+    </section>
+
 </div>
 
 <nav class="bottom-nav">
-    <div class="nav-item active-nav" data-page="search" onclick="window.switchPage('search')">🔍</div>
-    <div class="nav-item" data-page="reserves" onclick="window.switchPage('reserves')">📦</div>
-    <div class="nav-item" data-page="training" onclick="window.switchPage('training')">🎓</div>
-    <div class="nav-item" data-page="settings" onclick="window.switchPage('settings')">⚙️</div>
+    <div class="nav-item" onclick="window.switchPage('reserves')">
+        <span>📦</span>
+        <span>Резерви</span>
+    </div>
+    <div class="nav-item active main-btn" onclick="window.switchPage('search')">
+        <div class="icon-circle">🔍</div>
+        <span>Пошук</span>
+    </div>
+    <div class="nav-item" onclick="window.switchPage('training')">
+        <span>🎓</span>
+        <span>Навчання</span>
+    </div>
+    <div class="nav-item" onclick="window.switchPage('settings')">
+        <span>⚙️</span>
+        <span>Налаштування</span>
+    </div>
 </nav>
 
-<div id="compareBar" class="compare-action-bar">
-    <div class="compare-status-text" id="compareStatusText" style="font-weight: 800;">Оберіть 2 сервіси</div>
-    <button class="compare-execute-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()">Порівняти (0/2)</button>
-</div>
-
-<div id="compareModal" class="modal"><div class="modal-content"><div class="modal-header"><b>Порівняння</b><button onclick="window.closeCompareModal()" class="modal-close">✕</button></div><div id="compareModalBody"></div></div></div>
-<div id="descModal" class="modal"><div class="modal-content"><div class="modal-header"><b id="modalTitle"></b><button onclick="window.closeModal()" class="modal-close">✕</button></div><div id="modalBody"></div><button onclick="window.closeModal()" class="neu-btn neu-btn-primary" style="margin-top:20px;">Зрозуміло</button></div></div>
-<div id="rezervItemModal" class="modal"><div class="modal-content" style="max-height: 95vh;"><div class="modal-header"><b id="rezervItemTitle"></b><button onclick="window.closeRezervItemModal()" class="modal-close">✕</button></div><div id="rezervItemBody"><div id="rezervTechInfo" style="display:none; flex-direction:column; gap:12px; margin-bottom:20px;"></div><div id="rezervServiceList" class="service-list"></div></div></div></div>
-<div id="galleryModal" class="gallery-modal"><div class="gallery-content"><img id="galleryImage" src=""><button onclick="window.closeGallery()" class="neu-btn" style="width:auto; padding:10px 30px; margin-top:20px; color:#fff;">Закрити</button></div></div>
-
-<script>
+<div id="descModal" class="modal"><div class="modal-content"><div class="modal-header"><b id="modalTitle"></b></div><div id="modalBody"></div><button onclick="window.closeModal()" style="width:100%; padding:15px; margin-top:15px; border-radius:15px; border:none; background:var(--primary); color:white; font-weight:800;">Зрозуміло</button></div></div>
+<div id="guideModal" class="modal"><div class="modal-content" id="guideContent"></div></div>
 const API_URL = 'https://script.google.com/macros/s/AKfycbzhFVFblevDpHkyfQ446Q7SymCNu-Kpfrfdj6s-ugNBL3mO2KySA3Rw4nQaL-FU5d_Ofg/exec';
-    const CACHE_KEY = 'skillhub_v1000_drive_fix_final'; 
+    const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: [], serviceCodes: {}, rezervyData: [] };
     let currentCategoryData = null;
     let scrollPos = 0;
-    
-    let isCompareMode = false;
-    let compareSelection = [];
-    window.lastCalculatedServices = [];
 
-    let isModalCompareMode = false;
-    let modalCompareSelection = [];
-    window.lastModalServices = [];
-
-    // --- НАВІГАЦІЯ ТА ТЕМА ---
+    // --- НАВІГАЦІЯ ---
     window.switchPage = function(pageId) {
+        // Ховаємо всі сторінки
         document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        // Показуємо обрану
         document.getElementById('page-' + pageId).classList.add('active');
-        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active-nav'));
-        const activeBtn = document.querySelector(`[data-page="${pageId}"]`);
-        if(activeBtn) activeBtn.classList.add('active-nav');
         
-        if (isCompareMode) window.toggleCompareMode();
+        // Оновлюємо іконки в меню
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        const activeNav = document.querySelector(`.nav-item[onclick*="${pageId}"]`);
+        if (activeNav) activeNav.classList.add('active');
+
         window.scrollTo(0, 0);
-        if(pageId === 'reserves') window.renderRezervyList();
+
+        // Спеціальні дії для сторінок
+        if (pageId === 'reserves') window.renderRezervyList();
     };
 
+    // --- ТЕМА ---
     let currentTheme = localStorage.getItem('theme') || 'light';
     document.documentElement.setAttribute('data-theme', currentTheme);
-    const themeBtn = document.getElementById('themeToggle');
-    const themeThumb = themeBtn.querySelector('.neu-switch-thumb');
     
-    if(currentTheme === 'dark') themeThumb.style.transform = 'translateX(30px)';
-
-    themeBtn.onclick = () => {
+    document.getElementById('themeToggle').onclick = () => {
         currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
         document.documentElement.setAttribute('data-theme', currentTheme);
         localStorage.setItem('theme', currentTheme);
-        themeThumb.style.transform = currentTheme === 'dark' ? 'translateX(30px)' : 'translateX(0)';
+        const thumb = document.querySelector('.neu-switch-thumb');
+        thumb.style.transform = currentTheme === 'dark' ? 'translateX(30px)' : 'translateX(0)';
     };
 
     // --- ДОПОМІЖНІ ФУНКЦІЇ ---
@@ -295,27 +285,12 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzhFVFblevDpHkyfQ446Q7S
         return s.replace(/^\[.*?\]\s*/, '').replace(/[«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
     }
 
-    function escapeForJS(str) {
-        if (!str) return '';
-        return str.toString().replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "\\\"").replace(/\n/g, "\\n").replace(/\r/g, "");
-    }
-
     function debounce(func, wait) {
         let timeout;
         return function(...args) {
             clearTimeout(timeout);
             timeout = setTimeout(() => func.apply(this, args), wait);
         };
-    }
-
-    function findInDb(dict, key) {
-        if (!key || !dict) return "";
-        if (dict[key]) return dict[key];
-        let clean = normalizeServiceName(key);
-        for (let k in dict) {
-            if (normalizeServiceName(k) === clean) return dict[k];
-        }
-        return "";
     }
 
     // --- РОБОТА З ДАНИМИ ---
@@ -344,7 +319,7 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzhFVFblevDpHkyfQ446Q7S
             window.populateStoreFilter();
         } catch (e) {
             setAppStatus('error');
-            if (first) document.querySelector('.loader-text').innerHTML = "❌ Помилка завантаження";
+            if (first) document.querySelector('.loader-text').innerHTML = "❌ Відсутній зв'язок";
         }
     }
 
@@ -360,38 +335,29 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzhFVFblevDpHkyfQ446Q7S
         document.getElementById('appLoader').classList.add('hidden');
     }
 
-    // --- ПОШУК ТА РОЗРАХУНОК СЕРВІСІВ ---
+    // --- ПОШУК ТА РОЗРАХУНОК ---
     const elCatInput = document.getElementById('catInput');
     elCatInput.addEventListener('input', debounce(() => {
         const val = normalize(elCatInput.value);
-        const clearBtn = document.getElementById('clearAllBtn');
-        clearBtn.style.display = val.length > 0 ? 'flex' : 'none';
-        
-        if (val.length < 2) { 
-            document.getElementById('customSuggestions').style.display = 'none'; 
-            return; 
-        }
+        if (val.length < 2) { document.getElementById('customSuggestions').style.display = 'none'; return; }
         
         const matches = db.categories.filter(c => 
             normalize(c.ua).includes(val) || normalize(c.ru).includes(val)
         ).slice(0, 10);
-        
+
         if (matches.length > 0) {
             document.getElementById('customSuggestions').style.display = 'block';
             document.getElementById('matchesContainer').innerHTML = matches.map(m => 
-                `<div class="suggestion-item" onclick="window.selectItemByName('${escapeForJS(m.ua)}')">${m.ua}</div>`
+                `<div class="suggestion-item" onclick="window.selectItem('${m.ua.replace(/'/g, "\\'")}')">${m.ua}</div>`
             ).join('');
-        } else {
-            document.getElementById('customSuggestions').style.display = 'none';
         }
     }, 150));
 
-    window.selectItemByName = function(name) {
-        currentCategoryData = db.categories.find(c => c.ua === name);
-        elCatInput.value = name;
+    window.selectItem = function(uaName) {
+        currentCategoryData = db.categories.find(c => c.ua === uaName);
+        elCatInput.value = uaName;
         document.getElementById('customSuggestions').style.display = 'none';
-        document.getElementById('uaTitle').innerText = name;
-        document.getElementById('itemCategory').innerText = currentCategoryData.category || "";
+        document.getElementById('uaTitle').innerText = uaName;
         document.getElementById('priceWrapper').style.display = 'flex';
         document.getElementById('result').style.display = 'block';
         renderServices();
@@ -399,166 +365,119 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbzhFVFblevDpHkyfQ446Q7S
 
     function renderServices() {
         const p = parseFloat(document.getElementById('devicePrice').value) || 0;
-        const techCont = document.getElementById('techInfo');
+        const listCont = document.getElementById('serviceList');
         
         // Технічна довідка
         let techHTML = "";
         if (currentCategoryData.complexity) {
-            techHTML += `<div class="tech-item"><div class="icon-circle bg-complexity">⚙️</div><div><span style="font-size:9px; font-weight:800; color:var(--text-muted);">СКЛАДНІСТЬ</span><br><b>${currentCategoryData.complexity}</b></div></div>`;
+            techHTML += `<div style="font-size:12px; margin-bottom:10px;"><b>Складність ремонту:</b> ${currentCategoryData.complexity}</div>`;
         }
-        if (currentCategoryData.photo1) {
-            techHTML += `<div class="tech-photo-wrapper" onclick="window.openGallery('${currentCategoryData.photo1}')"><div class="photo-icon">📸</div><div class="photo-text"><span class="photo-title">Приклади пошкоджень</span><span class="photo-subtitle">Глянути фото</span></div><div class="photo-arrow">❯</div></div>`;
-        }
-        techCont.innerHTML = techHTML;
-        techCont.style.display = techHTML ? 'flex' : 'none';
+        document.getElementById('techInfo').innerHTML = techHTML;
 
-        // Розрахунок цін
-        const servicesNames = currentCategoryData.service.split('|').map(s => s.trim());
-        const calculated = servicesNames.map(name => {
+        // Послуги
+        const serviceNames = currentCategoryData.service.split('|').map(s => s.trim());
+        listCont.innerHTML = serviceNames.map(name => {
             const cleanName = normalizeServiceName(name);
-            const tariffs = db.tariffs.filter(t => normalizeServiceName(t.service) === cleanName);
-            let tariff = tariffs.find(t => p >= t.minPrice && p <= t.maxPrice);
-            if (!tariff && tariffs.length > 0) tariff = tariffs[0];
-            
-            let costLabel = "Дізнатись";
-            let numCost = 0;
+            const matchingTariffs = db.tariffs.filter(t => normalizeServiceName(t.service) === cleanName);
+            let tariff = matchingTariffs.find(t => p >= t.minPrice && p <= t.maxPrice);
+            if (!tariff && matchingTariffs.length > 0) tariff = matchingTariffs[0];
 
+            let costLabel = "Дізнатись";
             if (tariff && tariff.cost) {
                 let raw = tariff.cost.toString();
-                if (raw.includes('%')) {
-                    numCost = Math.round(p * parseFloat(raw) / 100);
-                    costLabel = numCost.toLocaleString() + " ₴";
-                } else {
-                    numCost = parseFloat(raw.replace(/[^\d.]/g, '')) || 0;
-                    costLabel = numCost > 0 ? numCost.toLocaleString() + " ₴" : raw;
-                }
+                costLabel = raw.includes('%') ? Math.round(p * parseFloat(raw) / 100) + " ₴" : raw;
             }
 
-            let cls = 'brand-other';
-            if (name.toUpperCase().includes('SUPPORT')) cls = 'brand-support';
-            else if (name.toUpperCase().includes('EKTA')) cls = 'brand-ekta';
-            else if (name.toUpperCase().includes('EPZ')) cls = 'brand-epz';
-            else if (name.toUpperCase().includes('МОНТАЖ')) cls = 'brand-install';
+            let cls = name.toLowerCase().includes('support') ? 'brand-support' : 
+                      name.toLowerCase().includes('ekta') ? 'brand-ekta' : 'brand-other';
 
-            return { name, title: name.replace(/^\[.*?\]\s*/, ''), label: costLabel, numCost, cls, isPackage: name.includes('Пакет') || name.includes('Монтаж') };
-        });
-
-        window.lastCalculatedServices = calculated;
-        document.getElementById('serviceList').innerHTML = calculated.map(s => `
-            <div class="service-card ${s.cls} ${isCompareMode ? 'compare-mode' : ''}" onclick="window.handleServiceClick('${escapeForJS(s.name)}', ${s.isPackage})">
-                <div class="compare-checkbox"></div>
-                <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                    <div class="service-content-left">
-                        <div class="brand-tag">${s.cls.replace('brand-','')}</div>
-                        <div class="service-title">${s.title}</div>
+            return `
+                <div class="service-card ${cls}" onclick="window.openModal('${name.replace(/'/g, "\\'")}')">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div class="service-title">${name.replace(/^\[.*?\]\s*/, '')}</div>
+                        <div class="price-badge">${costLabel}</div>
                     </div>
-                    <div class="price-badge">${s.label}</div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // --- НАВЧАННЯ (ФІЛЬТР) ---
+    window.filterTraining = function(keyword) {
+        window.switchPage('search');
+        document.getElementById('uaTitle').innerText = "Категорія: " + keyword.toUpperCase();
+        document.getElementById('priceWrapper').style.display = 'none';
+        document.getElementById('result').style.display = 'block';
+        
+        // Фільтруємо всі сервіси з тарифів за ключовим словом
+        const matches = db.tariffs.filter(t => 
+            normalize(t.service).includes(normalize(keyword)) || 
+            normalize(t.cat || "").includes(normalize(keyword))
+        );
+
+        document.getElementById('serviceList').innerHTML = matches.map(m => `
+            <div class="service-card brand-settings" onclick="window.openModal('${m.service.replace(/'/g, "\\'")}')">
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div class="service-title">${m.service}</div>
+                    <div class="price-badge">${m.cost}</div>
                 </div>
             </div>
         `).join('');
-        
-        document.getElementById('toggleCompareBtn').style.display = calculated.length > 1 ? 'block' : 'none';
-    }
-
-    // --- МОДАЛКИ ТА ПОРІВНЯННЯ ---
-    window.handleServiceClick = function(name, isPkg) {
-        if (isCompareMode && !isPkg) {
-            const idx = compareSelection.indexOf(name);
-            if (idx > -1) compareSelection.splice(idx, 1);
-            else if (compareSelection.length < 2) compareSelection.push(name);
-            
-            updateCompareUI();
-            renderServices();
-        } else {
-            window.openModal(name);
-        }
-    };
-
-    function updateCompareUI() {
-        const count = compareSelection.length;
-        const bar = document.getElementById('compareBar');
-        const btn = document.getElementById('compareExecuteBtn');
-        document.getElementById('compareStatusText').innerText = count === 2 ? "Готово!" : `Обрано: ${count}/2`;
-        btn.className = 'compare-execute-btn ' + (count === 2 ? 'ready' : '');
-    }
-
-    window.toggleCompareMode = function() {
-        isCompareMode = !isCompareMode;
-        compareSelection = [];
-        document.getElementById('toggleCompareBtn').classList.toggle('active');
-        document.getElementById('compareBar').classList.toggle('show', isCompareMode);
-        renderServices();
-    };
-
-    window.handleExecuteCompare = function() {
-        if(compareSelection.length !== 2) return;
-        const s1 = window.lastCalculatedServices.find(s => s.name === compareSelection[0]);
-        const s2 = window.lastCalculatedServices.find(s => s.name === compareSelection[1]);
-        const d1 = db.descriptions[s1.name] || "Опис відсутній";
-        const d2 = db.descriptions[s2.name] || "Опис відсутній";
-
-        document.getElementById('compareModalBody').innerHTML = `
-            <div class="compare-wrapper">
-                <table class="compare-table">
-                    <tr>
-                        <th>${s1.title}<br><small>${s1.label}</small></th>
-                        <th>${s2.title}<br><small>${s2.label}</small></th>
-                    </tr>
-                    <tr>
-                        <td>${d1.replace(/\|/g, '<br>')}</td>
-                        <td>${d2.replace(/\|/g, '<br>')}</td>
-                    </tr>
-                </table>
-            </div>`;
-        document.getElementById('compareModal').classList.add('show');
-    };
-
-    window.openModal = function(name) {
-        scrollPos = window.pageYOffset;
-        document.body.classList.add('modal-open');
-        document.getElementById('modalTitle').innerText = name.replace(/^\[.*?\]\s*/, '');
-        const desc = db.descriptions[name] || "Інформація оновлюється...";
-        document.getElementById('modalBody').innerHTML = `<div class="neu-card" style="box-shadow:var(--neu-in); font-size:14px; line-height:1.6;">${desc.replace(/\|/g, '<br>')}</div>`;
-        document.getElementById('descModal').classList.add('show');
-    };
-
-    window.closeModal = () => {
-        document.getElementById('descModal').classList.remove('show');
-        document.body.classList.remove('modal-open');
-        window.scrollTo(0, scrollPos);
     };
 
     // --- РЕЗЕРВИ ---
+    window.populateStoreFilter = function() {
+        if (!db.rezervyData) return;
+        const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
+        const html = '<option value="">-- Оберіть магазин --</option>' + stores.map(s => `<option value="${s}">${s}</option>`).join('');
+        document.getElementById('storeFilter').innerHTML = html;
+        document.getElementById('defaultStoreSettings').innerHTML = html;
+        const def = localStorage.getItem('skillhub_default_store');
+        if (def) { document.getElementById('storeFilter').value = def; document.getElementById('defaultStoreSettings').value = def; }
+    }
+
+    window.saveDefaultStore = (val) => localStorage.setItem('skillhub_default_store', val);
+
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
         const cont = document.getElementById('rezervyList');
-        if (!store) { cont.innerHTML = '<div style="text-align:center; padding:40px; color:var(--text-muted);">Оберіть магазин</div>'; return; }
+        if (!store) return;
         const matches = db.rezervyData.filter(r => r.store === store);
         cont.innerHTML = matches.map(r => `
-            <div class="rezervy-item" onclick="window.openModal('${escapeForJS(r.cat)}')">
+            <div class="rezervy-item" onclick="window.openModal('${r.cat.replace(/'/g, "\\'")}')">
                 <div>
                     <div class="rezervy-name">${r.name}</div>
                     <div class="rezervy-cat">${r.cat}</div>
                 </div>
-                <div class="rezervy-price">${Math.round(r.price).toLocaleString()} ₴</div>
+                <div class="rezervy-price">${Math.round(r.price)} ₴</div>
             </div>
         `).join('');
-    };
+    }
+
+    // --- МОДАЛКИ ---
+    window.openModal = function(name) {
+        scrollPos = window.pageYOffset;
+        document.body.classList.add('modal-open');
+        document.getElementById('modalTitle').innerText = name;
+        const desc = db.descriptions[name] || "Опис очікується...";
+        document.getElementById('modalBody').innerHTML = desc.replace(/\|/g, '<br>');
+        document.getElementById('descModal').classList.add('show');
+    }
+
+    window.closeModal = () => {
+        document.getElementById('descModal').classList.remove('show');
+        document.body.classList.remove('modal-open');
+    }
 
     // --- ІНІЦІАЛІЗАЦІЯ ---
-    document.getElementById('clearAllBtn').onclick = () => {
-        elCatInput.value = ""; document.getElementById('devicePrice').value = "";
-        document.getElementById('result').style.display = 'none';
-        document.getElementById('clearAllBtn').style.display = 'none';
-    };
     document.getElementById('okBtn').onclick = () => renderServices();
+    document.getElementById('forceUpdateBtn').onclick = () => refreshData();
     
-    window.closeCompareModal = () => document.getElementById('compareModal').classList.remove('show');
-    window.closeRezervItemModal = () => document.getElementById('rezervItemModal').classList.remove('show');
-    window.openGallery = (url) => { document.getElementById('galleryImage').src = url; document.getElementById('galleryModal').style.display = 'flex'; };
-    window.closeGallery = () => document.getElementById('galleryModal').style.display = 'none';
-
     init();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(()=>{}); });
+    }
 </script>
 </body>
 </html>
