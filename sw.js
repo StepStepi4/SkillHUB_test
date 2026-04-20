@@ -1,4 +1,4 @@
-const CACHE_NAME = 'skillhub-test-cache-v1';
+const CACHE_NAME = 'skillhub-test-cache-v2';
 const CACHE_ASSETS = ['./', './index.html', './manifest.json', './icon-192.png', './icon-512.jpg'];
 
 self.addEventListener('install', (event) => {
