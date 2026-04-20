@@ -233,28 +233,28 @@
         .neu-switch-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--primary); box-shadow: var(--neu-out); transition: 0.3s; transform: translateX(0); }
         [data-theme="dark"] .neu-switch-thumb { transform: translateX(28px); background: #8b5cf6; }
 
-        /* Нижня Навігація */
+        /* НИЖНЯ НАВІГАЦІЯ - ПЕРЕРОБЛЕНА ДЛЯ 4 КНОПОК */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; height: 85px;
-            background: var(--bg-color); border-radius: 35px 35px 0 0;
+            position: fixed; bottom: 0; left: 0; right: 0; 
+            height: calc(75px + env(safe-area-inset-bottom)); /* Фікс для iPhone */
+            padding-bottom: env(safe-area-inset-bottom);
+            background: var(--bg-color); border-radius: 30px 30px 0 0;
             box-shadow: 0 -10px 25px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-evenly; align-items: center;
-            z-index: 1000; padding: 0 10px;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 1000; padding-left: 10px; padding-right: 10px;
         }
-        [data-theme="dark"] .bottom-nav { box-shadow: 0 -10px 25px rgba(0,0,0,0.4); }
+        [data-theme="dark"] .bottom-nav { box-shadow: 0 -10px 25px rgba(0,0,0,0.3); }
         .nav-item {
-            width: 54px; height: 54px; border-radius: 18px;
+            width: 50px; height: 50px; border-radius: 16px;
             box-shadow: var(--neu-out); display: flex; justify-content: center; align-items: center;
-            font-size: 22px; cursor: pointer; transition: 0.3s; color: var(--text-muted);
+            font-size: 22px; cursor: pointer; transition: all 0.3s ease; color: var(--text-muted);
+            -webkit-tap-highlight-color: transparent;
         }
-        .nav-item.active-nav { box-shadow: var(--neu-in); color: var(--primary); }
-        .nav-item.center-nav {
-            width: 70px; height: 70px; border-radius: 50%;
-            transform: translateY(-20px); font-size: 28px;
-            background: var(--bg-color); color: var(--primary);
-            box-shadow: var(--neu-out); border: 4px solid var(--bg-color);
+        .nav-item:active { transform: scale(0.92); }
+        .nav-item.active-nav { 
+            box-shadow: var(--neu-in); 
+            color: var(--primary); 
         }
-        .nav-item.center-nav.active-nav { box-shadow: var(--neu-in); }
 
         /* СТИЛІ ПОРІВНЯННЯ */
         .service-card.compare-mode { padding-left: 45px; }
@@ -269,7 +269,7 @@
         .compare-toggle-btn:active { box-shadow: var(--neu-btn-active); }
         .compare-toggle-btn.active { color: #ef4444; }
         
-        .compare-action-bar { position: fixed; bottom: 85px; left: 0; width: 100%; background: var(--bg-color); padding: 16px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; }
+        .compare-action-bar { position: fixed; bottom: calc(85px + env(safe-area-inset-bottom)); left: 0; width: 100%; background: var(--bg-color); padding: 16px 24px; box-shadow: 0 -10px 30px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; transform: translateY(150%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9998; border-radius: 30px 30px 0 0; }
         .compare-action-bar.show { transform: translateY(0); }
         .compare-status-text { font-size: 14px; font-weight: 800; color: var(--text-main); }
         .compare-execute-btn { background: var(--bg-color); border: none; color: var(--text-muted); padding: 12px 24px; border-radius: 16px; font-size: 14px; font-weight: 800; cursor: not-allowed; transition: 0.2s; box-shadow: var(--neu-in); }
@@ -285,7 +285,7 @@
         /* Модалки */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(5px); display: none; align-items: flex-end; justify-content: center; z-index: 100020; opacity: 0; transition: opacity 0.3s ease; }
         .modal.show { display: flex; opacity: 1; }
-        .modal-content { background: var(--bg-color); width: 100%; max-width: 480px; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: 40px; display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -15px 40px rgba(0,0,0,0.1);}
+        .modal-content { background: var(--bg-color); width: 100%; max-width: 480px; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: calc(40px + env(safe-area-inset-bottom)); display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -15px 40px rgba(0,0,0,0.1);}
         .modal.show .modal-content { transform: translateY(0); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-shrink: 0; }
@@ -424,7 +424,7 @@
         <div class="neu-card profile-card">
             <div class="profile-avatar">👨‍💻</div>
             <div class="profile-info">
-                <h3>Вітаємо, Степан</h3>
+                <h3>Вітаємо, Stepan</h3>
                 <p id="appVersionDisp">Синхронізація...</p>
             </div>
         </div>
@@ -477,8 +477,8 @@
 </div>
 
 <nav class="bottom-nav">
+    <div class="nav-item active-nav" data-page="search" onclick="window.switchPage('search')">🔍</div>
     <div class="nav-item" data-page="reserves" onclick="window.switchPage('reserves')">📦</div>
-    <div class="nav-item center-nav active-nav" data-page="search" onclick="window.switchPage('search')">🔍</div>
     <div class="nav-item" data-page="training" onclick="window.switchPage('training')">🎓</div>
     <div class="nav-item" data-page="settings" onclick="window.switchPage('settings')">⚙️</div>
 </nav>
@@ -588,7 +588,7 @@
 
     window.escapeHTML = function(str) {
         if (!str) return '';
-        return str.toString().replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        return str.toString().replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
     }
 
     window.escapeForJS = function(str) {
