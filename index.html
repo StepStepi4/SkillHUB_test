@@ -15,10 +15,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        *, *::before, *::after { 
-            box-sizing: border-box; 
-            -webkit-tap-highlight-color: transparent; 
-        }
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
             /* Neumorphism Світла Тема (#0B2B26) */
@@ -45,8 +42,8 @@
             --text-muted: #8b9a96; 
             --border: transparent;
             
-            --neu-out: 6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(45, 65, 60, 0.3);
-            --neu-out-sm: 3px 3px 6px rgba(0, 0, 0, 0.5), -3px -3px 6px rgba(45, 65, 60, 0.3);
+            --neu-out: 6px 6px 12px rgba(0, 0, 0, 0.5), -6px -6px 12px rgba(45, 65, 60, 0.4);
+            --neu-out-sm: 3px 3px 6px rgba(0, 0, 0, 0.5), -3px -3px 6px rgba(45, 65, 60, 0.4);
             --neu-pressed: inset 4px 4px 8px rgba(0, 0, 0, 0.6), inset -4px -4px 8px rgba(45, 65, 60, 0.2);
             
             --modal-overlay: rgba(20, 30, 28, 0.95);
@@ -55,12 +52,7 @@
         
         body.modal-open { overflow: hidden; position: fixed; width: 100%; }
 
-        body { 
-            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
-            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
-            min-height: 100vh; transition: background 0.3s ease, color 0.3s ease; 
-            padding-bottom: 100px;
-        }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; min-height: 100vh; transition: background 0.3s ease, color 0.3s ease; padding-bottom: 100px; }
 
         .container { position: relative; width: 100%; max-width: 600px; padding: 24px; min-height: 100vh; display: flex; flex-direction: column; }
 
@@ -68,7 +60,6 @@
         .app-page.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: scale(0.98); } to { opacity: 1; transform: scale(1); } }
         
-        /* ВЕКТОРНІ (ОДНОКОЛІРНІ) ЕМОДЗІ */
         .mono-emoji { color: transparent !important; text-shadow: 0 0 0 var(--primary) !important; font-style: normal; filter: grayscale(1) brightness(0.8); }
         .color-emoji { font-style: normal; }
 
@@ -77,14 +68,13 @@
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .spinner-box { width: 80px; height: 80px; border-radius: 50%; box-shadow: var(--neu-out); display: flex; justify-content: center; align-items: center; margin-bottom: 24px; }
         .spinner-ring { width: 40px; height: 40px; border-radius: 50%; border: 4px solid transparent; border-top-color: var(--primary); animation: spin 1s cubic-bezier(0.5, 0, 0.5, 1) infinite; }
-        .loader-text { font-size: 14px; font-weight: 800; color: var(--text-main); text-align: center; line-height: 1.5; }
+        .loader-text { font-size: 14px; font-weight: 800; color: var(--text-main); text-transform: uppercase; letter-spacing: 1px; text-align: center; line-height: 1.5; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         /* --- ШАПКА --- */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding-top: 10px;}
         h2 { color: var(--primary); margin: 0; font-size: 26px; font-weight: 900; letter-spacing: -1px; text-shadow: 1px 1px 2px rgba(0,0,0,0.05);}
 
-        /* СТАТУС БАР */
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; background: var(--bg); padding: 16px 20px; border-radius: 20px; box-shadow: var(--neu-flat);}
         .status-wrapper { display: flex; align-items: center; gap: 12px; }
         .status-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; }
@@ -98,7 +88,7 @@
         .refresh-db-btn:active { box-shadow: var(--neu-pressed); transform: scale(0.95); color: var(--text-main);}
         .refresh-db-btn.spinning svg { animation: spin 1s linear infinite; }
 
-        /* --- ВВОДИ (NEUMORPHISM) --- */
+        /* --- ВВОДИ --- */
         .search-wrapper, .price-wrapper { position: relative; margin-bottom: 24px; display: flex; align-items: center; gap: 16px; }
         input, select, .input-neu { width: 100%; padding: 22px 24px; border: none; border-radius: 24px; font-size: 16px; font-weight: 700; font-family: inherit; outline: none; transition: 0.3s ease; background: var(--bg); color: var(--text-main); box-shadow: var(--neu-pressed); -webkit-appearance: none;}
         input::placeholder { color: var(--text-muted); font-weight: 600; opacity: 0.7;}
@@ -127,23 +117,25 @@
         
         .service-title { font-size: 15px; font-weight: 700; line-height: 1.4; color: var(--text-main); }
         .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--primary); box-shadow: var(--neu-pressed);}
+        
         .price-badge { font-size: 16px; font-weight: 900; color: var(--primary); background: var(--bg); padding: 12px 18px; border-radius: 16px; box-shadow: var(--neu-pressed); text-align: center; white-space: nowrap;}
 
-        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.5)); margin-left: -2px; margin-bottom: 4px;}
+        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; margin-bottom: 4px;}
+        @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         /* ТЕХ ІНФО */
         .tech-info { display: flex; flex-direction: column; gap: 16px; margin-bottom: 30px;}
         .tech-item { display: flex; align-items: center; gap: 16px; background: var(--bg); padding: 18px; border-radius: 24px; box-shadow: var(--neu-pressed); }
         .icon-circle { width: 44px; height: 44px; min-width: 44px; border-radius: 50%; background: var(--bg); box-shadow: var(--neu-flat); display: flex; align-items: center; justify-content: center; font-size: 20px; }
 
-        /* --- РЕЗЕРВИ --- */
+        /* --- РЕЗЕРВИ (ТАБ 2) --- */
         .rezervy-item { background: var(--bg); border-radius: 24px; padding: 22px; margin-bottom: 18px; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--neu-flat); }
         .rezervy-item:active { box-shadow: var(--neu-pressed); transform: scale(0.98); }
         .rezervy-name { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; line-height: 1.3;}
         .rezervy-cat { font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
         .rezervy-price { font-size: 18px; font-weight: 900; color: var(--primary); background: var(--bg); padding: 12px 18px; border-radius: 16px; box-shadow: var(--neu-pressed);}
 
-        /* --- КАТАЛОГ --- */
+        /* --- АКОРДЕОН НАВЧАННЯ (ТАБ 3) --- */
         .btn-3d { position: relative; display: flex; align-items: center; justify-content: space-between; width: 100%; padding: 22px 24px; border-radius: 24px; border: none; font-weight: 900; font-size: 16px; color: var(--primary); cursor: pointer; transition: all 0.2s ease; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 16px; outline: none; background: var(--bg); box-shadow: var(--neu-flat);}
         .btn-3d:active, .btn-3d.open { box-shadow: var(--neu-pressed); color: var(--text-main); }
         .btn-3d .arrow { font-size: 14px; transition: 0.3s; opacity: 0.8;}
@@ -154,7 +146,7 @@
         .catalog-item:active { box-shadow: var(--neu-pressed); color: var(--primary); transform: scale(0.98);}
         .catalog-item:last-child { margin-bottom: 0; }
 
-        /* --- НАЛАШТУВАННЯ --- */
+        /* --- НАЛАШТУВАННЯ (ТАБ 4) --- */
         .settings-card { background: var(--bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; box-shadow: var(--neu-flat); display: flex; justify-content: space-between; align-items: center;}
         .settings-title { font-size: 15px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
         .settings-icon { width: 44px; height: 44px; border-radius: 50%; background: var(--bg); box-shadow: var(--neu-pressed); display: flex; align-items: center; justify-content: center; font-size: 20px; color: var(--primary);}
@@ -226,9 +218,6 @@
         .compare-table td { padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-main); font-weight: 600; line-height: 1.4; text-align: left;}
         [data-theme="dark"] .compare-table td { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .compare-table tr:last-child td { border-bottom: none; }
-        .desc-toggle { font-size: 13px; font-weight: 800; color: var(--primary); margin-top: 12px; cursor: pointer; display: flex; align-items: center; gap: 6px; padding-top: 12px; border-top: 2px dashed rgba(0,0,0,0.05); width: 100%; transition: 0.2s; user-select: none;}
-        [data-theme="dark"] .desc-toggle { border-top: 2px dashed rgba(255,255,255,0.05); }
-        .desc-content { margin-top: 10px; padding: 14px; background: var(--bg); border-radius: 14px; box-shadow: var(--neu-pressed); }
     </style>
 </head>
 <body>
@@ -375,33 +364,29 @@
             </select>
         </div>
 
-        <div style="background: var(--bg); border-radius: 24px; padding: 20px; box-shadow: var(--neu-pressed); margin-top: 24px;">
+        <div class="pwa-guide-container">
             <div style="font-size: 18px; font-weight: 900; margin-bottom: 16px; color: var(--primary);">Встановлення додатка</div>
-            <div style="background: var(--bg); box-shadow: var(--neu-out-sm); padding: 16px; border-radius: 16px; margin-bottom: 20px; text-align: center;">
+            <div style="background: var(--bg); box-shadow: var(--neu-in); padding: 16px; border-radius: 16px; margin-bottom: 20px; text-align: center;">
                 <b style="color:#ef4444; font-size:14px; display:block; margin-bottom:8px;">Відкрито у месенджері?</b>
                 <span style="font-size:13px; line-height:1.5; font-weight:600; color:var(--text-muted);">Внутрішні браузери (Telegram, Viber) не підтримують встановлення. Відкрийте в Safari або Chrome.</span>
             </div>
 
-            <div style="padding: 20px 0; border-bottom: 2px dashed rgba(0,0,0,0.05);">
-                <div style="font-size: 16px; font-weight: 800; margin-bottom: 12px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 20px; margin-right: 6px;">🍎</span> Для iOS (iPhone)
-                </div>
-                <ol style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600;">
-                    <li style="margin-bottom: 12px;">Відкрийте сайт у <b>Safari</b>.</li>
-                    <li style="margin-bottom: 12px;">Натисніть кнопку <b>«Поділитися»</b>.</li>
-                    <li style="margin-bottom: 12px;">Виберіть <b>«На початковий екран»</b>.</li>
-                    <li style="margin-bottom: 12px;">Натисніть <b>«Додати»</b>.</li>
+            <div class="pwa-device-section">
+                <div class="pwa-device-title"><span class="color-emoji" style="font-size: 20px; margin-right: 6px;">🍎</span> Для iOS (iPhone)</div>
+                <ol class="pwa-instructions">
+                    <li>Відкрийте сайт у <b>Safari</b>.</li>
+                    <li>Натисніть кнопку <b>«Поділитися»</b>.</li>
+                    <li>Виберіть <b>«На початковий екран»</b>.</li>
+                    <li>Натисніть <b>«Додати»</b>.</li>
                 </ol>
             </div>
 
-            <div style="padding: 20px 0;">
-                <div style="font-size: 16px; font-weight: 800; margin-bottom: 12px; color: var(--primary); display: flex; align-items: center; gap: 10px;">
-                    <span style="font-size: 20px; margin-right: 6px;">🤖</span> Для Android
-                </div>
-                <ol style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600;">
-                    <li style="margin-bottom: 12px;">Відкрийте сайт у <b>Google Chrome</b>.</li>
-                    <li style="margin-bottom: 12px;">Натисніть меню <b>(три крапки)</b>.</li>
-                    <li style="margin-bottom: 12px;">Виберіть <b>«Додати на головний екран»</b>.</li>
+            <div class="pwa-device-section">
+                <div class="pwa-device-title"><span class="color-emoji" style="font-size: 20px; margin-right: 6px;">🤖</span> Для Android</div>
+                <ol class="pwa-instructions">
+                    <li>Відкрийте сайт у <b>Google Chrome</b>.</li>
+                    <li>Натисніть меню <b>(три крапки)</b>.</li>
+                    <li>Виберіть <b>«Додати на головний екран»</b>.</li>
                 </ol>
             </div>
         </div>
@@ -410,16 +395,16 @@
 
 <nav class="bottom-nav">
     <div class="nav-item active" onclick="window.switchTab('page-home', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48"><path d="M41 41l-9-9m0 0a13 13 0 10-18.38-18.38A13 13 0 0032 32z" stroke="currentColor" stroke-width="4" stroke-linecap="round"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 2a8 8 0 105.293 13.707l5 5a1 1 0 001.414-1.414l-5-5A8 8 0 0010 2zm-6 8a6 6 0 1112 0 6 6 0 01-12 0z" fill="currentColor"/></svg>
     </div>
     <div class="nav-item" onclick="window.switchTab('page-rezervy', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><polyline points="3.27 6.96 12 12.01 20.73 6.96" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><line x1="12" y1="22.08" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16zM12 4.27l5.25 3-5.25 3-5.25-3zM5 14.54V8.51l5 2.86v6.03zm14 0l-5 2.86V11.37l5-2.86z" fill="currentColor"/></svg>
     </div>
     <div class="nav-item" onclick="window.switchTab('page-catalog', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 3L1 9l4 2.18v6L12 21l7-3.82v-6l2-1.09V17h2V9L12 3zm6.82 6L12 12.72 5.18 9 12 5.28 18.82 9zM17 15.99l-5 2.73-5-2.73v-3.72L12 15l5-2.73v3.72z" fill="currentColor"/></svg>
     </div>
     <div class="nav-item" onclick="window.switchTab('page-settings', this)">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z" fill="currentColor"/></svg>
     </div>
 </nav>
 
@@ -464,19 +449,22 @@
     </div>
 </div>
 <script>
+    // --- ОСНОВНІ ЗМІННІ ТА НАЛАШТУВАННЯ ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbwwAyjBUnTzmgEsHoYjMKor7GbYznJGTT-NhD0Rv9d7jE_ew7Ett10qh0jOd5q1Zbxgbg/exec';
-    const CACHE_KEY = 'skillhub_v20_final_stable';
+    const CACHE_KEY = 'skillhub_v19_final_stable_icons';
     let db = { categories: [], descriptions: {}, tariffs: [], montazhData: [], serviceCodes: {}, rezervyData: [] };
     let currentCategoryData = null;
     let scrollPos = 0;
-    let compareSelection = [];
+    
     let isCompareMode = false;
-    let modalCompareSelection = [];
-    let isModalCompareMode = false;
-    let lastModalServices = [];
-    let lastCalculatedServices = [];
+    let compareSelection = [];
+    window.lastCalculatedServices = [];
 
-    // --- БЕЗПЕЧНЕ ЕКРАНУВАННЯ ---
+    let isModalCompareMode = false;
+    let modalCompareSelection = [];
+    window.lastModalServices = [];
+
+    // --- БЕЗПЕЧНЕ ЕКРАНУВАННЯ (ЗАПОБІГАЄ ЗАВИСАННЮ) ---
     window.escapeHTML = function(s) { 
         if(!s) return ''; 
         return s.toString().replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;"); 
@@ -495,7 +483,7 @@
         localStorage.setItem('theme', currentTheme);
     };
 
-    // --- БЛОКУВАННЯ ФОНУ ---
+    // --- СКРОЛ (Блокування фону при відкритті модалок) ---
     function toggleBodyScroll(disable) {
         if(disable) { 
             scrollPos = window.pageYOffset; 
@@ -513,7 +501,9 @@
         document.querySelectorAll('.app-page').forEach(p => p.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
         document.getElementById(pageId).classList.add('active');
-        if (element) { element.classList.add('active'); }
+        if (element) {
+            element.classList.add('active');
+        }
         window.scrollTo(0, 0);
     }
 
@@ -558,7 +548,7 @@
         setTimeout(() => { valueBox.innerHTML = originalHTML; }, 1500);
     }
 
-    // --- ІНІЦІАЛІЗАЦІЯ ---
+    // --- ІНІЦІАЛІЗАЦІЯ ТА ЗАВАНТАЖЕННЯ ---
     async function init() {
         const cached = localStorage.getItem(CACHE_KEY);
         if (cached) { 
@@ -625,7 +615,7 @@
         if (document.getElementById('appLoader')) document.getElementById('appLoader').classList.add('hidden');
     }
 
-    // --- МАГАЗИНИ ---
+    // --- НАЛАШТУВАННЯ ТА МАГАЗИН ЗА ЗАМОВЧУВАННЯМ ---
     window.saveSettingsStore = function() {
         let val = document.getElementById('settingsStoreSelect').value;
         localStorage.setItem('defaultStore', val);
@@ -639,6 +629,7 @@
         document.getElementById('settingsStoreSelect').value = val;
     }
 
+    // --- РЕЗЕРВИ (ТАБ 2) ---
     window.populateStoreFilter = function() {
         if (!db.rezervyData || db.rezervyData.length === 0) return;
         const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
@@ -950,7 +941,7 @@
         let codeHtml = codeF ? `
             <div class="code-box" onclick="window.copyCode(event, this, '${window.escapeForJS(codeF)}')">
                 <div>
-                    <div style="font-size:11px; font-weight:800; color:rgba(255,255,255,0.7); margin-bottom:4px;">КОД СЕРВІСУ</div>
+                    <div style="font-size:11px; font-weight:800; color:var(--text-muted); margin-bottom:4px;">КОД СЕРВІСУ</div>
                     <div class="code-value-text" style="font-size:24px; font-weight:900;">${codeF}</div>
                 </div>
                 <div style="font-size:24px;"><span class="color-emoji">📋</span></div>
@@ -1088,8 +1079,8 @@
         let availHtml = s.availabilityHTML ? `<div style="width:100%; margin-top:8px; position:relative; z-index:2;">${s.availabilityHTML}</div>` : '';
         
         let focusHtml = (s.isFocus && !isSelected) ? `<div style="font-size: 22px; filter: drop-shadow(0px 2px 4px rgba(255, 100, 0, 0.5)); margin-left: -2px;"><span class="color-emoji">🔥</span></div>` : '';
-        let brandHtml = s.brand ? `<div class="brand-tag">${s.brand}</div>` : `<div style="display: none;"></div>`;
-        let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="compare-checkbox"></div>` : '';
+        let brandHtml = s.brand ? `<div style="font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--primary); box-shadow: var(--neu-pressed);">${s.brand}</div>` : `<div style="display: none;"></div>`;
+        let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="compare-checkbox">${isSelected ? '✓' : ''}</div>` : '';
         
         let wrapperStyle = isModalCtx ? "display:flex; flex-direction:column; align-items:stretch;" : "display:flex; justify-content:space-between; align-items:center;";
 
@@ -1286,18 +1277,16 @@
         let listB = extractFeaturesList(descB);
 
         if (listA.length === 0 && listB.length === 0) {
-            let html = `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
+            let html = `<div style="overflow-x: auto; margin-top: 10px; border-radius: 20px; box-shadow: var(--neu-in); max-height: 60vh; background: var(--bg); padding: 10px;"><table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;"><thead><tr>`;
             [sA, sB].forEach(s => {
-                let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
-                html += `<th>
-                             <div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
+                html += `<th style="padding: 16px 12px; border-bottom: 2px dashed rgba(0,0,0,0.1); vertical-align: top; width: 50%; color: var(--primary); position: sticky; top: 0; z-index: 2;">
                              <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
                              <div style="font-size: 14px; font-weight: 900; margin-top: 6px;">${s.label || s.priceText}</div>
                           </th>`;
             });
             html += `</tr></thead><tbody><tr>`;
-            html += `<td style="white-space:pre-wrap; font-weight: 500;">${descA || 'Опис відсутній'}</td>`;
-            html += `<td style="white-space:pre-wrap; font-weight: 500;">${descB || 'Опис відсутній'}</td>`;
+            html += `<td style="padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-main); font-weight: 600; line-height: 1.4; text-align: left; white-space:pre-wrap;">${descA || 'Опис відсутній'}</td>`;
+            html += `<td style="padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-main); font-weight: 600; line-height: 1.4; text-align: left; white-space:pre-wrap;">${descB || 'Опис відсутній'}</td>`;
             html += `</tr></tbody></table></div>`;
             return html;
         }
@@ -1318,12 +1307,10 @@
         });
 
         let html = `<div style="font-size: 11px; color: var(--text-muted); font-weight: 800; margin-bottom: 12px; text-align: center; text-transform: uppercase;">Властивості (унікальні позначені ⭐️)</div>`;
-        html += `<div class="compare-wrapper"><table class="compare-table"><thead><tr>`;
+        html += `<div style="overflow-x: auto; margin-top: 10px; border-radius: 20px; box-shadow: var(--neu-in); max-height: 60vh; background: var(--bg); padding: 10px;"><table style="width: 100%; border-collapse: collapse; font-size: 13px; text-align: center;"><thead><tr>`;
         
         [sA, sB].forEach(s => {
-            let brandLabel = s.brand || (s.cls === 'brand-ekta' ? 'ЕКТА' : (s.cls === 'brand-support' ? 'SUPPORT' : (s.cls === 'brand-epz' ? 'ЕПЗ' : 'СЕРВІС')));
-            html += `<th>
-                        <div class="brand-tag ${s.cls}" style="margin:0 auto 6px auto; display: inline-block;">${brandLabel}</div>
+            html += `<th style="padding: 16px 12px; border-bottom: 2px dashed rgba(0,0,0,0.1); vertical-align: top; width: 50%; color: var(--primary); position: sticky; top: 0; z-index: 2;">
                         <div style="font-size: 11px; white-space: normal; line-height: 1.2;">${s.title}</div>
                         <div style="font-size: 15px; font-weight: 900; color: var(--primary); margin-top: 6px;">${s.label || s.priceText}</div>
                      </th>`;
@@ -1334,8 +1321,8 @@
             html += `<tr><td colspan="2" style="background: var(--bg); box-shadow:var(--neu-in); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 10px 12px;">Спільні властивості</td></tr>`;
             common.forEach(pair => {
                 html += `<tr>
-                    <td style="color:var(--text-muted); font-weight: 500;">${pair.a}</td>
-                    <td style="color:var(--text-muted); font-weight: 500;">${pair.b}</td>
+                    <td style="padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-muted); font-weight: 500; text-align: left;">${pair.a}</td>
+                    <td style="padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); color: var(--text-muted); font-weight: 500; text-align: left;">${pair.b}</td>
                 </tr>`;
             });
         }
@@ -1348,8 +1335,8 @@
                 let valB = diffB[i] ? `<span class="color-emoji" style="margin-right:6px; font-size: 14px;">⭐️</span>${diffB[i]}` : `<span style="color:var(--text-muted)">-</span>`;
                 
                 html += `<tr>
-                    <td style="font-weight:700;">${valA}</td>
-                    <td style="font-weight:700;">${valB}</td>
+                    <td style="padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight:700; text-align: left;">${valA}</td>
+                    <td style="padding: 16px 12px; border-bottom: 1px solid rgba(0,0,0,0.05); font-weight:700; text-align: left;">${valB}</td>
                 </tr>`;
             }
         }
@@ -1432,40 +1419,22 @@
         if (!isStaticEpz && !forceDesc) {
             let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
             if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) {
-                document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
-                window.renderMontazhModal();
-                document.getElementById('descModal').classList.add('show');
-                return;
+                window.renderMontazhModal(); return;
             } 
             else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) {
-                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі";
-                window.renderDirectListModal(["перевірка", "піксел"]);
-                document.getElementById('descModal').classList.add('show');
-                return;
+                document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі"; window.renderDirectListModal(["перевірка", "піксел"]); document.getElementById('descModal').classList.add('show'); return;
             } 
             else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) {
-                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок";
-                window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]);
-                document.getElementById('descModal').classList.add('show');
-                return;
+                document.getElementById('modalTitle').innerText = "Поклейка скла та плівок"; window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]); document.getElementById('descModal').classList.add('show'); return;
             }
             else if (u.includes('АНТИВІРУС') || u.includes('ESET')) {
-                document.getElementById('modalTitle').innerText = "Антивіруси";
-                window.renderSetupModal(name, "antivirus");
-                document.getElementById('descModal').classList.add('show');
-                return;
+                document.getElementById('modalTitle').innerText = "Антивіруси"; window.renderSetupModal(name, "antivirus"); document.getElementById('descModal').classList.add('show'); return;
             }
             else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { 
-                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри";
-                window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]);
-                document.getElementById('descModal').classList.add('show');
-                return;
+                document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри"; window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]); document.getElementById('descModal').classList.add('show'); return;
             }
             else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) {
-                document.getElementById('modalTitle').innerText = "Налаштування та сервіси";
-                window.renderSetupModal(name, "setup");
-                document.getElementById('descModal').classList.add('show');
-                return;
+                document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.renderSetupModal(name, "setup"); document.getElementById('descModal').classList.add('show'); return;
             }
         }
 
@@ -1496,7 +1465,7 @@
         document.getElementById('descModal').classList.add('show'); 
     }
 
-    // --- МОНТАЖ ТА ІНШІ МОДАЛКИ ---
+    // --- МОНТАЖ ТА ІНШІ МОДАЛКИ (Стара логіка повністю збережена) ---
     window.renderMontazhModal = function() {
         if (!db.montazhData || !db.montazhData.cities || db.montazhData.cities.length === 0) {
             document.getElementById('modalBody').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`;
@@ -1517,6 +1486,7 @@
 
         const categories = [...new Set(services.map(s => s.cat).filter(Boolean))];
 
+        document.getElementById('modalTitle').innerText = "Монтаж ВПТ";
         document.getElementById('modalBody').innerHTML = `
             <div style="margin-bottom: 24px;">
                 <span style="font-size: 14px; color: var(--text-muted); margin-bottom: 10px; display: block; font-weight: 700; text-align: left; padding-left: 8px;">В якому місті шукаємо?</span>
@@ -1578,6 +1548,8 @@
             window.updateMontazhResults();
         });
         document.getElementById('montazhSubCat').addEventListener('change', window.updateMontazhResults);
+        
+        document.getElementById('descModal').classList.add('show');
     }
 
     window.updateMontazhResults = function() {
@@ -1661,7 +1633,6 @@
                     seenUnavailable.add(pUpper);
                     resultsHTML += `
                     <div style="position: relative; padding: 22px; border-radius: 24px; cursor: default; background: var(--bg); display: block; box-shadow: var(--neu-in); margin-bottom: 18px; border: 1px solid var(--border);">
-                        <div style="font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--primary); box-shadow: var(--neu-pressed);">${item.displayProv}</div>
                         <div style="font-size: 13px; font-weight: 600; color: #ef4444; margin-top: 5px;">На жаль, в цьому місті неможливий монтаж підрядником ${item.displayProv}</div>
                     </div>`; 
                 }
@@ -1671,7 +1642,7 @@
                  
                  let extraInfoHTML = "";
                  if (text && availLower !== "так" && availLower !== "+") {
-                     extraInfoHTML = `<div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: 1px solid var(--border); background: var(--bg); box-shadow: var(--neu-pressed); color: var(--primary);"><span class="color-emoji" style="font-size: 16px;">📍</span> ${displayText}</div>`;
+                     extraInfoHTML = `<div style="display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; background: var(--bg); box-shadow: var(--neu-pressed); color: var(--primary);"><span class="color-emoji" style="font-size: 16px;">📍</span> ${displayText}</div>`;
                  }
                  obj.availabilityHTML = extraInfoHTML; 
                  resultsHTML += generateServiceCardHTML(obj, true); 
