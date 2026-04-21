@@ -21,16 +21,13 @@
         }
 
         :root {
-            /* Світлий неоморфізм */
             --bg: #e0e5ec; 
             --text-main: #2d3436; 
             --text-muted: #636e72; 
             --primary: #2563eb; 
             
-            /* Тіні випуклі */
             --shadow-out: 8px 8px 16px #c5cbd4, -8px -8px 16px #ffffff;
             --shadow-sm-out: 4px 4px 8px #c5cbd4, -4px -4px 8px #ffffff;
-            /* Тіні вдавлені */
             --shadow-in: inset 6px 6px 12px #c5cbd4, inset -6px -6px 12px #ffffff;
             
             --modal-overlay: rgba(224, 229, 236, 0.85);
@@ -43,7 +40,6 @@
         }
 
         [data-theme="dark"] {
-            /* Темний неоморфізм */
             --bg: #26282B; 
             --text-main: #f0f4f8; 
             --text-muted: #8a93a2; 
@@ -83,7 +79,7 @@
             animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
         .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px;}
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
@@ -402,7 +398,7 @@
 
         <div class="price-wrapper" id="priceWrapper">
             <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" class="montazh-select" style="margin-bottom:0;">
-            <button class="neo-btn" id="okBtn" style="padding: 0 24px;">ОК</button>
+            <button class="neo-btn" id="okBtn" style="padding: 0 24px; box-shadow: var(--shadow-out);">ОК</button>
         </div>
 
         <div id="result" class="result-box">
@@ -510,7 +506,7 @@
 
 <div id="compareBar" class="compare-action-bar">
     <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px;">Порівняти</button>
+    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px; box-shadow: var(--shadow-sm-out);">Порівняти</button>
 </div>
 
 <div id="compareModal" class="modal">
@@ -538,7 +534,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary);"></b>
+            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3);"></b>
             <button class="modal-close-btn" onclick="window.closeRezervItemModal()">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -564,10 +560,22 @@
             <div style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-main);">
               Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
               <ul style="margin: 12px 0 0 0; padding-left: 20px;">
-                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса.</li>
+                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса в правому нижньому куті екрана.</li>
                 <li style="margin-bottom: 8px;"><strong>Android:</strong> Натисніть три крапки в правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong> (Chrome).</li>
               </ul>
             </div>
+          </div>
+
+          <div style="padding: 24px 20px; background: var(--bg); border-top: 2px solid var(--input-bg);">
+            <div style="display: flex; align-items: center; font-size: 18px; font-weight: 800; margin-bottom: 15px; color: var(--text-main);">
+              <svg viewBox="0 0 384 512" style="margin-right: 12px; width: 24px; height: 24px; fill: var(--text-main);"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              Встановлення на iOS
+            </div>
+            <ol style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600;">
+              <li style="margin-bottom: 12px;">Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
+              <li style="margin-bottom: 12px;">Натисніть кнопку <strong>«Поділитися»</strong> внизу екрана.</li>
+              <li style="margin-bottom: 12px;">Виберіть <strong>«На початковий екран»</strong>.</li>
+            </ol>
           </div>
         </div>
         <div style="padding: 24px;">
@@ -585,6 +593,23 @@
 </div>
 
 <script>
+    // Обробник для перехоплення неочікуваних помилок, щоб вони не висіли мовчки
+    window.addEventListener('error', function(event) {
+        const elLoader = document.getElementById('appLoader');
+        if (elLoader) {
+            elLoader.querySelector('.loader-text').innerHTML = "❌ JS Помилка: " + event.message;
+            elLoader.querySelector('.spinner-ring').style.display = 'none';
+        }
+    });
+    window.addEventListener('unhandledrejection', function(event) {
+        const elLoader = document.getElementById('appLoader');
+        if (elLoader) {
+            let msg = event.reason.message || event.reason || "Мережева помилка";
+            elLoader.querySelector('.loader-text').innerHTML = "❌ Мережа: " + msg;
+            elLoader.querySelector('.spinner-ring').style.display = 'none';
+        }
+    });
+
     const API_URL = 'https://script.google.com/macros/s/AKfycbw8hjs3UT0uVF4pMpEHYhotnFOa19zlZn6WJ1786kCsf-mkjjEknVUuuFBHUq48ccvGAw/exec';
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -695,11 +720,11 @@
     window.escapeForJS = function(str) {
         if (!str) return '';
         let s = str.toString();
-        s = s.replace(/\\/g, "\\\\");
+        s = s.replace(/\\/g, '\\\\');
         s = s.replace(/'/g, "\\'");
-        s = s.replace(/"/g, "\\\"");
-        s = s.replace(/\n/g, "\\n");
-        s = s.replace(/\r/g, "");
+        s = s.replace(/"/g, '\\"');
+        s = s.replace(/\n/g, '\\n');
+        s = s.replace(/\r/g, '');
         return s;
     }
 
@@ -764,13 +789,15 @@
     }
 
     async function init() {
-        const cached = localStorage.getItem(CACHE_KEY);
+        let cached = null;
+        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) { console.error("LocalStorage disabled"); }
+        
         if (cached) { 
             try {
                 db = JSON.parse(cached); 
                 enableUI(); window.populateFilters();
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
-                refreshData(); 
+                refreshData(false); 
             } catch(e) {
                 await refreshData(true);
             }
@@ -780,31 +807,43 @@
     async function refreshData(first = false) {
         setAppStatus('loading', 'Синхронізація...');
         try {
-            const response = await fetch(API_URL + '?nocache=' + Date.now());
+            // Додаємо таймаут 15 сек, щоб fetch не висів вічно
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            
+            const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
+            clearTimeout(timeoutId);
+            
             const dataStr = await response.text();
-            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до скрипта Google. Відкрий доступ для всіх.");
+            if (dataStr.trim().startsWith('<')) throw new Error("Google Script повернув HTML (можливо, потрібен доступ 'Для всіх').");
             
             let newDb = JSON.parse(dataStr);
             if (newDb.error) throw new Error(newDb.error);
             
-            let savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
-            let guideSeen = localStorage.getItem('skillhub_guide_seen');
+            let savedVersion = null;
+            let guideSeen = null;
+            try {
+                savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
+                guideSeen = localStorage.getItem('skillhub_guide_seen');
+                localStorage.setItem(CACHE_KEY, dataStr);
+            } catch (e) {} // ігноруємо помилки доступу до localStorage
             
             db = newDb;
-            localStorage.setItem(CACHE_KEY, dataStr);
             setAppStatus('ok', 'Дані актуальні');
             
             if (!guideSeen) {
                 setTimeout(() => {
                     window.switchTab('tab-settings');
                     window.openGuideModal();
-                    localStorage.setItem('skillhub_guide_seen', 'true');
-                    if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
+                    try {
+                        localStorage.setItem('skillhub_guide_seen', 'true');
+                        if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
+                    } catch(e) {}
                 }, 1000);
             } 
             else if (db.appVersion && savedVersion !== db.appVersion) {
                 if (savedVersion !== null) setTimeout(() => window.showChangelogModal(db.appVersion, db.changelog), 1000); 
-                localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
+                try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
             }
 
             enableUI(); window.populateFilters();
@@ -812,13 +851,17 @@
             
         } catch (e) { 
             console.error(e);
-            if (localStorage.getItem(CACHE_KEY)) {
+            let cached = null;
+            try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
+            
+            if (cached) {
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
                 if (first) { enableUI(); window.populateFilters(); }
             } else { 
                 setAppStatus('error', 'Помилка');
                 if (first && elLoader) {
-                    elLoader.querySelector('.loader-text').innerHTML = "❌ Помилка: " + e.message;
+                    let msg = e.message === "Failed to fetch" ? "Немає доступу до інтернету або сервер блокує запит" : e.message;
+                    elLoader.querySelector('.loader-text').innerHTML = "❌ Помилка: " + msg;
                     elLoader.querySelector('.spinner-ring').style.display = 'none';
                 }
             }
@@ -852,7 +895,7 @@
 
     window.saveDefaultStore = function() {
         const val = document.getElementById('defaultStoreSelect').value;
-        localStorage.setItem('skillhub_default_store', val);
+        try { localStorage.setItem('skillhub_default_store', val); } catch(e){}
         const reserveFilter = document.getElementById('storeFilter');
         if (reserveFilter) {
             reserveFilter.value = val;
@@ -874,7 +917,8 @@
             storeSel.innerHTML = h;
             defaultSel.innerHTML = h.replace('Оберіть магазин', 'Не вибрано');
             
-            const savedStore = localStorage.getItem('skillhub_default_store');
+            let savedStore = null;
+            try { savedStore = localStorage.getItem('skillhub_default_store'); } catch(e){}
             if (savedStore) {
                 storeSel.value = savedStore;
                 defaultSel.value = savedStore;
