@@ -791,7 +791,12 @@
 
     window.escapeHTML = function(str) {
         if (!str) return '';
-        return str.toString().replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, """).replace(/'/g, "'");
+        return str.toString()
+            .split('&').join('&amp;')
+            .split('<').join('&lt;')
+            .split('>').join('&gt;')
+            .split('"').join('&quot;')
+            .split("'").join('&#39;');
     }
 
     window.escapeForJS = function(str) {
