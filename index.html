@@ -27,10 +27,10 @@
             --text-muted: #636e72; 
             --primary: #2563eb; 
             
-            /* Тіні випуклі (для карток) */
+            /* Тіні випуклі */
             --shadow-out: 8px 8px 16px #c5cbd4, -8px -8px 16px #ffffff;
             --shadow-sm-out: 4px 4px 8px #c5cbd4, -4px -4px 8px #ffffff;
-            /* Тіні вдавлені (для інпутів та натиснутих кнопок) */
+            /* Тіні вдавлені */
             --shadow-in: inset 6px 6px 12px #c5cbd4, inset -6px -6px 12px #ffffff;
             
             --modal-overlay: rgba(224, 229, 236, 0.85);
@@ -43,13 +43,12 @@
         }
 
         [data-theme="dark"] {
-            /* Темний неоморфізм (Графіт + Неон) */
+            /* Темний неоморфізм */
             --bg: #26282B; 
             --text-main: #f0f4f8; 
             --text-muted: #8a93a2; 
             --primary: #00f3ff; 
             
-            /* Тіні темні */
             --shadow-out: 8px 8px 16px #1a1b1e, -8px -8px 16px #323538;
             --shadow-sm-out: 4px 4px 8px #1a1b1e, -4px -4px 8px #323538;
             --shadow-in: inset 6px 6px 12px #1a1b1e, inset -6px -6px 12px #323538;
@@ -84,7 +83,7 @@
             animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
         .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; padding: 0 20px;}
+        .loader-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; }
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
@@ -100,7 +99,7 @@
         @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 10px; }
-        h2 { color: var(--text-main); margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; transition: 0.3s;}
+        h2 { color: var(--text-main); margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; transition: 0.3s;}
         [data-theme="dark"] h2 { text-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
         .bottom-nav {
@@ -152,7 +151,7 @@
 
         .neo-btn {
             background: var(--bg); color: var(--primary); border: none; padding: 15px 20px; border-radius: 18px; 
-            font-weight: 800; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
+            font-weight: 800; font-size: 15px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
             display: flex; align-items: center; justify-content: center; gap: 10px;
             box-shadow: var(--shadow-out); 
         }
@@ -162,7 +161,7 @@
         .neo-card {
             background: var(--bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; 
             border: none; box-shadow: var(--shadow-out); display: flex; flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease; text-align: left;
         }
         
         .service-card, .rezervy-item, .training-card { cursor: pointer; }
@@ -200,23 +199,23 @@
         
         .ok-btn { 
             background: var(--bg); color: var(--primary); border: none; padding: 0 24px; border-radius: 18px; 
-            font-weight: 900; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
+            font-weight: 900; font-size: 15px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
             display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-out); 
         }
         .ok-btn:active { transform: scale(0.95); box-shadow: var(--shadow-in); }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border: none; border-radius: 20px; box-shadow: var(--shadow-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 10px; }
-        .suggestion-item { padding: 14px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; transition: background 0.2s ease, box-shadow 0.2s ease; }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border: none; border-radius: 20px; box-shadow: var(--shadow-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 10px; text-align: left; }
+        .suggestion-item { padding: 14px 16px; cursor: pointer; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; transition: background 0.2s ease, box-shadow 0.2s ease; }
         .suggestion-item:active, .suggestion-item:hover { box-shadow: var(--shadow-in); }
         
-        .result-box { display: none; padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
+        .result-box { display: none; padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; text-align: left; }
 
         .ua-name { font-weight: 900; font-size: 22px; margin-bottom: 5px; padding: 0 10px; color: var(--text-main); line-height: 1.2;}
-        .item-category { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 25px; padding: 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .item-category { font-size: 13px; color: var(--text-muted); font-weight: 700; margin-bottom: 25px; padding: 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
         
         .tech-info { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;}
-        .tech-item { display: flex; align-items: center; gap: 14px; background: var(--bg); padding: 12px; border-radius: 20px; border: none; box-shadow: var(--shadow-out); transform: translateZ(0); }
-        .icon-circle { width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: var(--shadow-in); background: var(--bg); }
+        .tech-item { display: flex; align-items: center; gap: 16px; background: var(--bg); padding: 12px 16px; border-radius: 20px; border: none; box-shadow: var(--shadow-out); transform: translateZ(0); }
+        .icon-circle { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: var(--shadow-in); background: var(--bg); }
         
         .bg-complexity { color: #f59e0b; } 
         .bg-price { color: #10b981; } 
@@ -231,30 +230,30 @@
 
         .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 10px; background: var(--bg); padding: 16px; border-radius: 20px; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow-out); }
         .tech-photo-wrapper:active { transform: scale(0.97); box-shadow: var(--shadow-in); }
-        .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-        .photo-text { flex: 1; display: flex; flex-direction: column; }
+        .photo-icon { font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .photo-text { flex: 1; display: flex; flex-direction: column; text-align: left; }
         .photo-title { font-size: 14px; font-weight: 800; color: var(--text-main); }
-        .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 4px; }
+        .photo-subtitle { font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 4px; }
         .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
 
         .service-list { display: flex; flex-direction: column; gap: 16px; padding-bottom: 20px;}
         
-        .service-card { position: relative; padding: 20px; border-radius: 24px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, padding-left 0.3s ease; border: none; box-shadow: var(--shadow-out); background: var(--bg);}
+        .service-card { position: relative; padding: 16px 20px; border-radius: 24px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, padding-left 0.3s ease; border: none; box-shadow: var(--shadow-out); background: var(--bg); text-align: left;}
         .service-card:active { transform: scale(0.98); box-shadow: var(--shadow-in); }
-        .service-content-left { display: flex; align-items: center; gap: 10px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
+        .service-content-left { display: flex; align-items: center; gap: 12px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         
-        .service-title { font-size: 15px; font-weight: 800; line-height: 1.3; color: var(--text-main); margin-bottom: 4px;}
+        .service-title { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--text-main); margin-bottom: 4px;}
 
-        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 10px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--text-muted); box-shadow: var(--shadow-sm-out); }
+        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--text-muted); box-shadow: var(--shadow-sm-out); }
         .service-card.brand-support .brand-tag { color: var(--clr-support); } 
         .service-card.brand-ekta .brand-tag { color: var(--clr-ekta); } 
         .service-card.brand-epz .brand-tag { color: var(--clr-epz); } 
         .service-card.brand-install .brand-tag { color: var(--clr-install); } 
 
-        .price-badge { font-size: 15px; font-weight: 900; background: var(--bg); color: var(--primary); padding: 10px 16px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-in); z-index: 2;}
+        .price-badge { font-size: 14px; font-weight: 900; background: var(--bg); color: var(--primary); padding: 10px 16px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-in); z-index: 2;}
         [data-theme="dark"] .price-badge { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
-        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 5px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
+        .focus-icon { font-size: 24px; filter: drop-shadow(0px 2px 5px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
         @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         .service-card.compare-mode { padding-left: 50px; }
@@ -267,21 +266,21 @@
         
         .modal-body .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; box-shadow: var(--shadow-sm-out); background: var(--bg); color: var(--primary);}
 
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 100000; overscroll-behavior: contain; opacity: 0; transition: opacity 0.3s ease; }
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; overscroll-behavior: contain; opacity: 0; transition: opacity 0.3s ease; }
         .modal.show { display: flex; opacity: 1; }
         .modal-content { background: var(--bg); width: 100%; max-width: 480px; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: calc(env(safe-area-inset-bottom) + 20px); display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -15px 40px rgba(0,0,0,0.5);}
         .modal.show .modal-content { transform: translateY(0); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding: 0 5px; color: var(--text-main);}
+        .modal-body { overflow-y: auto; flex-grow: 1; padding: 0 5px 20px 5px; color: var(--text-main); text-align: left; }
         
-        .modal-section-title { font-size: 15px; font-weight: 800; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
-        .modal-cost-header { font-size: 10px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 1px;}
+        .modal-section-title { font-size: 16px; font-weight: 800; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
+        .modal-cost-header { font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 1px;}
         .modal-divider { height: 2px; background: var(--input-bg); margin: 15px 0; border-radius: 2px; width: 100%; box-shadow: var(--shadow-in); }
         
-        .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; background: var(--bg); padding: 12px; border-radius: 18px; border: none; box-shadow: var(--shadow-out); }
-        .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg); box-shadow: var(--shadow-in); border: none;}
-        .modal-text { font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 600; }
+        .modal-item { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; background: var(--bg); padding: 14px; border-radius: 18px; border: none; box-shadow: var(--shadow-out); }
+        .modal-icon-circle { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg); box-shadow: var(--shadow-in); border: none;}
+        .modal-text { font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 600; text-align: left; }
         
         .code-block-wrapper { background: var(--bg); border: none; box-shadow: var(--shadow-in); border-radius: 18px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
         .code-block-wrapper:active { transform: scale(0.97); }
@@ -290,7 +289,7 @@
         [data-theme="dark"] .code-value-text { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
         .montazh-label { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; display: block; font-weight: 700; text-align: left; padding-left: 5px; }
-        .availability-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: none; background: var(--bg); box-shadow: var(--shadow-in);}
+        .availability-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: none; background: var(--bg); box-shadow: var(--shadow-in);}
         
         .status-city-limit { color: #ff3366; }
         .status-fee-zone { color: #f59e0b; }
@@ -301,22 +300,22 @@
         
         .desc-toggle { font-size: 14px; font-weight: 800; color: var(--primary); margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; width: 100%; transition: 0.2s; user-select: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 16px;}
         .desc-toggle:active { box-shadow: var(--shadow-in); transform: scale(0.98); }
-        .desc-content { margin-top: 15px; padding: 20px; background: var(--bg); border-radius: 20px; border: none; box-shadow: var(--shadow-in); }
+        .desc-content { margin-top: 15px; padding: 20px; background: var(--bg); border-radius: 20px; border: none; box-shadow: var(--shadow-in); font-size: 14px; line-height: 1.5; text-align: left; }
         
-        .rezervy-item { background: var(--bg); border-radius: 20px; padding: 18px; margin-bottom: 16px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); }
+        .rezervy-item { background: var(--bg); border-radius: 20px; padding: 18px; margin-bottom: 16px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); text-align: left; }
         .rezervy-item:active { box-shadow: var(--shadow-in); transform: scale(0.98); }
-        .rezervy-name { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 5px; line-height: 1.3;}
+        .rezervy-name { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; line-height: 1.4;}
         .rezervy-cat { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
-        .rezervy-price { font-size: 18px; font-weight: 900; color: var(--primary); white-space: nowrap; }
+        .rezervy-price { font-size: 16px; font-weight: 900; color: var(--primary); white-space: nowrap; }
         [data-theme="dark"] .rezervy-price { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
-        .training-card { background: var(--bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: none; box-shadow: var(--shadow-out); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .training-card { background: var(--bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; border: none; box-shadow: var(--shadow-out); transition: transform 0.2s ease, box-shadow 0.2s ease; text-align: left; }
         .training-card:active { transform: scale(0.98); box-shadow: var(--shadow-in); }
         .tc-brand { font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--primary); background: var(--bg); box-shadow: var(--shadow-in); padding: 8px 14px; border-radius: 12px; display: inline-block; margin-bottom: 15px;}
-        .tc-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 10px; line-height: 1.3; }
+        .tc-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
 
-        .settings-card { background: var(--bg); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: none; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); }
-        .settings-info { display: flex; flex-direction: column; gap: 6px; }
+        .settings-card { background: var(--bg); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: none; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); text-align: left; }
+        .settings-info { display: flex; flex-direction: column; gap: 6px; text-align: left; }
         .settings-title { font-size: 16px; font-weight: 800; color: var(--text-main); }
         .settings-desc { font-size: 12px; font-weight: 600; color: var(--text-muted); }
 
@@ -325,8 +324,8 @@
         .settings-btn.primary { background: var(--bg); color: var(--primary); border: none; box-shadow: var(--shadow-sm-out); }
         .settings-btn.spinning svg { animation: spin 1s linear infinite; }
 
-        .footer { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 20px;}
-        .app-version { display: inline-block; font-size: 12px; font-weight: 800; margin-top: 8px; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 14px; transition: 0.2s; border: none; text-decoration: none;}
+        .footer { text-align: center; font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 20px;}
+        .app-version { display: inline-block; font-size: 13px; font-weight: 800; margin-top: 8px; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 14px; transition: 0.2s; border: none; text-decoration: none;}
         .app-version:active { transform: scale(0.95); box-shadow: var(--shadow-in);}
 
         .floating-btns { position: fixed; bottom: calc(var(--nav-height) + 15px); right: 24px; z-index: 9998; pointer-events: none; }
@@ -344,9 +343,6 @@
         .update-version { font-size: 13px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
         .changelog-panel { background: var(--bg); box-shadow: var(--shadow-in); border-radius: 20px; padding: 20px; border: none; margin-bottom: 24px;}
         
-        .modal-confirm-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--bg); color: var(--primary); font-weight: 900; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-out); transition: 0.2s ease; text-transform: uppercase; letter-spacing: 1px;}
-        .modal-confirm-btn:active { transform: scale(0.97); box-shadow: var(--shadow-in); }
-
         .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px;}
         .compare-toggle-btn { background: var(--bg); color: var(--primary); border: none; padding: 10px 16px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm-out); transition: 0.2s; }
         .compare-toggle-btn.active { color: #ff3366; box-shadow: var(--shadow-in); }
@@ -433,7 +429,7 @@
         <select id="brandFilter" class="montazh-select" onchange="window.renderTrainingTab()">
             <option value="">-- Всі бренди --</option>
         </select>
-        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; line-height: 1.5; padding: 0 10px; text-align: center;">Тут зібрані всі сервіси для вивчення.<br>Обирай бренд та читай опис.</div>
+        <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 20px; font-weight: 600; line-height: 1.5; padding: 0 10px; text-align: left;">Тут зібрані всі сервіси для вивчення. Обирай бренд та читай опис.</div>
         <div id="trainingList" class="service-list"></div>
     </div>
 
@@ -483,9 +479,9 @@
             </a>
         </div>
 
-        <div style="text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 10px;">
+        <div style="text-align: center; font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 10px;">
             🇺🇦 ROZETKA KHARKIV REGION • 2026<br>
-            <button id="appVersionDisp" style="display:none; margin-top: 15px; font-size: 12px; font-weight: 800; color: var(--primary); background: var(--bg); box-shadow: var(--shadow-out); border-radius: 14px; border: none; padding: 12px 24px; cursor: pointer;" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</button>
+            <button id="appVersionDisp" style="display:none; margin-top: 15px; font-size: 13px; font-weight: 800; color: var(--primary); background: var(--bg); box-shadow: var(--shadow-out); border-radius: 14px; border: none; padding: 12px 24px; cursor: pointer;" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">Оновлення відсутні</button>
         </div>
     </div>
 </div>
@@ -539,7 +535,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary);"></b>
+            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3);"></b>
             <button class="modal-close-btn" onclick="window.closeRezervItemModal()">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -556,19 +552,31 @@
             <b style="font-size: 20px; font-weight: 900;">Встановлення додатка</b>
             <button class="modal-close-btn" onclick="window.closeGuideModal()">✕</button>
         </div>
-        <div class="modal-body pwa-guide-container" style="padding: 0;">
+        <div class="modal-body pwa-guide-container" style="padding: 0 0 20px 0;">
           <div class="pwa-alert">
             <div style="display: flex; align-items: center; font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 10px;">
-              <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 10px; fill: var(--primary);"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+              <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; margin-right: 10px; fill: var(--primary);"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               Відкрито у месенджері?
             </div>
-            <div style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-main);">
+            <div style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-main); text-align: left;">
               Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
               <ul style="margin: 12px 0 0 0; padding-left: 20px;">
-                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса.</li>
-                <li style="margin-bottom: 8px;"><strong>Android:</strong> Натисніть три крапки в правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong> (Chrome).</li>
+                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса (або три крапки) та оберіть «Відкрити у браузері».</li>
+                <li style="margin-bottom: 8px;"><strong>Android:</strong> Натисніть три крапки в правому верхньому куті та виберіть <strong>«Відкрити у Chrome»</strong>.</li>
               </ul>
             </div>
+          </div>
+
+          <div style="padding: 24px 20px; background: var(--bg); border-top: 2px solid var(--input-bg);">
+            <div style="display: flex; align-items: center; font-size: 18px; font-weight: 800; margin-bottom: 15px; color: var(--text-main); text-align: left;">
+              <svg viewBox="0 0 384 512" style="margin-right: 12px; width: 28px; height: 28px; fill: var(--text-main);"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+              Встановлення на iOS
+            </div>
+            <ol style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600; text-align: left;">
+              <li style="margin-bottom: 12px;">Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
+              <li style="margin-bottom: 12px;">Натисніть кнопку <strong>«Поділитися»</strong> (квадрат зі стрілочкою вгору) внизу екрана.</li>
+              <li style="margin-bottom: 12px;">Виберіть <strong>«На початковий екран»</strong>.</li>
+            </ol>
           </div>
         </div>
         <div style="padding: 24px;">
@@ -586,7 +594,6 @@
 </div>
 
 <script>
-    // Обробник для перехоплення неочікуваних помилок, щоб вони не висіли мовчки
     window.addEventListener('error', function(event) {
         const elLoader = document.getElementById('appLoader');
         if (elLoader) {
@@ -783,7 +790,7 @@
 
     async function init() {
         let cached = null;
-        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) { console.error("LocalStorage disabled"); }
+        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
         
         if (cached) { 
             try {
@@ -825,13 +832,13 @@
             
             if (!guideSeen) {
                 setTimeout(() => {
-                    window.switchTab('tab-settings');
+                    window.switchTab('tab-search');
                     window.openGuideModal();
                     try {
                         localStorage.setItem('skillhub_guide_seen', 'true');
                         if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); 
                     } catch(e) {}
-                }, 1000);
+                }, 600);
             } 
             else if (db.appVersion && savedVersion !== db.appVersion) {
                 if (savedVersion !== null) setTimeout(() => window.showChangelogModal(db.appVersion, db.changelog), 1000); 
@@ -1121,8 +1128,8 @@
             }
             
             return `
-            <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 10px; padding: 12px; background: var(--bg); border-radius: 18px; box-shadow: var(--shadow-sm-out); border: none;">${e ? `<div style="width: 32px; height: 32px; min-width: 32px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--bg); box-shadow: var(--shadow-in);">${e}</div>` : ''}
-                <div style="font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 600;">${t}</div>
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding: 14px; background: var(--bg); border-radius: 18px; box-shadow: var(--shadow-sm-out); border: none;">${e ? `<div style="width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg); box-shadow: var(--shadow-in);">${e}</div>` : ''}
+                <div style="font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 500; text-align: left;">${t}</div>
             </div>`;
         }).join('');
     }
