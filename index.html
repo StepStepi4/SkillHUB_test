@@ -6,7 +6,7 @@
     <title>SkillHUB Assistant</title>
     
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#e0e5ec">
+    <meta name="theme-color" content="#ecf0f3">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SkillHUB">
@@ -21,19 +21,18 @@
         }
 
         :root {
-            /* Світлий неоморфізм */
-            --bg: #e0e5ec; 
-            --text-main: #2d3436; 
-            --text-muted: #636e72; 
-            --primary: #2563eb; 
+            /* Світлий преміум неоморфізм (як на скріншоті) */
+            --bg: #ecf0f3; 
+            --text-main: #31344b; 
+            --text-muted: #8c98a4; 
+            --primary: #3b82f6; 
             
-            /* Тіні випуклі */
-            --shadow-out: 8px 8px 16px #c5cbd4, -8px -8px 16px #ffffff;
-            --shadow-sm-out: 4px 4px 8px #c5cbd4, -4px -4px 8px #ffffff;
-            /* Тіні вдавлені */
-            --shadow-in: inset 6px 6px 12px #c5cbd4, inset -6px -6px 12px #ffffff;
+            /* Тіні: м'які та об'ємні */
+            --shadow-out: 9px 9px 16px rgb(163,177,198,0.5), -9px -9px 16px #ffffff;
+            --shadow-sm-out: 5px 5px 10px rgb(163,177,198,0.5), -5px -5px 10px #ffffff;
+            --shadow-in: inset 6px 6px 10px 0 rgba(163,177,198, 0.6), inset -6px -6px 10px 0 #ffffff;
             
-            --modal-overlay: rgba(224, 229, 236, 0.85);
+            --modal-overlay: rgba(236, 240, 243, 0.85);
             --nav-height: 85px;
             
             --clr-support: #f59e0b; 
@@ -83,7 +82,7 @@
             animation: spin 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
         }
         .spinner-logo { font-size: 24px; animation: pulseText 1.5s ease-in-out infinite; }
-        .loader-text { font-size: 14px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; }
+        .loader-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; animation: pulseText 1.5s ease-in-out infinite; text-align: center; }
         
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         @keyframes pulseText { 0%, 100% { transform: scale(0.95); opacity: 0.6; } 50% { transform: scale(1.05); opacity: 1; } }
@@ -98,8 +97,8 @@
         .app-tab.active { display: block; }
         @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 10px; }
-        h2 { color: var(--text-main); margin: 0; font-size: 20px; font-weight: 900; letter-spacing: -0.5px; transition: 0.3s;}
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 5px; }
+        h2 { color: var(--text-main); margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; transition: 0.3s;}
         [data-theme="dark"] h2 { text-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
         .bottom-nav {
@@ -108,29 +107,28 @@
             display: flex; justify-content: space-around; align-items: center;
             z-index: 9990; padding-bottom: env(safe-area-inset-bottom);
             border-radius: 30px 30px 0 0;
-            box-shadow: 0 -8px 25px rgba(0,0,0,0.08);
+            box-shadow: 0 -8px 25px rgba(0,0,0,0.06);
             transition: background 0.3s;
         }
         [data-theme="dark"] .bottom-nav { box-shadow: 0 -8px 25px rgba(0,0,0,0.4); }
 
         .nav-item {
-            position: relative;
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 6px; flex: 1; height: 100%; background: transparent; border: none;
             color: var(--text-muted); cursor: pointer; transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1); font-family: inherit;
         }
-        .nav-item svg { width: 26px; height: 26px; stroke: currentColor; fill: none; stroke-width: 2.2; transition: 0.3s; stroke-linecap: round; stroke-linejoin: round;}
+        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; transition: 0.3s; stroke-linecap: round; stroke-linejoin: round;}
         .nav-item span { font-size: 11px; font-weight: 700; transition: 0.3s; }
         
         .nav-item.active { color: var(--primary); }
-        .nav-item.active svg { transform: translateY(-4px); stroke-width: 2.8;}
+        .nav-item.active svg { transform: translateY(-4px); stroke-width: 2.5;}
         .nav-item.active span { transform: translateY(-2px); }
         [data-theme="dark"] .nav-item.active svg { filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.6)); }
 
         .search-wrapper { position: relative; margin-bottom: 20px; display: flex; align-items: center; }
         input, .montazh-select { 
-            width: 100%; padding: 18px 20px; border-radius: 20px; 
-            font-size: 16px; font-family: inherit; font-weight: 700; outline: none; transition: 0.3s ease; 
+            width: 100%; padding: 16px 20px; border-radius: 16px; 
+            font-size: 15px; font-family: inherit; font-weight: 700; outline: none; transition: 0.3s ease; 
             background: var(--bg); color: var(--text-main); border: none;
             box-shadow: var(--shadow-in);
             -webkit-appearance: none; -moz-appearance: none; appearance: none;
@@ -138,30 +136,29 @@
         .search-wrapper input { padding-left: 20px; padding-right: 50px; }
         
         .montazh-select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23636e72' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238c98a4' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
             background-repeat: no-repeat; background-position: right 16px center; background-size: 18px;
             cursor: pointer; margin-bottom: 20px;
-        }
-        [data-theme="dark"] .montazh-select {
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%238a93a2' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
         }
 
         .clear-data-btn { position: absolute; right: 14px; background: transparent; color: var(--text-muted); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; z-index: 5;}
         .clear-data-btn:active { color: #ef4444; }
 
+        /* Кнопки Налаштувань та Порівняння */
         .neo-btn {
-            background: var(--bg); color: var(--primary); border: none; padding: 15px 20px; border-radius: 18px; 
-            font-weight: 800; font-size: 15px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
-            display: flex; align-items: center; justify-content: center; gap: 10px;
-            box-shadow: var(--shadow-out); 
+            background: var(--bg); color: var(--primary); border: none; padding: 12px 18px; border-radius: 14px; 
+            font-weight: 800; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            box-shadow: var(--shadow-sm-out); 
         }
         .neo-btn:active { transform: scale(0.96); box-shadow: var(--shadow-in); }
+        .neo-btn svg { width: 18px; height: 18px; stroke: currentColor; fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round;}
         [data-theme="dark"] .neo-btn { text-shadow: 0 0 8px rgba(0,243,255,0.4); }
 
         .neo-card {
             background: var(--bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; 
             border: none; box-shadow: var(--shadow-out); display: flex; flex-direction: column;
-            transition: transform 0.2s ease, box-shadow 0.2s ease; text-align: left;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
         .service-card, .rezervy-item, .training-card { cursor: pointer; }
@@ -169,24 +166,25 @@
             transform: scale(0.98); box-shadow: var(--shadow-in);
         }
 
+        /* Тумблер (як на фото) */
         .theme-switch {
-            position: relative; width: 64px; height: 34px; background: var(--bg); border-radius: 34px;
-            cursor: pointer; box-shadow: var(--shadow-in); border: none; flex-shrink: 0;
+            position: relative; width: 60px; height: 32px; background: var(--bg); border-radius: 32px;
+            cursor: pointer; box-shadow: var(--shadow-in); border: none; flex-shrink: 0; display: flex; align-items: center;
         }
         .theme-slider {
-            position: absolute; top: 4px; left: 4px; width: 26px; height: 26px; background: #f59e0b; 
+            position: absolute; left: 4px; width: 24px; height: 24px; background: #fbbf24; /* М'який жовтий */
             border-radius: 50%; box-shadow: var(--shadow-sm-out); transition: 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        [data-theme="dark"] .theme-slider { transform: translateX(30px); background: var(--primary); box-shadow: 0 0 10px var(--primary); }
+        [data-theme="dark"] .theme-slider { transform: translateX(28px); background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 
-        .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px;}
+        .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 5px;}
         .status-wrapper { display: flex; align-items: center; gap: 10px; }
         .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
         .pulse-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
-        .dot-green { background-color: #22c55e; animation: pulseGreen 2s infinite; }
+        .dot-green { background-color: #10b981; animation: pulseGreen 2s infinite; }
         .dot-red { background-color: #ef4444; animation: pulseRed 2s infinite; }
-        .dot-loading { background-color: #eab308; animation: pulseYellow 2s infinite; }
+        .dot-loading { background-color: #f59e0b; animation: pulseYellow 2s infinite; }
         [data-theme="dark"] .dot-green { background-color: #00ff66; box-shadow: 0 0 10px #00ff66; }
 
         @keyframes pulseGreen { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
@@ -194,28 +192,28 @@
         @keyframes pulseYellow { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
 
         .price-wrapper { display: none; gap: 15px; margin-bottom: 25px; align-items: stretch; animation: fadeInTab 0.3s ease; }
-        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; text-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; }
         #devicePrice::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 600; text-shadow: none; }
         
         .ok-btn { 
-            background: var(--bg); color: var(--primary); border: none; padding: 0 24px; border-radius: 18px; 
-            font-weight: 900; font-size: 15px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
+            background: var(--bg); color: var(--primary); border: none; padding: 0 24px; border-radius: 16px; 
+            font-weight: 900; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
             display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-out); 
         }
         .ok-btn:active { transform: scale(0.95); box-shadow: var(--shadow-in); }
 
-        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border: none; border-radius: 20px; box-shadow: var(--shadow-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 10px; text-align: left; }
-        .suggestion-item { padding: 14px 16px; cursor: pointer; border-radius: 12px; font-size: 15px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; transition: background 0.2s ease, box-shadow 0.2s ease; }
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border: none; border-radius: 20px; box-shadow: var(--shadow-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 10px; }
+        .suggestion-item { padding: 14px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; transition: background 0.2s ease, box-shadow 0.2s ease; }
         .suggestion-item:active, .suggestion-item:hover { box-shadow: var(--shadow-in); }
         
-        .result-box { display: none; padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; text-align: left; }
+        .result-box { display: none; padding-top: 15px; margin-bottom: 10px; animation: fadeIn 0.4s ease; }
 
-        .ua-name { font-weight: 900; font-size: 22px; margin-bottom: 5px; padding: 0 10px; color: var(--text-main); line-height: 1.2;}
-        .item-category { font-size: 13px; color: var(--text-muted); font-weight: 700; margin-bottom: 25px; padding: 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ua-name { font-weight: 900; font-size: 22px; margin-bottom: 5px; padding: 0 5px; color: var(--text-main); line-height: 1.2;}
+        .item-category { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 25px; padding: 0 5px; text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .tech-info { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;}
-        .tech-item { display: flex; align-items: center; gap: 16px; background: var(--bg); padding: 12px 16px; border-radius: 20px; border: none; box-shadow: var(--shadow-out); transform: translateZ(0); }
-        .icon-circle { width: 42px; height: 42px; min-width: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; box-shadow: var(--shadow-in); background: var(--bg); }
+        .tech-info { display: flex; flex-direction: column; gap: 14px; margin-bottom: 30px;}
+        .tech-item { display: flex; align-items: center; gap: 14px; background: var(--bg); padding: 14px; border-radius: 20px; border: none; box-shadow: var(--shadow-out); transform: translateZ(0); }
+        .icon-circle { width: 40px; height: 40px; min-width: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: var(--shadow-in); background: var(--bg); }
         
         .bg-complexity { color: #f59e0b; } 
         .bg-price { color: #10b981; } 
@@ -230,21 +228,21 @@
 
         .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 10px; background: var(--bg); padding: 16px; border-radius: 20px; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow-out); }
         .tech-photo-wrapper:active { transform: scale(0.97); box-shadow: var(--shadow-in); }
-        .photo-icon { font-size: 26px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
-        .photo-text { flex: 1; display: flex; flex-direction: column; text-align: left; }
+        .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .photo-text { flex: 1; display: flex; flex-direction: column; }
         .photo-title { font-size: 14px; font-weight: 800; color: var(--text-main); }
-        .photo-subtitle { font-size: 12px; font-weight: 600; color: var(--primary); margin-top: 4px; }
+        .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 4px; }
         .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
 
         .service-list { display: flex; flex-direction: column; gap: 16px; padding-bottom: 20px;}
         
-        .service-card { position: relative; padding: 16px 20px; border-radius: 24px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, padding-left 0.3s ease; border: none; box-shadow: var(--shadow-out); background: var(--bg); text-align: left;}
+        .service-card { position: relative; padding: 20px; border-radius: 24px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, padding-left 0.3s ease; border: none; box-shadow: var(--shadow-out); background: var(--bg);}
         .service-card:active { transform: scale(0.98); box-shadow: var(--shadow-in); }
-        .service-content-left { display: flex; align-items: center; gap: 12px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
+        .service-content-left { display: flex; align-items: center; gap: 10px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
         
-        .service-title { font-size: 14px; font-weight: 700; line-height: 1.4; color: var(--text-main); margin-bottom: 4px;}
+        .service-title { font-size: 15px; font-weight: 800; line-height: 1.3; color: var(--text-main); margin-bottom: 4px;}
 
-        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--text-muted); box-shadow: var(--shadow-sm-out); }
+        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 10px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--text-muted); box-shadow: var(--shadow-sm-out); }
         .service-card.brand-support .brand-tag { color: var(--clr-support); } 
         .service-card.brand-ekta .brand-tag { color: var(--clr-ekta); } 
         .service-card.brand-epz .brand-tag { color: var(--clr-epz); } 
@@ -253,7 +251,7 @@
         .price-badge { font-size: 14px; font-weight: 900; background: var(--bg); color: var(--primary); padding: 10px 16px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-in); z-index: 2;}
         [data-theme="dark"] .price-badge { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
-        .focus-icon { font-size: 24px; filter: drop-shadow(0px 2px 5px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
+        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 5px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
         @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
         .service-card.compare-mode { padding-left: 50px; }
@@ -272,15 +270,15 @@
         .modal.show .modal-content { transform: translateY(0); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding: 0 5px 20px 5px; color: var(--text-main); text-align: left; }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding: 0 5px; color: var(--text-main);}
         
-        .modal-section-title { font-size: 16px; font-weight: 800; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
+        .modal-section-title { font-size: 15px; font-weight: 800; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
         .modal-cost-header { font-size: 11px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 1px;}
-        .modal-divider { height: 2px; background: var(--input-bg); margin: 15px 0; border-radius: 2px; width: 100%; box-shadow: var(--shadow-in); }
+        .modal-divider { height: 2px; background: var(--text-muted); opacity: 0.1; margin: 15px 0; border-radius: 2px; width: 100%; }
         
         .modal-item { display: flex; align-items: center; gap: 14px; margin-bottom: 12px; background: var(--bg); padding: 14px; border-radius: 18px; border: none; box-shadow: var(--shadow-out); }
-        .modal-icon-circle { width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg); box-shadow: var(--shadow-in); border: none;}
-        .modal-text { font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 600; text-align: left; }
+        .modal-icon-circle { width: 38px; height: 38px; min-width: 38px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--bg); box-shadow: var(--shadow-in); border: none;}
+        .modal-text { font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 600; text-align: left;}
         
         .code-block-wrapper { background: var(--bg); border: none; box-shadow: var(--shadow-in); border-radius: 18px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
         .code-block-wrapper:active { transform: scale(0.97); }
@@ -289,43 +287,41 @@
         [data-theme="dark"] .code-value-text { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
         .montazh-label { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; display: block; font-weight: 700; text-align: left; padding-left: 5px; }
-        .availability-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 12px; font-size: 13px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: none; background: var(--bg); box-shadow: var(--shadow-in);}
+        .availability-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 14px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: none; background: var(--bg); box-shadow: var(--shadow-in);}
         
         .status-city-limit { color: #ff3366; }
         .status-fee-zone { color: #f59e0b; }
-        .status-full-coverage { color: #00ff66; }
+        .status-full-coverage { color: #10b981; }
         [data-theme="dark"] .status-city-limit { text-shadow: 0 0 8px rgba(255,51,102,0.5); }
         [data-theme="dark"] .status-fee-zone { text-shadow: 0 0 8px rgba(245,158,11,0.5); }
         [data-theme="dark"] .status-full-coverage { text-shadow: 0 0 8px rgba(0,255,102,0.5); }
         
         .desc-toggle { font-size: 14px; font-weight: 800; color: var(--primary); margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; width: 100%; transition: 0.2s; user-select: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 16px;}
         .desc-toggle:active { box-shadow: var(--shadow-in); transform: scale(0.98); }
-        .desc-content { margin-top: 15px; padding: 20px; background: var(--bg); border-radius: 20px; border: none; box-shadow: var(--shadow-in); font-size: 14px; line-height: 1.5; text-align: left; }
+        .desc-content { margin-top: 15px; padding: 20px; background: var(--bg); border-radius: 20px; border: none; box-shadow: var(--shadow-in); font-size: 14px; line-height: 1.5; text-align: left;}
         
-        .rezervy-item { background: var(--bg); border-radius: 20px; padding: 18px; margin-bottom: 16px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); text-align: left; }
+        /* Налаштування Резервів */
+        .rezervy-item { background: var(--bg); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); }
         .rezervy-item:active { box-shadow: var(--shadow-in); transform: scale(0.98); }
-        .rezervy-name { font-size: 13px; font-weight: 700; color: var(--text-main); margin-bottom: 5px; line-height: 1.4;}
+        .rezervy-name { font-size: 13px; font-weight: 800; color: var(--text-main); margin-bottom: 6px; line-height: 1.3;}
         .rezervy-cat { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
         .rezervy-price { font-size: 16px; font-weight: 900; color: var(--primary); white-space: nowrap; }
         [data-theme="dark"] .rezervy-price { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
-        .training-card { background: var(--bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; border: none; box-shadow: var(--shadow-out); transition: transform 0.2s ease, box-shadow 0.2s ease; text-align: left; }
+        /* Налаштування Навчання */
+        .training-card { background: var(--bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: none; box-shadow: var(--shadow-out); transition: transform 0.2s ease, box-shadow 0.2s ease; text-align: left; }
         .training-card:active { transform: scale(0.98); box-shadow: var(--shadow-in); }
         .tc-brand { font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--primary); background: var(--bg); box-shadow: var(--shadow-in); padding: 8px 14px; border-radius: 12px; display: inline-block; margin-bottom: 15px;}
-        .tc-title { font-size: 16px; font-weight: 800; color: var(--text-main); margin-bottom: 10px; line-height: 1.4; }
+        .tc-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 10px; line-height: 1.3; }
 
+        /* Налаштування Опції */
         .settings-card { background: var(--bg); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: none; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); text-align: left; }
-        .settings-info { display: flex; flex-direction: column; gap: 6px; text-align: left; }
+        .settings-info { display: flex; flex-direction: column; gap: 6px; }
         .settings-title { font-size: 16px; font-weight: 800; color: var(--text-main); }
         .settings-desc { font-size: 12px; font-weight: 600; color: var(--text-muted); }
 
-        .settings-btn { background: var(--bg); color: var(--primary); border: none; border-radius: 14px; padding: 10px 18px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm-out); }
-        .settings-btn:active { transform: scale(0.95); box-shadow: var(--shadow-in); }
-        .settings-btn.primary { background: var(--bg); color: var(--primary); border: none; box-shadow: var(--shadow-sm-out); }
-        .settings-btn.spinning svg { animation: spin 1s linear infinite; }
-
-        .footer { text-align: center; font-size: 12px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 20px;}
-        .app-version { display: inline-block; font-size: 13px; font-weight: 800; margin-top: 8px; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 14px; transition: 0.2s; border: none; text-decoration: none;}
+        .footer { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 20px;}
+        .app-version { display: inline-block; font-size: 12px; font-weight: 800; margin-top: 8px; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 14px; transition: 0.2s; border: none; text-decoration: none;}
         .app-version:active { transform: scale(0.95); box-shadow: var(--shadow-in);}
 
         .floating-btns { position: fixed; bottom: calc(var(--nav-height) + 15px); right: 24px; z-index: 9998; pointer-events: none; }
@@ -341,11 +337,11 @@
         .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
         .update-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin-bottom: 4px;}
         .update-version { font-size: 13px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
-        .changelog-panel { background: var(--bg); box-shadow: var(--shadow-in); border-radius: 20px; padding: 20px; border: none; margin-bottom: 24px;}
+        .changelog-panel { background: var(--bg); box-shadow: var(--shadow-in); border-radius: 20px; padding: 20px; border: none; margin-bottom: 24px; text-align: left;}
         
-        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px;}
+        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 5px;}
         .compare-toggle-btn { background: var(--bg); color: var(--primary); border: none; padding: 10px 16px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm-out); transition: 0.2s; }
-        .compare-toggle-btn.active { color: #ff3366; box-shadow: var(--shadow-in); }
+        .compare-toggle-btn.active { color: #ef4444; box-shadow: var(--shadow-in); }
         [data-theme="dark"] .compare-toggle-btn.active { text-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
         
         .compare-action-bar { position: fixed; bottom: calc(var(--nav-height) - 10px); left: 0; width: 100%; background: var(--bg); padding: 20px 24px 25px 24px; box-shadow: 0 -15px 40px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9980; border-radius: 30px 30px 0 0; border: none; }
@@ -359,8 +355,8 @@
         .compare-table th { padding: 20px 15px; border-bottom: 2px solid transparent; background: var(--bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
         .compare-table td { padding: 16px 15px; color: var(--text-main); font-weight: 600; line-height: 1.5; text-align: left;}
         
-        .pwa-guide-container { color: var(--text-main); background: var(--bg); border-radius: 0 0 30px 30px;}
-        .pwa-alert { background: var(--bg); box-shadow: var(--shadow-in); padding: 20px; margin-bottom: 20px; border-radius: 24px; border: none; }
+        .pwa-guide-container { color: var(--text-main); background: var(--bg); border-radius: 0 0 30px 30px; overflow-y: auto;}
+        .pwa-alert { background: var(--bg); box-shadow: var(--shadow-in); padding: 20px; margin: 20px 20px 24px 20px; border-radius: 24px; border: none; }
         .modal-close-btn { border: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; font-size: 18px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; transition: 0.2s;}
         .modal-close-btn:active { box-shadow: var(--shadow-in); transform: scale(0.95); }
     </style>
@@ -438,7 +434,7 @@
         <div class="neo-card" style="flex-direction: row; justify-content: space-between; align-items: center;">
             <div class="settings-info">
                 <span style="font-size: 16px; font-weight: 800;">Темна тема</span>
-                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Стиль Неоморфізм</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Стиль Неоморфізм</span>
             </div>
             <button id="themeToggle" class="theme-switch" title="Змінити тему">
                 <div class="theme-slider"></div>
@@ -448,7 +444,7 @@
         <div class="neo-card" style="align-items: flex-start; flex-direction: column;">
             <div class="settings-info" style="margin-bottom: 16px;">
                 <span style="font-size: 16px; font-weight: 800;">Магазин за замовчуванням</span>
-                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Для швидкого доступу до резервів</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Для швидкого доступу до резервів</span>
             </div>
             <select id="defaultStoreSelect" class="montazh-select" style="margin-bottom: 0;" onchange="window.saveDefaultStore()"></select>
         </div>
@@ -456,7 +452,7 @@
         <div class="neo-card" style="flex-direction: row; justify-content: space-between; align-items: center;">
             <div class="settings-info">
                 <span style="font-size: 16px; font-weight: 800;">База даних</span>
-                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Синхронізація таблиці</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Синхронізація таблиці</span>
             </div>
             <button id="forceUpdateBtn" class="neo-btn">Оновити</button>
         </div>
@@ -464,7 +460,7 @@
         <div class="neo-card" style="flex-direction: row; justify-content: space-between; align-items: center;">
             <div class="settings-info">
                 <span style="font-size: 16px; font-weight: 800;">Встановлення (PWA)</span>
-                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Як додати на екран</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Як додати на екран</span>
             </div>
             <button class="neo-btn" onclick="window.openGuideModal()">Інструкція</button>
         </div>
@@ -472,7 +468,7 @@
         <div class="neo-card" style="flex-direction: row; justify-content: space-between; align-items: center;">
             <div class="settings-info">
                 <span style="font-size: 16px; font-weight: 800;">Зворотній зв'язок</span>
-                <span style="font-size: 12px; font-weight: 600; color: var(--text-muted);">Повідомити про помилку</span>
+                <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">Повідомити про помилку</span>
             </div>
             <a href="https://forms.gle/z4wz9XcSLT5pGXkp8" target="_blank" style="text-decoration: none;">
                 <button class="neo-btn">Написати</button>
@@ -507,7 +503,7 @@
 
 <div id="compareBar" class="compare-action-bar">
     <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px;">Порівняти</button>
+    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px; box-shadow: var(--shadow-sm-out);">Порівняти</button>
 </div>
 
 <div id="compareModal" class="modal">
@@ -535,7 +531,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3);"></b>
+            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary);"></b>
             <button class="modal-close-btn" onclick="window.closeRezervItemModal()">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -547,14 +543,14 @@
 </div>
 
 <div id="guideModal" class="modal">
-    <div class="modal-content" style="padding: 0; overflow: hidden;">
+    <div class="modal-content" style="padding: 0; overflow: hidden; max-height: 85vh; display: flex; flex-direction: column;">
         <div class="modal-header" style="padding: 24px; margin-bottom: 0;">
             <b style="font-size: 20px; font-weight: 900;">Встановлення додатка</b>
             <button class="modal-close-btn" onclick="window.closeGuideModal()">✕</button>
         </div>
-        <div class="modal-body pwa-guide-container" style="padding: 0 0 20px 0;">
+        <div class="modal-body pwa-guide-container" style="padding: 0 0 20px 0; overflow-y: auto; flex-grow: 1;">
           <div class="pwa-alert">
-            <div style="display: flex; align-items: center; font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 10px;">
+            <div style="display: flex; align-items: center; font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 12px;">
               <svg viewBox="0 0 24 24" style="width: 24px; height: 24px; margin-right: 10px; fill: var(--primary);"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               Відкрито у месенджері?
             </div>
@@ -679,15 +675,6 @@
         window.scrollTo(0, 0);
     }
 
-    function checkOpenModals() {
-        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal'];
-        for (let id of modals) {
-            let el = document.getElementById(id);
-            if (el && el.classList.contains('show')) return true;
-        }
-        return false;
-    }
-
     function removeModalFreeze() {
         document.body.classList.remove('modal-open');
         document.body.style.position = '';
@@ -790,7 +777,7 @@
 
     async function init() {
         let cached = null;
-        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
+        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) { console.error("LocalStorage disabled"); }
         
         if (cached) { 
             try {
@@ -889,7 +876,7 @@
 
     window.closeGuideModal = function() {
         document.getElementById('guideModal').classList.remove('show');
-        if (!checkOpenModals()) removeModalFreeze();
+        removeModalFreeze();
     }
 
     window.saveDefaultStore = function() {
@@ -976,7 +963,7 @@
 
     window.closeRezervItemModal = function() {
         document.getElementById('rezervItemModal').classList.remove('show');
-        if (!checkOpenModals()) removeModalFreeze();
+        removeModalFreeze();
     }
 
     window.renderTrainingTab = function() {
@@ -1064,7 +1051,7 @@
             else if (t.includes('висок')) s = "color: #f97316; font-weight: 800;";
             else if (t.includes('середн')) s = "color: #eab308; font-weight: 700;";
             else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
-            techHTML += `<div class="tech-item"><div class="icon-circle bg-complexity">⚙️</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:800;text-transform:uppercase;">СКЛАДНІСТЬ</span><span style="font-size:14px; ${s}">${item.complexity}</span></div></div>`;
+            techHTML += `<div class="tech-item"><div class="icon-circle bg-complexity" style="font-size: 22px;">⚙️</div><div><span style="font-size:10px;color:var(--text-muted);display:block;font-weight:800;text-transform:uppercase;">СКЛАДНІСТЬ</span><span style="font-size:14px; ${s}">${item.complexity}</span></div></div>`;
         }
         
         let calcRepairPrice = item.price ? item.price.toString() : "";
@@ -1086,7 +1073,7 @@
             if (f[2] && f[2].toString().trim() !== "") { 
                 hasInfo = true;
                 let cls = f[1].includes('НЕГАРАНТ') ? 'bg-negarant' : '';
-                techHTML += `<div class="tech-item ${cls}"><div class="icon-circle ${f[3]}">${f[0]}</div><div><span style="font-size:9px;color:var(--text-muted);display:block;font-weight:800;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:700;color:var(--text-main);">${f[2]}</span></div></div>`;
+                techHTML += `<div class="tech-item ${cls}"><div class="icon-circle ${f[3]}" style="font-size: 22px;">${f[0]}</div><div><span style="font-size:10px;color:var(--text-muted);display:block;font-weight:800;text-transform:uppercase;">${f[1]}</span><span style="font-size:13px;font-weight:700;color:var(--text-main);">${f[2]}</span></div></div>`;
             }
         });
         return hasInfo ? techHTML : "";
@@ -1101,9 +1088,9 @@
     }
 
     function parseDescriptionLines(descE) {
-        if (!descE) return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
+        if (!descE) return `<div style="text-align:left; padding: 20px; color:var(--text-muted); font-size:14px;">Опис відсутній...</div>`;
         let raw = descE.toString().trim();
-        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-size:13px;">Опис відсутній...</div>`;
+        if (raw === "Опис відсутній..." || raw === "") return `<div style="text-align:left; padding: 20px; color:var(--text-muted); font-size:14px;">Опис відсутній...</div>`;
 
         return raw.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
             const l = line.trim(); 
@@ -1128,7 +1115,7 @@
             }
             
             return `
-            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding: 14px; background: var(--bg); border-radius: 18px; box-shadow: var(--shadow-sm-out); border: none;">${e ? `<div style="width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg); box-shadow: var(--shadow-in);">${e}</div>` : ''}
+            <div style="display: flex; align-items: center; gap: 14px; margin-bottom: 12px; padding: 14px; background: var(--bg); border-radius: 18px; box-shadow: var(--shadow-sm-out); border: none;">${e ? `<div style="width: 40px; height: 40px; min-width: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; background: var(--bg); box-shadow: var(--shadow-in);">${e}</div>` : ''}
                 <div style="font-size: 13px; line-height: 1.5; color: var(--text-main); font-weight: 500; text-align: left;">${t}</div>
             </div>`;
         }).join('');
@@ -1148,7 +1135,7 @@
         if (!descText && !codeHtml) return '';
 
         return `
-            <div class="desc-toggle neo-btn" style="margin-top: 15px; padding: 12px;" onclick="const c = this.nextElementSibling; if(c.style.display==='none'){c.style.display='block';}else{c.style.display='none';}">
+            <div class="desc-toggle neo-btn" style="margin-top: 15px; padding: 14px;" onclick="const c = this.nextElementSibling; if(c.style.display==='none'){c.style.display='block';}else{c.style.display='none';}">
                 Детальний опис
             </div>
             <div class="desc-content" style="display: none;">
