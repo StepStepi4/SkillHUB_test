@@ -294,7 +294,7 @@
 
 <div class="container">
     
-    <div class="header-row">
+    <div class="header-row" id="mainHeader">
         <h2 id="headerTitle">SkillHUB Assistant</h2>
     </div>
     
@@ -315,8 +315,8 @@
         </div>
 
         <div class="price-wrapper" id="priceWrapper">
-            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric">
-            <button class="neo-btn" id="okBtn" style="padding: 0 24px;">ОК</button>
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" class="montazh-select" style="margin-bottom:0;">
+            <button class="neo-btn" id="okBtn" style="padding: 0 24px; box-shadow: var(--shadow-out);">ОК</button>
         </div>
 
         <div id="result" class="result-box">
@@ -424,7 +424,7 @@
 
 <div id="compareBar" class="compare-action-bar">
     <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px;">Порівняти</button>
+    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px; box-shadow: var(--shadow-sm-out);">Порівняти</button>
 </div>
 
 <div id="compareModal" class="modal">
@@ -452,7 +452,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary);"></b>
+            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3);"></b>
             <button class="modal-close-btn" onclick="window.closeRezervItemModal()">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -471,45 +471,28 @@
         </div>
         <div class="modal-body pwa-guide-container" style="padding: 0;">
           <div class="pwa-alert">
-            <div class="pwa-alert-title">
-              <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+            <div style="display: flex; align-items: center; font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 10px;">
+              <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; margin-right: 10px; fill: var(--primary);"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
               Відкрито у месенджері?
             </div>
-            <div class="pwa-alert-text">
+            <div style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-main);">
               Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
-              <ul>
-                <li><strong>iOS (iPhone):</strong> Натисніть значок компаса 
-                  <span class="pwa-icon-inline">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg>
-                  </span> 
-                  у правому нижньому куті екрана.
-                </li>
-                <li><strong>Android:</strong> Натисніть три крапки 
-                  <span class="pwa-icon-inline">
-                    <svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg>
-                  </span> 
-                  у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong> (Chrome).
-                </li>
+              <ul style="margin: 12px 0 0 0; padding-left: 20px;">
+                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса в правому нижньому куті екрана.</li>
+                <li style="margin-bottom: 8px;"><strong>Android:</strong> Натисніть три крапки в правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong> (Chrome).</li>
               </ul>
             </div>
           </div>
-          <div class="pwa-device-section">
-            <div class="pwa-device-title">
-              <svg class="color-apple" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+
+          <div style="padding: 24px 20px; background: var(--bg); border-top: 2px solid var(--input-bg);">
+            <div style="display: flex; align-items: center; font-size: 18px; font-weight: 800; margin-bottom: 15px; color: var(--text-main);">
+              <svg viewBox="0 0 384 512" style="margin-right: 12px; width: 24px; height: 24px; fill: var(--text-main);"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
               Встановлення на iOS
             </div>
-            <ol class="pwa-instructions">
-              <li>Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
-              <li>Натисніть кнопку <strong>«Поділитися»</strong> 
-                <span class="pwa-icon-inline">
-                  <svg class="color-safari-blue" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path>
-                    <polyline points="16 6 12 2 8 6"></polyline>
-                    <line x1="12" y1="2" x2="12" y2="15"></line>
-                  </svg>
-                </span> 
-              внизу екрана.</li>
-              <li>Виберіть <strong>«На початковий екран»</strong>.</li>
+            <ol style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600;">
+              <li style="margin-bottom: 12px;">Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
+              <li style="margin-bottom: 12px;">Натисніть кнопку <strong>«Поділитися»</strong> внизу екрана.</li>
+              <li style="margin-bottom: 12px;">Виберіть <strong>«На початковий екран»</strong>.</li>
             </ol>
           </div>
         </div>
@@ -528,7 +511,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwIIjwiFqSkMP7M8z6UrOS6Bg1fUpr_z_nNXUgG87yAVCahl1fuq_nrCkzedAZm_Lu5vg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyLM6btrJtEOUjAIcwFCGyd9jeKzLEKzcR6GViQixm7OHezsXfJMRgpat8_ahKU3C9g2A/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -586,10 +569,7 @@
         document.getElementById(tabId).classList.add('active');
         if (event) event.currentTarget.classList.add('active');
 
-        // Зміна заголовку сторінки
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
-        
-        // Ховаємо статус-контейнер скрізь крім головної
         document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
 
         if (isCompareMode) toggleCompareMode();
@@ -628,7 +608,7 @@
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // БЕЗПЕЧНИЙ ESCAPE (Виправлено баг з одинарною лапкою)
+    // ПРАВИЛЬНИЙ ESCAPE (Без лапок у .join)
     window.escapeHTML = function(str) {
         if (!str) return '';
         const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
@@ -797,51 +777,50 @@
     }
 
     window.populateFilters = function() {
-        if (db.rezervyData && db.rezervyData.length > 0) {
+        const storeSel = document.getElementById('storeFilter');
+        const brandSel = document.getElementById('brandFilter');
+        const defaultSel = document.getElementById('defaultStoreSelect');
+        
+        if (db.rezervyData) {
             const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
-            const selectStore = document.getElementById('storeFilter');
-            const defaultStoreSel = document.getElementById('defaultStoreSelect');
-            
-            let optionsHTML = '<option value="">-- Оберіть магазин --</option>';
+            let h = '<option value="">-- Оберіть магазин --</option>';
             stores.forEach(s => {
-                if (s && s !== "Не вказано") optionsHTML += `<option value="${s}">${s}</option>`;
+                if (s && s !== "Не вказано") h += `<option value="${s}">${s}</option>`;
             });
+            storeSel.innerHTML = h;
+            defaultSel.innerHTML = h.replace('Оберіть магазин', 'Не вибрано');
             
-            selectStore.innerHTML = optionsHTML;
-            if (defaultStoreSel) defaultStoreSel.innerHTML = '<option value="">-- Не вибрано --</option>' + optionsHTML.replace('-- Оберіть магазин --', '');
-
-            const savedStore = localStorage.getItem('skillhub_default_store');
-            if (savedStore) {
-                if (defaultStoreSel) defaultStoreSel.value = savedStore;
-                selectStore.value = savedStore;
+            const saved = localStorage.getItem('skillhub_default_store');
+            if (saved) {
+                storeSel.value = saved;
+                defaultSel.value = saved;
             }
         }
-        
-        if (db.trainingData && db.trainingData.length > 0) {
+
+        if (db.trainingData) {
             const brands = [...new Set(db.trainingData.map(t => t.brand).filter(b => b))].sort();
-            const selectBrand = document.getElementById('brandFilter');
-            const currentSelected = selectBrand.value; 
-            
-            selectBrand.innerHTML = '<option value="">-- Всі бренди --</option>';
-            brands.forEach(b => { selectBrand.innerHTML += `<option value="${b}">${b}</option>`; });
-            if(currentSelected) selectBrand.value = currentSelected;
+            let h = '<option value="">-- Всі бренди --</option>';
+            const currentSelected = brandSel.value;
+            brands.forEach(b => h += `<option value="${b}">${b}</option>`);
+            brandSel.innerHTML = h;
+            if(currentSelected) brandSel.value = currentSelected;
         }
     }
 
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
-        const container = document.getElementById('rezervyList');
-        if (!store) { container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">Оберіть магазин</div>'; return; }
+        const cont = document.getElementById('rezervyList');
+        if (!store) { cont.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">Оберіть магазин, щоб побачити резерви</div>'; return; }
         
-        let matches = db.rezervyData.filter(r => r.store === store);
-        if (matches.length === 0) { container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">Немає товарів</div>`; return; }
+        const matches = db.rezervyData.filter(r => r.store === store);
+        if (matches.length === 0) { cont.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">Немає товарів в цьому магазині</div>`; return; }
 
         matches.sort((a, b) => b.price - a.price);
 
-        container.innerHTML = matches.map(r => {
+        cont.innerHTML = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             return `
-            <div class="rezervy-item neo-card" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
+            <div class="rezervy-item" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
                 <div style="flex: 1; padding-right: 15px; overflow: hidden;">
                     <div class="rezervy-name" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${window.escapeHTML(shortName)}</div>
                     <div class="rezervy-cat">${window.escapeHTML(r.cat)}</div>
@@ -881,36 +860,20 @@
         
         let filteredData = db.trainingData;
         if (brandFilter) filteredData = filteredData.filter(item => item.brand === brandFilter);
-        if (filteredData.length === 0) { list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Немає сервісів</div>'; return; }
+        if (filteredData.length === 0) { list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding:20px;">Немає сервісів для цього бренду</div>'; return; }
         
         list.innerHTML = filteredData.map(item => {
             let brand = item.brand;
             let title = item.name.replace(/^\[.*?\]\s*/, '').trim(); 
             let desc = item.desc;
             let code = window.findInDb(db.serviceCodes, item.name) || "";
-            
-            let cls = 'brand-other';
-            let checkName = (brand + " " + item.name).toUpperCase(); 
-
-            if (checkName.includes('SUPPORT') || checkName.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
-            else if (checkName.includes('EKTA') || checkName.includes('ЕКТА')) cls = 'brand-ekta'; 
-            else if (checkName.includes('EPZ') || checkName.includes('ЕПЗ') || checkName.includes('ЛІЦЕНЗІЙНЕ')) cls = 'brand-epz'; 
-            else if (checkName.includes('МОНТАЖ') || checkName.includes('ПІДКЛЮЧЕННЯ')) cls = 'brand-install';
-            else cls = 'brand-settings';
-
             let descToggle = generateDescToggleHTML(desc, code);
             
             return `
-            <div class="service-card ${cls}" style="display:flex; flex-direction:column; align-items:stretch; margin-bottom: 20px; cursor:default;">
-                <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                    <div class="service-content-left" style="flex:1;">
-                        <div>
-                            ${brand ? `<div class="brand-tag">${brand}</div>` : ''}
-                            <div class="service-title">${title}</div>
-                        </div>
-                    </div>
-                </div>
-                <div style="width:100%; margin-top:5px; position:relative; z-index:2;">${descToggle}</div>
+            <div class="training-card">
+                ${brand ? `<div class="tc-brand">${brand}</div>` : ''}
+                <div class="tc-title">${title}</div>
+                <div style="width:100%; margin-top:10px; position:relative; z-index:2; text-align:left;">${descToggle}</div>
             </div>`;
         }).join('');
     }
@@ -922,7 +885,6 @@
         techEl.style.display = techStr ? 'flex' : 'none';
 
         let listEl = document.getElementById('rezervServiceList');
-
         if (!item.service) { listEl.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--text-muted);">Немає прив\'язаних сервісів</div>'; return; }
 
         let dataForSort = calculateServicesArray(item, p);
@@ -983,7 +945,7 @@
             let uahCalc = calcRepairPrice.replace(/(\d+(?:\.\d+)?)%/g, (match, p1) => {
                 return Math.round(p * parseFloat(p1) / 100).toLocaleString('uk-UA') + " ₴";
             });
-            calcRepairPrice = `${calcRepairPrice} <span style="color:var(--primary);">(${uahCalc})</span>`;
+            calcRepairPrice = `${calcRepairPrice} <span style="color:var(--primary); text-shadow: 0 0 5px rgba(0,243,255,0.3);">(${uahCalc})</span>`;
         }
         
         const fields = [
