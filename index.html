@@ -63,8 +63,7 @@
             --clr-install-bg: #3b0764; --clr-install-text: #e9d5ff;
         }
 
-        /* НОВИЙ, БЕЗПЕЧНИЙ БЛОК СКРОЛУ ДЛЯ МОДАЛОК */
-        body.modal-open { overflow: hidden; }
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; height: 100%; }
         
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
@@ -130,19 +129,19 @@
         .nav-item span { font-size: 10px; font-weight: 600; transition: 0.2s; }
         
         .nav-item.active { color: var(--primary); }
-        .nav-item.active svg { stroke-width: 2.2; filter: drop-shadow(0 0 6px var(--primary)); transform: translateY(-2px); }
+        .nav-item.active svg { stroke-width: 2.2; transform: scale(1.1) translateY(-2px); }
         .nav-item.active span { font-weight: 800; }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
         input, select { 
-            width: 100%; padding: 16px; border-radius: 12px; 
+            width: 100%; padding: 16px 20px; border-radius: 12px; 
             font-size: 16px; font-family: inherit; font-weight: 500; 
             background: var(--input-bg); color: var(--text-main); 
             border: 1px solid var(--border); 
             outline: none; transition: 0.2s; -webkit-appearance: none; appearance: none;
         }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        input:focus, select:focus { border-color: var(--primary); }
         
         select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -201,6 +200,7 @@
         
         .sc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px;}
         
+        /* АДАПТИВНІ ЯРЛИКИ БРЕНДІВ */
         .sc-brand { 
             font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; 
             border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;
@@ -237,32 +237,34 @@
         .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); }
         .modal-close { background: var(--input-bg); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; color: var(--text-muted); display: flex; justify-content: center; align-items: center; cursor: pointer;}
         
-        .modal-body { overflow-y: auto; flex: 1; padding-bottom: 20px;}
+        .modal-body { overflow-y: auto; flex: 1; padding-bottom: 20px; text-align: left;}
         
         /* ТЕХНІЧНА ДОВІДКА */
-        .tech-info-block { background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden;}
-        .tech-row { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 12px;}
-        .tech-row:last-child { margin-bottom: 0; border-bottom: none; padding-bottom: 0;}
-        .tech-icon { font-size: 22px; }
-        .tech-text-wrap { display: flex; flex-direction: column; gap: 4px; flex: 1;}
-        .tech-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px;}
+        .tech-info-block { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; }
+        .tech-row { display: flex; align-items: center; gap: 14px; padding: 14px 16px; border-bottom: 1px solid var(--border); }
+        .tech-row:last-child { border-bottom: none; }
+        .tech-icon { font-size: 22px; width: 26px; text-align: center;}
+        .tech-text-wrap { display: flex; flex-direction: column; gap: 2px; }
+        .tech-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
         .tech-val { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4;}
         
-        .bg-negarant { background: var(--danger-bg); border-radius: 8px; margin: -8px; padding: 8px; } /* Виправлення геометрії заливки */
+        .bg-negarant { background: var(--danger-bg); }
 
         /* ПОРІВНЯННЯ */
         .compare-bar { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px; display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: 0.3s; z-index: 9980;}
         .compare-bar.show { transform: translateY(0); }
         
-        /* Чекбокс у порівнянні не перекриває клік */
-        .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; pointer-events: none;}
+        .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--border); background: var(--card-bg); display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%);}
+        .service-card.compare-mode { padding-left: 50px; }
+        .service-card.compare-mode .checkbox { left: 16px; }
+        
         .service-card.selected { border-color: var(--primary); background: var(--primary-light); }
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
         /* ОПИС СЕРВІСІВ У МОДАЛЦІ */
-        .desc-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5;}
-        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px; border-radius: 12px; margin-bottom: 16px; font-weight: 600;}
+        .desc-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; text-align: left;}
+        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer;}
         
         /* Окремі форми під емодзі в модалці */
         .desc-line { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
@@ -277,7 +279,7 @@
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
-    <div class="loader-text" id="mainLoaderText">Синхронізація бази...</div>
+    <div class="loader-text" id="mainLoaderText">Синхронізація з базою...</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -304,19 +306,19 @@
         </div>
 
         <div id="priceWrapper" class="input-group" style="display:none; gap:10px; flex-direction:row;">
-            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1;">
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1; margin-bottom:0;">
             <button class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
         </div>
 
         <div id="result" style="display:none;">
             <div class="ua-name" id="uaTitle" style="font-size:20px; font-weight:800; margin-bottom:5px; text-align: left;"></div>
-            <div class="item-category" id="itemCategory" style="margin-bottom: 20px;"></div>
+            <div class="item-category" id="itemCategory" style="margin-bottom:20px; opacity:0.7; font-size:13px; text-transform: uppercase; font-weight: 700; text-align: left;"></div>
             
             <div id="techInfo"></div>
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:14px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span>
-                <button id="toggleCompareBtn" style="background:none; border:none; color:var(--primary); font-weight:600; font-size:14px; display:none; cursor: pointer;">Порівняти</button>
+                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
+                <button id="toggleCompareBtn" style="background:none; border:none; color:var(--primary); font-weight:600; font-size:14px; display:none; cursor:pointer;" onclick="window.toggleCompareMode()">Порівняти</button>
             </div>
             
             <div id="serviceList"></div>
@@ -356,7 +358,7 @@
             <div class="list-item" style="flex-direction:column; align-items:flex-start;">
                 <div class="list-item-content" style="margin-bottom: 10px; width:100%;">
                     <span class="list-item-title">Магазин на якому Ви працюєте?</span>
-                    <span class="list-item-subtitle">Для вкладки "Резерви"</span>
+                    <span class="list-item-subtitle">Для швидкого доступу до резервів</span>
                 </div>
                 <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--bg);"></select>
             </div>
@@ -390,7 +392,7 @@
 
         <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px;">
             ROZETKA KHARKIV REGION<br>
-            <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:4px 8px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer;" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
+            <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
         </div>
     </div>
 </div>
@@ -414,8 +416,12 @@
     </button>
 </nav>
 
+<div class="floating-top" id="scrollTopBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</div>
+
 <div id="compareBar" class="compare-bar">
-    <div style="font-weight:600;" id="compareStatusText">Оберіть 2 сервіси</div>
+    <div style="font-weight:600; font-size:14px;" id="compareStatusText">Оберіть 2 сервіси</div>
     <button class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px;">Порівняти</button>
 </div>
 
@@ -449,52 +455,54 @@
         </div>
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
-            <div style="font-weight:700; font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Сервіси</div>
+            <div style="font-weight:700; font-size:12px; color:var(--text-muted); text-transform:uppercase; margin-bottom:12px;">Рекомендовані сервіси</div>
             <div id="rezervServiceList"></div>
         </div>
     </div>
 </div>
 
 <div id="guideModal" class="modal">
-    <div class="modal-content">
+    <div class="modal-content" style="max-height: 85vh; padding-bottom: 20px;">
         <div class="modal-header">
             <div class="modal-title">Встановлення PWA</div>
             <button class="modal-close" onclick="window.closeGuideModal()">✕</button>
         </div>
-        <div class="modal-body">
-            <div style="background:var(--input-bg); padding:16px; border-radius:12px; margin-bottom:16px;">
-                <b style="color:var(--primary); display:flex; align-items:center; gap:8px; margin-bottom:8px;">
+        <div class="modal-body" style="overflow-y: auto; padding-right: 5px;">
+            <div style="background:var(--input-bg); padding:16px; border-radius:12px; margin-bottom:16px; text-align: left; border: 1px solid var(--border);">
+                <b style="color:var(--primary); display:flex; align-items:center; gap:8px; font-size: 16px; margin-bottom:8px;">
                     <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                     Відкрито у месенджері?
                 </b>
-                Телеграм чи Вайбер не підтримують встановлення. Натисни три крапки (або компас) і вибери <b>Відкрити у браузері</b>.
+                <span style="font-size: 14px; line-height: 1.5; display:block;">Телеграм чи Вайбер не підтримують встановлення додатку. Натисніть три крапки (або компас) і виберіть <b>Відкрити у браузері</b>.</span>
             </div>
-            <div style="margin-bottom:16px;">
-                <b style="display:flex; align-items:center; gap:8px;">
-                    <svg viewBox="0 0 384 512" style="width: 18px; height: 18px; fill: currentColor;"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-                    iOS (Safari)
-                </b>
-                <ol style="padding-left: 20px; margin-top:8px;">
-                    <li>Натисни кнопку "Поділитися" (квадрат зі стрілочкою внизу)</li>
-                    <li>Вибери "На початковий екран"</li>
+            
+            <div style="border: 1px solid var(--border); background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: left;">
+                <div style="font-size: 16px; font-weight: 800; display:flex; align-items:center; gap:8px; margin-bottom:12px;">
+                    <svg viewBox="0 0 384 512" style="width: 20px; height: 20px; fill: currentColor;"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                    Для iOS (Safari)
+                </div>
+                <ol style="padding-left: 20px; margin:0; font-size: 14px; line-height:1.6;">
+                    <li>Натисніть кнопку "Поділитися" (квадрат зі стрілочкою вгору внизу екрана)</li>
+                    <li>Прокрутіть меню вниз та виберіть <b>"На початковий екран"</b></li>
                 </ol>
             </div>
-            <div>
-                <b style="display:flex; align-items:center; gap:8px; color:#10b981;">
-                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.56-.38-.85-.22-.31.16-.42.54-.26.85l1.84 3.18C2.7 11.41 0 15.65 0 20.6h24c0-4.95-2.7-9.19-6.4-11.12zM8.5 16.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
-                    Android (Chrome)
-                </b>
-                <ol style="padding-left: 20px; margin-top:8px;">
-                    <li>Натисни меню (три крапки вгорі)</li>
-                    <li>Вибери "Додати на головний екран"</li>
+            
+            <div style="border: 1px solid var(--border); background: var(--card-bg); border-radius: 12px; padding: 16px; text-align: left;">
+                <div style="font-size: 16px; font-weight: 800; display:flex; align-items:center; gap:8px; margin-bottom:12px; color: #10b981;">
+                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.56-.38-.85-.22-.31.16-.42.54-.26.85l1.84 3.18C2.7 11.41 0 15.65 0 20.6h24c0-4.95-2.7-9.19-6.4-11.12zM8.5 16.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                    Для Android (Chrome)
+                </div>
+                <ol style="padding-left: 20px; margin:0; font-size: 14px; line-height:1.6;">
+                    <li>Натисніть меню (три крапки в правому верхньому куті)</li>
+                    <li>Виберіть <b>"Додати на головний екран"</b></li>
                 </ol>
             </div>
         </div>
-        <button class="btn btn-primary" onclick="window.closeGuideModal()">ОК</button>
+        <div style="padding: 0 20px 20px 20px;">
+            <button class="btn btn-primary" onclick="window.closeGuideModal()">Зрозуміло</button>
+        </div>
     </div>
 </div>
-
-<div class="floating-top" id="scrollTopBtn">↑</div>
 
 <script>
     // Глобальний перехоплювач помилок
@@ -580,7 +588,6 @@
         window.scrollTo(0, 0);
     }
 
-    // Плавне розблокування скролу
     function removeModalFreeze() {
         document.body.classList.remove('modal-open');
     }
@@ -724,7 +731,7 @@
                 }
                 enableUI(); window.populateFilters();
                 if(document.getElementById('tab-training').classList.contains('active')) window.renderTrainingTab();
-            }, 400);
+            }, 400); // чекаємо щоб прогрес бар дійшов до 100%
             
         } catch (e) { 
             let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
@@ -812,10 +819,10 @@
             return `
             <div class="list-item" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
                 <div class="list-item-content">
-                    <span class="list-item-title" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; font-size:13px;">${window.escapeHTML(shortName)}</span>
-                    <span class="list-item-subtitle" style="font-size:12px;">${window.escapeHTML(r.cat)}</span>
+                    <span class="list-item-title rezervy-name">${window.escapeHTML(shortName)}</span>
+                    <span class="list-item-subtitle">${window.escapeHTML(r.cat)}</span>
                 </div>
-                <div class="list-item-value" style="color:var(--text-main); font-size:15px;">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
+                <div class="list-item-value">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
             </div>`;
         }).join('');
     }
@@ -856,7 +863,7 @@
             let descToggle = generateDescToggleHTML(item.desc, code);
             return `
             <div class="list-item" style="flex-direction:column; align-items:flex-start; padding: 20px 16px;">
-                ${brand ? `<div class="sc-brand ${cls}">${brand}</div>` : ''}
+                ${brand ? `<div class="sc-brand ${cls}" style="margin-bottom: 12px;">${brand}</div>` : ''}
                 <div style="font-size:16px; font-weight:700; margin-bottom:10px;">${title}</div>
                 <div style="width:100%;">${descToggle}</div>
             </div>`;
@@ -933,7 +940,7 @@
             if (f[2] && f[2].toString().trim() !== "") { 
                 hasInfo = true;
                 let isNegarant = f[1].includes('Негарантійні');
-                let rowStyle = isNegarant ? "background: var(--danger-bg); border-radius: 8px; margin: -8px; padding: 8px;" : "";
+                let rowStyle = isNegarant ? "background: var(--danger-bg); margin: 0 -16px; padding: 14px 16px;" : "";
                 let noBorder = isNegarant ? "border-bottom: none;" : "";
                 html += `<div class="tech-row" style="${rowStyle} ${noBorder}"><div class="tech-icon">${f[0]}</div><div class="tech-text-wrap"><div class="tech-label">${f[1]}</div><div class="tech-val">${f[2]}</div></div></div>`;
             }
@@ -970,12 +977,12 @@
         if (!descText && !codeHtml) return '';
 
         return `
-            <div style="margin-top: 12px; background: var(--input-bg); border-radius: 12px; width: 100%;">
-                <div style="display:flex; justify-content:space-between; align-items:center; padding: 14px 16px; cursor:pointer; font-weight:600; font-size:14px; color:var(--primary); border: 1px solid var(--border); border-radius: 12px;" onclick="const c = this.nextElementSibling; const a = this.querySelector('svg'); if(c.style.display==='none'){c.style.display='block'; a.style.transform='rotate(180deg)';}else{c.style.display='none'; a.style.transform='rotate(0deg)';}">
+            <div style="margin-top: 12px; background: var(--card-bg); border-radius: 12px; width: 100%; border: 1px solid var(--border);">
+                <div class="desc-toggle-wrapper" style="display:flex; justify-content:space-between; align-items:center; padding: 14px 16px; cursor:pointer; font-weight:600; font-size:14px; color:var(--text-main);" onclick="const c = this.nextElementSibling; const a = this.querySelector('svg'); if(c.style.display==='none'){c.style.display='block'; a.style.transform='rotate(180deg)';}else{c.style.display='none'; a.style.transform='rotate(0deg)';}">
                     <span>Детальний опис</span>
                     <svg viewBox="0 0 24 24" style="width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:0.3s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div style="display: none; padding: 12px 16px 16px 16px;">
+                <div style="display: none; padding: 0 16px 16px 16px; border-top: 1px solid var(--border); margin-top: 5px; padding-top: 15px;">
                     ${codeHtml}
                     ${descText}
                 </div>
@@ -1133,8 +1140,7 @@
 
     window.handleServiceClick = function(e, name, code, isPackage, forceNoCompare = false) {
         let target = e.target;
-        // Запобігаємо спрацьовуванню, якщо клік був по опису (Навчання/Резерви)
-        if (target.closest('div[onclick*="nextElementSibling"]') || target.closest('.desc-code')) return;
+        if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-code')) return;
 
         if (isCompareMode && !forceNoCompare) {
             if (isPackage) { alert("Пакети послуг не порівнюються."); return; }
@@ -1147,7 +1153,7 @@
 
     window.handleModalServiceClick = function(e, name, isPackage, code) {
         let target = e.target;
-        if (target.closest('div[onclick*="nextElementSibling"]') || target.closest('.desc-code')) return; 
+        if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-code')) return; 
         
         if (isModalCompareMode) {
             if (isPackage) { alert("Пакети не порівнюються."); return; }
@@ -1156,6 +1162,9 @@
             else if (modalCompareSelection.length < 2) modalCompareSelection.push(name); 
             updateModalCompareUI();
             if (document.getElementById('montazhCity')) window.updateMontazhResults(); else window.updateSetupResults(); 
+        } else {
+            let toggle = e.currentTarget.querySelector('.desc-toggle-wrapper'); 
+            if(toggle) toggle.click();
         }
     }
 
@@ -1260,7 +1269,7 @@
         document.getElementById('compareModal').classList.remove('show');
         if (isCompareMode) toggleCompareMode();
         if (isModalCompareMode) toggleModalCompareMode();
-        if (!checkOpenModals()) removeModalFreeze();
+        removeModalFreeze();
     }
 
     window.renderMontazhModal = function() {
@@ -1278,19 +1287,19 @@
 
         document.getElementById('modalBody').innerHTML = `
             <div class="input-group">
-                <select id="montazhCity" class="montazh-select">
+                <select id="montazhCity">
                     <option value="">-- Оберіть місто --</option>
                     ${cities.map(c => { let emoji = window.cityStatusMap.get(c) ? "🟢" : "🔴"; return `<option value="${c}">${emoji} ${c}</option>`; }).join('')}
                 </select>
             </div>
             <div class="input-group">
-                <select id="montazhCat" class="montazh-select">
+                <select id="montazhCat">
                     <option value="">-- Оберіть категорію --</option>
                     ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
                 </select>
             </div>
             <div id="montazhSubCatWrapper" class="input-group" style="display:none;">
-                <select id="montazhSubCat" class="montazh-select"></select>
+                <select id="montazhSubCat"></select>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Послуги</span>
@@ -1421,7 +1430,7 @@
         }).map(t => t.cat))];
         
         let labelText = mode === "antivirus" ? "Оберіть тип антивірусу:" : "Оберіть тип сервісу:";
-        document.getElementById('modalBody').innerHTML = `<div class="input-group"><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" style="background:none; border:none; color:var(--primary); font-weight:600; font-size:12px; display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" class="list-group" style="margin-bottom:0;"></div>`;
+        document.getElementById('modalBody').innerHTML = `<div class="input-group"><select id="setupCat"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" style="background:none; border:none; color:var(--primary); font-weight:600; font-size:12px; display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" class="list-group" style="margin-bottom:0;"></div>`;
         
         let catSelect = document.getElementById('setupCat'); let targetClean = normalizeServiceName(targetName);
         let targetTariff = db.tariffs.find(t => normalizeServiceName(t.service) === targetClean || (t.serviceRu && normalizeServiceName(t.serviceRu) === targetClean));
