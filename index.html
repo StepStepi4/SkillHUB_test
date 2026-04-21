@@ -21,13 +21,16 @@
         }
 
         :root {
+            /* Світлий неоморфізм */
             --bg: #e0e5ec; 
             --text-main: #2d3436; 
             --text-muted: #636e72; 
             --primary: #2563eb; 
             
+            /* Тіні випуклі (для карток) */
             --shadow-out: 8px 8px 16px #c5cbd4, -8px -8px 16px #ffffff;
             --shadow-sm-out: 4px 4px 8px #c5cbd4, -4px -4px 8px #ffffff;
+            /* Тіні вдавлені (для інпутів та натиснутих кнопок) */
             --shadow-in: inset 6px 6px 12px #c5cbd4, inset -6px -6px 12px #ffffff;
             
             --modal-overlay: rgba(224, 229, 236, 0.85);
@@ -40,11 +43,13 @@
         }
 
         [data-theme="dark"] {
+            /* Темний неоморфізм (Графіт + Неон) */
             --bg: #26282B; 
             --text-main: #f0f4f8; 
             --text-muted: #8a93a2; 
             --primary: #00f3ff; 
             
+            /* Тіні темні */
             --shadow-out: 8px 8px 16px #1a1b1e, -8px -8px 16px #323538;
             --shadow-sm-out: 4px 4px 8px #1a1b1e, -4px -4px 8px #323538;
             --shadow-in: inset 6px 6px 12px #1a1b1e, inset -6px -6px 12px #323538;
@@ -506,7 +511,7 @@
 
 <div id="compareBar" class="compare-action-bar">
     <div class="compare-status-text" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px; box-shadow: var(--shadow-sm-out);">Порівняти</button>
+    <button class="neo-btn" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="padding: 12px 24px;">Порівняти</button>
 </div>
 
 <div id="compareModal" class="modal">
@@ -534,7 +539,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3);"></b>
+            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary);"></b>
             <button class="modal-close-btn" onclick="window.closeRezervItemModal()">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -560,22 +565,10 @@
             <div style="margin: 0; font-size: 14px; line-height: 1.6; color: var(--text-main);">
               Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
               <ul style="margin: 12px 0 0 0; padding-left: 20px;">
-                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса в правому нижньому куті екрана.</li>
+                <li style="margin-bottom: 8px;"><strong>iOS (iPhone):</strong> Натисніть значок компаса.</li>
                 <li style="margin-bottom: 8px;"><strong>Android:</strong> Натисніть три крапки в правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong> (Chrome).</li>
               </ul>
             </div>
-          </div>
-
-          <div style="padding: 24px 20px; background: var(--bg); border-top: 2px solid var(--input-bg);">
-            <div style="display: flex; align-items: center; font-size: 18px; font-weight: 800; margin-bottom: 15px; color: var(--text-main);">
-              <svg viewBox="0 0 384 512" style="margin-right: 12px; width: 24px; height: 24px; fill: var(--text-main);"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
-              Встановлення на iOS
-            </div>
-            <ol style="margin: 0; padding-left: 20px; line-height: 1.6; font-size: 14px; color: var(--text-main); font-weight: 600;">
-              <li style="margin-bottom: 12px;">Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
-              <li style="margin-bottom: 12px;">Натисніть кнопку <strong>«Поділитися»</strong> внизу екрана.</li>
-              <li style="margin-bottom: 12px;">Виберіть <strong>«На початковий екран»</strong>.</li>
-            </ol>
           </div>
         </div>
         <div style="padding: 24px;">
@@ -807,7 +800,6 @@
     async function refreshData(first = false) {
         setAppStatus('loading', 'Синхронізація...');
         try {
-            // Додаємо таймаут 15 сек, щоб fetch не висів вічно
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 15000);
             
@@ -826,7 +818,7 @@
                 savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
                 guideSeen = localStorage.getItem('skillhub_guide_seen');
                 localStorage.setItem(CACHE_KEY, dataStr);
-            } catch (e) {} // ігноруємо помилки доступу до localStorage
+            } catch (e) {}
             
             db = newDb;
             setAppStatus('ok', 'Дані актуальні');
@@ -1724,7 +1716,17 @@
         document.getElementById('modalTitle').innerHTML = "Опис"; 
     }
     
-    document.getElementById('closeModalBtn').onclick = window.closeModal;
+    // ДОДАНИЙ РЯДОК!
+    document.addEventListener('click', (e) => {
+        if (e.target.classList.contains('modal-close-btn')) {
+            const modal = e.target.closest('.modal');
+            if (modal.id === 'descModal') window.closeModal();
+            else if (modal.id === 'compareModal') window.closeCompareModal();
+            else if (modal.id === 'rezervItemModal') window.closeRezervItemModal();
+            else if (modal.id === 'guideModal') window.closeGuideModal();
+        }
+    });
+
     elModal.onclick = (e) => { if(e.target.id === 'descModal') window.closeModal(); };
 
     init();
