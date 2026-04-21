@@ -21,16 +21,13 @@
         }
 
         :root {
-            /* Світлий неоморфізм */
             --bg: #e0e5ec; 
             --text-main: #2d3436; 
             --text-muted: #636e72; 
             --primary: #2563eb; 
             
-            /* Тіні випуклі (для карток) */
             --shadow-out: 8px 8px 16px #c5cbd4, -8px -8px 16px #ffffff;
             --shadow-sm-out: 4px 4px 8px #c5cbd4, -4px -4px 8px #ffffff;
-            /* Тіні вдавлені (для інпутів та натиснутих кнопок) */
             --shadow-in: inset 6px 6px 12px #c5cbd4, inset -6px -6px 12px #ffffff;
             
             --modal-overlay: rgba(224, 229, 236, 0.85);
@@ -43,13 +40,11 @@
         }
 
         [data-theme="dark"] {
-            /* Темний неоморфізм (Графіт + Неон) */
             --bg: #26282B; 
             --text-main: #f0f4f8; 
             --text-muted: #8a93a2; 
             --primary: #00f3ff; 
             
-            /* Тіні темні */
             --shadow-out: 8px 8px 16px #1a1b1e, -8px -8px 16px #323538;
             --shadow-sm-out: 4px 4px 8px #1a1b1e, -4px -4px 8px #323538;
             --shadow-in: inset 6px 6px 12px #1a1b1e, inset -6px -6px 12px #323538;
@@ -99,12 +94,10 @@
         .app-tab.active { display: block; }
         @keyframes fadeInTab { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* --- ШАПКА (ДИНАМІЧНА) --- */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; padding: 0 10px; }
         h2 { color: var(--text-main); margin: 0; font-size: 24px; font-weight: 900; letter-spacing: -0.5px; transition: 0.3s;}
         [data-theme="dark"] h2 { text-shadow: 0 0 15px rgba(0, 243, 255, 0.2); }
 
-        /* --- НИЖНЯ ПАНЕЛЬ --- */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
             background: var(--bg); border: none;
@@ -130,7 +123,6 @@
         .nav-item.active span { transform: translateY(-2px); }
         [data-theme="dark"] .nav-item.active svg { filter: drop-shadow(0 0 8px rgba(0, 243, 255, 0.6)); }
 
-        /* --- НЕОМОРФНІ ІНПУТИ ТА СЕЛЕКТИ --- */
         .search-wrapper { position: relative; margin-bottom: 20px; display: flex; align-items: center; }
         input, .montazh-select { 
             width: 100%; padding: 18px 20px; border-radius: 20px; 
@@ -153,7 +145,6 @@
         .clear-data-btn { position: absolute; right: 14px; background: transparent; color: var(--text-muted); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 16px; font-weight: 800; cursor: pointer; display: none; align-items: center; justify-content: center; transition: 0.2s; z-index: 5;}
         .clear-data-btn:active { color: #ef4444; }
 
-        /* --- КНОПКИ ТА КАРТКИ (НЕОМОРФІЗМ) --- */
         .neo-btn {
             background: var(--bg); color: var(--primary); border: none; padding: 15px 20px; border-radius: 18px; 
             font-weight: 800; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
@@ -169,13 +160,11 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
-        /* Клікарні картки (Резерви, Навчання, Сервіси) */
         .service-card, .rezervy-item, .training-card { cursor: pointer; }
         .service-card:active, .rezervy-item:active, .training-card:active {
             transform: scale(0.98); box-shadow: var(--shadow-in);
         }
 
-        /* --- ТУМБЛЕР (ТЕМНА ТЕМА) --- */
         .theme-switch {
             position: relative; width: 64px; height: 34px; background: var(--bg); border-radius: 34px;
             cursor: pointer; box-shadow: var(--shadow-in); border: none; flex-shrink: 0;
@@ -186,100 +175,193 @@
         }
         [data-theme="dark"] .theme-slider { transform: translateX(30px); background: var(--primary); box-shadow: 0 0 10px var(--primary); }
 
-        /* --- СТАТУС БАР --- */
         .status-container { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding: 0 10px;}
         .status-wrapper { display: flex; align-items: center; gap: 10px; }
+        .status-text { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
+        .pulse-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+        .dot-green { background-color: #22c55e; animation: pulseGreen 2s infinite; }
+        .dot-red { background-color: #ef4444; animation: pulseRed 2s infinite; }
+        .dot-loading { background-color: #eab308; animation: pulseYellow 2s infinite; }
+        [data-theme="dark"] .dot-green { background-color: #00ff66; box-shadow: 0 0 10px #00ff66; }
+
+        @keyframes pulseGreen { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+        @keyframes pulseRed { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+        @keyframes pulseYellow { 0% { transform: scale(0.95); opacity: 0.8; } 50% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.95); opacity: 0.8; } }
+
         .price-wrapper { display: none; gap: 15px; margin-bottom: 25px; align-items: stretch; animation: fadeInTab 0.3s ease; }
+        #devicePrice { flex-grow: 1; color: var(--primary); font-weight: 900; text-shadow: 0 0 5px rgba(0, 243, 255, 0.2); }
+        #devicePrice::placeholder { color: var(--text-muted); opacity: 0.6; font-weight: 600; text-shadow: none; }
         
-        /* --- ВЛАСТИВОСТІ ТОВАРУ --- */
+        .ok-btn { 
+            background: var(--bg); color: var(--primary); border: none; padding: 0 24px; border-radius: 18px; 
+            font-weight: 900; font-size: 14px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.2s ease; 
+            display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-out); 
+        }
+        .ok-btn:active { transform: scale(0.95); box-shadow: var(--shadow-in); }
+
+        .suggestions-list { position: absolute; top: 105%; left: 0; right: 0; background: var(--bg); border: none; border-radius: 20px; box-shadow: var(--shadow-out); max-height: 250px; overflow-y: auto; z-index: 100; display: none; padding: 10px; }
+        .suggestion-item { padding: 14px; cursor: pointer; border-radius: 12px; font-size: 14px; font-weight: 600; color: var(--text-main); margin-bottom: 5px; transition: background 0.2s ease, box-shadow 0.2s ease; }
+        .suggestion-item:active, .suggestion-item:hover { box-shadow: var(--shadow-in); }
+        
+        .result-box { display: none; padding-top: 15px; margin-top: 10px; animation: fadeIn 0.4s ease; }
+
         .ua-name { font-weight: 900; font-size: 22px; margin-bottom: 5px; padding: 0 10px; color: var(--text-main); line-height: 1.2;}
         .item-category { font-size: 12px; color: var(--text-muted); font-weight: 700; margin-bottom: 25px; padding: 0 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+        
+        .tech-info { display: flex; flex-direction: column; gap: 12px; margin-bottom: 25px;}
+        .tech-item { display: flex; align-items: center; gap: 14px; background: var(--bg); padding: 12px; border-radius: 20px; border: none; box-shadow: var(--shadow-out); transform: translateZ(0); }
+        .icon-circle { width: 38px; height: 38px; min-width: 38px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; box-shadow: var(--shadow-in); background: var(--bg); }
+        
+        .bg-complexity { color: #f59e0b; } 
+        .bg-price { color: #10b981; } 
+        .bg-garant { color: #3b82f6; } 
+        .bg-negarant { color: #ef4444; }
+        .bg-parts { color: #8b5cf6; } 
+        [data-theme="dark"] .bg-complexity { color: #fde047; text-shadow: 0 0 8px rgba(253,224,71,0.5);}
+        [data-theme="dark"] .bg-price { color: #00ff66; text-shadow: 0 0 8px rgba(0,255,102,0.5);}
+        [data-theme="dark"] .bg-garant { color: #00f3ff; text-shadow: 0 0 8px rgba(0,243,255,0.5);}
+        [data-theme="dark"] .bg-negarant { color: #ff3366; text-shadow: 0 0 8px rgba(255,51,102,0.5);}
+        [data-theme="dark"] .bg-parts { color: #c084fc; text-shadow: 0 0 8px rgba(192,132,252,0.5);}
 
-        /* --- ВНУТРІШНІ ЕЛЕМЕНТИ КАРТОК --- */
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 10px; background: var(--bg); padding: 16px; border-radius: 20px; border: none; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; box-shadow: var(--shadow-out); }
+        .tech-photo-wrapper:active { transform: scale(0.97); box-shadow: var(--shadow-in); }
+        .photo-icon { font-size: 24px; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); }
+        .photo-text { flex: 1; display: flex; flex-direction: column; }
+        .photo-title { font-size: 14px; font-weight: 800; color: var(--text-main); }
+        .photo-subtitle { font-size: 11px; font-weight: 600; color: var(--primary); margin-top: 4px; }
+        .photo-arrow { color: var(--primary); font-weight: 900; font-size: 18px; }
+
+        .service-list { display: flex; flex-direction: column; gap: 16px; padding-bottom: 20px;}
+        
+        .service-card { position: relative; padding: 20px; border-radius: 24px; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, padding-left 0.3s ease; border: none; box-shadow: var(--shadow-out); background: var(--bg);}
+        .service-card:active { transform: scale(0.98); box-shadow: var(--shadow-in); }
+        .service-content-left { display: flex; align-items: center; gap: 10px; flex: 1; padding-right: 5px; pointer-events: none; z-index: 2;}
+        
         .service-title { font-size: 15px; font-weight: 800; line-height: 1.3; color: var(--text-main); margin-bottom: 4px;}
-        .brand-tag { 
-            font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 12px; 
-            border-radius: 10px; margin-bottom: 12px; display: inline-block; 
-            background: var(--bg); box-shadow: var(--shadow-sm-out); color: var(--text-muted);
-        }
-        .price-badge { 
-            font-size: 15px; font-weight: 900; background: var(--bg); color: var(--primary); 
-            padding: 12px 18px; border-radius: 16px; min-width: 95px; text-align: center; 
-            line-height: 1.1; box-shadow: var(--shadow-in);
-        }
+
+        .service-card .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 6px 10px; border-radius: 10px; margin-bottom: 8px; display: inline-block; background: var(--bg); color: var(--text-muted); box-shadow: var(--shadow-sm-out); }
+        .service-card.brand-support .brand-tag { color: var(--clr-support); } 
+        .service-card.brand-ekta .brand-tag { color: var(--clr-ekta); } 
+        .service-card.brand-epz .brand-tag { color: var(--clr-epz); } 
+        .service-card.brand-install .brand-tag { color: var(--clr-install); } 
+
+        .price-badge { font-size: 15px; font-weight: 900; background: var(--bg); color: var(--primary); padding: 10px 16px; border-radius: 14px; min-width: 95px; text-align: center; line-height: 1.1; pointer-events: none; box-shadow: var(--shadow-in); z-index: 2;}
         [data-theme="dark"] .price-badge { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
 
-        /* --- КОЛЬОРИ БРЕНДІВ --- */
-        .brand-support .brand-tag { color: var(--clr-support); } 
-        .brand-ekta .brand-tag { color: var(--clr-ekta); } 
-        .brand-epz .brand-tag { color: var(--clr-epz); } 
-        .brand-install .brand-tag { color: var(--clr-install); }
+        .focus-icon { font-size: 22px; filter: drop-shadow(0px 2px 5px rgba(255, 100, 0, 0.5)); animation: pulseFocus 2s infinite ease-in-out; margin-left: -2px; }
+        @keyframes pulseFocus { 0% { transform: scale(1); } 50% { transform: scale(1.15); } 100% { transform: scale(1); } }
 
-        /* --- ПОРІВНЯННЯ --- */
-        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px;}
-        .compare-toggle-btn { background: var(--bg); color: var(--primary); border: none; padding: 10px 18px; border-radius: 14px; font-size: 12px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-out); transition: 0.2s; }
-        .compare-toggle-btn.active { color: #ef4444; box-shadow: var(--shadow-in); }
-        [data-theme="dark"] .compare-toggle-btn.active { text-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
-
-        .service-card.compare-mode { padding-left: 60px; }
-        .compare-checkbox { position: absolute; left: -40px; top: 30px; width: 26px; height: 26px; border-radius: 50%; border: none; background: var(--bg); box-shadow: var(--shadow-in); transition: 0.3s ease; display: flex; align-items: center; justify-content: center; }
+        .service-card.compare-mode { padding-left: 50px; }
+        .compare-checkbox { position: absolute; left: -30px; top: 22px; width: 24px; height: 24px; border-radius: 50%; border: none; background: var(--bg); box-shadow: var(--shadow-in); transition: 0.3s ease; z-index: 1; display: flex; align-items: center; justify-content: center; }
         .service-card.compare-mode .compare-checkbox { left: 16px; }
         
         .service-card.selected-for-compare { box-shadow: var(--shadow-in); }
         .service-card.selected-for-compare .compare-checkbox { box-shadow: var(--shadow-sm-out); }
-        .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: var(--primary); font-size: 18px; font-weight: 900; }
-        [data-theme="dark"] .service-card.selected-for-compare .compare-checkbox::after { text-shadow: 0 0 8px rgba(0, 243, 255, 0.6); }
-
-        .compare-action-bar { 
-            position: fixed; bottom: calc(var(--nav-height) - 10px); left: 0; width: 100%; 
-            background: var(--bg); padding: 20px 24px 25px 24px; box-shadow: 0 -15px 30px rgba(0,0,0,0.3); 
-            display: flex; justify-content: space-between; align-items: center; 
-            transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); 
-            z-index: 9980; border-radius: 30px 30px 0 0; border: none; 
-        }
-        .compare-action-bar.show { transform: translateY(0); }
-
-        /* --- МОДАЛЬНІ ВІКНА --- */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.3s ease; }
-        .modal.show { display: flex; opacity: 1; }
-        .modal-content { 
-            background: var(--bg); width: 100%; max-width: 480px; border-radius: 35px 35px 0 0; 
-            padding: 24px; padding-bottom: calc(env(safe-area-inset-bottom) + 20px); display: flex; flex-direction: column; 
-            max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); 
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.4);
-        }
-        .modal.show .modal-content { transform: translateY(0); }
-        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; flex-shrink: 0; }
-        .modal-body { overflow-y: auto; flex-grow: 1; padding: 0 5px; color: var(--text-main);}
+        .service-card.selected-for-compare .compare-checkbox::after { content: '✓'; color: var(--primary); font-size: 16px; font-weight: 900; text-shadow: 0 0 5px var(--primary); }
         
-        .modal-close-btn { border: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; font-size: 18px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; transition: 0.2s;}
-        .modal-close-btn:active { box-shadow: var(--shadow-in); transform: scale(0.95); }
+        .modal-body .brand-tag { font-size: 10px; font-weight: 900; text-transform: uppercase; padding: 4px 10px; border-radius: 10px; margin-bottom: 5px; display: inline-block; box-shadow: var(--shadow-sm-out); background: var(--bg); color: var(--primary);}
 
-        /* Деталі опису */
-        .desc-toggle { font-size: 13px; font-weight: 800; color: var(--primary); margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; width: 100%; transition: 0.2s; user-select: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 16px;}
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); backdrop-filter: blur(8px); display: none; align-items: flex-end; justify-content: center; z-index: 100000; overscroll-behavior: contain; opacity: 0; transition: opacity 0.3s ease; }
+        .modal.show { display: flex; opacity: 1; }
+        .modal-content { background: var(--bg); width: 100%; max-width: 480px; border-radius: 30px 30px 0 0; padding: 24px; padding-bottom: calc(env(safe-area-inset-bottom) + 20px); display: flex; flex-direction: column; max-height: 90vh; min-height: 45vh; transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1); margin: 0 auto; box-shadow: 0 -15px 40px rgba(0,0,0,0.5);}
+        .modal.show .modal-content { transform: translateY(0); }
+        
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; flex-shrink: 0; }
+        .modal-body { overflow-y: auto; flex-grow: 1; padding-right: 5px; color: var(--text-main);}
+        
+        .modal-section-title { font-size: 15px; font-weight: 800; color: var(--primary); margin: 15px 0 8px 0; line-height: 1.3;}
+        .modal-cost-header { font-size: 10px; font-weight: 900; color: var(--text-muted); text-transform: uppercase; margin: 12px 0 6px 5px; letter-spacing: 1px;}
+        .modal-divider { height: 2px; background: var(--input-bg); margin: 15px 0; border-radius: 2px; width: 100%; box-shadow: var(--shadow-in); }
+        
+        .modal-item { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; background: var(--bg); padding: 12px; border-radius: 18px; border: none; box-shadow: var(--shadow-out); }
+        .modal-icon-circle { width: 36px; height: 36px; min-width: 36px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg); box-shadow: var(--shadow-in); border: none;}
+        .modal-text { font-size: 12px; line-height: 1.4; color: var(--text-main); font-weight: 600; }
+        
+        .code-block-wrapper { background: var(--bg); border: none; box-shadow: var(--shadow-in); border-radius: 18px; padding: 16px 20px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s ease; }
+        .code-block-wrapper:active { transform: scale(0.97); }
+        .code-label-text { font-size: 14px; font-weight: 700; color: var(--text-muted); }
+        .code-value-text { font-size: 18px; font-weight: 900; color: var(--primary); display: flex; align-items: center; gap: 10px; background: var(--bg); padding: 8px 16px; border-radius: 12px; box-shadow: var(--shadow-out); transition: background 0.2s ease; }
+        [data-theme="dark"] .code-value-text { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+
+        .montazh-label { font-size: 14px; color: var(--text-muted); margin-bottom: 10px; display: block; font-weight: 700; text-align: left; padding-left: 5px; }
+        .availability-badge { display: inline-flex; align-items: center; gap: 8px; padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 800; text-transform: uppercase; margin-top: 10px; line-height: 1; border: none; background: var(--bg); box-shadow: var(--shadow-in);}
+        
+        .status-city-limit { color: #ff3366; }
+        .status-fee-zone { color: #f59e0b; }
+        .status-full-coverage { color: #00ff66; }
+        [data-theme="dark"] .status-city-limit { text-shadow: 0 0 8px rgba(255,51,102,0.5); }
+        [data-theme="dark"] .status-fee-zone { text-shadow: 0 0 8px rgba(245,158,11,0.5); }
+        [data-theme="dark"] .status-full-coverage { text-shadow: 0 0 8px rgba(0,255,102,0.5); }
+        
+        .desc-toggle { font-size: 14px; font-weight: 800; color: var(--primary); margin-top: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; padding: 14px; width: 100%; transition: 0.2s; user-select: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 16px;}
         .desc-toggle:active { box-shadow: var(--shadow-in); transform: scale(0.98); }
         .desc-content { margin-top: 15px; padding: 20px; background: var(--bg); border-radius: 20px; border: none; box-shadow: var(--shadow-in); }
-
-        /* Інші стилі */
-        .settings-info { display: flex; flex-direction: column; gap: 6px; }
-        .montazh-label { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; display: block; font-weight: 700; text-align: left; padding-left: 5px; }
         
+        .rezervy-item { background: var(--bg); border-radius: 20px; padding: 18px; margin-bottom: 16px; border: none; cursor: pointer; transition: 0.2s; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); }
+        .rezervy-item:active { box-shadow: var(--shadow-in); transform: scale(0.98); }
+        .rezervy-name { font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 5px; line-height: 1.3;}
+        .rezervy-cat { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;}
+        .rezervy-price { font-size: 18px; font-weight: 900; color: var(--primary); white-space: nowrap; }
+        [data-theme="dark"] .rezervy-price { text-shadow: 0 0 10px rgba(0, 243, 255, 0.4); }
+
+        .training-card { background: var(--bg); border-radius: 24px; padding: 24px; margin-bottom: 20px; border: none; box-shadow: var(--shadow-out); transition: transform 0.2s ease, box-shadow 0.2s ease; }
+        .training-card:active { transform: scale(0.98); box-shadow: var(--shadow-in); }
+        .tc-brand { font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--primary); background: var(--bg); box-shadow: var(--shadow-in); padding: 8px 14px; border-radius: 12px; display: inline-block; margin-bottom: 15px;}
+        .tc-title { font-size: 18px; font-weight: 800; color: var(--text-main); margin-bottom: 10px; line-height: 1.3; }
+
+        .settings-card { background: var(--bg); border-radius: 20px; padding: 20px; margin-bottom: 16px; border: none; display: flex; justify-content: space-between; align-items: center; box-shadow: var(--shadow-out); }
+        .settings-info { display: flex; flex-direction: column; gap: 6px; }
+        .settings-title { font-size: 16px; font-weight: 800; color: var(--text-main); }
+        .settings-desc { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+
+        .settings-btn { background: var(--bg); color: var(--primary); border: none; border-radius: 14px; padding: 10px 18px; font-weight: 800; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm-out); }
+        .settings-btn:active { transform: scale(0.95); box-shadow: var(--shadow-in); }
+        .settings-btn.primary { background: var(--bg); color: var(--primary); border: none; box-shadow: var(--shadow-sm-out); }
+        .settings-btn.spinning svg { animation: spin 1s linear infinite; }
+
+        .footer { text-align: center; font-size: 11px; color: var(--text-muted); font-weight: 600; line-height: 1.5; padding-top: 20px;}
+        .app-version { display: inline-block; font-size: 12px; font-weight: 800; margin-top: 8px; color: var(--primary); cursor: pointer; padding: 8px 16px; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 14px; transition: 0.2s; border: none; text-decoration: none;}
+        .app-version:active { transform: scale(0.95); box-shadow: var(--shadow-in);}
+
         .floating-btns { position: fixed; bottom: calc(var(--nav-height) + 15px); right: 24px; z-index: 9998; pointer-events: none; }
         .float-btn { width: 54px; height: 54px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; border: none; box-shadow: var(--shadow-out); transition: 0.3s; background: var(--bg); color: var(--primary); pointer-events: auto;}
         .float-btn:active { box-shadow: var(--shadow-in); transform: scale(0.92); }
+        [data-theme="dark"] .float-btn svg { filter: drop-shadow(0 0 5px rgba(0,243,255,0.4)); }
+        
         #scrollTopBtn { opacity: 0; visibility: hidden; transform: translateY(20px) scale(0.8); }
         #scrollTopBtn.show { opacity: 1; visibility: visible; transform: translateY(0) scale(1); }
+
+        .update-title-wrapper { display: flex; align-items: center; gap: 14px; width: 100%; text-align: left;}
+        .update-icon-circle { width: 50px; height: 50px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 26px; background: var(--bg); box-shadow: var(--shadow-in); border: none; }
+        .update-text-wrapper { display: flex; flex-direction: column; flex: 1;}
+        .update-title { font-size: 18px; font-weight: 900; color: var(--text-main); margin-bottom: 4px;}
+        .update-version { font-size: 13px; font-weight: 800; color: var(--primary); text-transform: uppercase; letter-spacing: 0.5px;}
+        .changelog-panel { background: var(--bg); box-shadow: var(--shadow-in); border-radius: 20px; padding: 20px; border: none; margin-bottom: 24px;}
         
-        /* Спеціальні елементи порівняння */
-        .compare-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 20px; box-shadow: var(--shadow-in); max-height: 60vh; background: var(--bg); padding: 10px;}
+        .modal-confirm-btn { width: 100%; padding: 18px; border-radius: 20px; border: none; background: var(--bg); color: var(--primary); font-weight: 900; cursor: pointer; font-size: 16px; margin-top: 10px; box-shadow: var(--shadow-out); transition: 0.2s ease; text-transform: uppercase; letter-spacing: 1px;}
+        .modal-confirm-btn:active { transform: scale(0.97); box-shadow: var(--shadow-in); }
+
+        .compare-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; padding: 0 10px;}
+        .compare-toggle-btn { background: var(--bg); color: var(--primary); border: none; padding: 10px 16px; border-radius: 14px; font-size: 13px; font-weight: 800; cursor: pointer; display: flex; align-items: center; gap: 8px; box-shadow: var(--shadow-sm-out); transition: 0.2s; }
+        .compare-toggle-btn.active { color: #ff3366; box-shadow: var(--shadow-in); }
+        [data-theme="dark"] .compare-toggle-btn.active { text-shadow: 0 0 8px rgba(239, 68, 68, 0.6); }
+        
+        .compare-action-bar { position: fixed; bottom: calc(var(--nav-height) - 10px); left: 0; width: 100%; background: var(--bg); padding: 20px 24px 25px 24px; box-shadow: 0 -15px 40px rgba(0,0,0,0.5); display: flex; justify-content: space-between; align-items: center; transform: translateY(150%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1); z-index: 9980; border-radius: 30px 30px 0 0; border: none; }
+        .compare-action-bar.show { transform: translateY(0); }
+        .compare-status-text { font-size: 15px; font-weight: 800; color: var(--text-main); }
+        .compare-execute-btn { background: var(--bg); border: none; box-shadow: var(--shadow-in); color: var(--text-muted); padding: 14px 26px; border-radius: 18px; font-size: 15px; font-weight: 900; cursor: not-allowed; transition: 0.2s; }
+        .compare-execute-btn.ready { color: var(--primary); cursor: pointer; box-shadow: var(--shadow-out); }
+        .compare-execute-btn.ready:active { transform: scale(0.96); box-shadow: var(--shadow-in); }
+        .compare-wrapper { overflow-x: auto; margin-top: 15px; border-radius: 20px; border: none; box-shadow: var(--shadow-in); max-height: 60vh; background: var(--bg); padding: 10px;}
         .compare-table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: center; }
         .compare-table th { padding: 20px 15px; border-bottom: 2px solid transparent; background: var(--bg); vertical-align: top; width: 50%; color: var(--text-main); position: sticky; top: 0; z-index: 2;}
         .compare-table td { padding: 16px 15px; color: var(--text-main); font-weight: 600; line-height: 1.5; text-align: left;}
-
-        /* Спеціальні елементи інструкцій */
+        
         .pwa-guide-container { color: var(--text-main); background: var(--bg); border-radius: 0 0 30px 30px;}
         .pwa-alert { background: var(--bg); box-shadow: var(--shadow-in); padding: 20px; margin-bottom: 20px; border-radius: 24px; border: none; }
+        .modal-close-btn { border: none; background: var(--bg); box-shadow: var(--shadow-sm-out); border-radius: 50%; width: 44px; height: 44px; cursor: pointer; font-size: 18px; color: var(--text-muted); display: flex; align-items: center; justify-content: center; transition: 0.2s;}
+        .modal-close-btn:active { box-shadow: var(--shadow-in); transform: scale(0.95); }
     </style>
 </head>
 <body>
@@ -289,7 +371,7 @@
         <div class="spinner-ring"></div>
         <div style="font-size: 28px;">⚡</div>
     </div>
-    <div class="loader-text">Завантаження...</div>
+    <div class="loader-text" id="mainLoaderText">Завантаження...</div>
 </div>
 
 <div class="container">
@@ -452,7 +534,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items: flex-start;">
-            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary); text-shadow: 0 0 10px rgba(0,243,255,0.3);"></b>
+            <b id="rezervItemTitle" style="font-size: 18px; font-weight: 900; line-height: 1.3; color: var(--primary);"></b>
             <button class="modal-close-btn" onclick="window.closeRezervItemModal()">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -608,11 +690,14 @@
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // ПРАВИЛЬНИЙ ESCAPE (Без лапок у .join)
     window.escapeHTML = function(str) {
         if (!str) return '';
-        const map = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' };
-        return str.toString().replace(/[&<>"']/g, function(m) { return map[m]; });
+        return str.toString()
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
 
     window.escapeForJS = function(str) {
@@ -699,7 +784,7 @@
         try {
             const response = await fetch(API_URL + '?nocache=' + Date.now());
             const dataStr = await response.text();
-            if (dataStr.trim().startsWith('<')) throw new Error("CORS Error");
+            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до скрипта Google. Перевір налаштування доступу.");
             
             let newDb = JSON.parse(dataStr);
             if (newDb.error) throw new Error(newDb.error);
@@ -728,13 +813,14 @@
             if(document.getElementById('tab-training').classList.contains('active')) window.renderTrainingTab();
             
         } catch (e) { 
+            console.error(e);
             if (localStorage.getItem(CACHE_KEY)) {
                 setAppStatus('ok', 'Працюю офлайн (З кешу)');
                 if (first) { enableUI(); window.populateFilters(); }
             } else { 
                 setAppStatus('error', 'Помилка');
                 if (first && elLoader) {
-                    elLoader.querySelector('.loader-text').innerHTML = "❌ Немає інтернету.<br>Немає кешу.";
+                    elLoader.querySelector('.loader-text').innerHTML = "❌ Помилка: " + e.message;
                     elLoader.querySelector('.spinner-ring').style.display = 'none';
                 }
             }
@@ -985,7 +1071,7 @@
             if (l.startsWith('=')) return `<div class="modal-cost-header">${l.substring(1).trim() || 'Вартість:'}</div>`;
             if (l.includes('---')) return `<div class="modal-divider"></div>`;
             
-            let match = l.match(/^[^\w\sа-яА-ЯіІїЇєЄґҐ()\-]/ui); 
+            let match = l.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/); 
             let e = match ? match[0] : "";
             let t = match ? l.replace(e, '').trim() : l;
             
@@ -1280,12 +1366,12 @@
         html += `</tr></thead><tbody>`;
 
         if (common.length > 0) {
-            html += `<tr><td colspan="2" style="background: var(--input-bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 10px 12px;">Спільні властивості</td></tr>`;
+            html += `<tr><td colspan="2" style="background: var(--bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 10px 12px;">Спільні властивості</td></tr>`;
             common.forEach(pair => { html += `<tr><td><div class="feat-row" style="color:var(--text-muted); font-weight: 500;">${pair.a}</div></td><td><div class="feat-row" style="color:var(--text-muted); font-weight: 500;">${pair.b}</div></td></tr>`; });
         }
 
         if (diffA.length > 0 || diffB.length > 0) {
-            html += `<tr><td colspan="2" style="background: var(--input-bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 10px 12px;">Відмінності</td></tr>`;
+            html += `<tr><td colspan="2" style="background: var(--bg); font-weight: 800; font-size: 10px; color: var(--text-muted); text-transform: uppercase; padding: 10px 12px;">Відмінності</td></tr>`;
             let maxDiff = Math.max(diffA.length, diffB.length);
             for (let i = 0; i < maxDiff; i++) {
                 let valA = diffA[i] ? `<span style="margin-right:6px; color: var(--primary); text-shadow: 0 0 5px rgba(0,243,255,0.5);">⭐️</span>${diffA[i]}` : `<span style="color:var(--border)">-</span>`;
