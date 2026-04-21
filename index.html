@@ -449,7 +449,10 @@
 
     <div id="tab-training" class="app-tab">
         <h3 style="margin-top: 0; margin-bottom: 20px; font-size: 20px; color: var(--text-main); font-weight: 900;">🎓 База знань</h3>
-        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; font-weight: 600;">Тут зібрані всі сервіси для вивчення. Умови та описи об'єднані для зручності читання.</div>
+        <select id="trainingBrandFilter" class="montazh-select" onchange="window.renderTrainingTab()">
+            <option value="">-- Всі бренди --</option>
+        </select>
+        <div style="font-size: 12px; color: var(--text-muted); margin-bottom: 15px; font-weight: 600;">Оберіть бренд та сервіс для перегляду детального опису та умов.</div>
         <div id="trainingList" class="service-list"></div>
     </div>
 
@@ -687,7 +690,7 @@
     </button>
 </div>
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzhFVFblevDpHkyfQ446Q7SymCNu-Kpfrfdj6s-ugNBL3mO2KySA3Rw4nQaL-FU5d_Ofg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyugAYilEV3MwfmXyFhaWKEBAxF1NdQlvmcZbLL7T5cL_3yFPXylUdlavsnyDrcw8Jzew/exec';
     
     const CACHE_KEY = 'skillhub_v1000_drive_fix'; 
     const SEEN_VERSION_KEY = 'skillhub_seen_version';
@@ -743,7 +746,7 @@
         if (tabId === 'tab-reserves') {
             window.renderRezervyList();
         }
-        if (tabId === 'tab-training' && document.getElementById('trainingList').innerHTML === '') {
+        if (tabId === 'tab-training') {
             window.renderTrainingTab();
         }
         window.scrollTo(0, 0);
@@ -773,7 +776,7 @@
 
     window.escapeHTML = function(str) {
         if (!str) return '';
-        return str.toString().replace(/&/g, "&").replace(/</g, "<").replace(/>/g, ">").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+        return str.toString().replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
     }
 
     window.escapeForJS = function(str) {
@@ -1023,52 +1026,97 @@
         }
     }
 
-    // --- ЛОГІКА ДЛЯ ВКЛАДКИ "НАВЧАННЯ" ---
+    // --- ЛОГІКА ДЛЯ ВКЛАДКИ "НАВЧАННЯ" (ОНОВЛЕНО) ---
     window.renderTrainingTab = function() {
         const list = document.getElementById('trainingList');
+        const brandFilter = document.getElementById('trainingBrandFilter');
         if(!list || !db.descriptions) return;
-        
+
         let grouped = {};
+        let brandsSet = new Set();
+
         for (let key in db.descriptions) {
             // Видаляємо терміни для угруповання: 1 рік, 2 роки, 12 міс і т.д.
             let baseName = key.replace(/\s*\(?(1|2|3|4|5|6)\s*(рік|роки|років|міс\.|місяців|місяці)\.?\)?/gi, '').trim();
+            
             if (!grouped[baseName]) {
+                let brandMatch = baseName.match(/^\[(.*?)\]/);
+                let brand = brandMatch ? brandMatch[1].trim() : '';
+                let title = brandMatch ? baseName.replace(brandMatch[0], '').trim() : baseName;
+
+                let uName = baseName.toUpperCase();
+                // Якщо бренд не вказаний явно в дужках, визначаємо за назвою
+                if (!brand) {
+                    if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) brand = 'SUPPORT';
+                    else if (uName.includes('EKTA') || uName.includes('ЕКТА')) brand = 'EKTA';
+                    else if (uName.includes('EPZ') || uName.includes('ЕПЗ')) brand = 'EPZ';
+                    else if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ')) brand = 'МОНТАЖ';
+                    else brand = 'ІНШІ';
+                }
+
+                if (brand.toUpperCase() === 'ЕКТА') brand = 'EKTA';
+
+                brandsSet.add(brand);
+
                 grouped[baseName] = {
                     originalName: key,
+                    brand: brand,
+                    title: title,
                     desc: db.descriptions[key],
                     code: findInDb(db.serviceCodes, key) || ""
                 };
             }
         }
-        
-        let items = Object.keys(grouped).sort();
-        let html = items.map(baseName => {
-            let item = grouped[baseName];
-            let brandMatch = baseName.match(/^\[(.*?)\]/);
-            let brand = brandMatch ? brandMatch[1] : '';
-            let title = brandMatch ? baseName.replace(brandMatch[0], '').trim() : baseName;
-            
+
+        let currentFilterVal = brandFilter.value;
+
+        // Заповнюємо випадаючий список брендів
+        if (brandFilter.options.length <= 1 && brandsSet.size > 0) {
+            let sortedBrands = Array.from(brandsSet).sort((a, b) => {
+                if (a === 'ІНШІ') return 1;
+                if (b === 'ІНШІ') return -1;
+                return a.localeCompare(b);
+            });
+            brandFilter.innerHTML = '<option value="">-- Всі бренди --</option>';
+            sortedBrands.forEach(b => {
+                let opt = document.createElement('option');
+                opt.value = b; opt.innerText = b;
+                brandFilter.appendChild(opt);
+            });
+            brandFilter.value = currentFilterVal;
+        }
+
+        let selectedBrand = brandFilter.value;
+        let items = Object.keys(grouped).map(k => grouped[k]);
+
+        if (selectedBrand) {
+            items = items.filter(item => item.brand === selectedBrand);
+        }
+
+        items.sort((a, b) => a.title.localeCompare(b.title));
+
+        let html = items.map(item => {
             let cls = 'brand-other';
-            let uName = baseName.toUpperCase();
-            if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
-            else if (uName.includes('EKTA') || uName.includes('ЕКТА')) cls = 'brand-ekta'; 
-            else if (uName.includes('EPZ') || uName.includes('ЕПЗ')) cls = 'brand-epz'; 
-            else if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ')) cls = 'brand-install';
+            let uName = item.brand.toUpperCase();
+            if (uName.includes('SUPPORT') || uName.includes('НАШ СЕРВІС')) cls = 'brand-support';
+            else if (uName.includes('EKTA')) cls = 'brand-ekta';
+            else if (uName.includes('EPZ')) cls = 'brand-epz';
+            else if (uName.includes('МОНТАЖ')) cls = 'brand-install';
             else cls = 'brand-settings';
 
-            let descToggle = generateDescToggleHTML(item.desc, item.code);
-            
+            let safeName = window.escapeForJS(item.originalName);
+            let safeCode = window.escapeForJS(item.code);
+
+            // Оновлені картки: натискання відкриває модальне вікно (Колонка H)
             return `
-            <div class="service-card ${cls}" style="display:flex; flex-direction:column; align-items:stretch; cursor:default; margin-bottom: 12px; padding: 14px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; width:100%;">
-                    <div class="service-content-left" style="flex:1;">
-                        <div>
-                            ${brand ? `<div class="brand-tag" style="display: inline-block;">${brand}</div>` : ''}
-                            <div class="service-title" style="font-size:14px;">${title}</div>
-                        </div>
+            <div class="service-card ${cls}" style="display:flex; justify-content:space-between; align-items:center; cursor:pointer; margin-bottom: 12px; padding: 16px;" onclick="window.openModal('${safeName}', '${safeCode}')">
+                <div class="service-content-left" style="flex:1;">
+                    <div>
+                        ${item.brand !== 'ІНШІ' ? `<div class="brand-tag" style="display: inline-block;">${item.brand}</div>` : ''}
+                        <div class="service-title" style="font-size:15px;">${item.title}</div>
                     </div>
                 </div>
-                <div style="width:100%; margin-top:5px; position:relative; z-index:2;">${descToggle}</div>
+                <div style="font-size: 18px; color: var(--text-muted); opacity: 0.7; display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; background: var(--box-bg); border-radius: 50%; box-shadow: var(--shadow-sm); flex-shrink: 0;">📖</div>
             </div>`;
         }).join('');
         
@@ -2485,3 +2533,5 @@
         });
     }
 </script>
+</body>
+</html>
