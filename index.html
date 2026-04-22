@@ -203,7 +203,7 @@
         }
         .service-card:active { background: var(--input-bg); transform: scale(0.98); }
         
-        .sc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;}
+        .sc-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; gap: 10px;}
         
         /* АДАПТИВНІ ЯРЛИКИ БРЕНДІВ */
         .sc-brand { 
@@ -211,13 +211,14 @@
             border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;
         }
         
-        .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 4px 10px; border-radius: 8px; border: 1px solid var(--border);}
-        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main);}
+        .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content;}
+        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center;}
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
         .brand-epz { background: var(--clr-epz-bg); color: var(--clr-epz-text); }
         .brand-install { background: var(--clr-install-bg); color: var(--clr-install-text); }
+        .brand-settings { background: var(--input-bg); color: var(--text-muted); }
         .brand-other { background: var(--input-bg); color: var(--text-muted); }
 
         /* АВТОКОМПЛІТ */
@@ -276,14 +277,19 @@
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        /* ОПИС СЕРВІСІВ У МОДАЛЦІ */
-        .desc-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; border: 1px solid var(--border); overflow: hidden;}
-        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 14px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
+        /* ОПИС СЕРВІСІВ (НОВИЙ ДИЗАЙН) */
+        .desc-toggle-wrapper {
+            display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
+        }
+        .desc-toggle-wrapper svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.5; transition: transform 0.3s ease; }
+        .desc-content { display: none; padding-top: 12px; margin-top: 8px; border-top: 1px dashed var(--border); }
         
-        /* Окремі форми під емодзі в модалці */
-        .desc-line { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
+        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
+        
+        .desc-line { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
-        .desc-icon-box { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--bg); border: 1px solid var(--border); }
+        .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
 
         .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main);}
         .floating-top.show { opacity: 1; }
@@ -389,7 +395,7 @@
                 <option value="">-- Всі бренди --</option>
             </select>
         </div>
-        <div id="trainingList" class="list-group"></div>
+        <div id="trainingList"></div>
     </div>
 
     <div id="tab-settings" class="app-tab">
@@ -499,7 +505,7 @@
             <div class="modal-title" id="modalTitle">Опис</div>
             <button class="modal-close" onclick="window.closeModalBase('descModal')">✕</button>
         </div>
-        <div id="modalBody" class="modal-body"></div>
+        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
         <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
     </div>
 </div>
@@ -663,7 +669,7 @@
             let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
             document.getElementById('modalTitle').innerText = title;
             const raw = window.findInDb(db.descriptions, name) || "";
-            document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальний опис', 'Опис сервісу');
+            document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу');
         }
 
         if (!document.body.classList.contains('modal-open')) {
@@ -706,7 +712,7 @@
 
     window.escapeHTML = function(str) {
         if (!str) return '';
-        return str.toString().replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        return str.toString().replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, ''');
     }
     window.escapeForJS = function(str) {
         if (!str) return '';
@@ -998,10 +1004,10 @@
 
             let descToggle = generateDescToggleHTML(item.desc, code);
             return `
-            <div style="background:var(--card-bg); border-radius:16px; padding:20px 16px; margin-bottom:16px; border:1px solid var(--border); text-align:left;">
-                ${brand ? `<div class="sc-brand ${cls}" style="margin-bottom: 12px;">${brand}</div>` : ''}
-                <div style="font-size:16px; font-weight:700; color:var(--text-main); margin-bottom:12px;">${title}</div>
-                <div style="width:100%;">${descToggle}</div>
+            <div class="service-card">
+                ${brand ? `<div class="sc-brand ${cls}" style="margin-bottom: 8px;">${brand}</div>` : ''}
+                <div class="sc-title" style="margin-bottom: 4px;">${title}</div>
+                ${descToggle}
             </div>`;
         }).join('');
     }
@@ -1015,7 +1021,7 @@
         if (!item.service) { listEl.innerHTML = '<div style="color:var(--text-muted);">Немає сервісів</div>'; return; }
 
         let dataForSort = calculateServicesArray(item, p);
-        requestAnimationFrame(() => { listEl.innerHTML = `<div class="list-group" style="margin-bottom:0;">` + dataForSort.map(s => generateServiceCardHTML(s, true, true)).join('') + `</div>`; });
+        requestAnimationFrame(() => { listEl.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, true, true)).join(''); });
     }
 
     elCatInput.addEventListener('input', debounce(() => {
@@ -1112,8 +1118,8 @@
     }
 
     function parseDescriptionLines(descE) {
-        if (!descE || descE.trim() === "Опис відсутній...") return `<div class="desc-block">Опис відсутній...</div>`;
-        let html = `<div>`;
+        if (!descE || descE.trim() === "Опис відсутній...") return `<div class="desc-line">Опис відсутній...</div>`;
+        let html = ``;
         html += descE.replace(/\|/g, '\n').split(/\r?\n/).map(line => {
             const l = line.trim(); if (!l) return '';
             if (l.startsWith('+')) return `<div style="font-weight:700; font-size:14px; color:var(--text-main); margin: 12px 0 6px 0;">${l.substring(1).trim()}</div>`;
@@ -1136,10 +1142,10 @@
             return `
             <div class="desc-line">
                 <div class="desc-icon-box">${e}</div>
-                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; padding-top:4px;">${t}</div>
+                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; padding-top:2px;">${t}</div>
             </div>`;
         }).join('');
-        html += `</div>`; return html;
+        return html;
     }
 
     function generateDescToggleHTML(descE, codeF) {
@@ -1153,16 +1159,14 @@
         if (!descText && !codeHtml) return '';
 
         return `
-            <div style="margin-top: 12px; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--border); overflow: hidden;">
-                <div class="desc-toggle-wrapper" style="display:flex; justify-content:space-between; align-items:center; padding: 14px 16px; cursor:pointer; font-weight:600; font-size:14px; color:var(--text-main);" onclick="const c = this.nextElementSibling; const a = this.querySelector('svg'); if(c.style.display==='none'){c.style.display='block'; a.style.transform='rotate(180deg)';}else{c.style.display='none'; a.style.transform='rotate(0deg)';}">
-                    <span>Детальний опис</span>
-                    <svg viewBox="0 0 24 24" style="width:18px; height:18px; fill:none; stroke:var(--text-muted); stroke-width:2; stroke-linecap:round; stroke-linejoin:round; transition:0.3s;"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            <div style="margin-top: 4px;">
+                <div class="desc-toggle-wrapper" onclick="const c = this.nextElementSibling; const a = this.querySelector('svg'); if(c.style.display==='none'){c.style.display='block'; a.style.transform='rotate(180deg)';}else{c.style.display='none'; a.style.transform='rotate(0deg)';}">
+                    <span>Детальніше</span>
+                    <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
-                <div style="display: none; padding: 0 16px 16px 16px; border-top: 1px solid var(--border);">
-                    <div style="padding-top: 16px;">
-                        ${codeHtml}
-                        ${descText}
-                    </div>
+                <div class="desc-content">
+                    ${codeHtml}
+                    ${descText}
                 </div>
             </div>
         `;
@@ -1234,8 +1238,7 @@
             compareModeActive = isModalCtx ? isModalCompareMode : isCompareMode;
         }
         
-        let cardClass = isModalCtx ? "list-item" : "service-card";
-        let cardStyle = isModalCtx ? "padding: 16px; margin-bottom: 12px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px;" : "";
+        let cardClass = "service-card";
         if (compareModeActive && !s.isPackage) cardClass += ' compare-mode';
         if (isSelected) cardClass += ' selected';
         
@@ -1247,33 +1250,17 @@
             
         let descHtml = s.descToggleHTML || '';
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
-        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px;">🔥</span>` : '';
+        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; margin-right:4px;">🔥</span>` : '';
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}">${s.brand}</div>` : '';
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
-
-        if(isModalCtx) {
-            return `
-            <div class="${cardClass}" style="${cardStyle} position:relative;" ${clickHandler}>
-                ${checkboxHtml}
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:12px;">
-                    <div style="flex:1;">
-                        ${brandHtml}
-                        <div style="font-size:14px; font-weight:600; color:var(--text-main); line-height:1.4;">${focusHtml} ${s.title}</div>
-                        ${availHtml}
-                    </div>
-                    <div style="font-size:15px; font-weight:700; color:var(--text-muted); white-space:nowrap; padding-top:2px;">${s.label}</div>
-                </div>
-                ${descHtml}
-            </div>`;
-        }
 
         return `
         <div class="${cardClass}" ${clickHandler}>
             ${checkboxHtml}
-            <div class="sc-header">
+            <div class="sc-header" style="align-items: center;">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
                     ${brandHtml}
-                    <div class="sc-title">${focusHtml} ${s.title}</div>
+                    <div class="sc-title">${focusHtml} <span>${s.title}</span></div>
                 </div>
                 <div class="sc-price">${s.label}</div>
             </div>
@@ -1331,7 +1318,6 @@
         if (document.getElementById('montazhCity')) window.updateMontazhResults(); else window.updateSetupResults(); 
     }
 
-    // --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ---
     window.handleServiceClick = function(e, name, code, isPackage, forceNoCompare = false) {
         let target = e.target;
         if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-code')) return;
@@ -1347,12 +1333,10 @@
             }
             updateCompareUI(); renderServices(); 
         } else {
-            // Исправление: вызываем твой роутер `openModal` вместо базовой модалки, чтобы работали выпадающие списки!
             window.openModal(name, code);
         }
     }
 
-    // --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ---
     window.handleModalServiceClick = function(e, name, isPackage, code) {
         let target = e.target;
         if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-code')) return; 
@@ -1369,7 +1353,6 @@
             updateModalCompareUI();
             if (document.getElementById('montazhCity')) window.updateMontazhResults(); else window.updateSetupResults(); 
         } else {
-            // Исправление: если внутри модалки кликнули на пакет (например, внутри резервов кликнули на Монтаж)
             if (isPackage) {
                 window.openModal(name, code);
             } else {
@@ -1521,7 +1504,7 @@
                 <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Послуги</span>
                 <button id="modalCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
-            <div id="montazhResults" class="list-group" style="margin-bottom:0;"></div>
+            <div id="montazhResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;"></div>
         `;
 
         let catSelect = document.getElementById('montazhCat');
@@ -1587,7 +1570,7 @@
             if (item.isUnavailable) {
                 if (!seenUnavailable.has(pUpper) && item.displayProv) {
                     seenUnavailable.add(pUpper);
-                    resultsHTML += `<div class="list-item" style="opacity:0.6;"><div class="list-item-content"><div class="sc-brand ${cls}" style="align-self:flex-start;">${item.displayProv}</div><div style="font-size:13px;">Монтаж у цьому місті відсутній</div></div></div>`; 
+                    resultsHTML += `<div class="service-card" style="opacity:0.6; cursor:default;"><div class="sc-header"><div class="sc-brand ${cls}" style="margin-bottom:0;">${item.displayProv}</div></div><div style="font-size:14px; font-weight:600;">Монтаж у цьому місті відсутній</div></div>`; 
                 }
             } else {
                  let text = item.availability; let availLower = text.toLowerCase(); let displayText = text;
@@ -1598,7 +1581,7 @@
                  
                  let extraInfoHTML = `<div style="font-size:11px; font-weight:600; color:${col}; margin-top: 6px;">📍 ${displayText}</div>`;
                  obj.availabilityHTML = extraInfoHTML; 
-                 resultsHTML += generateServiceCardHTML(obj, true); 
+                 resultsHTML += generateServiceCardHTML(obj, false, true); 
             }
         });
         resultsContainer.innerHTML = resultsHTML;
@@ -1635,7 +1618,7 @@
         processedMatches.sort((a, b) => b.numCost - a.numCost); window.lastModalServices = processedMatches;
         let headerHtml = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" class="compare-toggle-btn" style="display:${processedMatches.length >= 2 ? 'block' : 'none'}; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div>`;
         let html = processedMatches.map(m => { m.label = m.priceText; m.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, m.name), m.code); return generateServiceCardHTML(m, true); }).join('');
-        document.getElementById('modalBody').innerHTML = headerHtml + `<div id="setupResults" class="list-group" style="margin-bottom:0;">${html}</div>`;
+        document.getElementById('modalBody').innerHTML = headerHtml + `<div id="setupResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;">${html}</div>`;
     }
 
     window.renderSetupModal = function(targetName, mode = "setup") {
@@ -1646,7 +1629,7 @@
         }).map(t => t.cat))];
         
         let labelText = mode === "antivirus" ? "Оберіть тип антивірусу:" : "Оберіть тип сервісу:";
-        document.getElementById('modalBody').innerHTML = `<div class="input-group"><span class="montazh-label">${labelText}</span><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" class="compare-toggle-btn" style="display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" class="list-group" style="margin-bottom:0;"></div>`;
+        document.getElementById('modalBody').innerHTML = `<div class="input-group"><span class="montazh-label" style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">${labelText}</span><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" class="compare-toggle-btn" style="display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;"></div>`;
         
         let catSelect = document.getElementById('setupCat'); let targetClean = normalizeServiceName(targetName);
         let targetTariff = db.tariffs.find(t => normalizeServiceName(t.service) === targetClean || (t.serviceRu && normalizeServiceName(t.serviceRu) === targetClean));
@@ -1709,7 +1692,6 @@
             else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.openModalBase('descModal'); window.renderSetupModal(name, "setup"); return; }
         }
 
-        // Если это обычный сервис (или из резервов), просто открываем его описание
         window.openModalBase('descModal', name, code);
     }
 
