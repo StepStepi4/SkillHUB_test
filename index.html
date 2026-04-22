@@ -33,7 +33,7 @@
             --input-bg: #f9fafb;
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.08);
-            --modal-overlay: rgba(0, 0, 0, 0.4);
+            --modal-overlay: rgba(0, 0, 0, 0.5);
             --nav-height: 80px;
 
             --clr-support-bg: #fef9c3; --clr-support-text: #854d0e;
@@ -55,7 +55,7 @@
             --input-bg: #2c2c2e;
             --danger: #ff453a;
             --danger-bg: rgba(255, 69, 58, 0.15);
-            --modal-overlay: rgba(0, 0, 0, 0.7);
+            --modal-overlay: rgba(0, 0, 0, 0.8);
 
             --clr-support-bg: #422006; --clr-support-text: #fde047;
             --clr-ekta-bg: #1e3a8a; --clr-ekta-text: #bfdbfe;
@@ -63,14 +63,14 @@
             --clr-install-bg: #3b0764; --clr-install-text: #e9d5ff;
         }
 
-        /* БЕЗПЕЧНИЙ СКРОЛ-ЛОК ДЛЯ МОДАЛОК */
-        body.modal-open { overflow: hidden; }
-        
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
         }
+        
+        /* БЕЗПЕЧНИЙ БЛОК СКРОЛУ */
+        body.modal-open { overflow: hidden; }
 
         /* ЗАВАНТАЖУВАЧ */
         .app-loader {
@@ -81,7 +81,7 @@
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; }
+        .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; text-align: center;}
         .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
 
@@ -110,27 +110,27 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ З BLUR */
+        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ (ЕЛЕГАНТНА) */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
-            background: var(--nav-bg); border-top: 1px solid rgba(0,0,0,0.05);
-            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            background: var(--nav-bg); border-top: 0.5px solid rgba(0,0,0,0.1);
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
             display: flex; justify-content: space-around; align-items: center;
             z-index: 9990; padding-bottom: env(safe-area-inset-bottom);
         }
-        [data-theme="dark"] .bottom-nav { border-top: 1px solid rgba(255,255,255,0.05); }
+        [data-theme="dark"] .bottom-nav { border-top: 0.5px solid rgba(255,255,255,0.15); }
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; flex: 1; height: 100%; background: transparent; border: none;
+            gap: 4px; flex: 1; height: 100%; background: transparent; border: none; outline: none;
             color: var(--text-muted); cursor: pointer; transition: color 0.2s;
         }
-        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; transition: 0.2s;}
-        .nav-item span { font-size: 10px; font-weight: 600; transition: 0.2s; }
+        .nav-item svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 1.5; transition: 0.3s;}
+        .nav-item span { font-size: 10px; font-weight: 600; transition: 0.3s; }
         
         .nav-item.active { color: var(--primary); }
-        .nav-item.active svg { stroke-width: 2.2; transform: translateY(-2px) scale(1.05); }
-        .nav-item.active span { font-weight: 800; }
+        .nav-item.active svg { stroke-width: 2.2; transform: translateY(-2px) scale(1.15); }
+        .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -158,9 +158,10 @@
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:active { opacity: 0.8; transform: scale(0.98); }
 
+        /* КНОПКА ПОРІВНЯННЯ */
         .compare-toggle-btn {
-            background: transparent; color: var(--primary); border: 1px solid var(--primary);
-            padding: 8px 14px; border-radius: 12px; font-size: 13px; font-weight: 700; 
+            background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
+            padding: 8px 16px; border-radius: 12px; font-size: 13px; font-weight: 700; 
             cursor: pointer; transition: 0.2s; display: none; align-items: center;
         }
         .compare-toggle-btn.active { background: var(--danger-bg); border-color: var(--danger); color: var(--danger); }
@@ -173,7 +174,7 @@
         .list-item {
             padding: 16px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text-main);
-            background: var(--card-bg); border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
+            background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
         }
         .list-item:last-child { border-bottom: none; }
         .list-item:active { background: var(--input-bg); }
@@ -184,7 +185,7 @@
         .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
         .list-item-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px;}
 
-        /* ПЕРЕМИКАЧ */
+        /* ПЕРЕМИКАЧ (TOGGLE) */
         .toggle-switch {
             width: 50px; height: 30px; background: var(--border); border-radius: 30px;
             position: relative; cursor: pointer; transition: 0.3s; border: none;
@@ -196,7 +197,7 @@
         }
         .toggle-switch.active .toggle-knob { transform: translateX(20px); }
 
-        /* КАРТКИ СЕРВІСІВ */
+        /* КАРТКИ СЕРВІСІВ ТА ІНФО */
         .service-card {
             background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px;
             border: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left;
@@ -223,12 +224,12 @@
         .sugg-item:last-child { border-bottom: none; }
         .sugg-item:active { background: var(--input-bg); }
 
-        /* МОДАЛЬНІ ВІКНА */
-        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch;}
+        /* МОДАЛЬНІ ВІКНА (BOTTOM SHEET) */
+        .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch; }
         .modal.show { display: flex; opacity: 1; }
         .modal-content { 
-            background: var(--bg); width: 100%; border-radius: 20px 20px 0 0; 
-            padding: 20px 16px calc(env(safe-area-inset-bottom) + 20px) 16px; 
+            background: var(--bg); width: 100%; border-radius: 24px 24px 0 0; 
+            padding: 24px 16px calc(env(safe-area-inset-bottom) + 20px) 16px; 
             display: flex; flex-direction: column; max-height: 90vh; 
             transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
             text-align: left; overscroll-behavior: contain;
@@ -236,37 +237,32 @@
         .modal.show .modal-content { transform: translateY(0); }
         
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
-        .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
-        .modal-close { background: var(--input-bg); border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; color: var(--text-muted); display: flex; justify-content: center; align-items: center; cursor: pointer;}
+        .modal-title { font-size: 20px; font-weight: 800; color: var(--text-main); line-height: 1.3;}
+        .modal-close { background: var(--input-bg); border: none; width: 32px; height: 32px; border-radius: 50%; font-size: 14px; color: var(--text-muted); display: flex; justify-content: center; align-items: center; cursor: pointer; transition: 0.2s;}
         .modal-close:active { transform: scale(0.9); }
-        
         .modal-body { overflow-y: auto; flex: 1; padding-bottom: 20px; text-align: left; -webkit-overflow-scrolling: touch;}
         
         /* ТЕХНІЧНА ДОВІДКА */
-        .tech-info-block { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; padding: 0;}
-        .tech-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .tech-info-block { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; padding: 4px; }
+        .tech-row { display: flex; align-items: center; gap: 14px; padding: 12px 12px; border-bottom: 1px solid var(--border); border-radius: 12px; }
         .tech-row:last-child { border-bottom: none; }
-        .tech-row.negarant { background: var(--danger-bg); border-bottom: none; border-top: 1px solid rgba(239, 68, 68, 0.2); }
-        .tech-icon { font-size: 22px; width: 26px; text-align: center;} 
+        .tech-row.negarant { background: var(--danger-bg); border: 1px solid rgba(239, 68, 68, 0.2); }
+        .tech-icon { font-size: 22px; width: 28px; text-align: center;} 
         .tech-text-wrap { display: flex; flex-direction: column; gap: 2px; flex: 1;}
         .tech-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
         .tech-val { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4;}
 
-        /* ФОТОГАЛЕРЕЯ */
-        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-bottom: 24px; background: var(--input-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
-        .tech-photo-wrapper:active { transform: scale(0.97); background: var(--border); }
+        /* ФОТОГАЛЕРЕЯ ДОВІДКИ */
+        .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 16px; background: var(--card-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
+        .tech-photo-wrapper:active { transform: scale(0.98); background: var(--input-bg); }
         .photo-icon { font-size: 26px; }
         .photo-text { flex: 1; display: flex; flex-direction: column; text-align: left; }
         .photo-title { font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 2px;}
         .photo-subtitle { font-size: 12px; font-weight: 600; color: var(--primary); }
         .photo-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px; }
-        
-        .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
-        .gallery-nav.prev { left: 10px; }
-        .gallery-nav.next { right: 10px; }
 
         /* ПОРІВНЯННЯ */
-        .compare-bar { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px; display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: 0.3s; z-index: 9980;}
+        .compare-bar { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: 0.3s; z-index: 9980;}
         .compare-bar.show { transform: translateY(0); }
         
         .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); pointer-events: none;}
@@ -277,21 +273,49 @@
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        /* ОПИС СЕРВІСІВ (ФОРМА ЕМОДЗІ) */
-        .desc-block { background: var(--card-bg); border-radius: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; border: 1px solid var(--border); overflow: hidden;}
-        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 14px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer;}
+        /* ОПИС СЕРВІСІВ У МОДАЛЦІ */
+        .desc-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; border: 1px solid var(--border);}
+        .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 14px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
-        .desc-line { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .desc-line { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .desc-line:last-child { border-bottom: none; }
-        .desc-icon-box { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--bg); border: 1px solid var(--border); }
+        .desc-icon-box { width: 32px; height: 32px; min-width: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; background: var(--input-bg); border: 1px solid var(--border); }
 
         .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main);}
         .floating-top.show { opacity: 1; }
+        .floating-top:active { transform: scale(0.9); }
 
         /* РЕЗЕРВИ */
-        .rezervy-name { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.3;}
-        .rezervy-cat { font-size: 12px; font-weight: 500; color: var(--text-muted); margin-top: 4px; text-transform: uppercase;}
-        .rezervy-price { font-size: 15px; font-weight: 800; color: var(--text-main); white-space: nowrap;}
+        .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
+        
+        /* ІЄРАРХІЯ МОДАЛОК */
+        #rezervItemModal { z-index: 100010; }
+        #descModal { z-index: 100030; }
+        #compareModal { z-index: 100040; }
+        #guideModal { z-index: 100050; }
+        #galleryModal { z-index: 100060; }
+        
+        /* ГАЛЕРЕЯ */
+        .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
+        .gallery-nav.prev { left: 10px; }
+        .gallery-nav.next { right: 10px; }
+        
+        /* ІНСТРУКЦІЯ PWA */
+        .pwa-guide-container { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--text-main); }
+        .pwa-alert { background: var(--input-bg); padding: 16px; border-left: 4px solid #0088cc; border-radius: 8px; margin-bottom: 16px; }
+        .pwa-alert-title { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: #0088cc; margin-bottom: 8px; }
+        .pwa-alert-title svg { width: 20px; height: 20px; margin-right: 8px; fill: #0088cc; }
+        .pwa-alert-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-main); }
+        .pwa-device-section { padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; background: var(--card-bg); }
+        .pwa-device-title { display: flex; align-items: center; font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .pwa-device-title svg { margin-right: 10px; width: 22px; height: 22px; }
+        .pwa-instructions { margin: 0; padding-left: 20px; line-height: 1.5; font-size: 14px; color: var(--text-main); }
+        .pwa-icon-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px; margin: 0 4px; }
+        .pwa-icon-inline svg { width: 16px; height: 16px; }
+        .color-apple { fill: var(--text-main); }
+        .color-android { fill: #3DDC84; }
+        .color-safari-blue { stroke: #007AFF; }
+        .color-chrome-gray { fill: var(--text-muted); }
     </style>
 </head>
 <body>
@@ -325,19 +349,19 @@
         </div>
 
         <div id="priceWrapper" class="input-group" style="display:none; gap:10px; flex-direction:row;">
-            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1; margin-bottom:0;">
+            <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1;">
             <button class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
         </div>
 
         <div id="result" style="display:none;">
-            <div class="ua-name" id="uaTitle" style="font-size:20px; font-weight:800; margin-bottom:5px; text-align: left;"></div>
+            <div class="ua-name" id="uaTitle" style="font-size:22px; font-weight:800; margin-bottom:5px; text-align: left;"></div>
             <div class="item-category" id="itemCategory" style="margin-bottom:20px; opacity:0.7; font-size:13px; text-transform: uppercase; font-weight: 700; text-align: left;"></div>
             
             <div id="techInfo"></div>
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
-                <button id="toggleCompareBtn" class="compare-toggle-btn" onclick="window.toggleCompareMode()">Порівняти</button>
+                <span style="font-weight:700; font-size:14px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
+                <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
             </div>
             
             <div id="serviceList"></div>
@@ -377,9 +401,9 @@
             <div class="list-item" style="flex-direction:column; align-items:flex-start;">
                 <div class="list-item-content" style="margin-bottom: 10px; width:100%;">
                     <span class="list-item-title">Магазин на якому Ви працюєте?</span>
-                    <span class="list-item-subtitle">Для швидкого доступу до резервів</span>
+                    <span class="list-item-subtitle">Для вкладки "Резерви"</span>
                 </div>
-                <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--bg);"></select>
+                <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--input-bg);"></select>
             </div>
         </div>
 
@@ -413,7 +437,7 @@
 
         <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px;">
             ROZETKA KHARKIV REGION<br>
-            <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:4px 8px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
+            <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
         </div>
     </div>
 </div>
@@ -438,12 +462,8 @@
 </nav>
 
 <div id="compareBar" class="compare-bar">
-    <div style="font-weight:600; font-size:14px;" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px;">Порівняти</button>
-</div>
-
-<div class="floating-top" id="scrollTopBtn">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+    <div style="font-weight:600; font-size: 15px;" id="compareStatusText">Оберіть 2 сервіси</div>
+    <button class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px; border-radius: 12px;">Порівняти</button>
 </div>
 
 <div id="rezervItemModal" class="modal">
@@ -478,10 +498,10 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">Результат порівняння</div>
-            <button class="modal-close" onclick="window.closeModalBase('compareModal'); if(isCompareMode) window.toggleCompareMode(); if(isModalCompareMode) window.toggleModalCompareMode();">✕</button>
+            <button class="modal-close" onclick="window.closeCompareModal()">✕</button>
         </div>
         <div id="compareModalBody" class="modal-body"></div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('compareModal'); if(isCompareMode) window.toggleCompareMode(); if(isModalCompareMode) window.toggleModalCompareMode();">Закрити</button>
+        <button class="btn btn-primary" onclick="window.closeCompareModal()">Закрити</button>
     </div>
 </div>
 
@@ -491,34 +511,40 @@
             <div class="modal-title">Встановлення PWA</div>
             <button class="modal-close" onclick="window.closeModalBase('guideModal')">✕</button>
         </div>
-        <div class="modal-body" style="overflow-y: auto; padding-right: 5px;">
-            <div style="background:var(--input-bg); padding:16px; border-radius:12px; margin-bottom:16px; text-align: left; border: 1px solid var(--border);">
-                <b style="color:var(--primary); display:flex; align-items:center; gap:8px; font-size: 15px; margin-bottom:8px;">
-                    <svg viewBox="0 0 24 24" style="width: 20px; height: 20px; fill: currentColor;"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+        <div class="modal-body pwa-guide-container" style="overflow-y: auto; padding-right: 5px;">
+            <div class="pwa-alert">
+                <div class="pwa-alert-title">
+                    <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
                     Відкрито у месенджері?
-                </b>
-                <span style="font-size: 13px; line-height: 1.5; display:block;">Телеграм чи Вайбер не підтримують встановлення додатку. Натисніть три крапки (або компас) і виберіть <b>Відкрити у браузері</b>.</span>
+                </div>
+                <div class="pwa-alert-text">
+                    Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
+                    <ul>
+                        <li><strong>iOS (iPhone):</strong> Натисніть значок компаса <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></span> у правому нижньому куті екрана.</li>
+                        <li><strong>Android:</strong> Натисніть три крапки <span class="pwa-icon-inline"><svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></span> у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong>.</li>
+                    </ul>
+                </div>
             </div>
             
-            <div style="border: 1px solid var(--border); background: var(--card-bg); border-radius: 12px; padding: 16px; margin-bottom: 16px; text-align: left;">
-                <div style="font-size: 15px; font-weight: 700; display:flex; align-items:center; gap:8px; margin-bottom:12px; color:var(--text-main);">
-                    <svg viewBox="0 0 384 512" style="width: 18px; height: 18px; fill: currentColor;"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+            <div class="pwa-device-section">
+                <div class="pwa-device-title">
+                    <svg class="color-apple" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
                     Для iOS (Safari)
                 </div>
-                <ol style="padding-left: 20px; margin:0; font-size: 13px; line-height:1.5;">
-                    <li style="margin-bottom: 8px;">Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
-                    <li style="margin-bottom: 8px;">Натисніть кнопку <strong>«Поділитися»</strong> <svg style="width:14px; height:14px; display:inline-block; vertical-align:middle; stroke:#007AFF; fill:none; stroke-width:2;" viewBox="0 0 24 24"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg> внизу екрана.</li>
-                    <li>Виберіть <strong>"На початковий екран"</strong> <svg style="width:14px; height:14px; display:inline-block; vertical-align:middle; stroke:currentColor; fill:none; stroke-width:2;" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>.</li>
+                <ol class="pwa-instructions">
+                    <li>Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
+                    <li>Натисніть кнопку <strong>«Поділитися»</strong> <span class="pwa-icon-inline"><svg class="color-safari-blue" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></span> внизу екрана.</li>
+                    <li>Виберіть <strong>"На початковий екран"</strong> <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>.</li>
                 </ol>
             </div>
             
-            <div style="border: 1px solid var(--border); background: var(--card-bg); border-radius: 12px; padding: 16px; text-align: left;">
-                <div style="font-size: 15px; font-weight: 700; display:flex; align-items:center; gap:8px; margin-bottom:12px; color: #10b981;">
-                    <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; fill: currentColor;"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.56-.38-.85-.22-.31.16-.42.54-.26.85l1.84 3.18C2.7 11.41 0 15.65 0 20.6h24c0-4.95-2.7-9.19-6.4-11.12zM8.5 16.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+            <div class="pwa-device-section">
+                <div class="pwa-device-title" style="color: var(--primary);">
+                    <svg class="color-android" viewBox="0 0 24 24"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.56-.38-.85-.22-.31.16-.42.54-.26.85l1.84 3.18C2.7 11.41 0 15.65 0 20.6h24c0-4.95-2.7-9.19-6.4-11.12zM8.5 16.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
                     Для Android (Chrome)
                 </div>
-                <ol style="padding-left: 20px; margin:0; font-size: 13px; line-height:1.5;">
-                    <li style="margin-bottom: 8px;">Натисніть меню (три крапки в правому верхньому куті)</li>
+                <ol class="pwa-instructions">
+                    <li>Натисніть меню (три крапки в правому верхньому куті)</li>
                     <li>Виберіть <strong>"Додати на головний екран"</strong></li>
                 </ol>
             </div>
@@ -527,18 +553,22 @@
     </div>
 </div>
 
-<div id="galleryModal" class="modal" style="background: rgba(0,0,0,0.9);">
+<div id="galleryModal" class="modal" style="background: rgba(0,0,0,0.9); z-index: 100060;">
     <div class="modal-content" style="background:transparent; box-shadow:none; padding:0; height:100%; justify-content:center; align-items:center;">
         <div style="position:absolute; top:20px; right:20px; z-index:1000000;">
-            <button class="modal-close" onclick="window.closeModalBase('galleryModal')" style="background:rgba(255,255,255,0.3); color:white;">✕</button>
+            <button class="modal-close" onclick="window.closeGallery()" style="background:rgba(255,255,255,0.2); color:white;">✕</button>
         </div>
-        <div class="gallery-content" id="galleryContent" style="display:flex; justify-content:center; align-items:center; height:100%; width:100%;">
+        <div class="gallery-content" id="galleryContent" style="display:flex; justify-content:center; align-items:center; height:100%; width:100%; position:relative;">
             <button class="gallery-nav prev" onclick="event.stopPropagation(); window.changePhoto(-1)">❮</button>
             <img id="galleryImage" src="" alt="Фото" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">
             <button class="gallery-nav next" onclick="event.stopPropagation(); window.changePhoto(1)">❯</button>
         </div>
         <div id="galleryCounter" style="position:absolute; bottom:40px; color:white; font-weight:bold; background:rgba(0,0,0,0.5); padding:6px 16px; border-radius:20px;">1 / 3</div>
     </div>
+</div>
+
+<div class="floating-top" id="scrollTopBtn">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
 <script>
@@ -556,7 +586,6 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: [], serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
-    let scrollPos = 0;
     
     let isCompareMode = false;
     let compareSelection = [];
@@ -622,7 +651,7 @@
         window.scrollTo(0, 0);
     }
 
-    // НОВА БЕЗПЕЧНА ЛОГІКА СКРОЛУ
+    // БЕЗПЕЧНА ЛОГІКА СКРОЛУ
     window.openModalBase = function(modalId, name = "", code = "") {
         if (name && modalId === 'descModal') {
             let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
@@ -630,17 +659,14 @@
             const raw = window.findInDb(db.descriptions, name) || "";
             document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальний опис', 'Опис сервісу');
         }
-
-        if (!document.body.classList.contains('modal-open')) {
-            document.body.classList.add('modal-open');
-        }
+        document.body.style.overflow = 'hidden';
         document.getElementById(modalId).classList.add('show');
     }
 
     window.closeModalBase = function(modalId) {
         document.getElementById(modalId).classList.remove('show');
         if (!checkOpenModals()) {
-            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
         }
     }
 
@@ -669,14 +695,13 @@
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // Безпечний парсинг тексту
     window.escapeHTML = function(str) {
         if (!str) return '';
         return str.toString().replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return str.toString().replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        return str.toString().replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -966,7 +991,7 @@
             let descToggle = generateDescToggleHTML(item.desc, code);
             return `
             <div class="list-item" style="flex-direction:column; align-items:flex-start; padding: 20px 16px;">
-                ${brand ? `<div class="sc-brand ${cls}">${brand}</div>` : ''}
+                ${brand ? `<div class="sc-brand ${cls}" style="margin-bottom: 12px;">${brand}</div>` : ''}
                 <div style="font-size:16px; font-weight:700; margin-bottom:10px;">${title}</div>
                 <div style="width:100%;">${descToggle}</div>
             </div>`;
@@ -1048,7 +1073,6 @@
             }
         });
 
-        // ФОТОГАЛЕРЕЯ
         let photosArray = [];
         if (item.photo1) photosArray.push(item.photo1);
         if (item.photo2) photosArray.push(item.photo2);
@@ -1600,7 +1624,7 @@
         }).map(t => t.cat))];
         
         let labelText = mode === "antivirus" ? "Оберіть тип антивірусу:" : "Оберіть тип сервісу:";
-        document.getElementById('modalBody').innerHTML = `<div class="input-group"><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" class="compare-toggle-btn" style="display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" class="list-group" style="margin-bottom:0;"></div>`;
+        document.getElementById('modalBody').innerHTML = `<div class="input-group"><span class="montazh-label">${labelText}</span><select id="setupCat" class="montazh-select"><option value="">-- Оберіть категорію --</option>${setupCats.map(c => `<option value="${c}">${c}</option>`).join('')}</select></div><div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="modalCompareBtn" class="compare-toggle-btn" style="display:none; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div><div id="setupResults" class="list-group" style="margin-bottom:0;"></div>`;
         
         let catSelect = document.getElementById('setupCat'); let targetClean = normalizeServiceName(targetName);
         let targetTariff = db.tariffs.find(t => normalizeServiceName(t.service) === targetClean || (t.serviceRu && normalizeServiceName(t.serviceRu) === targetClean));
@@ -1649,46 +1673,23 @@
     }
 
     window.openModal = function(name, code = "") {
-        window.openModalBase('descModal', name, code);
-        
         let nameClean = normalizeServiceName(name); let u = name.toUpperCase(); 
         let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
         let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD') || u.includes('[ESD]')) && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС');
 
         if (!isStaticEpz) {
-            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) { document.getElementById('modalTitle').innerText = "Монтаж ВПТ"; window.renderMontazhModal(); return; } 
-            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) { document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі"; window.renderDirectListModal(["перевірка", "піксел"]); return; } 
-            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) { document.getElementById('modalTitle').innerText = "Поклейка скла та плівок"; window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]); return; }
-            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) { document.getElementById('modalTitle').innerText = "Антивіруси"; window.renderSetupModal(name, "antivirus"); return; }
-            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри"; window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]); return; }
-            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.renderSetupModal(name, "setup"); return; }
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('ЗАХИСН'))) { document.getElementById('modalTitle').innerText = "Монтаж ВПТ"; window.openModalBase('descModal'); window.renderMontazhModal(); return; } 
+            else if (u.includes('ПЕРЕВІРКА') || u.includes('ПІКСЕЛ')) { document.getElementById('modalTitle').innerText = "Перевірка на биті пікселі"; window.openModalBase('descModal'); window.renderDirectListModal(["перевірка", "піксел"]); return; } 
+            else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) { document.getElementById('modalTitle').innerText = "Поклейка скла та плівок"; window.openModalBase('descModal'); window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]); return; }
+            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) { document.getElementById('modalTitle').innerText = "Антивіруси"; window.openModalBase('descModal'); window.renderSetupModal(name, "antivirus"); return; }
+            else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри"; window.openModalBase('descModal'); window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]); return; }
+            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.openModalBase('descModal'); window.renderSetupModal(name, "setup"); return; }
         }
+
+        window.openModalBase('descModal', name, code);
     }
 
     window.showChangelogModal = function(version, changelogText) {
-        scrollPos = window.pageYOffset; document.body.style.top = `-${scrollPos}px`; document.body.classList.add('modal-open');
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
-        let lines = changelogText.split('\n'); let html = '<div style="background:var(--card-bg); border-radius:16px; border:1px solid var(--border);">';
-        lines.forEach((line, index) => {
-            const l = line.trim();
-            if (l) {
-                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                let prefix = hasEmoji ? "" : "🔹";
-                let border = index !== lines.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
-                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="margin-right:8px;">${prefix}</span><span style="flex:1;">${l}</span></div>`;
-            }
-        });
-        html += '</div>';
-        
-        document.getElementById('modalBody').innerHTML = html; window.openModalBase('descModal');
-    };
-
-    init();
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
-    }
-</script>
-</body>
-</html>
+        let lines = changelogText.split('\n'); let html = '<div style="background:var(--card-bg); border-radius:16px; border:1
