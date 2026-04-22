@@ -63,8 +63,7 @@
             --clr-install-bg: #3b0764; --clr-install-text: #e9d5ff;
         }
 
-        /* БЕЗПЕЧНИЙ БЛОК СКРОЛУ ДЛЯ МОДАЛОК */
-        body.modal-open { overflow: hidden; }
+        body.modal-open { overflow: hidden; position: fixed; width: 100%; }
         
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
@@ -410,7 +409,7 @@
                     <span class="list-item-title">Магазин на якому Ви працюєте?</span>
                     <span class="list-item-subtitle">Для швидкого доступу до резервів</span>
                 </div>
-                <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--bg); margin-bottom: 0;"></select>
+                <select id="defaultStoreSelect" onchange="window.saveDefaultStore()" style="background: var(--input-bg); margin-bottom: 0;"></select>
             </div>
         </div>
 
@@ -659,7 +658,7 @@
         window.scrollTo(0, 0);
     }
 
-    // БЕЗПЕЧНА ЛОГІКА СКРОЛУ
+    // НОВА БЕЗПЕЧНА ЛОГІКА СКРОЛУ
     window.openModalBase = function(modalId, name = "", code = "") {
         if (name && modalId === 'descModal') {
             let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
@@ -667,7 +666,7 @@
             const raw = window.findInDb(db.descriptions, name) || "";
             document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальний опис', 'Опис сервісу');
         }
-        
+
         if (!document.body.classList.contains('modal-open')) {
             document.body.classList.add('modal-open');
         }
@@ -928,8 +927,12 @@
             document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             window.openModalBase('rezervItemModal');
             renderRezervItemServices(foundItem, price);
-        } else alert(`Категорію "${catName}" не знайдено.`);
+        } else {
+            alert(`Категорію "${catName}" не знайдено.`);
+        }
     }
+
+    window.closeRezervItemModal = function() { window.closeModalBase('rezervItemModal'); }
 
     // --- ФОТОГАЛЕРЕЯ ---
     let currentPhotos = [];
@@ -974,6 +977,7 @@
         document.querySelector('.gallery-nav.prev').style.display = currentPhotos.length > 1 ? 'block' : 'none';
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
+
 
     window.renderTrainingTab = function() {
         const list = document.getElementById('trainingList');
@@ -1336,7 +1340,6 @@
         if (isCompareMode && !forceNoCompare) {
             if (isPackage) { alert("Пакети послуг не порівнюються."); return; }
             
-            // НОВА ЛОГІКА ПОРІВНЯННЯ
             let index = compareSelection.indexOf(name);
             if (index > -1) {
                 compareSelection.splice(index, 1);
@@ -1354,7 +1357,6 @@
         if (isModalCompareMode) {
             if (isPackage) { alert("Пакети не порівнюються."); return; }
             
-            // НОВА ЛОГІКА ПОРІВНЯННЯ
             let index = modalCompareSelection.indexOf(name);
             if (index > -1) {
                 modalCompareSelection.splice(index, 1);
