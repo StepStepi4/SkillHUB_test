@@ -211,7 +211,9 @@
         }
         
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
-        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center;}
+        
+        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ВОГНИКА В КАРТКАХ */
+        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px;}
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
@@ -287,10 +289,11 @@
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
+        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ІКОНОК У СПИСКУ ОПИСУ */
         .desc-line { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
-        .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
+        .desc-icon-box { display: flex; align-items: flex-start; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; padding-top: 1px; }
 
         .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main);}
         .floating-top.show { opacity: 1; }
@@ -585,7 +588,6 @@
 </div>
 
 <script>
-    // Відстеження критичних помилок, щоб екран не висів просто так
     window.addEventListener('error', function(e) {
         const elLoader = document.getElementById('appLoader');
         if (elLoader && !elLoader.classList.contains('hidden')) {
@@ -609,7 +611,6 @@
     let modalCompareSelection = [];
     window.lastModalServices = [];
 
-    // Жорстка очистка і підготовка даних, щоб уникнути помилок undefined
     function sanitizeDb(data) {
         if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
         data.categories = data.categories || [];
@@ -732,7 +733,6 @@
 
     const normalize = (str) => str ? String(str).toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // ВАЖНОЕ ИСПРАВЛЕНИЕ: БЕЗОПАСНЫЙ ESCAPE HTML
     window.escapeHTML = function(str) {
         if (!str) return '';
         return String(str)
@@ -740,7 +740,7 @@
             .replace(/</g, '<')
             .replace(/>/g, '>')
             .replace(/"/g, '"')
-            .replace(/'/g, '&#39;'); // Замена на безопасный HTML код одинарной кавычки
+            .replace(/'/g, ''');
     }
     
     window.escapeForJS = function(str) {
@@ -810,12 +810,11 @@
         } else await refreshData(true); 
     }
     
-    // Експортуємо init, щоб кнопка "Спробувати ще" могла її викликати
     window.init = init;
 
     async function refreshData(first = false) {
         setAppStatus('loading', 'Оновлення...');
-        let pInt; // Выносим за пределы try для безопасной очистки
+        let pInt; 
         try {
             const controller = new AbortController();
             
@@ -1019,7 +1018,6 @@
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
 
-
     window.renderTrainingTab = function() {
         try {
             const list = document.getElementById('trainingList');
@@ -1032,7 +1030,6 @@
             
             list.innerHTML = filteredData.map(item => {
                 let brand = item.brand || ""; let title = item.name ? String(item.name).replace(/^\[.*?\]\s*/, '').trim() : ""; 
-                let code = window.findInDb(db.serviceCodes, item.name) || "";
                 
                 let cls = 'brand-other'; let checkName = String(brand + " " + item.name).toUpperCase(); 
                 if (checkName.includes('SUPPORT') || checkName.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
@@ -1040,7 +1037,7 @@
                 else if (checkName.includes('EPZ') || checkName.includes('ЕПЗ') || checkName.includes('ЛІЦЕНЗІЙНЕ')) cls = 'brand-epz'; 
                 else if (checkName.includes('МОНТАЖ') || checkName.includes('ПІДКЛЮЧЕННЯ')) cls = 'brand-install';
 
-                let descToggle = generateDescToggleHTML(item.desc, code);
+                let descToggle = generateDescToggleHTML(item.desc, "");
                 return `
                 <div class="service-card">
                     ${brand ? `<div class="sc-brand ${cls}" style="margin-bottom: 8px;">${brand}</div>` : ''}
@@ -1200,7 +1197,7 @@
             return `
             <div class="desc-line">
                 <div class="desc-icon-box">${e}</div>
-                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; padding-top:2px;">${t}</div>
+                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1; padding-top: 2px;">${t}</div>
             </div>`;
         }).join('');
         return html;
@@ -1310,17 +1307,17 @@
             
         let descHtml = s.descToggleHTML || '';
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
-        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; margin-right:4px;">🔥</span>` : '';
+        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; flex-shrink:0; line-height:1.2;">🔥</span>` : '';
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}">${s.brand}</div>` : '';
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
 
         return `
         <div class="${cardClass}" ${clickHandler}>
             ${checkboxHtml}
-            <div class="sc-header" style="align-items: center;">
+            <div class="sc-header">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
                     ${brandHtml}
-                    <div class="sc-title">${focusHtml} <span>${s.title}</span></div>
+                    <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
                 </div>
                 <div class="sc-price">${s.label}</div>
             </div>
@@ -1373,13 +1370,21 @@
 
     window.toggleModalCompareMode = function() {
         isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; 
+        
+        // Знаходимо будь-яку активну кнопку порівняння в модалках
         const btn = document.querySelector('.modal.show .compare-toggle-btn');
         if (btn) {
             if (isModalCompareMode) btn.innerText = 'Скасувати порівняння';
             else btn.innerText = 'Порівняти';
         }
-        if (isModalCompareMode) { compareBar.classList.add('show'); compareBar.style.zIndex = '100035'; } 
-        else { compareBar.classList.remove('show'); }
+
+        if (isModalCompareMode) { 
+            compareBar.classList.add('show'); 
+            compareBar.style.zIndex = '100035'; 
+        } else { 
+            compareBar.classList.remove('show'); 
+        }
+        
         updateModalCompareUI();
 
         if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
@@ -1522,6 +1527,7 @@
         let html = buildCompareTable(sA, sB, descA, descB); 
         document.getElementById('compareModalBody').innerHTML = html;
         window.openModalBase('compareModal');
+        document.getElementById('compareBar').classList.remove('show');
     };
 
     window.executeModalCompare = function() {
@@ -1535,12 +1541,32 @@
         let html = buildCompareTable(mappedA, mappedB, descA, descB); 
         document.getElementById('compareModalBody').innerHTML = html;
         window.openModalBase('compareModal');
+        document.getElementById('compareBar').classList.remove('show');
     };
 
     window.closeCompareModal = function() {
         window.closeModalBase('compareModal');
-        if (isCompareMode) window.toggleCompareMode();
-        if (isModalCompareMode) window.toggleModalCompareMode();
+        
+        isCompareMode = false;
+        compareSelection = [];
+        isModalCompareMode = false;
+        modalCompareSelection = [];
+        
+        const cBar = document.getElementById('compareBar');
+        if (cBar) cBar.classList.remove('show');
+        
+        const mainBtn = document.getElementById('toggleCompareBtn');
+        if (mainBtn) { mainBtn.innerText = 'Порівняти'; mainBtn.classList.remove('active'); }
+        
+        document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
+            btn.innerText = 'Порівняти';
+            btn.classList.remove('active');
+        });
+
+        if (currentCategoryData) renderServices();
+        if (document.getElementById('montazhCity')) window.updateMontazhResults();
+        else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+        else window.updateSetupResults();
     }
 
     window.renderMontazhModal = function() {
@@ -1694,7 +1720,7 @@
 
             processedMatches.sort((a, b) => b.numCost - a.numCost); window.lastModalServices = processedMatches;
             let headerHtml = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;"><span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Сервіси</span><button id="setupCompareBtn" class="compare-toggle-btn" style="display:${processedMatches.length >= 2 ? 'block' : 'none'}; cursor:pointer;" onclick="window.toggleModalCompareMode()">Порівняти</button></div>`;
-            let html = processedMatches.map(m => { m.label = m.priceText; m.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, m.name), m.code); return generateServiceCardHTML(m, true); }).join('');
+            let html = processedMatches.map(m => { m.label = m.priceText; m.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, m.name), m.code); return generateServiceCardHTML(m, true, false); }).join('');
             document.getElementById('modalBody').innerHTML = headerHtml + `<div id="setupResults" style="margin-bottom:0; display:flex; flex-direction:column; gap:12px;">${html}</div>`;
         } catch(e) { console.error(e); }
     }
@@ -1767,7 +1793,7 @@
             let html = window.lastModalServices.map(m => { 
                 m.label = m.priceText; 
                 m.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, m.name), m.code); 
-                return generateServiceCardHTML(m, true); 
+                return generateServiceCardHTML(m, true, false); 
             }).join('');
             container.innerHTML = html;
         } catch(e) { console.error(e); }
