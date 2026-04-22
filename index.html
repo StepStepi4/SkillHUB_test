@@ -196,7 +196,7 @@
         }
         .toggle-switch.active .toggle-knob { transform: translateX(20px); }
 
-        /* КАРТКИ СЕРВІСІВ ТА ІНФО (НОВИЙ ДИЗАЙН) */
+        /* КАРТКИ СЕРВІСІВ ТА ІНФО */
         .service-card {
             background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px;
             border: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left;
@@ -278,7 +278,7 @@
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        /* ОПИС СЕРВІСІВ (НОВИЙ ДИЗАЙН - ЧИСТИЙ) */
+        /* ОПИС СЕРВІСІВ */
         .desc-toggle-wrapper {
             display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
         }
@@ -304,7 +304,7 @@
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
         
-        /* ІЄРАРХІЯ МОДАЛОК (Z-INDEX) */
+        /* ІЄРАРХІЯ МОДАЛОК */
         #rezervItemModal { z-index: 100010; }
         #descModal { z-index: 100030; }
         #compareModal { z-index: 100040; }
@@ -736,11 +736,11 @@
     window.escapeHTML = function(str) {
         if (!str) return '';
         return String(str)
-            .replace(/&/g, '&')
-            .replace(/</g, '<')
-            .replace(/>/g, '>')
-            .replace(/"/g, '"')
-            .replace(/'/g, ''');
+            .replace(/&/g, '\u0026amp;')
+            .replace(/</g, '\u0026lt;')
+            .replace(/>/g, '\u0026gt;')
+            .replace(/"/g, '\u0026quot;')
+            .replace(/'/g, '\u0026#39;');
     }
     
     window.escapeForJS = function(str) {
@@ -1017,6 +1017,7 @@
         document.querySelector('.gallery-nav.prev').style.display = currentPhotos.length > 1 ? 'block' : 'none';
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
+
 
     window.renderTrainingTab = function() {
         try {
