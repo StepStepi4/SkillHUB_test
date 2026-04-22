@@ -212,8 +212,8 @@
         
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
         
-        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ВОГНИКА В КАРТКАХ */
-        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px;}
+        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ВОГНИКА В КАРТКАХ (ПО ЦЕНТРУ) */
+        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
@@ -289,7 +289,6 @@
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
-        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ІКОНОК У СПИСКУ ОПИСУ */
         .desc-line { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
@@ -1262,7 +1261,7 @@
             
             let numCost = 0; let label = "Дізнатись"; let serviceCode = t && t.code ? t.code : window.findInDb(db.serviceCodes, name); 
             
-            if (isPackage) { label = "Пакети"; } 
+            if (isPackage) { label = "Обрати пакет"; } 
             else if (t && t.cost) {
                 let rawCost = t.cost.toString().trim();
                 if (rawCost.includes('%')) {
@@ -1315,7 +1314,7 @@
         return `
         <div class="${cardClass}" ${clickHandler}>
             ${checkboxHtml}
-            <div class="sc-header">
+            <div class="sc-header" style="align-items: center;">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
                     ${brandHtml}
                     <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
@@ -1372,7 +1371,6 @@
     window.toggleModalCompareMode = function() {
         isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; 
         
-        // Знаходимо будь-яку активну кнопку порівняння в модалках
         const btn = document.querySelector('.modal.show .compare-toggle-btn');
         if (btn) {
             if (isModalCompareMode) btn.innerText = 'Скасувати порівняння';
