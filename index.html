@@ -658,7 +658,6 @@
         window.scrollTo(0, 0);
     }
 
-    // НОВА БЕЗПЕЧНА ЛОГІКА СКРОЛУ
     window.openModalBase = function(modalId, name = "", code = "") {
         if (name && modalId === 'descModal') {
             let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
@@ -705,10 +704,9 @@
 
     const normalize = (str) => str ? str.toString().toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // Безпечний парсинг тексту
     window.escapeHTML = function(str) {
         if (!str) return '';
-        return str.toString().replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '"').replace(/'/g, ''');
+        return str.toString().replace(/&/g, '&').replace(/</g, '<').replace(/>/g, '>').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
     }
     window.escapeForJS = function(str) {
         if (!str) return '';
@@ -721,7 +719,7 @@
     }
 
     window.findInDb = function(dict, key) {
-        if (!key) return "";
+        if (!key || !dict) return "";
         if (dict[key]) return dict[key];
         let clean = normalizeServiceName(key);
         for (let k in dict) { if (normalizeServiceName(k) === clean) return dict[k]; }
@@ -1333,6 +1331,7 @@
         if (document.getElementById('montazhCity')) window.updateMontazhResults(); else window.updateSetupResults(); 
     }
 
+    // --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ---
     window.handleServiceClick = function(e, name, code, isPackage, forceNoCompare = false) {
         let target = e.target;
         if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-code')) return;
@@ -1347,9 +1346,13 @@
                 compareSelection.push(name);
             }
             updateCompareUI(); renderServices(); 
-        } else window.openModalBase('descModal', name, code);
+        } else {
+            // Исправление: вызываем твой роутер `openModal` вместо базовой модалки, чтобы работали выпадающие списки!
+            window.openModal(name, code);
+        }
     }
 
+    // --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ---
     window.handleModalServiceClick = function(e, name, isPackage, code) {
         let target = e.target;
         if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-code')) return; 
@@ -1366,8 +1369,13 @@
             updateModalCompareUI();
             if (document.getElementById('montazhCity')) window.updateMontazhResults(); else window.updateSetupResults(); 
         } else {
-            let toggle = e.currentTarget.querySelector('.desc-toggle-wrapper'); 
-            if(toggle) toggle.click();
+            // Исправление: если внутри модалки кликнули на пакет (например, внутри резервов кликнули на Монтаж)
+            if (isPackage) {
+                window.openModal(name, code);
+            } else {
+                let toggle = e.currentTarget.querySelector('.desc-toggle-wrapper'); 
+                if(toggle) toggle.click();
+            }
         }
     }
 
@@ -1701,7 +1709,7 @@
             else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.openModalBase('descModal'); window.renderSetupModal(name, "setup"); return; }
         }
 
-        // Якщо це звичайний сервіс (або з резервів), просто відкриваємо його опис
+        // Если это обычный сервис (или из резервов), просто открываем его описание
         window.openModalBase('descModal', name, code);
     }
 
