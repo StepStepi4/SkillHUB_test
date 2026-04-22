@@ -110,7 +110,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ (КРАСИВА, БЕЗ НЕОНУ) */
+        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ (ЕЛЕГАНТНА) */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
             background: var(--nav-bg); border-top: 0.5px solid rgba(0,0,0,0.1);
@@ -278,11 +278,11 @@
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
         /* ОПИС СЕРВІСІВ У МОДАЛЦІ */
-        .desc-block { background: var(--card-bg); border-radius: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; border: 1px solid var(--border); overflow: hidden;}
+        .desc-block { background: var(--card-bg); border-radius: 12px; padding: 12px; margin-bottom: 10px; font-size: 14px; line-height: 1.5; border: 1px solid var(--border); overflow: hidden;}
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 14px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
         /* Окремі форми під емодзі в модалці */
-        .desc-line { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .desc-line { display: flex; align-items: flex-start; gap: 12px; padding: 12px 0; border-bottom: 1px solid var(--border); }
         .desc-line:last-child { border-bottom: none; }
         .desc-icon-box { width: 34px; height: 34px; min-width: 34px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--bg); border: 1px solid var(--border); }
 
@@ -487,6 +487,7 @@
             <div id="rezervTechInfo"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
+                <button id="modalCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
             <div id="rezervServiceList"></div>
         </div>
@@ -592,6 +593,7 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: [], serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
+    let scrollPos = 0;
     
     let isCompareMode = false;
     let compareSelection = [];
@@ -657,7 +659,7 @@
         window.scrollTo(0, 0);
     }
 
-    // НОВА БЕЗПЕЧНА ЛОГІКА СКРОЛУ ДЛЯ БУДЬ-ЯКОГО ПРИСТРОЮ
+    // БЕЗПЕЧНА ЛОГІКА СКРОЛУ
     window.openModalBase = function(modalId, name = "", code = "") {
         if (name && modalId === 'descModal') {
             let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
@@ -665,18 +667,14 @@
             const raw = window.findInDb(db.descriptions, name) || "";
             document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальний опис', 'Опис сервісу');
         }
-        
-        // Використовуємо overflow: hidden замість position: fixed
-        if (!document.body.classList.contains('modal-open')) {
-            document.body.classList.add('modal-open');
-        }
+        document.body.style.overflow = 'hidden';
         document.getElementById(modalId).classList.add('show');
     }
 
     window.closeModalBase = function(modalId) {
         document.getElementById(modalId).classList.remove('show');
         if (!checkOpenModals()) {
-            document.body.classList.remove('modal-open');
+            document.body.style.overflow = '';
         }
     }
 
@@ -998,7 +996,7 @@
             <div style="background:var(--card-bg); border-radius:16px; padding:20px 16px; margin-bottom:16px; border:1px solid var(--border); text-align:left;">
                 ${brand ? `<div class="sc-brand ${cls}" style="margin-bottom: 12px;">${brand}</div>` : ''}
                 <div style="font-size:16px; font-weight:700; color:var(--text-main); margin-bottom:12px;">${title}</div>
-                ${descToggle}
+                <div style="width:100%;">${descToggle}</div>
             </div>`;
         }).join('');
     }
@@ -1335,7 +1333,6 @@
         if (isCompareMode && !forceNoCompare) {
             if (isPackage) { alert("Пакети послуг не порівнюються."); return; }
             
-            // НОВА ЛОГІКА ПОРІВНЯННЯ
             let index = compareSelection.indexOf(name);
             if (index > -1) {
                 compareSelection.splice(index, 1);
@@ -1353,7 +1350,6 @@
         if (isModalCompareMode) {
             if (isPackage) { alert("Пакети не порівнюються."); return; }
             
-            // НОВА ЛОГІКА ПОРІВНЯННЯ
             let index = modalCompareSelection.indexOf(name);
             if (index > -1) {
                 modalCompareSelection.splice(index, 1);
@@ -1683,6 +1679,7 @@
         container.innerHTML = html;
     }
 
+    // --- ОБРОБНИК ВІДКРИТТЯ ОПИСІВ З РІЗНИХ МІСЦЬ ---
     window.openModal = function(name, code = "") {
         let nameClean = normalizeServiceName(name); let u = name.toUpperCase(); 
         let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
@@ -1694,4 +1691,36 @@
             else if (u.includes('ПОКЛЕЙКА') || u.includes('ЗАХИСН') || u.includes('СКЛО') || u.includes('ПЛІВК')) { document.getElementById('modalTitle').innerText = "Поклейка скла та плівок"; window.openModalBase('descModal'); window.renderDirectListModal(["поклейка", "скло", "плівк", "захисн"]); return; }
             else if (u.includes('АНТИВІРУС') || u.includes('ESET')) { document.getElementById('modalTitle').innerText = "Антивіруси"; window.openModalBase('descModal'); window.renderSetupModal(name, "antivirus"); return; }
             else if (u.includes('КІНОТЕАТР') || u.includes('SWEET') || u.includes('PARALLELS')) { document.getElementById('modalTitle').innerText = u.includes('PARALLELS') ? "Parallels Desktop" : "Онлайн кінотеатри"; window.openModalBase('descModal'); window.renderDirectListModal(u.includes('PARALLELS') ? ["parallels"] : ["sweet", "кінотеатр"]); return; }
-            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.
+            else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.openModalBase('descModal'); window.renderSetupModal(name, "setup"); return; }
+        }
+
+        // Якщо це звичайний сервіс (або з резервів), просто відкриваємо його опис
+        window.openModalBase('descModal', name, code);
+    }
+
+    window.showChangelogModal = function(version, changelogText) {
+        document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
+        
+        let lines = changelogText.split('\n'); let html = '<div style="background:var(--card-bg); border-radius:16px; border:1px solid var(--border);">';
+        lines.forEach((line, index) => {
+            const l = line.trim();
+            if (l) {
+                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
+                let prefix = hasEmoji ? "" : "🔹";
+                let border = index !== lines.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
+                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="margin-right:8px;">${prefix}</span><span style="flex:1;">${l}</span></div>`;
+            }
+        });
+        html += '</div>';
+        
+        document.getElementById('modalBody').innerHTML = html; window.openModalBase('descModal');
+    };
+
+    init();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
+    }
+</script>
+</body>
+</html>
