@@ -278,7 +278,7 @@
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        /* ОПИС СЕРВІСІВ */
+        /* ОПИС СЕРВІСІВ (НОВИЙ ДИЗАЙН) */
         .desc-toggle-wrapper {
             display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
         }
@@ -289,10 +289,11 @@
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
-        .desc-line { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ІКОНОК У СПИСКУ ОПИСУ (ПО ЦЕНТРУ) */
+        .desc-line { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
-        .desc-icon-box { display: flex; align-items: flex-start; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; padding-top: 1px; }
+        .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
 
         .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main);}
         .floating-top.show { opacity: 1; }
@@ -705,6 +706,23 @@
         if (!checkOpenModals()) {
             document.body.classList.remove('modal-open');
         }
+        
+        if (modalId === 'descModal' || modalId === 'rezervItemModal') {
+            if (isModalCompareMode) {
+                isModalCompareMode = false;
+                modalCompareSelection = [];
+                const cBar = document.getElementById('compareBar');
+                if (cBar) cBar.classList.remove('show');
+                document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
+                    btn.innerText = 'Порівняти';
+                    btn.classList.remove('active');
+                });
+                
+                if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
+                else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+                else window.updateSetupResults();
+            }
+        }
     }
 
     function checkOpenModals() {
@@ -1058,6 +1076,11 @@
             if (!item.service) { listEl.innerHTML = '<div style="color:var(--text-muted);">Немає сервісів</div>'; return; }
 
             let dataForSort = calculateServicesArray(item, p);
+            
+            dataForSort.forEach(s => {
+                s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+            });
+
             window.lastModalServices = dataForSort;
             
             let btn = document.getElementById('rezervCompareBtn');
@@ -1197,7 +1220,7 @@
             return `
             <div class="desc-line">
                 <div class="desc-icon-box">${e}</div>
-                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1; padding-top: 2px;">${t}</div>
+                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1;">${t}</div>
             </div>`;
         }).join('');
         return html;
