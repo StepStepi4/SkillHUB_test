@@ -212,7 +212,8 @@
         
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
         
-        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: flex-start; gap: 6px;}
+        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ВОГНИКА В КАРТКАХ (ПО ЦЕНТРУ) */
+        .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
@@ -277,7 +278,7 @@
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        /* ОПИС СЕРВІСІВ */
+        /* ОПИС СЕРВІСІВ (НОВИЙ ДИЗАЙН) */
         .desc-toggle-wrapper {
             display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
         }
@@ -288,10 +289,11 @@
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
-        .desc-line { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        /* ВИРІВНЮВАННЯ ТЕКСТУ ТА ІКОНОК У СПИСКУ ОПИСУ (ПО ЦЕНТРУ) */
+        .desc-line { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
-        .desc-icon-box { display: flex; align-items: flex-start; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; padding-top: 1px; }
+        .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
 
         .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main);}
         .floating-top.show { opacity: 1; }
@@ -307,7 +309,6 @@
         #descModal { z-index: 100030; }
         #compareModal { z-index: 100040; }
         #guideModal { z-index: 100050; }
-        #combineGuideModal { z-index: 100055; }
         #galleryModal { z-index: 100060; }
         
         /* ГАЛЕРЕЯ */
@@ -331,29 +332,6 @@
         .color-android { fill: #3DDC84; }
         .color-safari-blue { stroke: #007AFF; }
         .color-chrome-gray { fill: var(--text-muted); }
-
-        /* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
-        .combine-guide-container { font-family: 'Inter', sans-serif; color: var(--text-main); }
-        .cg-alert-box { background-color: rgba(239, 68, 68, 0.1); border-left: 4px solid var(--danger); padding: 15px 20px; margin-bottom: 24px; border-radius: 8px; display: flex; align-items: flex-start; gap: 15px; }
-        .cg-alert-icon { font-size: 1.5rem; color: var(--danger); margin-top: 2px; }
-        .cg-alert-text { font-size: 14px; line-height: 1.5; color: var(--text-main); }
-        .cg-alert-text strong { color: var(--danger); display: block; margin-bottom: 4px; }
-        .cg-code { font-family: monospace; background: var(--card-bg); padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(239, 68, 68, 0.3); font-size: 13px; }
-        .cg-step-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 16px; display: flex; align-items: flex-start; gap: 16px; }
-        .cg-step-number { background: var(--primary); color: white; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; flex-shrink: 0; font-size: 14px; }
-        .cg-step-content { flex: 1; font-size: 14px; }
-        .cg-step-content strong { display: block; font-size: 15px; margin-bottom: 4px; color: var(--text-main); }
-        .cg-step-content p { margin: 0 0 8px 0; color: var(--text-muted); }
-        .cg-example-box { background: var(--input-bg); border-radius: 8px; padding: 12px; font-family: monospace; border: 1px solid var(--border); font-size: 13px; color: var(--text-main); }
-        .cg-math-highlight { color: var(--primary); font-weight: bold; }
-        .cg-step-icon { font-size: 1.8rem; opacity: 0.8; margin-top: 5px; flex-shrink:0; }
-        .cg-info-box { background-color: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.2); border-radius: 12px; padding: 16px; display: flex; align-items: center; gap: 12px; margin-top: 24px; }
-        .cg-info-icon { font-size: 1.8rem; flex-shrink: 0; }
-        .cg-info-text { font-size: 13px; font-weight: 500; color: var(--text-main); line-height: 1.5; }
-        .cg-service-line { margin-bottom: 10px; position: relative; }
-        .cg-underbrace-wrap { display: inline-block; position: relative; }
-        .cg-underbrace-svg { position: absolute; left: 0; top: 100%; width: 100%; height: 10px; margin-top: 1px; overflow: visible; }
-        @media (max-width: 400px) { .cg-step-card { gap: 12px; padding: 14px; } .cg-step-icon { display: none; } }
     </style>
 </head>
 <body>
@@ -460,14 +438,6 @@
                 <div class="list-item-content">
                     <span class="list-item-title">Встановлення PWA</span>
                     <span class="list-item-subtitle">Як додати на екран</span>
-                </div>
-                <div class="list-item-arrow">></div>
-            </button>
-
-            <button class="list-item" onclick="window.openModalBase('combineGuideModal')">
-                <div class="list-item-content">
-                    <span class="list-item-title">Як об'єднати сертифікати</span>
-                    <span class="list-item-subtitle">Рішення помилки "Немає на залишках"</span>
                 </div>
                 <div class="list-item-arrow">></div>
             </button>
@@ -600,91 +570,6 @@
             </div>
         </div>
         <button class="btn btn-primary" onclick="window.closeModalBase('guideModal')">ОК</button>
-    </div>
-</div>
-
-<div id="combineGuideModal" class="modal">
-    <div class="modal-content" style="max-height: 85vh; padding-bottom: 20px;">
-        <div class="modal-header">
-            <div class="modal-title">Об'єднання сертифікатів</div>
-            <button class="modal-close" onclick="window.closeModalBase('combineGuideModal')">✕</button>
-        </div>
-        <div class="modal-body combine-guide-container" style="overflow-y: auto; padding-right: 5px;">
-            <div class="cg-alert-box">
-                <div class="cg-alert-icon">⚠️</div>
-                <div class="cg-alert-text">
-                    <strong>Ситуація:</strong>
-                    Бувають випадки, коли при продажі електронних послуг виникає помилка: <br>
-                    <span class="cg-code">"Немає на залишках..."</span> чи щось подібне.
-                    <br><br>
-                    <strong>Рішення:</strong> В такому випадку потрібно об'єднати декілька позицій в один рахунок.
-                </div>
-            </div>
-
-            <div style="font-size: 14px; margin-bottom: 15px; color: var(--text-main);">
-                Товар коштує <strong>17 499 ₴</strong>. Ідеально до нього продати Сервіс (15 001 - 20 000), але його немає на залишку. Робимо наступні кроки:
-            </div>
-
-            <div class="cg-step-card">
-                <div class="cg-step-number">1</div>
-                <div class="cg-step-content">
-                    <strong>Обираємо замінники</strong>
-                    <p>Обираємо декілька менших за діапазоном позицій.</p>
-                    <div class="cg-example-box">
-                        <div class="cg-service-line">
-                            ✔️ Сервіс (10 001 - 
-                            <span class="cg-underbrace-wrap">
-                                <strong>15 000</strong>
-                                <svg class="cg-underbrace-svg" viewBox="0 0 100 12" preserveAspectRatio="none">
-                                    <path d="M 0,0 Q 0,6 6,6 L 44,6 Q 50,6 50,12 Q 50,6 56,6 L 94,6 Q 100,6 100,0" fill="none" stroke="var(--primary)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
-                                </svg>
-                            </span>)
-                        </div>
-                        <div class="cg-service-line">
-                            ✔️ Сервіс ( 2 001 -  
-                            <span class="cg-underbrace-wrap">
-                                <strong>3 000</strong>
-                                <svg class="cg-underbrace-svg" viewBox="0 0 100 12" preserveAspectRatio="none">
-                                    <path d="M 0,0 Q 0,6 6,6 L 44,6 Q 50,6 50,12 Q 50,6 56,6 L 94,6 Q 100,6 100,0" fill="none" stroke="var(--primary)" stroke-width="2.5" vector-effect="non-scaling-stroke"/>
-                                </svg>
-                            </span>)
-                        </div>
-                    </div>
-                </div>
-                <div class="cg-step-icon">🧩</div>
-            </div>
-
-            <div class="cg-step-card">
-                <div class="cg-step-number">2</div>
-                <div class="cg-step-content">
-                    <strong>Перевіряємо суму діапазонів</strong>
-                    <p>Сума крайніх діапазонів обраних сервісів має перекривати вартість товару.</p>
-                    <div class="cg-example-box">
-                        <span class="cg-math-highlight">15 000 + 3 000 = 18 000</span><br>
-                        Товар: 17 499 ₴ <br>
-                        <span style="color: #27ae60; margin-top:4px; display:inline-block;">✅ 18 000 > 17 499 (діапазон підходить)</span>
-                    </div>
-                </div>
-                <div class="cg-step-icon">🧮</div>
-            </div>
-
-            <div class="cg-step-card">
-                <div class="cg-step-number">3</div>
-                <div class="cg-step-content">
-                    <strong>Завершуємо продаж</strong>
-                    <p>Проводимо продаж в системі та видаємо клієнту тікети.</p>
-                </div>
-                <div class="cg-step-icon">🧾</div>
-            </div>
-
-            <div class="cg-info-box">
-                <div class="cg-info-icon">🤖</div>
-                <div class="cg-info-text">
-                    <strong>Важливо:</strong> Скидати фото тікетів в групу "Support" <u>не потрібно</u>! Ключі автоматично активуються по API.
-                </div>
-            </div>
-        </div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('combineGuideModal')">Зрозуміло</button>
     </div>
 </div>
 
@@ -821,10 +706,27 @@
         if (!checkOpenModals()) {
             document.body.classList.remove('modal-open');
         }
+        
+        if (modalId === 'descModal' || modalId === 'rezervItemModal') {
+            if (isModalCompareMode) {
+                isModalCompareMode = false;
+                modalCompareSelection = [];
+                const cBar = document.getElementById('compareBar');
+                if (cBar) cBar.classList.remove('show');
+                document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
+                    btn.innerText = 'Порівняти';
+                    btn.classList.remove('active');
+                });
+                
+                if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
+                else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
+                else window.updateSetupResults();
+            }
+        }
     }
 
     function checkOpenModals() {
-        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'combineGuideModal'];
+        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1174,6 +1076,11 @@
             if (!item.service) { listEl.innerHTML = '<div style="color:var(--text-muted);">Немає сервісів</div>'; return; }
 
             let dataForSort = calculateServicesArray(item, p);
+            
+            dataForSort.forEach(s => {
+                s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+            });
+
             window.lastModalServices = dataForSort;
             
             let btn = document.getElementById('rezervCompareBtn');
@@ -1313,7 +1220,7 @@
             return `
             <div class="desc-line">
                 <div class="desc-icon-box">${e}</div>
-                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1; padding-top: 2px;">${t}</div>
+                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1;">${t}</div>
             </div>`;
         }).join('');
         return html;
@@ -1377,7 +1284,7 @@
             
             let numCost = 0; let label = "Дізнатись"; let serviceCode = t && t.code ? t.code : window.findInDb(db.serviceCodes, name); 
             
-            if (isPackage) { label = "Пакети"; } 
+            if (isPackage) { label = "Обрати пакет"; } 
             else if (t && t.cost) {
                 let rawCost = t.cost.toString().trim();
                 if (rawCost.includes('%')) {
@@ -1430,7 +1337,7 @@
         return `
         <div class="${cardClass}" ${clickHandler}>
             ${checkboxHtml}
-            <div class="sc-header">
+            <div class="sc-header" style="align-items: center;">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
                     ${brandHtml}
                     <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
@@ -1487,7 +1394,6 @@
     window.toggleModalCompareMode = function() {
         isModalCompareMode = !isModalCompareMode; modalCompareSelection = []; 
         
-        // Знаходимо будь-яку активну кнопку порівняння в модалках
         const btn = document.querySelector('.modal.show .compare-toggle-btn');
         if (btn) {
             if (isModalCompareMode) btn.innerText = 'Скасувати порівняння';
