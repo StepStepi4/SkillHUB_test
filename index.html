@@ -40,6 +40,9 @@
             --clr-ekta-bg: #dbeafe; --clr-ekta-text: #1e40af;
             --clr-epz-bg: #e0f2fe; --clr-epz-text: #075985;
             --clr-install-bg: #f3e8ff; --clr-install-text: #6b21a8;
+            
+            --rozetka-green-light: #00c65d;
+            --rozetka-green-dark: #00a046;
         }
 
         [data-theme="dark"] {
@@ -133,14 +136,14 @@
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
-        input, select { 
+        input, select, textarea { 
             width: 100%; padding: 16px 20px; border-radius: 12px; 
             font-size: 16px; font-family: inherit; font-weight: 500; 
             background: var(--input-bg); color: var(--text-main); 
             border: 1px solid var(--border); 
             outline: none; transition: 0.2s; -webkit-appearance: none; appearance: none;
         }
-        input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         
         select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -267,7 +270,12 @@
         .photo-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px; }
 
         /* ПОРІВНЯННЯ */
-        .compare-bar { position: fixed; bottom: var(--nav-height); left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; transform: translateY(100%); transition: transform 0.3s, opacity 0.3s; z-index: 9980; opacity: 0; pointer-events: none;}
+        .compare-bar { 
+            position: fixed; bottom: var(--nav-height); left: 0; width: 100%; 
+            background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; 
+            display: flex; justify-content: space-between; align-items: center; 
+            transform: translateY(20px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9980;
+        }
         .compare-bar.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
         
         .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); pointer-events: none;}
@@ -295,8 +303,8 @@
         .desc-line:last-child { border-bottom: none; }
         .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
 
-        .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main);}
-        .floating-top.show { opacity: 1; }
+        .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main); pointer-events: none;}
+        .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
         /* РЕЗЕРВИ */
@@ -306,6 +314,7 @@
         
         /* ІЄРАРХІЯ МОДАЛОК */
         #rezervItemModal { z-index: 100010; }
+        #sellerModal { z-index: 100020; }
         #descModal { z-index: 100030; }
         #compareModal { z-index: 100040; }
         #guideModal { z-index: 100050; }
@@ -332,6 +341,26 @@
         .color-android { fill: #3DDC84; }
         .color-safari-blue { stroke: #007AFF; }
         .color-chrome-gray { fill: var(--text-muted); }
+
+        /* КНОПКА ЗАЯВКИ СЯЙВО */
+        .btn-submit-glow { 
+            background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
+            color: white; border: none; font-weight: 800; width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0, 198, 93, 0.35);
+            transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+        }
+        .btn-submit-glow::before {
+            content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
+            background: linear-gradient(to right, transparent, rgba(255,255,255,0.4), transparent);
+            transform: skewX(-25deg); animation: shine 3.5s infinite;
+        }
+        @keyframes shine { 0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; } }
+        .btn-submit-glow:active { transform: scale(0.96); }
+
+        #sellerStatusOverlay {
+            display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
+            border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -434,6 +463,14 @@
                 </div>
             </button>
             
+            <button class="list-item" onclick="window.openSellerModal()">
+                <div class="list-item-content">
+                    <span class="list-item-title">Подати заявку на заміну продавця</span>
+                    <span class="list-item-subtitle">Форма для зміни магазину/продавця</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
+            
             <button class="list-item" onclick="window.openModalBase('guideModal')">
                 <div class="list-item-content">
                     <span class="list-item-title">Встановлення PWA</span>
@@ -478,7 +515,7 @@
 </nav>
 
 <div id="compareBar" class="compare-bar">
-    <div style="font-weight:600; font-size: 15px;" id="compareStatusText">Оберіть 2 сервіси</div>
+    <div style="font-weight:600; font-size: 15px; color: var(--text-main);" id="compareStatusText">Оберіть 2 сервіси</div>
     <button class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px; border-radius: 12px;">Порівняти</button>
 </div>
 
@@ -522,6 +559,45 @@
         </div>
         <div id="compareModalBody" class="modal-body"></div>
         <button class="btn btn-primary" onclick="window.closeCompareModal()">Закрити</button>
+    </div>
+</div>
+
+<div id="sellerModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" style="color: var(--text-main);">Зміна продавця</div>
+            <button class="modal-close" onclick="window.closeModalBase('sellerModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <form id="sellerFormSubmit">
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Магазин</span>
+                    <select id="sellerStore" name="store" required>
+                        <option value="" disabled selected>Завантаження списку...</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Ваше ПІБ</span>
+                    <input type="text" id="sellerFio" name="fio" placeholder="Прізвище Ім'я" required>
+                </div>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Номер рахунку</span>
+                    <input type="text" id="sellerBill" name="bill" placeholder="РО3________" required>
+                </div>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Причина зміни</span>
+                    <select id="sellerReason" name="reason" required>
+                        <option value="" disabled selected>Завантаження причин...</option>
+                    </select>
+                </div>
+                <button type="submit" id="submitSellerBtn" class="btn-submit-glow">ВІДПРАВИТИ</button>
+            </form>
+            <div id="sellerStatusOverlay">
+                <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
+                <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.2rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
+                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0; line-height: 1.4;">Заявка прийнята, очікуйте на виконання 2-3 дні, а може швидше 😉</p>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -586,7 +662,6 @@
         <div id="galleryCounter" style="position:absolute; bottom:40px; color:white; font-weight:bold; background:rgba(0,0,0,0.5); padding:6px 16px; border-radius:20px;">1 / 3</div>
     </div>
 </div>
-
 <script>
     window.addEventListener('error', function(e) {
         const elLoader = document.getElementById('appLoader');
@@ -602,7 +677,7 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
-    let scrollPos = 0;
+    let savedScrollY = 0; // Для збереження позиції екрану
     
     let isCompareMode = false;
     let compareSelection = [];
@@ -677,6 +752,9 @@
         if (isCompareMode) toggleCompareMode();
         if (isModalCompareMode) toggleModalCompareMode();
         
+        // Гарантовано ховаємо панель порівняння при перемиканні вкладок
+        if (compareBar) compareBar.classList.remove('show');
+        
         if (tabId === 'tab-reserves') window.renderRezervyList();
         if (tabId === 'tab-training' && document.getElementById('trainingList').innerHTML === '') window.renderTrainingTab();
         
@@ -695,8 +773,8 @@
             }
 
             if (!document.body.classList.contains('modal-open')) {
-                scrollPos = window.scrollY; // Зберігаємо позицію
-                document.body.style.top = `-${scrollPos}px`; // Фіксуємо без візуального стрибка
+                savedScrollY = window.scrollY; // Зберігаємо позицію скролу
+                document.body.style.top = `-${savedScrollY}px`;
                 document.body.classList.add('modal-open');
             }
             document.getElementById(modalId).classList.add('show');
@@ -705,18 +783,18 @@
 
     window.closeModalBase = function(modalId) {
         document.getElementById(modalId).classList.remove('show');
+        
         if (!checkOpenModals()) {
             document.body.classList.remove('modal-open');
-            document.body.style.top = ''; // Прибираємо фіксацію
-            window.scrollTo(0, scrollPos); // Відновлюємо скрол
+            document.body.style.top = '';
+            window.scrollTo(0, savedScrollY); // Повертаємо позицію скролу
         }
         
-        if (modalId === 'descModal' || modalId === 'rezervItemModal') {
+        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
                 modalCompareSelection = [];
-                const cBar = document.getElementById('compareBar');
-                if (cBar) cBar.classList.remove('show');
+                if (compareBar) compareBar.classList.remove('show');
                 document.querySelectorAll('.compare-toggle-btn').forEach(btn => {
                     btn.innerText = 'Порівняти';
                     btn.classList.remove('active');
@@ -730,7 +808,7 @@
     }
 
     function checkOpenModals() {
-        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal'];
+        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1858,6 +1936,60 @@
         html += '</div>';
         
         document.getElementById('modalBody').innerHTML = html; window.openModalBase('descModal');
+    };
+
+    /* ЛОГІКА ДЛЯ ФОРМИ ЗМІНИ ПРОДАВЦЯ */
+    const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEHnajgF9C4IvTN5jKMUOrYQybiQnrt5SBBmFFzC3SysV1EzvJoy-PtgFvWlvjGUuZFA/exec";
+
+    window.openSellerModal = function() {
+        window.openModalBase('sellerModal');
+        // Завантажуємо дані лише якщо вони ще не завантажені
+        if(document.getElementById('sellerStore').options.length <= 1) {
+            const scriptTag = document.createElement('script');
+            scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
+            document.body.appendChild(scriptTag);
+        }
+        
+        // Скидаємо форму до початкового стану на випадок якщо її вже відправляли
+        document.getElementById('sellerFormSubmit').style.display = 'block';
+        document.getElementById('sellerStatusOverlay').style.display = 'none';
+        document.getElementById('submitSellerBtn').disabled = false;
+        document.getElementById('submitSellerBtn').innerText = 'ВІДПРАВИТИ';
+        document.getElementById('sellerFormSubmit').reset();
+    }
+
+    window.handleSellerResponse = function(data) {
+        const s = document.getElementById('sellerStore');
+        const r = document.getElementById('sellerReason');
+        s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
+        r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
+        data.stores.forEach(item => s.add(new Option(item, item)));
+        data.reasons.forEach(item => r.add(new Option(item, item)));
+    }
+
+    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitSellerBtn');
+        const overlay = document.getElementById('sellerStatusOverlay');
+        const form = document.getElementById('sellerFormSubmit');
+        
+        btn.disabled = true;
+        btn.innerText = 'НАДСИЛАЄМО...';
+
+        fetch(SELLER_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: new FormData(this)
+        })
+        .then(() => {
+            form.style.display = 'none';
+            overlay.style.display = 'block';
+        })
+        .catch(() => {
+            alert("Помилка відправки.");
+            btn.disabled = false;
+            btn.innerText = 'ВІДПРАВИТИ';
+        });
     };
 
     init();
