@@ -150,7 +150,8 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        .clear-btn { position: absolute; right: 16px; top: 50%; transform: translateY(-50%); color: var(--text-muted); background: none; border: none; font-size: 18px; cursor: pointer; display: none; padding: 0;}
+        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
+        .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
         /* КНОПКИ */
         .btn {
@@ -397,7 +398,7 @@
     <div id="tab-search" class="app-tab active">
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
-            <button id="clearAllBtn" class="clear-btn">✕</button>
+            <button id="clearAllBtn" class="clear-btn">×</button>
             <div id="customSuggestions" class="suggestions"></div>
         </div>
 
@@ -1299,7 +1300,7 @@
                         return `<div class="sugg-item" data-idx="${idx}">
                             <span style="flex-shrink:0;">${m.icon}</span> 
                             ${brandBadge} 
-                            <span style="flex:1; line-height:1.3; word-wrap:break-word;">${text}</span>
+                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
                         </div>`;
                     }).join('');
                     
