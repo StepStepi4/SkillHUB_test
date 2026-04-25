@@ -712,24 +712,26 @@
         if(db.tariffs) {
             db.tariffs.forEach(t => {
                 if(t.service) {
-                    let nameClean = t.service.replace(/^\[.*?\]\s*/, '').trim();
-                    if(!uniqueMap.has(nameClean)) {
-                        uniqueMap.set(nameClean, { orig: t.service, ru: t.serviceRu || "", en: t.serviceEn || "" });
+                    let origName = t.service.trim();
+                    if(!uniqueMap.has(origName)) {
+                        uniqueMap.set(origName, { orig: origName, ru: t.serviceRu || "", en: t.serviceEn || "" });
                     }
                 }
             });
         }
         if(db.descriptions) {
             Object.keys(db.descriptions).forEach(k => {
-                let nameClean = k.replace(/^\[.*?\]\s*/, '').trim();
-                if(!uniqueMap.has(nameClean)) {
-                    uniqueMap.set(nameClean, { orig: k, ru: "", en: "" });
+                let origName = k.trim();
+                if(!uniqueMap.has(origName)) {
+                    uniqueMap.set(origName, { orig: origName, ru: "", en: "" });
                 }
             });
         }
         
-        window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([nameClean, data]) => {
+        window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([origName, data]) => {
+            let nameClean = origName.replace(/^\[.*?\]\s*/, '').trim();
             let u = nameClean.toUpperCase();
+            
             let icon = '🛡️'; 
             if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВІДЕОНАГЛЯД') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('WINDOWS'))) icon = '🔧';
             else if (u.includes('АНТИВІРУС') || u.includes('ESET')) icon = '🦠';
@@ -737,8 +739,8 @@
             else if (u.includes('НАЛАШТУВАННЯ') || u.includes('ПЕРЕНОС') || u.includes('ДІАГНОСТИКА') || u.includes('ОЧИЩЕННЯ')) icon = '⚙️';
             else if (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD')) icon = '📀';
             
-            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, data.orig) : "";
-            const brandMatch = data.orig.match(/^\[(.*?)\]/);
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
+            const brandMatch = origName.match(/^\[(.*?)\]/);
             let brand = exactBrand || (brandMatch ? brandMatch[1] : "");
             let uBrand = String(brand).toUpperCase();
             
@@ -755,6 +757,7 @@
             if(cls === 'brand-epz') displayBrand = 'ЕПЗ';
             
             return {
+                origName: origName,
                 name: nameClean, 
                 searchStr: [nameClean, data.ru, data.en].join(' '),
                 icon: icon, 
@@ -1296,7 +1299,7 @@
                         return `<div class="sugg-item" data-idx="${idx}">
                             <span style="margin-right:4px;">${m.icon}</span> 
                             ${brandBadge} 
-                            <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</span>
+                            <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; margin-left: 6px;">${text}</span>
                         </div>`;
                     }).join('');
                     
@@ -1323,31 +1326,12 @@
         if(item.searchType === 'service') {
             currentCategoryData = null;
             
-            let baseName = item.name.toLowerCase();
-            let matchingServices = new Set();
+            // Тепер ми передаємо оригінальну назву (з брендом), щоб вивести саме ту послугу, яку клікнули
+            currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
             
-            if(db.tariffs) {
-                db.tariffs.forEach(t => {
-                    if (t.service && t.service.replace(/^\[.*?\]\s*/, '').trim().toLowerCase() === baseName) {
-                        matchingServices.add(t.service);
-                    }
-                });
-            }
-            if(db.descriptions) {
-                Object.keys(db.descriptions).forEach(k => {
-                    if (k.replace(/^\[.*?\]\s*/, '').trim().toLowerCase() === baseName) {
-                        matchingServices.add(k);
-                    }
-                });
-            }
-            if(matchingServices.size === 0) matchingServices.add(item.name);
-
-            let combinedServices = Array.from(matchingServices).join(' | ');
-
-            currentServiceData = { name: item.name, combined: combinedServices, icon: item.icon };
             elCatInput.value = item.name;
             document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
-            document.getElementById('itemCategory').innerText = "Окрема послуга";
+            document.getElementById('itemCategory').innerText = item.brandText ? "Послуга від " + item.brandText : "Окрема послуга";
         } else {
             currentCategoryData = item;
             currentServiceData = null;
@@ -1606,7 +1590,8 @@
                 // Відмальовка прямого пошуку одиничної послуги (монтаж, подовження і тд)
                 elTechInfo.style.display = 'none'; elTechInfo.innerHTML = '';
                 
-                let fakeCat = { service: currentServiceData.combined, focusServices: currentServiceData.name };
+                // Використовуємо точне ім'я (з брендом) з того, що вибрали
+                let fakeCat = { service: currentServiceData.origName, focusServices: currentServiceData.name };
                 let dataForSort = calculateServicesArray(fakeCat, p);
                 
                 // Додаємо описи всередині карток (для розгортання)
@@ -1621,7 +1606,7 @@
                 if (isCompareMode) window.toggleCompareMode();
 
                 requestAnimationFrame(() => { 
-                    // Виводимо всі знайдені варіанти (наприклад, ЕКТА та Наш Сервіс)
+                    // Виводимо знайдену послугу (саме ту, яку клікнули)
                     elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false, false)).join(''); 
                     
                     // Автоматично розгортаємо опис для зручності
