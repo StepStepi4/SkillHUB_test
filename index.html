@@ -361,6 +361,44 @@
             display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
+
+        /* КНОПКА SKILLHUB В ОПЦИЯХ */
+        .skillhub-button {
+            display: inline-block;
+            cursor: pointer;
+            transition: all 0.2s ease; /* Плавность эффектов */
+            border: none;
+            background: none;
+            padding: 0;
+            outline: none;
+            text-decoration: none;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .skillhub-button img {
+            display: block;
+            width: 300px;
+            max-width: 100%; /* Для адаптивности на небольших экранах */
+            height: auto;
+            border-radius: 12px; /* Легкое закругление под стиль лого */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            transition: transform 0.1s, box-shadow 0.1s;
+        }
+
+        /* Эффект при наведении (легкое свечение) */
+        .skillhub-button:hover img {
+            box-shadow: 0 0 20px rgba(0, 180, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        /* Эффект нажатия (кнопка вдавливается) */
+        .skillhub-button:active {
+            transform: scale(0.95); /* Уменьшение при клике */
+        }
+        
+        .skillhub-button:active img {
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
     </style>
 </head>
 <body>
@@ -496,6 +534,12 @@
             </a>
         </div>
 
+        <div style="text-align: center; margin-top: 24px; margin-bottom: 8px;">
+            <a href="https://t.me/rz_info_bot/Start_skillHUB" class="skillhub-button" target="_blank">
+                <img src="Logo v3.png" alt="Skillhub Logo">
+            </a>
+        </div>
+
         <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px;">
             ROZETKA KHARKIV REGION<br>
             <div id="appVersionDisp" style="display:inline-block; margin-top:5px; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
@@ -625,7 +669,7 @@
                     Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
                     <ul>
                         <li><strong>iOS (iPhone):</strong> Натисніть значок компаса <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></span> у правому нижньому куті екрана.</li>
-                        <li><strong>Android:</strong> Натисніть три крапки <span class="pwa-icon-inline"><svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></span> у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong>.</li>
+                        <li><strong>Android:</strong> Натисніть три крапки <span class="pwa-icon-inline"><svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0-2 .9-2 2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></span> у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong>.</li>
                     </ul>
                 </div>
             </div>
@@ -947,7 +991,7 @@
             if (pInt) clearInterval(pInt);
             pBar.style.width = '100%';
 
-            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
+            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до базы. Перевірте Google Apps Script.");
             let newDb = JSON.parse(dataStr);
             if (newDb.error) throw new Error(newDb.error);
             
