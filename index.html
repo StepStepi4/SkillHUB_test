@@ -707,28 +707,62 @@
 
     // Функція генерації унікального списку послуг для пошуку
     window.buildServiceSearchList = function() {
-        let unique = new Set();
+        let uniqueMap = new Map();
+        
         if(db.tariffs) {
             db.tariffs.forEach(t => {
-                if(t.service) unique.add(t.service.replace(/^\[.*?\]\s*/, '').trim());
+                if(t.service) {
+                    let nameClean = t.service.replace(/^\[.*?\]\s*/, '').trim();
+                    if(!uniqueMap.has(nameClean)) {
+                        uniqueMap.set(nameClean, { orig: t.service, ru: t.serviceRu || "", en: t.serviceEn || "" });
+                    }
+                }
             });
         }
         if(db.descriptions) {
-            Object.keys(db.descriptions).forEach(k => unique.add(k.replace(/^\[.*?\]\s*/, '').trim()));
-        }
-        window.allServicesSearchList = Array.from(unique)
-            .filter(name => name.length > 0)
-            .map(name => {
-                let u = name.toUpperCase();
-                let icon = '🛡️'; 
-                if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВІДЕОНАГЛЯД') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('WINDOWS'))) icon = '🔧';
-                else if (u.includes('АНТИВІРУС') || u.includes('ESET')) icon = '🦠';
-                else if (u.includes('SWEET') || u.includes('КІНОТЕАТР') || u.includes('MEGOGO') || u.includes('ТБ')) icon = '🎞️';
-                else if (u.includes('НАЛАШТУВАННЯ') || u.includes('ПЕРЕНОС') || u.includes('ДІАГНОСТИКА') || u.includes('ОЧИЩЕННЯ')) icon = '⚙️';
-                else if (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD')) icon = '📀';
-                
-                return {name: name, icon: icon, searchType: 'service'};
+            Object.keys(db.descriptions).forEach(k => {
+                let nameClean = k.replace(/^\[.*?\]\s*/, '').trim();
+                if(!uniqueMap.has(nameClean)) {
+                    uniqueMap.set(nameClean, { orig: k, ru: "", en: "" });
+                }
             });
+        }
+        
+        window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([nameClean, data]) => {
+            let u = nameClean.toUpperCase();
+            let icon = '🛡️'; 
+            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВІДЕОНАГЛЯД') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('WINDOWS'))) icon = '🔧';
+            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) icon = '🦠';
+            else if (u.includes('SWEET') || u.includes('КІНОТЕАТР') || u.includes('MEGOGO') || u.includes('ТБ')) icon = '🎞️';
+            else if (u.includes('НАЛАШТУВАННЯ') || u.includes('ПЕРЕНОС') || u.includes('ДІАГНОСТИКА') || u.includes('ОЧИЩЕННЯ')) icon = '⚙️';
+            else if (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD')) icon = '📀';
+            
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, data.orig) : "";
+            const brandMatch = data.orig.match(/^\[(.*?)\]/);
+            let brand = exactBrand || (brandMatch ? brandMatch[1] : "");
+            let uBrand = String(brand).toUpperCase();
+            
+            let cls = 'brand-other';
+            if (uBrand.includes('SUPPORT') || u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
+            else if (uBrand.includes('ЕКТА') || uBrand.includes('EKTA') || u.includes('EKTA') || u.includes('ЕКТА')) cls = 'brand-ekta'; 
+            else if (uBrand.includes('EPZ') || u.includes('EPZ') || u.includes('ЕПЗ') || u.includes('ЛІЦЕНЗІЙНЕ') || u.includes('WINDOWS') || u.includes('OFFICE')) cls = 'brand-epz'; 
+            else if (u.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
+            else if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
+            
+            let displayBrand = brand;
+            if(cls === 'brand-ekta') displayBrand = 'ЕКТА';
+            if(cls === 'brand-support') displayBrand = 'SUPPORT';
+            if(cls === 'brand-epz') displayBrand = 'ЕПЗ';
+            
+            return {
+                name: nameClean, 
+                searchStr: [nameClean, data.ru, data.en].join(' '),
+                icon: icon, 
+                searchType: 'service',
+                brandText: displayBrand,
+                cls: cls
+            };
+        });
     };
 
     function sanitizeDb(data) {
@@ -1240,8 +1274,13 @@
             }
             if (val.length < 2) { elSuggList.style.display = 'none'; return; }
             
-            let catMatches = db.categories.filter(c => normalize(c.ua).includes(val) || normalize(c.ru).includes(val) || normalize(c.en).includes(val)).map(c => ({...c, searchType: 'category', icon: '📦'}));
-            let servMatches = window.allServicesSearchList.filter(s => normalize(s.name).includes(val));
+            let catMatches = db.categories.filter(c => 
+                (c.ua && normalize(c.ua).includes(val)) || 
+                (c.ru && normalize(c.ru).includes(val)) || 
+                (c.en && normalize(c.en).includes(val))
+            ).map(c => ({...c, searchType: 'category', icon: '📦'}));
+            
+            let servMatches = window.allServicesSearchList.filter(s => normalize(s.searchStr).includes(val));
             
             let matches = [...catMatches, ...servMatches].slice(0, 15);
 
@@ -1250,7 +1289,15 @@
                     elSuggList.style.display = 'block';
                     elSuggList.innerHTML = matches.map((m, idx) => {
                         let text = m.searchType === 'category' ? m.ua : m.name;
-                        return `<div class="sugg-item" data-idx="${idx}">${m.icon} ${text}</div>`;
+                        let brandBadge = '';
+                        if (m.searchType === 'service' && m.brandText) {
+                            brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px;">${m.brandText}</div>`;
+                        }
+                        return `<div class="sugg-item" data-idx="${idx}">
+                            <span style="margin-right:4px;">${m.icon}</span> 
+                            ${brandBadge} 
+                            <span style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${text}</span>
+                        </div>`;
                     }).join('');
                     
                     Array.from(elSuggList.children).forEach((el) => {
@@ -1279,7 +1326,6 @@
             let baseName = item.name.toLowerCase();
             let matchingServices = new Set();
             
-            // Шукаємо усі послуги (від різних брендів), які мають таку базову назву
             if(db.tariffs) {
                 db.tariffs.forEach(t => {
                     if (t.service && t.service.replace(/^\[.*?\]\s*/, '').trim().toLowerCase() === baseName) {
@@ -1294,7 +1340,6 @@
                     }
                 });
             }
-            // Якщо не знайшли - додаємо саму назву
             if(matchingServices.size === 0) matchingServices.add(item.name);
 
             let combinedServices = Array.from(matchingServices).join(' | ');
@@ -1578,6 +1623,14 @@
                 requestAnimationFrame(() => { 
                     // Виводимо всі знайдені варіанти (наприклад, ЕКТА та Наш Сервіс)
                     elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false, false)).join(''); 
+                    
+                    // Автоматично розгортаємо опис для зручності
+                    setTimeout(() => {
+                        let toggleWrapper = elServiceList.querySelector('.desc-toggle-wrapper');
+                        if (toggleWrapper && !toggleWrapper.nextElementSibling.classList.contains('show')) {
+                            toggleWrapper.click();
+                        }
+                    }, 50);
                 });
                 
             } else {
