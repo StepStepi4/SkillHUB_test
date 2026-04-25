@@ -733,12 +733,7 @@
             let nameClean = origName.replace(/^\[.*?\]\s*/, '').trim();
             let u = nameClean.toUpperCase();
             
-            let icon = '🛡️'; 
-            if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВІДЕОНАГЛЯД') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('WINDOWS'))) icon = '🔧';
-            else if (u.includes('АНТИВІРУС') || u.includes('ESET')) icon = '🦠';
-            else if (u.includes('SWEET') || u.includes('КІНОТЕАТР') || u.includes('MEGOGO') || u.includes('ТБ')) icon = '🎞️';
-            else if (u.includes('НАЛАШТУВАННЯ') || u.includes('ПЕРЕНОС') || u.includes('ДІАГНОСТИКА') || u.includes('ОЧИЩЕННЯ')) icon = '⚙️';
-            else if (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD')) icon = '📀';
+            let icon = '⚙️'; 
             
             let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
             const brandMatch = origName.match(/^\[(.*?)\]/);
