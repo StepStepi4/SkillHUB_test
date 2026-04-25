@@ -396,7 +396,7 @@
 
     <div id="tab-search" class="app-tab active">
         <div class="input-group">
-            <input type="text" id="catInput" placeholder="Яку техніку шукаємо?" autocomplete="off" disabled>
+            <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
             <button id="clearAllBtn" class="clear-btn">✕</button>
             <div id="customSuggestions" class="suggestions"></div>
         </div>
@@ -710,13 +710,25 @@
         let unique = new Set();
         if(db.tariffs) {
             db.tariffs.forEach(t => {
-                if(t.service) unique.add(t.service.trim());
+                if(t.service) unique.add(t.service.replace(/^\[.*?\]\s*/, '').trim());
             });
         }
         if(db.descriptions) {
-            Object.keys(db.descriptions).forEach(k => unique.add(k.trim()));
+            Object.keys(db.descriptions).forEach(k => unique.add(k.replace(/^\[.*?\]\s*/, '').trim()));
         }
-        window.allServicesSearchList = Array.from(unique).map(name => ({name: name}));
+        window.allServicesSearchList = Array.from(unique)
+            .filter(name => name.length > 0)
+            .map(name => {
+                let u = name.toUpperCase();
+                let icon = '🛡️'; 
+                if (u.includes('МОНТАЖ') || u.includes('ПІДКЛЮЧЕННЯ') || u.includes('ВІДЕОНАГЛЯД') || (u.includes('ВСТАНОВЛЕННЯ') && !u.includes('WINDOWS'))) icon = '🔧';
+                else if (u.includes('АНТИВІРУС') || u.includes('ESET')) icon = '🦠';
+                else if (u.includes('SWEET') || u.includes('КІНОТЕАТР') || u.includes('MEGOGO') || u.includes('ТБ')) icon = '🎞️';
+                else if (u.includes('НАЛАШТУВАННЯ') || u.includes('ПЕРЕНОС') || u.includes('ДІАГНОСТИКА') || u.includes('ОЧИЩЕННЯ')) icon = '⚙️';
+                else if (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD')) icon = '📀';
+                
+                return {name: name, icon: icon, searchType: 'service'};
+            });
     };
 
     function sanitizeDb(data) {
@@ -1228,8 +1240,8 @@
             }
             if (val.length < 2) { elSuggList.style.display = 'none'; return; }
             
-            let catMatches = db.categories.filter(c => normalize(c.ua).includes(val) || normalize(c.ru).includes(val) || normalize(c.en).includes(val)).map(c => ({...c, searchType: 'category'}));
-            let servMatches = window.allServicesSearchList.filter(s => normalize(s.name).includes(val)).map(s => ({...s, searchType: 'service'}));
+            let catMatches = db.categories.filter(c => normalize(c.ua).includes(val) || normalize(c.ru).includes(val) || normalize(c.en).includes(val)).map(c => ({...c, searchType: 'category', icon: '📦'}));
+            let servMatches = window.allServicesSearchList.filter(s => normalize(s.name).includes(val));
             
             let matches = [...catMatches, ...servMatches].slice(0, 15);
 
@@ -1237,9 +1249,8 @@
                 if (matches.length > 0) {
                     elSuggList.style.display = 'block';
                     elSuggList.innerHTML = matches.map((m, idx) => {
-                        let icon = m.searchType === 'category' ? '📱' : '🔧';
-                        let text = m.searchType === 'category' ? m.ua : m.name.replace(/^\[.*?\]\s*/, '');
-                        return `<div class="sugg-item" data-idx="${idx}">${icon} ${text}</div>`;
+                        let text = m.searchType === 'category' ? m.ua : m.name;
+                        return `<div class="sugg-item" data-idx="${idx}">${m.icon} ${text}</div>`;
                     }).join('');
                     
                     Array.from(elSuggList.children).forEach((el) => {
@@ -1264,15 +1275,39 @@
     function selectItem(item) {
         if(item.searchType === 'service') {
             currentCategoryData = null;
-            currentServiceData = item;
-            elCatInput.value = item.name.replace(/^\[.*?\]\s*/, '');
-            document.getElementById('uaTitle').innerText = elCatInput.value;
+            
+            let baseName = item.name.toLowerCase();
+            let matchingServices = new Set();
+            
+            // Шукаємо усі послуги (від різних брендів), які мають таку базову назву
+            if(db.tariffs) {
+                db.tariffs.forEach(t => {
+                    if (t.service && t.service.replace(/^\[.*?\]\s*/, '').trim().toLowerCase() === baseName) {
+                        matchingServices.add(t.service);
+                    }
+                });
+            }
+            if(db.descriptions) {
+                Object.keys(db.descriptions).forEach(k => {
+                    if (k.replace(/^\[.*?\]\s*/, '').trim().toLowerCase() === baseName) {
+                        matchingServices.add(k);
+                    }
+                });
+            }
+            // Якщо не знайшли - додаємо саму назву
+            if(matchingServices.size === 0) matchingServices.add(item.name);
+
+            let combinedServices = Array.from(matchingServices).join(' | ');
+
+            currentServiceData = { name: item.name, combined: combinedServices, icon: item.icon };
+            elCatInput.value = item.name;
+            document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
             document.getElementById('itemCategory').innerText = "Окрема послуга";
         } else {
             currentCategoryData = item;
             currentServiceData = null;
             elCatInput.value = item.ua; 
-            document.getElementById('uaTitle').innerText = item.ua; 
+            document.getElementById('uaTitle').innerText = item.icon + " " + item.ua; 
             document.getElementById('itemCategory').innerText = item.category || ""; 
         }
         
@@ -1504,6 +1539,7 @@
             const p = parseFloat(elPriceInput.value) || 0; 
             
             if (currentCategoryData && currentCategoryData.service) {
+                // Відмальовка стандартної категорії (телевізори, телефони і тд)
                 renderTechInfo(); 
                 let dataForSort = calculateServicesArray(currentCategoryData, p);
                 window.lastCalculatedServices = dataForSort;
@@ -1522,29 +1558,26 @@
                 requestAnimationFrame(() => { elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false)).join(''); });
                 
             } else if (currentServiceData) {
+                // Відмальовка прямого пошуку одиничної послуги (монтаж, подовження і тд)
                 elTechInfo.style.display = 'none'; elTechInfo.innerHTML = '';
                 
-                let fakeCat = { service: currentServiceData.name, focusServices: currentServiceData.name };
+                let fakeCat = { service: currentServiceData.combined, focusServices: currentServiceData.name };
                 let dataForSort = calculateServicesArray(fakeCat, p);
                 
+                // Додаємо описи всередині карток (для розгортання)
                 dataForSort.forEach(s => {
                     s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
                 });
                 
                 window.lastCalculatedServices = dataForSort;
+                
+                // Для прямого пошуку послуг ховаємо загальну кнопку порівняння, оскільки це не логічно
                 document.getElementById('toggleCompareBtn').style.display = 'none';
                 if (isCompareMode) window.toggleCompareMode();
 
                 requestAnimationFrame(() => { 
+                    // Виводимо всі знайдені варіанти (наприклад, ЕКТА та Наш Сервіс)
                     elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false, false)).join(''); 
-                    
-                    // Автоматично розгортаємо опис для зручності
-                    setTimeout(() => {
-                        let toggleWrapper = elServiceList.querySelector('.desc-toggle-wrapper');
-                        if (toggleWrapper && !toggleWrapper.nextElementSibling.classList.contains('show')) {
-                            toggleWrapper.click();
-                        }
-                    }, 50);
                 });
                 
             } else {
