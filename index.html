@@ -12,6 +12,14 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RGPNFZ4CSW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-RGPNFZ4CSW');
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
@@ -150,7 +158,7 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        /* КНОПКА СБРОСА ПОИСКА (КРЕСТИК В КРУЖОЧКЕ) */
+        /* КНОПКА СБРОСА ПОИСКА */
         .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
@@ -696,8 +704,8 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
-    let currentServiceData = null; // Змінна стану для одиничної послуги
-    let savedScrollY = 0; // Для збереження позиції екрану
+    let currentServiceData = null; 
+    let savedScrollY = 0; 
     
     let isCompareMode = false;
     let compareSelection = [];
@@ -706,6 +714,17 @@
     let modalCompareSelection = [];
     window.lastModalServices = [];
     window.allServicesSearchList = [];
+
+    /* GOOGLE ANALYTICS INSTALL TRACKING */
+    window.addEventListener('appinstalled', (evt) => {
+        if (typeof gtag === 'function') {
+            gtag('event', 'app_installed', {
+                'event_category': 'PWA',
+                'event_label': 'Install'
+            });
+        }
+        console.log('App was installed');
+    });
 
     // Функція генерації унікального списку послуг для пошуку
     window.buildServiceSearchList = function() {
@@ -732,14 +751,15 @@
         
         window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([origName, data]) => {
             let nameClean = origName.replace(/^\[.*?\]\s*/, '').trim();
-            let u = nameClean.toUpperCase();
             
+            // Завжди ставимо шестірню для будь-якої послуги
             let icon = '⚙️'; 
             
             let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
             const brandMatch = origName.match(/^\[(.*?)\]/);
             let brand = exactBrand || (brandMatch ? brandMatch[1] : "");
             let uBrand = String(brand).toUpperCase();
+            let u = nameClean.toUpperCase();
             
             let cls = 'brand-other';
             if (uBrand.includes('SUPPORT') || u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
@@ -1296,7 +1316,7 @@
                         return `<div class="sugg-item" data-idx="${idx}">
                             <span style="flex-shrink:0;">${m.icon}</span> 
                             ${brandBadge} 
-                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
+                            <span style="flex:1; line-height:1.3; word-wrap:break-word; margin-left: 6px;">${text}</span>
                         </div>`;
                     }).join('');
                     
@@ -1329,12 +1349,28 @@
             elCatInput.value = item.name;
             document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
             document.getElementById('itemCategory').innerText = item.brandText ? "Послуга від " + item.brandText : "Окрема послуга";
+            
+            // Відправка події пошуку послуги
+            if (typeof gtag === 'function') {
+                gtag('event', 'search_success', {
+                    'search_term': item.name,
+                    'item_category': 'Service'
+                });
+            }
         } else {
             currentCategoryData = item;
             currentServiceData = null;
             elCatInput.value = item.ua; 
             document.getElementById('uaTitle').innerText = item.icon + " " + item.ua; 
             document.getElementById('itemCategory').innerText = item.category || ""; 
+            
+            // Відправка події пошуку товару
+            if (typeof gtag === 'function') {
+                gtag('event', 'search_success', {
+                    'search_term': item.ua,
+                    'item_category': item.category || 'Category'
+                });
+            }
         }
         
         elSuggList.style.display = 'none'; 
