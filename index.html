@@ -597,8 +597,16 @@
             
             <button class="list-item" onclick="window.openModalBase('guideModal')">
                 <div class="list-item-content">
-                    <span class="list-item-title">📗 Інструкція</span>
+                    <span class="list-item-title">📗 Інструкція PWA</span>
                     <span class="list-item-subtitle">Як встановити додаток</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
+
+            <button class="list-item" onclick="window.openModalBase('certManualModal')">
+                <div class="list-item-content">
+                    <span class="list-item-title">🧩 Сертифікати</span>
+                    <span class="list-item-subtitle">Об'єднання декількох сертифікатів</span>
                 </div>
                 <div class="list-item-arrow">></div>
             </button>
@@ -665,10 +673,7 @@
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
-                    <button onclick="window.openModalBase('certManualModal')" style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; padding: 2px 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s;" title="Інструкція з сертифікатів">🧩</button>
-                </div>
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
                 <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
             <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
