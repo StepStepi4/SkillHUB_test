@@ -12,14 +12,6 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB">
     <link rel="apple-touch-icon" href="icon-192.png">
 
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-RGPNFZ4CSW"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-
-      gtag('config', 'G-RGPNFZ4CSW');
-    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
@@ -158,7 +150,7 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        /* КНОПКА СБРОСА ПОИСКА */
+        /* КНОПКА СБРОСА ПОИСКА (КРЕСТИК В КРУЖОЧКЕ) */
         .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
@@ -326,6 +318,7 @@
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
         #descModal { z-index: 100030; }
+        #certManualModal { z-index: 100035; }
         #compareModal { z-index: 100040; }
         #guideModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
@@ -371,6 +364,119 @@
             display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
+
+        /* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
+        .cert-manual-wrapper {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #334155;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f8fafc;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: left;
+        }
+        .cert-header {
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 12px;
+            margin-top: 0;
+            font-size: 22px;
+        }
+        .cert-alert {
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 5px solid;
+            font-size: 15px;
+        }
+        .cert-alert.warning {
+            background-color: #fffbeb;
+            border-color: #f59e0b;
+            color: #92400e;
+        }
+        .cert-alert.info {
+            background-color: #ecfdf5;
+            border-color: #10b981;
+            color: #065f46;
+        }
+        .cert-example {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .cert-example h3 {
+            margin-top: 0;
+            color: #0f172a;
+            font-size: 18px;
+        }
+        .cert-steps {
+            margin: 15px 0 0 0;
+            padding-left: 0;
+            list-style-type: none;
+            counter-reset: step-counter;
+        }
+        .cert-steps li {
+            position: relative;
+            padding-left: 45px;
+            margin-bottom: 16px;
+        }
+        .cert-steps li::before {
+            content: counter(step-counter);
+            counter-increment: step-counter;
+            position: absolute;
+            left: 0;
+            top: 0;
+            background-color: #3b82f6;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
+        .cert-highlight {
+            font-weight: 600;
+            color: #111827;
+            background-color: #f1f5f9;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .brace-highlight {
+            position: relative;
+            display: inline-block;
+            padding-bottom: 12px;
+            font-weight: 500;
+        }
+        .brace-highlight::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 12px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+        }
+        
+        /* Адаптація сертифікату під темну тему */
+        [data-theme="dark"] .cert-manual-wrapper { background-color: var(--card-bg); color: var(--text-main); box-shadow: none; border: 1px solid var(--border); }
+        [data-theme="dark"] .cert-header { color: var(--text-main); border-color: var(--border); }
+        [data-theme="dark"] .cert-example { background-color: var(--input-bg); border-color: var(--border); }
+        [data-theme="dark"] .cert-example h3 { color: var(--text-main); }
+        [data-theme="dark"] .cert-alert.warning { background-color: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #fcd34d; }
+        [data-theme="dark"] .cert-alert.info { background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #6ee7b7; }
+        [data-theme="dark"] .cert-highlight { background-color: var(--bg); color: var(--text-main); }
+
     </style>
 </head>
 <body>
@@ -559,7 +665,10 @@
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
+                    <button onclick="window.openModalBase('certManualModal')" style="background: var(--input-bg); border: 1px solid var(--border); border-radius: 8px; font-size: 14px; cursor: pointer; padding: 2px 6px; display: flex; align-items: center; justify-content: center; transition: 0.2s;" title="Інструкція з сертифікатів">🧩</button>
+                </div>
                 <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
             <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -575,6 +684,39 @@
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
         <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+    </div>
+</div>
+
+<div id="certManualModal" class="modal">
+    <div class="modal-content" style="max-height: 90vh;">
+        <div class="modal-header">
+            <div class="modal-title">Довідка</div>
+            <button class="modal-close" onclick="window.closeModalBase('certManualModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="cert-manual-wrapper">
+              <h2 class="cert-header">Об'єднання декількох сертифікатів</h2>
+
+              <div class="cert-alert warning">
+                <strong>⚠️ Проблема:</strong> Бувають випадки, коли при продажі електронних послуг виникає помилка <em>«Немає на залишках...»</em>, або Ви хочете зробити знижку клієнту. В такому випадку потрібно об'єднати декілька позицій в один рахунок.
+              </div>
+
+              <div class="cert-example">
+                <h3>📋 Приклад вирішення</h3>
+                <p>Товар коштує <span class="cert-highlight">17 499 ₴</span>. Ідеально до нього продати <em>Сервіс (15 001 - 20 000)</em>, але його немає на залишку. Робимо наступні кроки:</p>
+
+                <ul class="cert-steps">
+                  <li><strong>Обираємо декілька менших за діапазоном позицій</strong><br> Наприклад: <em>Сервіс (10 001 - <span class="brace-highlight">15 000</span>)</em> та <em>Сервіс (2 001 - <span class="brace-highlight">3 000</span>)</em>.</li>
+                  <li><strong>Перевіряємо суму діапазонів</strong><br> У нас виходить сума крайніх діапазонів: <span class="brace-highlight">15 000 + 3 000</span> = <span class="cert-highlight">18 000</span>. Оскільки товар коштує 17 499, тобто діапазон повністю підходить.</li>
+                  <li><strong>Завершуємо продаж</strong><br> Проводимо продаж і видаємо клієнту тікети.</li>
+                </ul>
+              </div>
+
+              <div class="cert-alert info">
+                <strong>✅ Важливо:</strong> Скидати фото тікетів в групу <em>«Support» / «Екта»</em> не потрібно, ключі автоматично активуються по API.
+              </div>
+            </div>
+        </div>
     </div>
 </div>
 
@@ -704,8 +846,8 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
-    let currentServiceData = null; 
-    let savedScrollY = 0; 
+    let currentServiceData = null; // Змінна стану для одиничної послуги
+    let savedScrollY = 0; // Для збереження позиції екрану
     
     let isCompareMode = false;
     let compareSelection = [];
@@ -714,17 +856,6 @@
     let modalCompareSelection = [];
     window.lastModalServices = [];
     window.allServicesSearchList = [];
-
-    /* GOOGLE ANALYTICS INSTALL TRACKING */
-    window.addEventListener('appinstalled', (evt) => {
-        if (typeof gtag === 'function') {
-            gtag('event', 'app_installed', {
-                'event_category': 'PWA',
-                'event_label': 'Install'
-            });
-        }
-        console.log('App was installed');
-    });
 
     // Функція генерації унікального списку послуг для пошуку
     window.buildServiceSearchList = function() {
@@ -751,15 +882,14 @@
         
         window.allServicesSearchList = Array.from(uniqueMap.entries()).map(([origName, data]) => {
             let nameClean = origName.replace(/^\[.*?\]\s*/, '').trim();
+            let u = nameClean.toUpperCase();
             
-            // Завжди ставимо шестірню для будь-якої послуги
             let icon = '⚙️'; 
             
             let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
             const brandMatch = origName.match(/^\[(.*?)\]/);
             let brand = exactBrand || (brandMatch ? brandMatch[1] : "");
             let uBrand = String(brand).toUpperCase();
-            let u = nameClean.toUpperCase();
             
             let cls = 'brand-other';
             if (uBrand.includes('SUPPORT') || u.includes('SUPPORT') || u.includes('НАШ СЕРВІС')) cls = 'brand-support'; 
@@ -889,7 +1019,7 @@
             window.scrollTo(0, savedScrollY); // Повертаємо позицію скролу
         }
         
-        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal') {
+        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
                 modalCompareSelection = [];
@@ -906,8 +1036,9 @@
         }
     }
 
+    // ДОДАНО НОВУ МОДАЛКУ В МАСИВ КОНТРОЛЮ
     function checkOpenModals() {
-        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal'];
+        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1316,7 +1447,7 @@
                         return `<div class="sugg-item" data-idx="${idx}">
                             <span style="flex-shrink:0;">${m.icon}</span> 
                             ${brandBadge} 
-                            <span style="flex:1; line-height:1.3; word-wrap:break-word; margin-left: 6px;">${text}</span>
+                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
                         </div>`;
                     }).join('');
                     
@@ -1349,28 +1480,12 @@
             elCatInput.value = item.name;
             document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
             document.getElementById('itemCategory').innerText = item.brandText ? "Послуга від " + item.brandText : "Окрема послуга";
-            
-            // Відправка події пошуку послуги
-            if (typeof gtag === 'function') {
-                gtag('event', 'search_success', {
-                    'search_term': item.name,
-                    'item_category': 'Service'
-                });
-            }
         } else {
             currentCategoryData = item;
             currentServiceData = null;
             elCatInput.value = item.ua; 
             document.getElementById('uaTitle').innerText = item.icon + " " + item.ua; 
             document.getElementById('itemCategory').innerText = item.category || ""; 
-            
-            // Відправка події пошуку товару
-            if (typeof gtag === 'function') {
-                gtag('event', 'search_success', {
-                    'search_term': item.ua,
-                    'item_category': item.category || 'Category'
-                });
-            }
         }
         
         elSuggList.style.display = 'none'; 
