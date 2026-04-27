@@ -365,32 +365,34 @@
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
 
-        /* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
+/* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
         .cert-manual-wrapper {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #334155;
-            line-height: 1.6;
+            line-height: 1.4;
             max-width: 800px;
             margin: 0 auto;
-            padding: 20px;
+            padding: 12px;
             background-color: #f8fafc;
             border-radius: 10px;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             text-align: left;
+            font-size: 12px;
         }
         .cert-header {
             color: #1e293b;
             border-bottom: 2px solid #e2e8f0;
-            padding-bottom: 12px;
+            padding-bottom: 8px;
             margin-top: 0;
-            font-size: 22px;
+            font-size: 15px;
+            font-weight: 700;
         }
         .cert-alert {
-            padding: 16px;
+            padding: 10px;
             border-radius: 8px;
-            margin-bottom: 20px;
-            border-left: 5px solid;
-            font-size: 15px;
+            margin-bottom: 12px;
+            border-left: 4px solid;
+            font-size: 12px;
         }
         .cert-alert.warning {
             background-color: #fffbeb;
@@ -406,55 +408,60 @@
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 12px;
+            margin-bottom: 12px;
         }
         .cert-example h3 {
             margin-top: 0;
             color: #0f172a;
-            font-size: 18px;
+            font-size: 13px;
+            margin-bottom: 8px;
         }
         .cert-steps {
-            margin: 15px 0 0 0;
+            margin: 10px 0 0 0;
             padding-left: 0;
             list-style-type: none;
             counter-reset: step-counter;
         }
         .cert-steps li {
             position: relative;
-            padding-left: 45px;
-            margin-bottom: 16px;
+            padding-left: 32px;
+            margin-bottom: 12px;
+            font-size: 12px;
         }
         .cert-steps li::before {
             content: counter(step-counter);
             counter-increment: step-counter;
             position: absolute;
             left: 0;
-            top: 0;
+            top: -2px;
             background-color: #3b82f6;
             color: white;
-            width: 30px;
-            height: 30px;
+            width: 22px;
+            height: 22px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: 600;
-            font-size: 14px;
+            font-size: 11px;
             box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
         }
         .cert-highlight {
             font-weight: 600;
             color: #111827;
             background-color: #f1f5f9;
-            padding: 2px 6px;
+            padding: 2px 4px;
             border-radius: 4px;
+            font-size: 11px;
+            white-space: nowrap;
         }
         .brace-highlight {
             position: relative;
             display: inline-block;
-            padding-bottom: 12px;
-            font-weight: 500;
+            padding-bottom: 6px;
+            font-weight: 600;
+            white-space: nowrap;
         }
         .brace-highlight::after {
             content: '';
@@ -462,7 +469,7 @@
             left: 0;
             bottom: 0;
             width: 100%;
-            height: 12px;
+            height: 8px;
             background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
             background-size: 100% 100%;
             background-repeat: no-repeat;
