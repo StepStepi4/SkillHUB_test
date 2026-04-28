@@ -484,143 +484,46 @@
         [data-theme="dark"] .cert-alert.info { background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #6ee7b7; }
         [data-theme="dark"] .cert-highlight { background-color: var(--bg); color: var(--text-main); }
 
-        /* === НОВИЙ ПРЕМІАЛЬНИЙ ФІЛЬТР (EXPANDABLE SEGMENTED PANEL) === */
-        .premium-filter-panel {
-            background: var(--card-bg);
-            border-radius: 16px;
-            border: 1px solid var(--border);
-            margin-bottom: 20px;
-            overflow: hidden;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
-            transition: box-shadow 0.3s ease;
-        }
-        
-        .premium-filter-panel.expanded {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
-        }
-        
-        .premium-filter-header {
-            padding: 16px 20px;
+        /* === MODERN MINIMALIST SCROLL FILTER (PILLS) === */
+        .modern-filter-wrapper {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 8px;
+            overflow-x: auto;
+            padding: 0 4px 16px 4px;
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+            scroll-behavior: smooth;
+        }
+        .modern-filter-wrapper::-webkit-scrollbar { 
+            display: none; 
+        }
+        .modern-filter-pill {
+            flex-shrink: 0;
+            padding: 8px 18px;
+            border-radius: 100px;
+            background: var(--input-bg);
+            color: var(--text-muted);
+            font-size: 14px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.25s ease;
+            border: 1px solid transparent;
             user-select: none;
             -webkit-tap-highlight-color: transparent;
+            scroll-snap-align: center;
         }
-        
-        .premium-filter-label {
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 4px;
+        .modern-filter-pill:active {
+            transform: scale(0.96);
         }
-        
-        .premium-filter-current {
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .modern-filter-pill.active {
+            background: var(--text-main);
+            color: var(--bg);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
-        
-        .current-brand-text {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
+        [data-theme="dark"] .modern-filter-pill.active {
+            box-shadow: 0 4px 12px rgba(255,255,255,0.08);
         }
-        
-        .filter-chevron {
-            width: 20px;
-            height: 20px;
-            color: var(--text-muted);
-            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-        
-        .premium-filter-panel.expanded .filter-chevron {
-            transform: rotate(180deg);
-            color: var(--primary);
-        }
-        
-        .premium-filter-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            border-top: 0px solid var(--border);
-        }
-        
-        .premium-filter-panel.expanded .premium-filter-content {
-            max-height: 400px;
-            border-top-width: 1px;
-        }
-        
-        .filter-options-list {
-            padding: 8px 0;
-        }
-        
-        .filter-option-item {
-            padding: 14px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            cursor: pointer;
-            transition: background-color 0.2s ease;
-            position: relative;
-        }
-        
-        .filter-option-item:active {
-            background-color: var(--input-bg);
-        }
-        
-        .filter-option-item.active {
-            background-color: var(--primary-light);
-        }
-        
-        .option-icon {
-            font-size: 20px;
-            width: 24px;
-            text-align: center;
-        }
-        
-        .option-text {
-            font-size: 15px;
-            font-weight: 600;
-            color: var(--text-main);
-            flex: 1;
-        }
-        
-        .option-check {
-            width: 20px;
-            height: 20px;
-            color: var(--primary);
-            opacity: 0;
-            transform: scale(0.5);
-            transition: all 0.2s ease;
-        }
-        
-        .filter-option-item.active .option-check {
-            opacity: 1;
-            transform: scale(1);
-        }
-        
-        .opt-style-all { background: linear-gradient(135deg, #1f2937, #000000); }
-        .filter-option-item.active.opt-style-all .option-text, .filter-option-item.active.opt-style-all .option-check { color: white; }
-        
-        .opt-style-support { background: linear-gradient(135deg, #fef08a, #eab308); }
-        .filter-option-item.active.opt-style-support .option-text, .filter-option-item.active.opt-style-support .option-check { color: #713f12; }
-        
-        .opt-style-ekta { background: linear-gradient(135deg, #93c5fd, #3b82f6); }
-        .filter-option-item.active.opt-style-ekta .option-text, .filter-option-item.active.opt-style-ekta .option-check { color: white; }
-        
-        .opt-style-epz { background: linear-gradient(135deg, #a5f3fc, #06b6d4); }
-        .filter-option-item.active.opt-style-epz .option-text, .filter-option-item.active.opt-style-epz .option-check { color: #164e63; }
-        
-        .opt-style-install { background: linear-gradient(135deg, #e9d5ff, #a855f7); }
-        .filter-option-item.active.opt-style-install .option-text, .filter-option-item.active.opt-style-install .option-check { color: white; }
-        
-        [data-theme="dark"] .filter-option-item.active { box-shadow: 0 4px 15px rgba(255,255,255,0.1); }
-        [data-theme="dark"] .filter-option-item.active.opt-style-all { background: linear-gradient(135deg, #f9fafb, #d1d5db); }
-        [data-theme="dark"] .filter-option-item.active.opt-style-all .option-text, [data-theme="dark"] .filter-option-item.active.opt-style-all .option-check { color: black; }
+
     </style>
 </head>
 <body>
@@ -691,23 +594,8 @@
     </div>
 
     <div id="tab-training" class="app-tab">
-        <div id="premiumFilterPanel" class="premium-filter-panel" style="display:none;">
-            <div class="premium-filter-header" onclick="window.togglePremiumFilter()">
-                <div>
-                    <div class="premium-filter-label">Бренд навчання</div>
-                    <div class="premium-filter-current" id="filterCurrentState">
-                        <span class="option-icon">🌟</span>
-                        <span class="current-brand-text">Всі бренди</span>
-                    </div>
-                </div>
-                <svg class="filter-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
-            </div>
-            <div class="premium-filter-content">
-                <div class="filter-options-list" id="filterOptionsList">
-                    </div>
-            </div>
-        </div>
-        
+        <div id="trainingFilterContainer" class="modern-filter-wrapper" style="display:none;"></div>
+
         <div id="trainingList" style="display:flex; flex-direction:column; gap:12px;"></div>
     </div>
 
@@ -806,7 +694,7 @@
         <span>Навчання</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 01-2 2v-.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
         <span>Опції</span>
     </button>
 </nav>
@@ -1013,14 +901,14 @@
     
     let isCompareMode = false;
     let compareSelection = [];
-    
     window.lastCalculatedServices = [];
     let isModalCompareMode = false;
     let modalCompareSelection = [];
     window.lastModalServices = [];
     window.allServicesSearchList = [];
     
-    let activeTrainingBrand = 'all'; // Поточний вибраний бренд у навчанні
+    // --- НОВА ЗМІННА СТАНУ ДЛЯ ФІЛЬТРУ ---
+    let activeTrainingBrand = 'all';
 
     window.buildServiceSearchList = function() {
         let uniqueMap = new Map();
@@ -1148,6 +1036,8 @@
         if (compareBar) compareBar.classList.remove('show');
         
         if (tabId === 'tab-reserves') window.renderRezervyList();
+        
+        // Рендер Навчання при переході на вкладку
         if (tabId === 'tab-training') window.renderTrainingTab();
         
         window.scrollTo(0, 0);
@@ -1502,72 +1392,47 @@
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
 
-    // --- ФУНКЦІЇ ДЛЯ ПРЕМІУМ-ФІЛЬТРУ ---
-    window.togglePremiumFilter = function() {
-        const panel = document.getElementById('premiumFilterPanel');
-        if (panel) panel.classList.toggle('expanded');
-    };
-
-    window.setTrainingBrand = function(brand, brandName, icon) {
+    // --- ФУНКЦІЇ ДЛЯ СУЧАСНИХ ПІЛСІВ (НАВЧАННЯ) ---
+    window.setTrainingBrand = function(brand, btnElement) {
         activeTrainingBrand = brand;
-        const stateEl = document.getElementById('filterCurrentState');
-        if (stateEl) {
-            stateEl.innerHTML = `
-                <span class="option-icon">${icon}</span>
-                <span class="current-brand-text">${brandName}</span>
-            `;
+        
+        // Плавний скролл до вибраного елемента
+        if (btnElement) {
+            btnElement.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
         }
-        const panel = document.getElementById('premiumFilterPanel');
-        if (panel) panel.classList.remove('expanded');
+        
         window.renderTrainingTab(true); 
     };
 
     window.renderTrainingTab = function(skipFilterRender = false) {
         try {
             const list = document.getElementById('trainingList');
-            const panel = document.getElementById('premiumFilterPanel');
-            const optionsList = document.getElementById('filterOptionsList');
+            const filterContainer = document.getElementById('trainingFilterContainer');
             
             if(!list || !db.trainingData || db.trainingData.length === 0) { 
                 if(list) list.innerHTML = ''; 
-                if(panel) panel.style.display = 'none';
+                if(filterContainer) filterContainer.style.display = 'none';
                 return; 
             }
-            
-            if (panel) panel.style.display = 'block';
 
             if (!skipFilterRender) {
                 const brands = [...new Set(db.trainingData.map(item => item.brand).filter(b => b))].sort();
                 
-                let optionsHtml = `
-                    <div class="filter-option-item ${activeTrainingBrand === 'all' ? 'active opt-style-all' : ''}" 
-                         onclick="window.setTrainingBrand('all', 'Всі бренди', '🌟')">
-                        <span class="option-icon">🌟</span>
-                        <span class="option-text">Всі бренди</span>
-                        <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                    </div>
-                `;
-                
-                brands.forEach(b => {
-                    let uBrand = String(b).toUpperCase();
-                    let icon = '📖'; let cls = '';
-                    if (uBrand.includes('SUPPORT') || uBrand.includes('НАШ СЕРВІС')) { icon = '🛠'; cls = 'opt-style-support'; }
-                    else if (uBrand.includes('EKTA') || uBrand.includes('ЕКТА')) { icon = '🛡'; cls = 'opt-style-ekta'; }
-                    else if (uBrand.includes('EPZ') || uBrand.includes('ЕПЗ')) { icon = '💻'; cls = 'opt-style-epz'; }
-                    else if (uBrand.includes('МОНТАЖ')) { icon = '🔧'; cls = 'opt-style-install'; }
-
-                    let activeCls = activeTrainingBrand === b ? `active ${cls}` : '';
-                    optionsHtml += `
-                        <div class="filter-option-item ${activeCls}" 
-                             onclick="window.setTrainingBrand('${window.escapeForJS(b)}', '${window.escapeForJS(b)}', '${icon}')">
-                            <span class="option-icon">${icon}</span>
-                            <span class="option-text">${b}</span>
-                            <svg class="option-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
-                        </div>
-                    `;
-                });
-                
-                if (optionsList) optionsList.innerHTML = optionsHtml;
+                if (brands.length > 0) {
+                    let filterHtml = `<div class="modern-filter-pill ${activeTrainingBrand === 'all' ? 'active' : ''}" onclick="window.setTrainingBrand('all', this)">Всі</div>`;
+                    
+                    brands.forEach(b => {
+                        let activeCls = activeTrainingBrand === b ? 'active' : '';
+                        filterHtml += `<div class="modern-filter-pill ${activeCls}" onclick="window.setTrainingBrand('${window.escapeForJS(b)}', this)">${b}</div>`;
+                    });
+                    
+                    if (filterContainer) {
+                        filterContainer.innerHTML = filterHtml;
+                        filterContainer.style.display = 'flex';
+                    }
+                } else {
+                    if (filterContainer) filterContainer.style.display = 'none';
+                }
             }
 
             let filteredData = db.trainingData;
@@ -1730,7 +1595,7 @@
         }
         
         const fields = [
-            ['💵', 'Платний ремонт', calcPrice], ['🔧', 'Найдорожчі деталі', item.expensiveParts],
+            ['💵', 'Платний ремонт', calcPrice], ['🔧', 'Найдорожчі মেরামত', item.expensiveParts],
             ['✅', 'Гарантійні випадки', item.garant], ['❌', 'Негарантійні випадки', item.negarant]
         ];
         
