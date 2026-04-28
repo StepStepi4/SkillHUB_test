@@ -365,7 +365,7 @@
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
 
-/* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
+        /* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
         .cert-manual-wrapper {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             color: #334155;
@@ -484,55 +484,62 @@
         [data-theme="dark"] .cert-alert.info { background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #6ee7b7; }
         [data-theme="dark"] .cert-highlight { background-color: var(--bg); color: var(--text-main); }
 
-        /* === ФІЛЬТР БРЕНДІВ (ЧИПИ) === */
-        .brand-filter-container {
-            display: flex;
-            gap: 8px;
-            overflow-x: auto;
-            margin-bottom: 16px;
-            padding-bottom: 4px;
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
+        /* === ОРИГІНАЛЬНИЙ ФІЛЬТР ДЛЯ НАВЧАННЯ === */
+        .training-filter-wrapper {
+            display: flex; gap: 10px; overflow-x: auto; margin-bottom: 16px; padding: 4px 4px 16px 4px;
+            -ms-overflow-style: none; scrollbar-width: none;
         }
-        .brand-filter-container::-webkit-scrollbar {
-            display: none; /* Chrome, Safari, Opera */
-        }
-        .brand-chip {
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 600;
-            white-space: nowrap;
-            border: 1px solid var(--border);
-            background: var(--input-bg);
-            color: var(--text-muted);
-            cursor: pointer;
-            transition: 0.2s ease;
-            outline: none;
+        .training-filter-wrapper::-webkit-scrollbar { display: none; }
+
+        .training-chip {
+            display: flex; align-items: center; gap: 6px;
+            padding: 10px 18px; border-radius: 16px;
+            background: var(--card-bg); border: 1.5px solid var(--border);
+            color: var(--text-muted); font-weight: 700; font-size: 13px;
+            cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: nowrap; box-shadow: 0 2px 6px rgba(0,0,0,0.03);
             -webkit-tap-highlight-color: transparent;
         }
         
-        /* Активний стан "Усі" */
-        .brand-chip.active {
-            background: var(--text-main);
-            color: var(--bg);
-            border-color: var(--text-main);
+        .training-chip:active { transform: scale(0.96); }
+
+        /* Активні стани (Оригінальні градієнти) */
+        .training-chip.active {
+            transform: translateY(-2px); border-color: transparent;
+        }
+        
+        .training-chip.brand-all.active { 
+            background: linear-gradient(135deg, #374151, #000000); color: #fff; 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2); 
+        }
+        [data-theme="dark"] .training-chip.brand-all.active {
+            background: linear-gradient(135deg, #f9fafb, #d1d5db); color: #000;
+            box-shadow: 0 8px 16px rgba(255,255,255,0.1);
         }
 
-        /* Фірмові кольори для активних кнопок конкретних брендів */
-        .brand-chip.brand-support.active { background: var(--clr-support-bg); color: var(--clr-support-text); border-color: var(--clr-support-bg); }
-        .brand-chip.brand-ekta.active { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); border-color: var(--clr-ekta-bg); }
-        .brand-chip.brand-epz.active { background: var(--clr-epz-bg); color: var(--clr-epz-text); border-color: var(--clr-epz-bg); }
-        .brand-chip.brand-install.active { background: var(--clr-install-bg); color: var(--clr-install-text); border-color: var(--clr-install-bg); }
-        .brand-chip.brand-settings.active { background: var(--primary); color: white; border-color: var(--primary); }
-
+        .training-chip.brand-support.active { 
+            background: linear-gradient(135deg, #fef08a, #eab308); color: #713f12; 
+            box-shadow: 0 8px 16px rgba(234, 179, 8, 0.25);
+        }
+        .training-chip.brand-ekta.active { 
+            background: linear-gradient(135deg, #93c5fd, #3b82f6); color: #fff; 
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.25);
+        }
+        .training-chip.brand-epz.active { 
+            background: linear-gradient(135deg, #7dd3fc, #0284c7); color: #fff; 
+            box-shadow: 0 8px 16px rgba(2, 132, 199, 0.25);
+        }
+        .training-chip.brand-install.active { 
+            background: linear-gradient(135deg, #d8b4fe, #9333ea); color: #fff; 
+            box-shadow: 0 8px 16px rgba(147, 51, 234, 0.25);
+        }
     </style>
 </head>
 <body>
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
-    <div class="loader-text" id="mainLoaderText">Синхронізація з базою...</div>
+    <div class="loader-text" id="mainLoaderText">Синхронізація з base...</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -576,8 +583,6 @@
             <div class="item-category" id="itemCategory" style="margin-bottom:20px; opacity:0.7; font-size:13px; text-transform: uppercase; font-weight: 700; text-align: left;"></div>
             
             <div id="techInfo"></div>
-
-            <div id="brandFilterContainer" class="brand-filter-container" style="display:none;"></div>
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
@@ -598,11 +603,8 @@
     </div>
 
     <div id="tab-training" class="app-tab">
-        <div class="input-group">
-            <select id="brandFilter" onchange="window.renderTrainingTab()">
-                <option value="">-- Всі бренди --</option>
-            </select>
-        </div>
+        <div id="trainingFilterContainer" class="training-filter-wrapper" style="display:none;"></div>
+        
         <div id="trainingList" style="display:flex; flex-direction:column; gap:12px;"></div>
     </div>
 
@@ -701,7 +703,7 @@
         <span>Навчання</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
-        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 01-2 2v-.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"></path></svg>
         <span>Опції</span>
     </button>
 </nav>
@@ -902,19 +904,19 @@
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
-    let currentServiceData = null; // Змінна стану для одиничної послуги
-    let savedScrollY = 0; // Для збереження позиції екрану
+    let currentServiceData = null; 
+    let savedScrollY = 0; 
     
     let isCompareMode = false;
     let compareSelection = [];
-    let activeBrandFilter = 'all'; // <--- НОВА ЗМІННА СТАНУ ДЛЯ ФІЛЬТРУ
+    let activeTrainingBrand = 'all'; // НОВА змінна для вкладки навчання
+    
     window.lastCalculatedServices = [];
     let isModalCompareMode = false;
     let modalCompareSelection = [];
     window.lastModalServices = [];
     window.allServicesSearchList = [];
 
-    // Функція генерації унікального списку послуг для пошуку
     window.buildServiceSearchList = function() {
         let uniqueMap = new Map();
         
@@ -1038,11 +1040,10 @@
         if (isCompareMode) toggleCompareMode();
         if (isModalCompareMode) toggleModalCompareMode();
         
-        // Гарантовано ховаємо панель порівняння при перемиканні вкладок
         if (compareBar) compareBar.classList.remove('show');
         
         if (tabId === 'tab-reserves') window.renderRezervyList();
-        if (tabId === 'tab-training' && document.getElementById('trainingList').innerHTML === '') window.renderTrainingTab();
+        if (tabId === 'tab-training') window.renderTrainingTab();
         
         window.scrollTo(0, 0);
     }
@@ -1059,7 +1060,7 @@
             }
 
             if (!document.body.classList.contains('modal-open')) {
-                savedScrollY = window.scrollY; // Зберігаємо позицію скролу
+                savedScrollY = window.scrollY;
                 document.body.style.top = `-${savedScrollY}px`;
                 document.body.classList.add('modal-open');
             }
@@ -1073,7 +1074,7 @@
         if (!checkOpenModals()) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
-            window.scrollTo(0, savedScrollY); // Повертаємо позицію скролу
+            window.scrollTo(0, savedScrollY);
         }
         
         if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal') {
@@ -1093,7 +1094,6 @@
         }
     }
 
-    // ДОДАНО НОВУ МОДАЛКУ В МАСИВ КОНТРОЛЮ
     function checkOpenModals() {
         const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal'];
         for (let id of modals) {
@@ -1304,7 +1304,6 @@
     window.populateFilters = function() {
         const storeSel = document.getElementById('storeFilter');
         const defaultSel = document.getElementById('defaultStoreSelect');
-        const brandSel = document.getElementById('brandFilter');
         
         if (db.rezervyData) {
             const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
@@ -1314,14 +1313,6 @@
             
             let savedStore = null; try { savedStore = localStorage.getItem('skillhub_default_store'); } catch(e){}
             if (savedStore) { storeSel.value = savedStore; defaultSel.value = savedStore; }
-        }
-
-        if (db.trainingData) {
-            const brands = [...new Set(db.trainingData.map(t => t.brand).filter(b => b))].sort();
-            let h = '<option value="">-- Всі бренди --</option>';
-            const currentSelected = brandSel.value;
-            brands.forEach(b => h += `<option value="${b}">${b}</option>`);
-            brandSel.innerHTML = h; if(currentSelected) brandSel.value = currentSelected;
         }
     }
 
@@ -1407,16 +1398,64 @@
     }
 
 
+    window.setTrainingBrand = function(brand) {
+        activeTrainingBrand = brand;
+        window.renderTrainingTab();
+    };
+
     window.renderTrainingTab = function() {
         try {
             const list = document.getElementById('trainingList');
-            const brandFilter = document.getElementById('brandFilter').value;
-            if(!list || !db.trainingData || db.trainingData.length === 0) { if(list) list.innerHTML = ''; return; }
+            const filterContainer = document.getElementById('trainingFilterContainer');
             
+            if(!list || !db.trainingData || db.trainingData.length === 0) { 
+                if(list) list.innerHTML = ''; 
+                if(filterContainer) filterContainer.innerHTML = '';
+                return; 
+            }
+            
+            // 1. Унікальні бренди
+            const brandsSet = new Set();
+            db.trainingData.forEach(item => {
+                if (item.brand) brandsSet.add(item.brand);
+            });
+            const brands = Array.from(brandsSet).sort();
+
+            // 2. Рендер кнопок фільтру
+            if (brands.length > 0) {
+                let filterHtml = `<div class="training-chip brand-all ${activeTrainingBrand === 'all' ? 'active' : ''}" onclick="window.setTrainingBrand('all')">🌟 Всі</div>`;
+                
+                brands.forEach(b => {
+                    let cls = 'brand-all';
+                    let uBrand = String(b).toUpperCase();
+                    let icon = '📖'; 
+                    
+                    if (uBrand.includes('SUPPORT') || uBrand.includes('НАШ СЕРВІС')) { cls = 'brand-support'; icon = '🛠'; }
+                    else if (uBrand.includes('EKTA') || uBrand.includes('ЕКТА')) { cls = 'brand-ekta'; icon = '🛡'; }
+                    else if (uBrand.includes('EPZ') || uBrand.includes('ЕПЗ')) { cls = 'brand-epz'; icon = '💻'; }
+                    else if (uBrand.includes('МОНТАЖ')) { cls = 'brand-install'; icon = '🔧'; }
+
+                    let activeCls = activeTrainingBrand === b ? 'active' : '';
+                    filterHtml += `<div class="training-chip ${cls} ${activeCls}" onclick="window.setTrainingBrand('${window.escapeForJS(b)}')">${icon} ${b}</div>`;
+                });
+                filterContainer.innerHTML = filterHtml;
+                filterContainer.style.display = 'flex';
+            } else {
+                filterContainer.style.display = 'none';
+            }
+
+            // 3. Фільтрація даних
             let filteredData = db.trainingData;
-            if (brandFilter) filteredData = filteredData.filter(item => item.brand === brandFilter);
-            if (filteredData.length === 0) { list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Немає сервісів</div>'; return; }
+            if (activeTrainingBrand !== 'all') {
+                filteredData = filteredData.filter(item => item.brand === activeTrainingBrand);
+            }
+
+            if (filteredData.length === 0) { 
+                list.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Немає сервісів</div>'; 
+                return; 
+            }
             
+            // 4. Вивід списку
             list.innerHTML = filteredData.map(item => {
                 let brand = item.brand || ""; let title = item.name ? String(item.name).replace(/^\[.*?\]\s*/, '').trim() : ""; 
                 
@@ -1521,7 +1560,6 @@
         elClearBtn.style.display = "none"; elSuggList.style.display = "none"; 
         elPriceWrapper.style.display = "none"; elResultBox.style.display = "none"; 
         currentCategoryData = null; currentServiceData = null; 
-        activeBrandFilter = 'all'; // Очищаємо фільтр при скиданні
         elCatInput.focus();
         if(isCompareMode) window.toggleCompareMode(); document.getElementById('toggleCompareBtn').style.display = 'none';
     };
@@ -1532,7 +1570,6 @@
         if(item.searchType === 'service') {
             currentCategoryData = null;
             
-            // Тепер ми передаємо оригінальну назву (з брендом), щоб вивести саме ту послугу, яку клікнули
             currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
             
             elCatInput.value = item.name;
@@ -1769,76 +1806,16 @@
         </div>`;
     }
 
-    // НОВА ФУНКЦІЯ: Малювання кнопок фільтрів
-    function renderBrandFilters(data) {
-        const container = document.getElementById('brandFilterContainer');
-        if (!data || data.length === 0) {
-            container.style.display = 'none';
-            return;
-        }
-
-        const brands = new Set();
-        data.forEach(s => {
-            if (s.cls) brands.add(s.cls);
-        });
-
-        if (brands.size < 2) {
-            container.style.display = 'none';
-            return;
-        }
-
-        const brandNames = {
-            'brand-support': 'Support',
-            'brand-ekta': 'Екта',
-            'brand-epz': 'ЕПЗ',
-            'brand-install': 'Монтаж',
-            'brand-settings': 'Налаштування / ПЗ',
-            'brand-other': 'Інше'
-        };
-
-        let html = `<button class="brand-chip ${activeBrandFilter === 'all' ? 'active' : ''}" onclick="window.setBrandFilter('all')">Усі</button>`;
-
-        Array.from(brands).sort().forEach(cls => {
-            let name = brandNames[cls] || 'Сервіс';
-            let activeClass = activeBrandFilter === cls ? `active ${cls}` : '';
-            html += `<button class="brand-chip ${activeClass}" onclick="window.setBrandFilter('${cls}')">${name}</button>`;
-        });
-
-        container.innerHTML = html;
-        container.style.display = 'flex';
-    }
-
-    // НОВА ФУНКЦІЯ: Перемикання фільтру
-    window.setBrandFilter = function(filterVal) {
-        activeBrandFilter = filterVal;
-        
-        if (isCompareMode) window.toggleCompareMode(); 
-        
-        renderServices(true); // Передаємо true, щоб не скидати фільтр
-    }
-
-    // ОНОВЛЕНА ФУНКЦІЯ: Рендер сервісів з урахуванням фільтрів
-    function renderServices(keepFilter = false) {
+    function renderServices() {
         try {
             const p = parseFloat(elPriceInput.value) || 0; 
-            
-            if (!keepFilter) activeBrandFilter = 'all';
 
             if (currentCategoryData && currentCategoryData.service) {
                 renderTechInfo(); 
                 let dataForSort = calculateServicesArray(currentCategoryData, p);
                 window.lastCalculatedServices = dataForSort;
 
-                // 1. Оновлюємо кнопки
-                renderBrandFilters(dataForSort);
-
-                // 2. Фільтруємо перед виводом
-                let dataToRender = dataForSort;
-                if (activeBrandFilter !== 'all') {
-                    dataToRender = dataForSort.filter(s => s.cls === activeBrandFilter);
-                }
-
-                let compareableCount = dataToRender.filter(s => !s.isPackage).length;
+                let compareableCount = dataForSort.filter(s => !s.isPackage).length;
                 
                 const btnCompare = document.getElementById('toggleCompareBtn');
                 if (compareableCount >= 2) {
@@ -1849,8 +1826,7 @@
                     if (isCompareMode) window.toggleCompareMode(); 
                 }
 
-                // Виводимо відфільтровані карточки
-                requestAnimationFrame(() => { elServiceList.innerHTML = dataToRender.map(s => generateServiceCardHTML(s, false)).join(''); });
+                requestAnimationFrame(() => { elServiceList.innerHTML = dataForSort.map(s => generateServiceCardHTML(s, false)).join(''); });
                 
             } else if (currentServiceData) {
                 elTechInfo.style.display = 'none'; elTechInfo.innerHTML = '';
@@ -1863,7 +1839,7 @@
                 });
                 
                 window.lastCalculatedServices = dataForSort;
-                document.getElementById('brandFilterContainer').style.display = 'none';
+                
                 document.getElementById('toggleCompareBtn').style.display = 'none';
                 if (isCompareMode) window.toggleCompareMode();
 
@@ -1880,14 +1856,13 @@
                 
             } else {
                 window.lastCalculatedServices = []; document.getElementById('toggleCompareBtn').style.display = 'none';
-                document.getElementById('brandFilterContainer').style.display = 'none';
                 if (isCompareMode) window.toggleCompareMode();
                 elTechInfo.style.display = 'none'; elTechInfo.innerHTML = ''; elServiceList.innerHTML = ''; return;
             }
         } catch(e) { console.error(e); }
     }
 
-    elPriceInput.addEventListener('input', debounce(() => renderServices(true), 50));
+    elPriceInput.addEventListener('input', debounce(renderServices, 50));
 
     window.toggleCompareMode = function() {
         isCompareMode = !isCompareMode; compareSelection = []; 
@@ -1899,7 +1874,7 @@
             btn.innerText = 'Порівняти'; btn.classList.remove('active');
             compareBar.classList.remove('show'); 
         }
-        updateCompareUI(); renderServices(true); 
+        updateCompareUI(); renderServices(); 
     }
 
     window.toggleModalCompareMode = function() {
@@ -1938,7 +1913,7 @@
             } else if (compareSelection.length < 2) {
                 compareSelection.push(name);
             }
-            updateCompareUI(); renderServices(true); 
+            updateCompareUI(); renderServices(); 
         } else {
             window.openModal(name, code);
         }
@@ -2096,7 +2071,7 @@
             btn.classList.remove('active');
         });
 
-        if (currentCategoryData || currentServiceData) renderServices(true);
+        if (currentCategoryData || currentServiceData) renderServices();
         if (document.getElementById('montazhCity')) window.updateMontazhResults();
         else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
         else window.updateSetupResults();
@@ -2367,19 +2342,16 @@
         document.getElementById('modalBody').innerHTML = html; window.openModalBase('descModal');
     };
 
-    /* ЛОГІКА ДЛЯ ФОРМИ ЗМІНИ ПРОДАВЦЯ */
     const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEHnajgF9C4IvTN5jKMUOrYQybiQnrt5SBBmFFzC3SysV1EzvJoy-PtgFvWlvjGUuZFA/exec";
 
     window.openSellerModal = function() {
         window.openModalBase('sellerModal');
-        // Завантажуємо дані лише якщо вони ще не завантажені
         if(document.getElementById('sellerStore').options.length <= 1) {
             const scriptTag = document.createElement('script');
             scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
             document.body.appendChild(scriptTag);
         }
         
-        // Скидаємо форму до початкового стану на випадок якщо її вже відправляли
         document.getElementById('sellerFormSubmit').style.display = 'block';
         document.getElementById('sellerStatusOverlay').style.display = 'none';
         document.getElementById('submitSellerBtn').disabled = false;
