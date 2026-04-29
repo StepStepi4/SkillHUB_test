@@ -493,11 +493,11 @@
     <div id="tab-skillhub" class="app-tab">
         <div class="list-group">
             
-            <button class="list-item" style="background: rgba(16, 185, 129, 0.08);" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0', '_blank')">
+            <button class="list-item" style="background: rgba(16, 185, 129, 0.08); width: 100%; border: none; border-bottom: 1px solid var(--border); font-family: inherit; outline: none; display: flex; align-items: center;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0', '_blank')">
                 <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
                     🌐
                 </div>
-                <div class="list-item-content">
+                <div class="list-item-content" style="flex:1; text-align:left;">
                     <span class="list-item-title" style="color: var(--rozetka-green-dark);">ПОРТАЛ SkillHUB</span>
                     <span class="list-item-subtitle">Перейти на головну сторінку</span>
                 </div>
@@ -1036,9 +1036,10 @@
         let html = db.skillHubButtons.map(btn => {
             let actionStr = `onclick="window.open('${btn.link}', '_blank')"`;
             
+            // Жорстка перевірка на внутрішні скрипти, якщо є --
             if (btn.link === "--" || btn.link === "" || btn.link === "#") {
                 let nm = String(btn.name).toLowerCase();
-                if (nm.includes("заміна продавця") || nm.includes("заменить продавца")) {
+                if (nm.includes("заміна продавця") || nm.includes("заменить продавца") || nm.includes("заміна")) {
                     actionStr = `onclick="window.openSellerModal()"`;
                 } else if (nm.includes("об'єднання") || nm.includes("объединение")) {
                     actionStr = `onclick="window.openModalBase('certManualModal')"`;
@@ -1050,11 +1051,11 @@
             }
 
             return `
-            <button class="list-item" ${actionStr}>
+            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center;">
                 <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
                     ${btn.emoji}
                 </div>
-                <div class="list-item-content">
+                <div class="list-item-content" style="flex:1; text-align:left;">
                     <span class="list-item-title">${btn.name}</span>
                     <span class="list-item-subtitle">${btn.desc}</span>
                 </div>
@@ -1077,13 +1078,12 @@
             return;
         }
 
-        // Групування по номінації. Щоб вивести текст ТОЧНО як в таблиці, групуємо по очищеній назві, але виводимо оригінальну
+        // Групування по номінації (використовуємо оригінальний рядок для групування)
         let groups = {};
         db.sellerRatings.forEach(r => {
-            let rawNom = r.nomination || "Загальний рейтинг";
-            let cleanNom = rawNom.replace(/\s*#\d+\s*$/, '').trim();
-            if (!groups[cleanNom]) groups[cleanNom] = [];
-            groups[cleanNom].push(r);
+            let nom = r.nomination || "Загальний рейтинг";
+            if (!groups[nom]) groups[nom] = [];
+            groups[nom].push(r);
         });
 
         let html = "";
