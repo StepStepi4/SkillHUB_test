@@ -21,7 +21,7 @@
         }
 
         :root {
-            /* СВІТЛА ТЕМА */
+            /* СВІТЛА ТЕМА (Flat iOS Style) */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #000000; 
@@ -183,7 +183,6 @@
             background: var(--card-bg); border-radius: 16px; overflow: hidden; margin-bottom: 24px;
             border: 1px solid var(--border); display: flex; flex-direction: column;
         }
-        
         .list-item {
             padding: 16px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text-main);
@@ -198,7 +197,8 @@
         .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
         .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
         
-        .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin-left: auto; }
+        /* СУЧАСНІ СТРІЛОЧКИ ДЛЯ МЕНЮ */
+        .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
         .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
         .toggle-switch {
@@ -1031,23 +1031,32 @@
         if (!container || !db.skillHubButtons) return;
 
         let html = db.skillHubButtons.map(btn => {
-            let actionStr = '';
-            let nm = String(btn.name).toLowerCase();
+            let actionStr = `onclick="window.open('${btn.link}', '_blank')"`;
             let linkStr = String(btn.link).trim();
+            let nm = String(btn.name).toLowerCase();
             
-            // Якщо є точний збіг "заміна продавця" в назві, або в посиланні вказано --, викликаємо внутрішню модалку
-            if (linkStr === "--" || nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
+            // Якщо в таблиці стоїть жорсткий маркер модалки:
+            if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
-            } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
-                actionStr = `onclick="window.openModalBase('certManualModal')"`;
-            } else if (nm.includes("рейтинг")) {
+            } else if (linkStr === "%") {
                 actionStr = `onclick="window.openRatingModal()"`;
-            } else if (linkStr !== "" && linkStr !== "#") {
-                actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
+            } else if (linkStr === "@@") {
+                actionStr = `onclick="window.openModalBase('certManualModal')"`;
+            } else if (linkStr === "" || linkStr === "#") {
+                // Якщо пусто, робимо фолбек по назві
+                if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
+                    actionStr = `onclick="window.openSellerModal()"`;
+                } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
+                    actionStr = `onclick="window.openModalBase('certManualModal')"`;
+                } else if (nm.includes("рейтинг")) {
+                    actionStr = `onclick="window.openRatingModal()"`;
+                } else {
+                    actionStr = ``;
+                }
             }
 
             return `
-            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center;">
+            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
                 <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
                     ${btn.emoji}
                 </div>
@@ -1077,8 +1086,8 @@
         // Групуємо безпосередньо по колонці номінації (оригінальний рядок з таблиці)
         let groups = {};
         db.sellerRatings.forEach(r => {
-            let rawNom = r.nomination || "Загальний рейтинг";
-            let cleanNom = rawNom.replace(/\s*#\d+\s*$/, '').trim();
+            let nom = r.nomination || "Загальний рейтинг";
+            let cleanNom = nom.replace(/\s*#\d+\s*$/, '').trim(); // Для чистого групування
             if (!groups[cleanNom]) groups[cleanNom] = [];
             groups[cleanNom].push(r);
         });
@@ -1086,7 +1095,7 @@
         let html = "";
         for (let nom in groups) {
             
-            // Груповий блок для візуального розділення
+            // Груповий блок для візуального розділення (без заголовку)
             html += `<div class="rating-group">`;
             
             // Сортування по спаданню 
@@ -1101,7 +1110,7 @@
                 let topClass = rank === 1 ? "top-1" : (rank === 2 ? "top-2" : (rank === 3 ? "top-3" : ""));
                 let rankDisplay = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : rank));
                 
-                // Виводимо номінацію точно як в таблиці (зміна лише у форматуванні)
+                // Виводимо номінацію точно як в таблиці (item.nomination)
                 html += `
                 <div class="rating-item ${topClass}">
                     <div class="rating-rank">${rankDisplay}</div>
