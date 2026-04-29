@@ -21,7 +21,7 @@
         }
 
         :root {
-            /* СВІТЛА ТЕМА (Flat iOS Style) */
+            /* СВІТЛА ТЕМА */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #000000; 
@@ -198,7 +198,6 @@
         .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
         .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
         
-        /* СУЧАСНІ СТРІЛОЧКИ ДЛЯ МЕНЮ */
         .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin-left: auto; }
         .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
@@ -396,12 +395,9 @@
             padding: 12px 16px; background: var(--card-bg);
             border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
         }
-        /* Бледно-золотой */
-        .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24;}
-        /* Бледно-серебристый */
-        .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8;}
-        /* Бледно-бронзовый */
-        .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706;}
+        .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
+        .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
+        .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706; }
         
         .rating-rank { font-size: 24px; font-weight: 800; width: 35px; text-align: center; color: var(--text-muted); }
         .top-1 .rating-rank { color: #d97706; }
@@ -1035,22 +1031,19 @@
         if (!container || !db.skillHubButtons) return;
 
         let html = db.skillHubButtons.map(btn => {
-            let actionStr = `onclick="window.open('${btn.link}', '_blank')"`;
+            let actionStr = '';
+            let nm = String(btn.name).toLowerCase();
+            let linkStr = String(btn.link).trim();
             
-            // Жорстка перевірка на внутрішні скрипти, якщо є --
-            if (btn.link === "--") {
+            // Якщо є точний збіг "заміна продавця" в назві, або в посиланні вказано --, викликаємо внутрішню модалку
+            if (linkStr === "--" || nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
                 actionStr = `onclick="window.openSellerModal()"`;
-            } else if (btn.link === "" || btn.link === "#") {
-                let nm = String(btn.name).toLowerCase();
-                if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
-                    actionStr = `onclick="window.openSellerModal()"`;
-                } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
-                    actionStr = `onclick="window.openModalBase('certManualModal')"`;
-                } else if (nm.includes("рейтинг")) {
-                    actionStr = `onclick="window.openRatingModal()"`;
-                } else {
-                    actionStr = ``;
-                }
+            } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
+                actionStr = `onclick="window.openModalBase('certManualModal')"`;
+            } else if (nm.includes("рейтинг")) {
+                actionStr = `onclick="window.openRatingModal()"`;
+            } else if (linkStr !== "" && linkStr !== "#") {
+                actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
             }
 
             return `
@@ -1084,9 +1077,10 @@
         // Групуємо безпосередньо по колонці номінації (оригінальний рядок з таблиці)
         let groups = {};
         db.sellerRatings.forEach(r => {
-            let nom = r.nomination || "Загальний рейтинг";
-            if (!groups[nom]) groups[nom] = [];
-            groups[nom].push(r);
+            let rawNom = r.nomination || "Загальний рейтинг";
+            let cleanNom = rawNom.replace(/\s*#\d+\s*$/, '').trim();
+            if (!groups[cleanNom]) groups[cleanNom] = [];
+            groups[cleanNom].push(r);
         });
 
         let html = "";
@@ -1116,7 +1110,7 @@
                             <span class="rating-name">${item.name}</span>
                             <span class="rating-score">${item.result}</span>
                         </div>
-                        <div class="rating-desc">${nom}</div>
+                        <div class="rating-desc">${item.nomination}</div>
                     </div>
                 </div>`;
             });
