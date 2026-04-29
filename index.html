@@ -112,7 +112,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* ПЛАВАЮЧЕ МЕНЮ (Точний Telegram / Material 3 Style) */
+        /* ПЛАВАЮЧЕ МЕНЮ (Естетична м'яка підсвітка) */
         .bottom-nav {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 16px); 
@@ -123,7 +123,7 @@
             height: var(--nav-height);
             background: var(--nav-bg); 
             border: 1px solid var(--border);
-            border-radius: 40px; /* Повністю круглі краї */
+            border-radius: 40px;
             backdrop-filter: blur(25px); 
             -webkit-backdrop-filter: blur(25px);
             display: flex; 
@@ -140,43 +140,50 @@
         }
 
         .nav-item {
+            position: relative;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 4px; 
             flex: 1; 
             height: 100%;
             background: transparent; border: none; outline: none;
             color: var(--text-muted); cursor: pointer; 
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
             padding: 0;
             margin: 0;
+            z-index: 1;
         }
-        
-        .nav-icon-box {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 64px; /* Ідеальна ширина пігулки */
-            height: 32px; /* Ідеальна висота пігулки */
-            border-radius: 16px; /* Заокруглення пігулки */
-            background: transparent;
-            transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+
+        /* М'яке радіальне світіння замість жорсткого овалу */
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 56px;
+            height: 56px;
+            background: radial-gradient(circle, var(--primary-light) 0%, transparent 60%);
+            opacity: 0;
+            transition: opacity 0.3s ease, transform 0.3s ease;
+            z-index: -1;
+            pointer-events: none;
         }
-        
-        .nav-item.active .nav-icon-box {
-            background: var(--primary-light);
+        [data-theme="dark"] .nav-item::before {
+            background: radial-gradient(circle, rgba(16, 185, 129, 0.25) 0%, transparent 60%);
         }
-        [data-theme="dark"] .nav-item.active .nav-icon-box {
-            background: rgba(16, 185, 129, 0.2);
+
+        .nav-item.active::before {
+            opacity: 1;
+            transform: translate(-50%, -45%) scale(1.1);
         }
 
         .nav-icon {
-            width: 24px; height: 24px; /* Повернуто гармонійний розмір іконки */
+            width: 24px; height: 24px; 
             background-color: currentColor;
             -webkit-mask-size: contain; mask-size: contain;
             -webkit-mask-position: center; mask-position: center;
             -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-            transition: 0.3s ease;
+            transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         .icon-search { -webkit-mask-image: url('search.svg'); mask-image: url('search.svg'); }
@@ -184,10 +191,18 @@
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); }
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
-        .nav-item span { font-size: 11px; font-weight: 600; transition: 0.3s; margin-top: 2px; }
-        .nav-item.active { color: var(--text-main); }
-        .nav-item.active .nav-icon { color: var(--rozetka-green-dark); }
-        [data-theme="dark"] .nav-item.active .nav-icon { color: var(--primary); }
+        .nav-item span { 
+            font-size: 11px; 
+            font-weight: 500; 
+            transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
+            margin-top: 2px; 
+        }
+        
+        .nav-item.active { color: var(--rozetka-green-dark); }
+        [data-theme="dark"] .nav-item.active { color: var(--primary); }
+        
+        /* Підйом та збільшення при активації */
+        .nav-item.active .nav-icon { transform: translateY(-2px) scale(1.15); }
         .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
@@ -620,19 +635,19 @@
 
 <nav class="bottom-nav">
     <button class="nav-item active" onclick="window.switchTab('tab-search')">
-        <div class="nav-icon-box"><div class="nav-icon icon-search"></div></div>
+        <div class="nav-icon icon-search"></div>
         <span>Пошук</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-reserves')">
-        <div class="nav-icon-box"><div class="nav-icon icon-rezerv"></div></div>
+        <div class="nav-icon icon-rezerv"></div>
         <span>Резерви</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
-        <div class="nav-icon-box"><div class="nav-icon icon-bulb"></div></div>
+        <div class="nav-icon icon-bulb"></div>
         <span>SkillHUB</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
-        <div class="nav-icon-box"><div class="nav-icon icon-settings"></div></div>
+        <div class="nav-icon icon-settings"></div>
         <span>Опції</span>
     </button>
 </nav>
@@ -714,7 +729,7 @@
             <button class="modal-close" onclick="window.closeModalBase('ratingModal')"></button>
         </div>
         <div class="modal-body" id="ratingModalBody">
-            </div>
+        </div>
         <button class="btn btn-primary" style="margin-top: 10px;" onclick="window.closeModalBase('ratingModal')">Супер!</button>
     </div>
 </div>
