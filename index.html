@@ -193,7 +193,7 @@
         .list-item-title { font-size: 16px; font-weight: 600; line-height: 1.3;}
         .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
         .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
-        .list-item-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px;}
+        .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin-left: 6px;}
 
         /* ПЕРЕМИКАЧ */
         .toggle-switch {
@@ -429,13 +429,13 @@
     <div id="tab-search" class="app-tab active">
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
-            <button id="clearAllBtn" class="clear-btn">×</button>
+            <button type="button" id="clearAllBtn" class="clear-btn">×</button>
             <div id="customSuggestions" class="suggestions"></div>
         </div>
 
         <div id="priceWrapper" class="input-group" style="display:none; gap:10px; flex-direction:row;">
             <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1; margin-bottom:0;">
-            <button class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
+            <button type="button" class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
         </div>
 
         <div id="result" style="display:none;">
@@ -446,7 +446,7 @@
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
-                <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
+                <button type="button" id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
             </div>
             
             <div id="serviceList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -464,13 +464,16 @@
 
     <div id="tab-skillhub" class="app-tab">
         <div class="list-group" style="margin-bottom: 12px;">
-            <a href="https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0" target="_blank" class="list-item">
-                <div class="list-item-content">
-                    <span class="list-item-title">🌐 SkillHUB Portal</span>
-                    <span class="list-item-subtitle">Перейти на сайт</span>
+            <a href="https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0" target="_blank" class="list-item" style="text-decoration: none;">
+                <div style="font-size: 26px; margin-right: 14px; flex-shrink: 0; line-height: 1; display: flex; align-items: center; justify-content: center;">
+                    🌐
                 </div>
-                <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 10px;">
-                    <img src="Logo v3.png" alt="Skillhub Logo" style="height: 34px; width: auto; border-radius: 6px; display: block; object-fit: contain;">
+                <div class="list-item-content">
+                    <span class="list-item-title">SkillHUB Portal</span>
+                    <span class="list-item-subtitle" style="font-size: 11px;">Перейти на сайт</span>
+                </div>
+                <div class="list-item-arrow" style="display:flex; align-items:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </a>
         </div>
@@ -486,7 +489,7 @@
                     <span class="list-item-title">Темна тема</span>
                     <span class="list-item-subtitle">Змінити оформлення додатку</span>
                 </div>
-                <button id="themeToggle" class="toggle-switch">
+                <button type="button" id="themeToggle" class="toggle-switch">
                     <div class="toggle-knob"></div>
                 </button>
             </div>
@@ -511,12 +514,14 @@
                 </div>
             </button>
 
-            <a href="https://forms.gle/aSYSoVy1ew3voSih7" target="_blank" class="list-item">
+            <a href="https://forms.gle/aSYSoVy1ew3voSih7" target="_blank" class="list-item" style="text-decoration: none;">
                 <div class="list-item-content">
                     <span class="list-item-title">💬 Зворотній зв'язок</span>
                     <span class="list-item-subtitle">Надіслати відгук, зауваження або оцінити додаток</span>
                 </div>
-                <div class="list-item-arrow">></div>
+                <div class="list-item-arrow" style="display:flex; align-items:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
             </a>
         </div>
 
@@ -528,19 +533,19 @@
 </div>
 
 <nav class="bottom-nav">
-    <button class="nav-item active" onclick="window.switchTab('tab-search')">
+    <button type="button" class="nav-item active" onclick="window.switchTab('tab-search')">
         <div class="nav-icon" style="-webkit-mask-image: url('search.svg'); mask-image: url('search.svg');"></div>
         <span>Пошук</span>
     </button>
-    <button class="nav-item" onclick="window.switchTab('tab-reserves')">
+    <button type="button" class="nav-item" onclick="window.switchTab('tab-reserves')">
         <div class="nav-icon" style="-webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg');"></div>
         <span>Резерви</span>
     </button>
-    <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
+    <button type="button" class="nav-item" onclick="window.switchTab('tab-skillhub')">
         <div class="nav-icon" style="-webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg');"></div>
         <span>SkillHUB</span>
     </button>
-    <button class="nav-item" onclick="window.switchTab('tab-settings')">
+    <button type="button" class="nav-item" onclick="window.switchTab('tab-settings')">
         <div class="nav-icon" style="-webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg');"></div>
         <span>Опції</span>
     </button>
@@ -700,7 +705,6 @@
         }
     });
 
-    // УВАГА: ВСТАВ СВІЙ АКТУАЛЬНИЙ URL ДЛЯ API
     const API_URL = 'https://script.google.com/macros/s/AKfycbzFPsjAEHKGRBBsXc9EdfKrm9yoOI1TGwgbhFUENNpAAffrAvwHVRyxdTaUTTL8uRI2nQ/exec';
     
     const CACHE_KEY = 'skillhub_v1_flat'; 
@@ -851,7 +855,7 @@
         window.scrollTo(0, 0);
     }
 
-    // НОВА ФУНКЦІЯ: Генерує вкладку SkillHUB з даними з таблиці
+    // ГЕНЕРАЦІЯ ВКЛАДКИ SKILLHUB З ТАБЛИЦІ
     window.renderSkillHubTab = function() {
         const listContainer = document.getElementById('skillhubList');
         if (!db.skillHubButtons || db.skillHubButtons.length === 0) {
@@ -872,19 +876,23 @@
                 clickAction = "window.openRatingModal()";
             }
 
-            // Додано type="button" для уникнення збоїв
             return `
-            <button type="button" class="list-item" onclick="${clickAction}">
-                <div class="list-item-content">
-                    <span class="list-item-title">${window.escapeHTML(btn.emoji)} ${window.escapeHTML(btn.name)}</span>
-                    <span class="list-item-subtitle">${window.escapeHTML(btn.desc)}</span>
+            <button type="button" class="list-item" onclick="${clickAction}; return false;">
+                <div style="font-size: 26px; margin-right: 14px; flex-shrink: 0; line-height: 1; display: flex; align-items: center; justify-content: center;">
+                    ${window.escapeHTML(btn.emoji || '🔹')}
                 </div>
-                <div class="list-item-arrow">></div>
+                <div class="list-item-content">
+                    <span class="list-item-title">${window.escapeHTML(btn.name)}</span>
+                    <span class="list-item-subtitle" style="font-size: 11px;">${window.escapeHTML(btn.desc)}</span>
+                </div>
+                <div class="list-item-arrow" style="display:flex; align-items:center;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
             </button>`;
         }).join('');
     };
 
-    // НОВА ФУНКЦІЯ: Генерує модалку Рейтингу
+    // ГЕНЕРАЦІЯ РЕЙТИНГУ
     window.openRatingModal = function() {
         try {
             const list = document.getElementById('ratingList');
