@@ -143,12 +143,12 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 3px; 
             flex: 1; 
-            height: 64px;
-            min-width: 64px;
+            height: 100%;
             background: transparent; border: none; outline: none;
-            border-radius: 16px;
+            border-radius: 0;
             color: var(--text-muted); cursor: pointer; 
             transition: all 0.3s ease;
+            padding: 0;
         }
         
         .nav-icon-box {
@@ -156,22 +156,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 60px; /* Розширено для більшої іконки */
-            height: 36px;
-            border-radius: 18px; /* Ідеальний овал */
-            transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+            width: 60px; /* USER: Трохи ширше */
+            height: 32px; /* Ідеальна висота для "пігулки" */
+            border-radius: 16px; /* Ідеально заокруглені краї (пігулка) */
+            background: transparent;
+            transition: background 0.3s ease;
         }
         
         .nav-item.active .nav-icon-box {
             background: var(--primary-light);
         }
-
         [data-theme="dark"] .nav-item.active .nav-icon-box {
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(255, 255, 255, 0.12);
         }
-        
+
         .nav-icon {
-            width: 28px; height: 28px; /* Збільшено розмір SVG іконок */
+            width: 22px; height: 22px;
             background-color: currentColor;
             -webkit-mask-size: contain; mask-size: contain;
             -webkit-mask-position: center; mask-position: center;
@@ -184,12 +184,11 @@
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); }
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
-        .nav-item span { font-size: 11px; font-weight: 600; transition: 0.3s; margin-top: 2px; }
-        
-        .nav-item.active { color: var(--primary); }
-        .nav-item.active .nav-icon { transform: scale(1.1); color: var(--rozetka-green-dark); }
+        .nav-item span { font-size: 11px; font-weight: 500; transition: 0.3s; margin-top: 2px; }
+        .nav-item.active { color: var(--text-main); }
+        .nav-item.active .nav-icon { color: var(--rozetka-green-dark); }
         [data-theme="dark"] .nav-item.active .nav-icon { color: var(--primary); }
-        .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
+        .nav-item.active span { font-weight: 700; transform: translateY(-1px); }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -1088,10 +1087,9 @@
 
         let html = db.skillHubButtons.map(btn => {
             let actionStr = '';
-            let linkStr = String(btn.link).trim();
             let nm = String(btn.name).toLowerCase();
+            let linkStr = String(btn.link).trim();
             
-            // Якщо є маркер з таблиці
             if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
             } else if (linkStr === "%") {
@@ -1138,11 +1136,10 @@
             return;
         }
 
-        // Групуємо безпосередньо по колонці номінації (оригінальний рядок з таблиці)
         let groups = {};
         db.sellerRatings.forEach(r => {
             let nom = r.nomination || "Загальний рейтинг";
-            let cleanNom = nom.replace(/\s*#\d+\s*$/, '').trim(); // Для чистого групування
+            let cleanNom = nom.replace(/\s*#\d+\s*$/, '').trim(); 
             if (!groups[cleanNom]) groups[cleanNom] = [];
             groups[cleanNom].push(r);
         });
@@ -1150,10 +1147,8 @@
         let html = "";
         for (let nom in groups) {
             
-            // Груповий блок для візуального розділення
             html += `<div class="rating-group">`;
             
-            // Сортування по спаданню 
             let sorted = groups[nom].sort((a, b) => {
                 let valA = parseFloat(String(a.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
                 let valB = parseFloat(String(b.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
@@ -1165,7 +1160,6 @@
                 let topClass = rank === 1 ? "top-1" : (rank === 2 ? "top-2" : (rank === 3 ? "top-3" : ""));
                 let rankDisplay = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : rank));
                 
-                // Виводимо номінацію точно як в таблиці (item.nomination)
                 html += `
                 <div class="rating-item ${topClass}">
                     <div class="rating-rank">${rankDisplay}</div>
@@ -1633,7 +1627,7 @@
         const servicesNames = item.service ? String(item.service).split('|').map(s => s.trim()).filter(s => s) : [];
         
         const dataForSort = servicesNames.map(name => {
-            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, name) : "";
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
             const brandMatch = name.match(brandRegex); const brand = exactBrand || (brandMatch ? brandMatch[1] : "");
             let title = name.replace(/^\[(.*?)\]\s*/, "").trim(); let nameClean = normalizeServiceName(name); let isFocus = false;
             
@@ -2198,7 +2192,7 @@
                         } else {
                             let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
                             if (cleanCost === '') priceText = rawCost;
-                            else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
+                            else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA) + " ₴"; }
                         }
                     }
                     let cls = 'brand-settings'; let uName = String(m.service).toUpperCase();
