@@ -74,8 +74,6 @@
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
         }
 
-        button, input, select, textarea { font-family: inherit; }
-
         /* ЗАВАНТАЖУВАЧ */
         .app-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -114,7 +112,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ ТА SVG ІКОНКИ */
+        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ */
         .bottom-nav {
             position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
             background: var(--nav-bg); border-top: 0.5px solid rgba(0,0,0,0.1);
@@ -127,21 +125,27 @@
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 4px; flex: 1; height: 100%; background: transparent; border: none; outline: none;
-            color: var(--text-muted); cursor: pointer; transition: color 0.2s; font-family: inherit;
+            color: var(--text-muted); cursor: pointer; transition: color 0.2s;
         }
         
+        /* НОВІ ІКОНКИ НАВІГАЦІЇ ЧЕРЕЗ CSS MASK */
         .nav-icon {
             width: 24px; height: 24px;
-            background-color: var(--text-muted);
-            -webkit-mask-size: contain; -webkit-mask-position: center; -webkit-mask-repeat: no-repeat;
-            mask-size: contain; mask-position: center; mask-repeat: no-repeat;
+            background-color: currentColor;
+            -webkit-mask-size: contain; mask-size: contain;
+            -webkit-mask-position: center; mask-position: center;
+            -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
             transition: 0.3s;
         }
+        .icon-search { -webkit-mask-image: url('search.svg'); mask-image: url('search.svg'); }
+        .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
+        .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); }
+        .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
         .nav-item span { font-size: 10px; font-weight: 600; transition: 0.3s; }
         
         .nav-item.active { color: var(--primary); }
-        .nav-item.active .nav-icon { background-color: var(--primary); transform: translateY(-2px) scale(1.15); }
+        .nav-item.active .nav-icon { transform: translateY(-2px) scale(1.15); }
         .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
@@ -160,14 +164,12 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        /* КНОПКА СБРОСА ПОИСКА */
         .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
-        /* КНОПКИ */
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
-            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit;
+            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:active { opacity: 0.8; transform: scale(0.98); }
@@ -175,30 +177,28 @@
         .compare-toggle-btn {
             background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
             padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; 
-            cursor: pointer; transition: 0.2s; display: none; align-items: center; gap: 6px; font-family: inherit;
+            cursor: pointer; transition: 0.2s; display: none; align-items: center; gap: 6px;
         }
         .compare-toggle-btn.active { background: var(--primary); color: white; }
 
-        /* СПИСКИ ТА ГРУПИ */
         .list-group {
             background: var(--card-bg); border-radius: 16px; overflow: hidden; margin-bottom: 24px;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border); display: flex; flex-direction: column;
         }
         .list-item {
             padding: 16px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text-main);
-            background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s; font-family: inherit;
+            background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
         }
         .list-item:last-child { border-bottom: none; }
         .list-item:active { background: var(--input-bg); }
         
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
         .list-item-title { font-size: 16px; font-weight: 600; line-height: 1.3;}
-        .list-item-subtitle { font-size: 12px; color: var(--text-muted); }
+        .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
         .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
-        .list-item-arrow { color: var(--text-muted); font-weight: bold; display: flex; align-items: center; justify-content: center; margin-left: 6px;}
+        .list-item-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px;}
 
-        /* ПЕРЕМИКАЧ */
         .toggle-switch {
             width: 50px; height: 30px; background: var(--border); border-radius: 30px;
             position: relative; cursor: pointer; transition: 0.3s; border: none; flex-shrink: 0;
@@ -210,7 +210,6 @@
         }
         .toggle-switch.active .toggle-knob { transform: translateX(20px); }
 
-        /* КАРТКИ СЕРВІСІВ ТА ІНФО */
         .service-card {
             background: var(--card-bg); border-radius: 16px; padding: 16px; margin-bottom: 12px;
             border: 1px solid var(--border); position: relative; overflow: hidden; cursor: pointer; transition: 0.2s; text-align: left;
@@ -235,13 +234,11 @@
         .brand-settings { background: var(--input-bg); color: var(--text-muted); }
         .brand-other { background: var(--input-bg); color: var(--text-muted); }
 
-        /* АВТОКОМПЛІТ */
         .suggestions { position: absolute; top: calc(100% + 4px); left: 0; width: 100%; background: var(--card-bg); border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 100; max-height: 250px; overflow-y: auto; border: 1px solid var(--border); display: none; text-align: left;}
         .sugg-item { padding: 14px 16px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 8px;}
         .sugg-item:last-child { border-bottom: none; }
         .sugg-item:active { background: var(--input-bg); }
 
-        /* МОДАЛЬНІ ВІКНА */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch;}
         .modal.show { display: flex; opacity: 1; }
         .modal-content { 
@@ -260,7 +257,6 @@
         
         .modal-body { overflow-y: auto; flex: 1; padding-bottom: 20px; text-align: left; -webkit-overflow-scrolling: touch;}
         
-        /* ТЕХНІЧНА ДОВІДКА */
         .tech-info-block { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; padding: 4px; }
         .tech-row { display: flex; align-items: center; gap: 14px; padding: 12px 16px; border-bottom: 1px solid var(--border); }
         .tech-row:last-child { border-bottom: none; }
@@ -270,7 +266,6 @@
         .tech-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px;}
         .tech-val { font-size: 14px; font-weight: 600; color: var(--text-main); line-height: 1.4;}
 
-        /* ФОТОГАЛЕРЕЯ ДОВІДКИ */
         .tech-photo-wrapper { display: flex; align-items: center; gap: 14px; margin-top: 16px; background: var(--input-bg); padding: 16px; border-radius: 16px; border: 1px solid var(--border); cursor: pointer; transition: 0.2s; }
         .tech-photo-wrapper:active { transform: scale(0.97); background: var(--border); }
         .photo-icon { font-size: 26px; flex-shrink: 0;}
@@ -279,7 +274,6 @@
         .photo-subtitle { font-size: 12px; font-weight: 600; color: var(--primary); }
         .photo-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px; }
 
-        /* ПОРІВНЯННЯ */
         .compare-bar { 
             position: fixed; bottom: var(--nav-height); left: 0; width: 100%; 
             background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; 
@@ -296,7 +290,6 @@
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        /* ОПИС СЕРВІСІВ */
         .desc-toggle-wrapper {
             display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
         }
@@ -316,43 +309,44 @@
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
-        /* РЕЗЕРВИ */
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
         
-        /* РЕЙТИНГ ПРОДАВЦІВ */
-        .rating-item { display: flex; justify-content: space-between; align-items: center; padding: 16px; border-bottom: 1px solid var(--border); }
-        .rating-item:last-child { border-bottom: none; }
-        .rating-rank { font-size: 16px; font-weight: 800; width: 35px; color: var(--text-muted); text-align: center; }
-        .rating-info { flex: 1; display: flex; flex-direction: column; gap: 4px; padding-right: 10px;}
-        .rating-name { font-weight: 700; font-size: 15px; color: var(--text-main); line-height: 1.2;}
-        .rating-desc { font-size: 12px; color: var(--text-muted); line-height: 1.2;}
-        .rating-score { font-weight: 800; font-size: 16px; color: var(--primary); white-space: nowrap;}
-        .rank-1 .rating-rank { color: #fbbf24; font-size: 26px; }
-        .rank-2 .rating-rank { color: #9ca3af; font-size: 22px; }
-        .rank-3 .rating-rank { color: #b45309; font-size: 20px; }
-
-        /* ІЄРАРХІЯ МОДАЛОК */
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
         #descModal { z-index: 100030; }
         #certManualModal { z-index: 100035; }
         #compareModal { z-index: 100040; }
+        #ratingModal { z-index: 100045; }
+        #guideModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
-        #ratingModal { z-index: 100070; }
         
-        /* ГАЛЕРЕЯ */
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
         .gallery-nav.next { right: 10px; }
         
-        /* КНОПКА ЗАЯВКИ СЯЙВО (Використовується і для Зміни продавця) */
+        .pwa-guide-container { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--text-main); }
+        .pwa-alert { background: var(--input-bg); padding: 16px; border-left: 4px solid #0088cc; border-radius: 8px; margin-bottom: 16px; }
+        .pwa-alert-title { display: flex; align-items: center; font-size: 16px; font-weight: 600; color: #0088cc; margin-bottom: 8px; }
+        .pwa-alert-title svg { width: 20px; height: 20px; margin-right: 8px; fill: #0088cc; }
+        .pwa-alert-text { margin: 0; font-size: 14px; line-height: 1.5; color: var(--text-main); }
+        .pwa-device-section { padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 16px; background: var(--card-bg); }
+        .pwa-device-title { display: flex; align-items: center; font-size: 16px; font-weight: 700; margin-bottom: 12px; }
+        .pwa-device-title svg { margin-right: 10px; width: 22px; height: 22px; }
+        .pwa-instructions { margin: 0; padding-left: 20px; line-height: 1.5; font-size: 14px; color: var(--text-main); }
+        .pwa-icon-inline { display: inline-flex; align-items: center; justify-content: center; vertical-align: middle; background: var(--input-bg); border: 1px solid var(--border); border-radius: 6px; padding: 4px; margin: 0 4px; }
+        .pwa-icon-inline svg { width: 16px; height: 16px; }
+        .color-apple { fill: var(--text-main); }
+        .color-android { fill: #3DDC84; }
+        .color-safari-blue { stroke: #007AFF; }
+        .color-chrome-gray { fill: var(--text-muted); }
+
         .btn-submit-glow { 
             background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
-            color: white; border: none; font-weight: 800; width: 100%; padding: 20px; border-radius: 18px;
-            font-size: 1.3rem; margin-top: 25px; box-shadow: 0 10px 25px rgba(0, 198, 93, 0.35);
-            transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: inherit;
+            color: white; border: none; font-weight: 800; width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0, 198, 93, 0.35);
+            transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
         }
         .btn-submit-glow::before {
             content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -362,11 +356,16 @@
         @keyframes shine { 0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; } }
         .btn-submit-glow:active { transform: scale(0.96); }
 
-        /* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
+        #sellerStatusOverlay {
+            display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
+            border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
+        }
+
         .cert-manual-wrapper {
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #334155; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 12px;
-            background-color: #f8fafc; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            color: #334155; line-height: 1.4; max-width: 800px;
+            margin: 0 auto; padding: 12px; background-color: #f8fafc;
+            border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
             text-align: left; font-size: 12px;
         }
         .cert-header { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 0; font-size: 15px; font-weight: 700; }
@@ -377,12 +376,37 @@
         .cert-example h3 { margin-top: 0; color: #0f172a; font-size: 13px; margin-bottom: 8px; }
         .cert-steps { margin: 10px 0 0 0; padding-left: 0; list-style-type: none; counter-reset: step-counter; }
         .cert-steps li { position: relative; padding-left: 32px; margin-bottom: 12px; font-size: 12px; }
-        .cert-steps li::before { content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3); }
+        .cert-steps li::before {
+            content: counter(step-counter); counter-increment: step-counter; position: absolute;
+            left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+        }
         .cert-highlight { font-weight: 600; color: #111827; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-size: 11px; white-space: nowrap; }
         .brace-highlight { position: relative; display: inline-block; padding-bottom: 6px; font-weight: 600; white-space: nowrap; }
-        .brace-highlight::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 8px; background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E"); background-size: 100% 100%; background-repeat: no-repeat; }
+        .brace-highlight::after {
+            content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 8px;
+            background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");
+            background-size: 100% 100%; background-repeat: no-repeat;
+        }
         
-        /* Адаптація сертифікату під темну тему */
+        .rating-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
+        }
+        .rating-item.top-1 { border-color: #fbbf24; background: rgba(251, 191, 36, 0.1); }
+        .rating-item.top-2 { border-color: #94a3b8; background: rgba(148, 163, 184, 0.1); }
+        .rating-item.top-3 { border-color: #b45309; background: rgba(180, 83, 9, 0.1); }
+        .rating-rank { font-size: 18px; font-weight: 800; width: 30px; text-align: center; }
+        .top-1 .rating-rank { color: #f59e0b; }
+        .top-2 .rating-rank { color: #64748b; }
+        .top-3 .rating-rank { color: #92400e; }
+        .rating-info { flex: 1; padding: 0 12px; }
+        .rating-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
+        .rating-desc { font-size: 12px; color: var(--text-muted); }
+        .rating-score { font-size: 16px; font-weight: 800; color: var(--primary); }
+
         [data-theme="dark"] .cert-manual-wrapper { background-color: var(--card-bg); color: var(--text-main); box-shadow: none; border: 1px solid var(--border); }
         [data-theme="dark"] .cert-header { color: var(--text-main); border-color: var(--border); }
         [data-theme="dark"] .cert-example { background-color: var(--input-bg); border-color: var(--border); }
@@ -390,14 +414,6 @@
         [data-theme="dark"] .cert-alert.warning { background-color: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #fcd34d; }
         [data-theme="dark"] .cert-alert.info { background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #6ee7b7; }
         [data-theme="dark"] .cert-highlight { background-color: var(--bg); color: var(--text-main); }
-
-        /* Стилі для форми зміни продавця (адаптація Bootstrap) */
-        .custom-form-label {
-            font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block; color: var(--text-main);
-        }
-        .custom-form-input {
-            border-radius: 14px; padding: 15px; border: 1.5px solid var(--border); background-color: var(--input-bg); color: var(--text-main); font-size: 1rem;
-        }
 
     </style>
 </head>
@@ -435,13 +451,13 @@
     <div id="tab-search" class="app-tab active">
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
-            <button type="button" id="clearAllBtn" class="clear-btn">×</button>
+            <button id="clearAllBtn" class="clear-btn">×</button>
             <div id="customSuggestions" class="suggestions"></div>
         </div>
 
         <div id="priceWrapper" class="input-group" style="display:none; gap:10px; flex-direction:row;">
             <input type="number" id="devicePrice" placeholder="Вартість техніки ₴" inputmode="numeric" style="flex:1; margin-bottom:0;">
-            <button type="button" class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
+            <button class="btn btn-primary" id="okBtn" style="width: auto; padding: 0 24px;">ОК</button>
         </div>
 
         <div id="result" style="display:none;">
@@ -452,7 +468,7 @@
             
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span style="font-weight:700; font-size:13px; text-transform:uppercase; color:var(--text-muted); letter-spacing: 0.5px;">Сервіси</span>
-                <button type="button" id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
+                <button id="toggleCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleCompareMode()">Порівняти</button>
             </div>
             
             <div id="serviceList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -469,23 +485,79 @@
     </div>
 
     <div id="tab-skillhub" class="app-tab">
-        <div class="list-group" style="margin-bottom: 12px;">
-            <a href="https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0" target="_blank" class="list-item" style="text-decoration: none;">
-                <div style="font-size: 26px; margin-right: 14px; flex-shrink: 0; line-height: 1; display: flex; align-items: center; justify-content: center;">
-                    🌐
-                </div>
+        <div class="list-group">
+            <a href="#" target="_blank" class="list-item">
                 <div class="list-item-content">
-                    <span class="list-item-title">SkillHUB Portal</span>
-                    <span class="list-item-subtitle" style="font-size: 11px;">Перейти на сайт</span>
+                    <span class="list-item-title">🎓 Навчання сервісам</span>
+                    <span class="list-item-subtitle">Опис сервісів та механіка їх дії</span>
                 </div>
-                <div class="list-item-arrow" style="display:flex; align-items:center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
+                <div class="list-item-arrow">></div>
             </a>
+            
+            <a href="#" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">💬 Як продавати сервіси</span>
+                    <span class="list-item-subtitle">Як запропонувати, обробити заперечення і продати</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </a>
+            
+            <a href="#" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">⚙️ Налаштування техніки</span>
+                    <span class="list-item-subtitle">Інструкції по налаштуванню техніки</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </a>
+            
+            <button class="list-item" onclick="window.openSellerModal()">
+                <div class="list-item-content">
+                    <span class="list-item-title">🔂 Заміна продавця</span>
+                    <span class="list-item-subtitle">Форма для заповнення зміни продавця</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
+            
+            <a href="#" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">📋 Загальні інструкції</span>
+                    <span class="list-item-subtitle">Користування базою, ОЧ та інше</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </a>
+            
+            <a href="#" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">♻️ Прийом пристроїв до Trade In</span>
+                    <span class="list-item-subtitle">Як правильно прийняти пристрій від початку до кінця</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </a>
+            
+            <a href="#" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">❓ Перевірка знань</span>
+                    <span class="list-item-subtitle">Просте тестування</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </a>
+
+            <button class="list-item" onclick="window.openModalBase('certManualModal')">
+                <div class="list-item-content">
+                    <span class="list-item-title">🧩 Об'єднання сертифікатів</span>
+                    <span class="list-item-subtitle">Коли немає на залишку або потрібна знижка</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
+            
+            <button class="list-item" onclick="window.openRatingModal()">
+                <div class="list-item-content">
+                    <span class="list-item-title">🏆 Рейтинг продавців</span>
+                    <span class="list-item-subtitle">Тут лише найкращі</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
         </div>
-        
-        <div id="skillhubList" class="list-group">
-            </div>
     </div>
 
     <div id="tab-settings" class="app-tab">
@@ -495,7 +567,7 @@
                     <span class="list-item-title">Темна тема</span>
                     <span class="list-item-subtitle">Змінити оформлення додатку</span>
                 </div>
-                <button type="button" id="themeToggle" class="toggle-switch">
+                <button id="themeToggle" class="toggle-switch">
                     <div class="toggle-knob"></div>
                 </button>
             </div>
@@ -510,7 +582,7 @@
         </div>
 
         <div class="list-group">
-            <button type="button" class="list-item" id="forceUpdateBtn">
+            <button class="list-item" id="forceUpdateBtn">
                 <div class="list-item-content">
                     <span class="list-item-title">🔄 Оновити базу даних</span>
                     <span class="list-item-subtitle">Очистити кеш та завантажити свіжі дані</span>
@@ -519,15 +591,30 @@
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
                 </div>
             </button>
+            
+            <button class="list-item" onclick="window.openModalBase('guideModal')">
+                <div class="list-item-content">
+                    <span class="list-item-title">📲 Як встановити додаток</span>
+                    <span class="list-item-subtitle">Покрокова інструкція</span>
+                </div>
+                <div class="list-item-arrow">></div>
+            </button>
 
-            <a href="https://forms.gle/aSYSoVy1ew3voSih7" target="_blank" class="list-item" style="text-decoration: none;">
+            <a href="https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0" target="_blank" class="list-item">
+                <div class="list-item-content">
+                    <span class="list-item-title">🌐 SkillHUB</span>
+                    <span class="list-item-subtitle">Перейти на портал</span>
+                </div>
+                <div style="display: flex; align-items: center; flex-shrink: 0; margin-left: 10px;">
+                    <img src="Logo v3.png" alt="Skillhub Logo" style="height: 34px; width: auto; border-radius: 6px; display: block; object-fit: contain;">
+                </div>
+            </a>
+            <a href="https://forms.gle/aSYSoVy1ew3voSih7" target="_blank" class="list-item">
                 <div class="list-item-content">
                     <span class="list-item-title">💬 Зворотній зв'язок</span>
                     <span class="list-item-subtitle">Надіслати відгук, зауваження або оцінити додаток</span>
                 </div>
-                <div class="list-item-arrow" style="display:flex; align-items:center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
+                <div class="list-item-arrow">></div>
             </a>
         </div>
 
@@ -539,55 +626,44 @@
 </div>
 
 <nav class="bottom-nav">
-    <button type="button" class="nav-item active" onclick="window.switchTab('tab-search')">
-        <div class="nav-icon" style="-webkit-mask-image: url('search.svg'); mask-image: url('search.svg');"></div>
+    <button class="nav-item active" onclick="window.switchTab('tab-search')">
+        <div class="nav-icon icon-search"></div>
         <span>Пошук</span>
     </button>
-    <button type="button" class="nav-item" onclick="window.switchTab('tab-reserves')">
-        <div class="nav-icon" style="-webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg');"></div>
+    <button class="nav-item" onclick="window.switchTab('tab-reserves')">
+        <div class="nav-icon icon-rezerv"></div>
         <span>Резерви</span>
     </button>
-    <button type="button" class="nav-item" onclick="window.switchTab('tab-skillhub')">
-        <div class="nav-icon" style="-webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg');"></div>
+    <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
+        <div class="nav-icon icon-bulb"></div>
         <span>SkillHUB</span>
     </button>
-    <button type="button" class="nav-item" onclick="window.switchTab('tab-settings')">
-        <div class="nav-icon" style="-webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg');"></div>
+    <button class="nav-item" onclick="window.switchTab('tab-settings')">
+        <div class="nav-icon icon-settings"></div>
         <span>Опції</span>
     </button>
 </nav>
 
 <div id="compareBar" class="compare-bar">
     <div style="font-weight:600; font-size: 15px; color: var(--text-main);" id="compareStatusText">Оберіть 2 сервіси</div>
-    <button type="button" class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px; border-radius: 12px;">Порівняти</button>
+    <button class="btn btn-primary" id="compareExecuteBtn" onclick="window.handleExecuteCompare()" style="width:auto; padding: 10px 20px; border-radius: 12px;">Порівняти</button>
 </div>
 
 <div class="floating-top" id="scrollTopBtn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
-<div id="ratingModal" class="modal">
-    <div class="modal-content" style="max-height: 85vh;">
-        <div class="modal-header">
-            <div class="modal-title">🏆 Рейтинг продавців</div>
-            <button type="button" class="modal-close" onclick="window.closeModalBase('ratingModal')">✕</button>
-        </div>
-        <div id="ratingList" class="modal-body" style="padding: 0;">
-            </div>
-    </div>
-</div>
-
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items:flex-start;">
             <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3;"></div>
-            <button type="button" class="modal-close" onclick="window.closeModalBase('rezervItemModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')">✕</button>
         </div>
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
                 <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
-                <button type="button" id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
+                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
             <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
         </div>
@@ -598,10 +674,10 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" id="modalTitle">Опис</div>
-            <button type="button" class="modal-close" onclick="window.closeModalBase('descModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('descModal')">✕</button>
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
-        <button type="button" class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
     </div>
 </div>
 
@@ -609,7 +685,7 @@
     <div class="modal-content" style="max-height: 90vh;">
         <div class="modal-header">
             <div class="modal-title">Довідка</div>
-            <button type="button" class="modal-close" onclick="window.closeModalBase('certManualModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('certManualModal')">✕</button>
         </div>
         <div class="modal-body">
             <div class="cert-manual-wrapper">
@@ -638,14 +714,92 @@
     </div>
 </div>
 
+<div id="ratingModal" class="modal">
+    <div class="modal-content" style="max-height: 85vh;">
+        <div class="modal-header">
+            <div class="modal-title">🏆 Рейтинг продавців</div>
+            <button class="modal-close" onclick="window.closeModalBase('ratingModal')">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="rating-list">
+                <div class="rating-item top-1">
+                    <div class="rating-rank">🥇</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Куць Сергій</div>
+                        <div class="rating-desc">Найбільший обіг #8</div>
+                    </div>
+                    <div class="rating-score">89 999 ₴</div>
+                </div>
+                <div class="rating-item top-2">
+                    <div class="rating-rank">🥈</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Пономаренко Олександра</div>
+                        <div class="rating-desc">Найбільший обіг #7</div>
+                    </div>
+                    <div class="rating-score">79 999 ₴</div>
+                </div>
+                <div class="rating-item top-3">
+                    <div class="rating-rank">🥉</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Чорний Олексій</div>
+                        <div class="rating-desc">Найбільший обіг #6</div>
+                    </div>
+                    <div class="rating-score">69 999 ₴</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-rank">4</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Риндін Артем</div>
+                        <div class="rating-desc">Найбільший обіг #5</div>
+                    </div>
+                    <div class="rating-score">59 999 ₴</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-rank">5</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Черкашин Владислав</div>
+                        <div class="rating-desc">Найбільший обіг #4</div>
+                    </div>
+                    <div class="rating-score">49 999 ₴</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-rank">6</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Жигарев Максим</div>
+                        <div class="rating-desc">Найбільший обіг #3</div>
+                    </div>
+                    <div class="rating-score">39 999 ₴</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-rank">7</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Суслова Поліна</div>
+                        <div class="rating-desc">Найбільший обіг #2</div>
+                    </div>
+                    <div class="rating-score">29 999 ₴</div>
+                </div>
+                <div class="rating-item">
+                    <div class="rating-rank">8</div>
+                    <div class="rating-info">
+                        <div class="rating-name">Лагун Аліна</div>
+                        <div class="rating-desc">Найбільший обіг #1</div>
+                    </div>
+                    <div class="rating-score">19 999 ₴</div>
+                </div>
+            </div>
+        </div>
+        <button class="btn btn-primary" style="margin-top: 10px;" onclick="window.closeModalBase('ratingModal')">Супер!</button>
+    </div>
+</div>
+
 <div id="compareModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">Результат порівняння</div>
-            <button type="button" class="modal-close" onclick="window.closeCompareModal()">✕</button>
+            <button class="modal-close" onclick="window.closeCompareModal()">✕</button>
         </div>
         <div id="compareModalBody" class="modal-body"></div>
-        <button type="button" class="btn btn-primary" onclick="window.closeCompareModal()">Закрити</button>
+        <button class="btn btn-primary" onclick="window.closeCompareModal()">Закрити</button>
     </div>
 </div>
 
@@ -653,51 +807,98 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" style="color: var(--text-main);">Зміна продавця</div>
-            <button type="button" class="modal-close" onclick="window.closeModalBase('sellerModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('sellerModal')">✕</button>
         </div>
         <div class="modal-body">
-            <form id="sellerForm">
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label class="custom-form-label">Магазин</label>
-                    <select id="store" name="store" class="custom-form-input" required>
+            <form id="sellerFormSubmit">
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Магазин</span>
+                    <select id="sellerStore" name="store" required>
                         <option value="" disabled selected>Завантаження списку...</option>
                     </select>
                 </div>
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label class="custom-form-label">Ваше ПІБ</label>
-                    <input type="text" id="fio" name="fio" class="custom-form-input" placeholder="Прізвище Ім'я" required>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Ваше ПІБ</span>
+                    <input type="text" id="sellerFio" name="fio" placeholder="Прізвище Ім'я" required>
                 </div>
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label class="custom-form-label">Номер рахунку</label>
-                    <input type="text" id="bill" name="bill" class="custom-form-input" placeholder="РО3________" required>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Номер рахунку</span>
+                    <input type="text" id="sellerBill" name="bill" placeholder="РО3________" required>
                 </div>
-                <div class="input-group" style="margin-bottom: 20px;">
-                    <label class="custom-form-label">Причина зміни</label>
-                    <select id="reason" name="reason" class="custom-form-input" required>
+                <div class="input-group">
+                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Причина зміни</span>
+                    <select id="sellerReason" name="reason" required>
                         <option value="" disabled selected>Завантаження причин...</option>
                     </select>
                 </div>
-                <button type="submit" id="submitBtn" class="btn-submit-glow">ВІДПРАВИТИ</button>
+                <button type="submit" id="submitSellerBtn" class="btn-submit-glow">ВІДПРАВИТИ</button>
             </form>
-            
-            <div id="statusOverlay" style="display: none; text-align: center; padding: 45px 20px; background: var(--card-bg); border: 2px solid var(--rozetka-green-dark); border-radius: 28px; margin-top: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.07);">
-                <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
-                <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.3rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
-                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 12px; margin-bottom: 0;">Заявка обробляється протягом певного часу</p>
+            <div id="sellerStatusOverlay">
+                <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
+                <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.2rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
+                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0; line-height: 1.4;">Заявка прийнята, очікуйте на виконання 2-3 дні, а може швидше 😉</p>
             </div>
         </div>
+    </div>
+</div>
+
+<div id="guideModal" class="modal">
+    <div class="modal-content" style="max-height: 85vh; padding-bottom: 20px;">
+        <div class="modal-header">
+            <div class="modal-title">Встановлення PWA</div>
+            <button class="modal-close" onclick="window.closeModalBase('guideModal')">✕</button>
+        </div>
+        <div class="modal-body pwa-guide-container" style="overflow-y: auto; padding-right: 5px;">
+            <div class="pwa-alert">
+                <div class="pwa-alert-title">
+                    <svg viewBox="0 0 24 24"><path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+                    Відкрито у месенджері?
+                </div>
+                <div class="pwa-alert-text">
+                    Внутрішні браузери (Telegram, Viber, Instagram) не підтримують встановлення. Спочатку перейдіть у звичайний браузер:
+                    <ul>
+                        <li><strong>iOS (iPhone):</strong> Натисніть значок компаса <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="#007AFF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polygon points="16.24 7.76 14.12 14.12 7.76 16.24 9.88 9.88 16.24 7.76"></polygon></svg></span> у правому нижньому куті екрана.</li>
+                        <li><strong>Android:</strong> Натисніть три крапки <span class="pwa-icon-inline"><svg class="color-chrome-gray" viewBox="0 0 24 24"><path d="M12 8c1.1 0-2 .9-2 2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"/></svg></span> у правому верхньому куті та виберіть <strong>«Відкрити у браузері»</strong>.</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="pwa-device-section">
+                <div class="pwa-device-title">
+                    <svg class="color-apple" viewBox="0 0 384 512"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                    Для iOS (Safari)
+                </div>
+                <ol class="pwa-instructions">
+                    <li>Відкрийте цей сайт у браузері <strong>Safari</strong>.</li>
+                    <li>Натисніть кнопку <strong>«Поділитися»</strong> <span class="pwa-icon-inline"><svg class="color-safari-blue" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"></path><polyline points="16 6 12 2 8 6"></polyline><line x1="12" y1="2" x2="12" y2="15"></line></svg></span> внизу екрана.</li>
+                    <li>Виберіть <strong>"На початковий екран"</strong> <span class="pwa-icon-inline"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4" ry="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg></span>.</li>
+                </ol>
+            </div>
+            
+            <div class="pwa-device-section">
+                <div class="pwa-device-title" style="color: var(--primary);">
+                    <svg class="color-android" viewBox="0 0 24 24"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.83.22l-1.88 3.24c-2.86-1.21-6.08-1.21-8.94 0L5.65 5.67c-.19-.28-.56-.38-.85-.22-.31.16-.42.54-.26.85l1.84 3.18C2.7 11.41 0 15.65 0 20.6h24c0-4.95-2.7-9.19-6.4-11.12zM8.5 16.5c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zm7 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                    Для Android (Chrome)
+                </div>
+                <ol class="pwa-instructions">
+                    <li>Натисніть меню (три крапки в правому верхньому куті)</li>
+                    <li>Виберіть <strong>"Додати на головний екран"</strong></li>
+                </ol>
+            </div>
+        </div>
+        <button class="btn btn-primary" onclick="window.closeModalBase('guideModal')">ОК</button>
     </div>
 </div>
 
 <div id="galleryModal" class="modal" style="background: rgba(0,0,0,0.9); z-index: 100060;">
     <div class="modal-content" style="background:transparent; box-shadow:none; padding:0; height:100%; justify-content:center; align-items:center;">
         <div style="position:absolute; top:20px; right:20px; z-index:1000000;">
-            <button type="button" class="modal-close" onclick="window.closeGallery()" style="background:rgba(255,255,255,0.2); color:white;">✕</button>
+            <button class="modal-close" onclick="window.closeGallery()" style="background:rgba(255,255,255,0.2); color:white;">✕</button>
         </div>
         <div class="gallery-content" id="galleryContent" style="display:flex; justify-content:center; align-items:center; height:100%; width:100%; position:relative;">
-            <button type="button" class="gallery-nav prev" onclick="event.stopPropagation(); window.changePhoto(-1)">❮</button>
+            <button class="gallery-nav prev" onclick="event.stopPropagation(); window.changePhoto(-1)">❮</button>
             <img id="galleryImage" src="" alt="Фото" style="max-width:100%; max-height:80vh; object-fit:contain; border-radius:12px;">
-            <button type="button" class="gallery-nav next" onclick="event.stopPropagation(); window.changePhoto(1)">❯</button>
+            <button class="gallery-nav next" onclick="event.stopPropagation(); window.changePhoto(1)">❯</button>
         </div>
         <div id="galleryCounter" style="position:absolute; bottom:40px; color:white; font-weight:bold; background:rgba(0,0,0,0.5); padding:6px 16px; border-radius:20px;">1 / 3</div>
     </div>
@@ -712,13 +913,11 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzFPsjAEHKGRBBsXc9EdfKrm9yoOI1TGwgbhFUENNpAAffrAvwHVRyxdTaUTTL8uRI2nQ/exec';
-    
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxXzEf4hK_RANMTiEWLTQWbBW9anmrYc44dDDM685aNtouqSlu7Wnrj2MmQ7Hub7U8pWw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    // Додано ratingData до початкового стану БД
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], ratingData: [] };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -789,7 +988,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], ratingData: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -800,8 +999,6 @@
         data.rezervyData = data.rezervyData || [];
         data.serviceBrands = data.serviceBrands || {};
         data.trainingData = data.trainingData || [];
-        data.skillHubButtons = data.skillHubButtons || [];
-        data.ratingData = data.ratingData || [];
         return data;
     }
 
@@ -848,7 +1045,10 @@
         document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
         
         document.getElementById(tabId).classList.add('active');
-        if (event) event.currentTarget.classList.add('active');
+        
+        // Надійне виділення активної кнопки в меню
+        let activeNavBtn = document.querySelector(`.nav-item[onclick*="${tabId}"]`);
+        if (activeNavBtn) activeNavBtn.classList.add('active');
 
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
         document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
@@ -859,82 +1059,9 @@
         if (compareBar) compareBar.classList.remove('show');
         
         if (tabId === 'tab-reserves') window.renderRezervyList();
-        if (tabId === 'tab-skillhub') window.renderSkillHubTab();
         
         window.scrollTo(0, 0);
     }
-
-    window.renderSkillHubTab = function() {
-        const listContainer = document.getElementById('skillhubList');
-        if (!db.skillHubButtons || db.skillHubButtons.length === 0) {
-            listContainer.innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Дані завантажуються або відсутні...</div>';
-            return;
-        }
-
-        listContainer.innerHTML = db.skillHubButtons.map(btn => {
-            let clickAction = `window.open('${window.escapeForJS(btn.link)}', '_blank')`;
-            let nameLower = String(btn.name).toLowerCase();
-            
-            if (nameLower.includes("зміна продавця") || nameLower.includes("заміна продавця")) {
-                clickAction = "window.openSellerModal()";
-            } else if (nameLower.includes("об'єднання сертифікатів") || nameLower.includes("обєднання сертифікатів") || nameLower.includes("объединение")) {
-                clickAction = "window.openModalBase('certManualModal')";
-            } else if (nameLower.includes("рейтинг продавців") || nameLower.includes("рейтинг")) {
-                clickAction = "window.openRatingModal()";
-            }
-
-            return `
-            <button type="button" class="list-item" onclick="${clickAction}; return false;">
-                <div style="font-size: 26px; margin-right: 14px; flex-shrink: 0; line-height: 1; display: flex; align-items: center; justify-content: center;">
-                    ${window.escapeHTML(btn.emoji || '🔹')}
-                </div>
-                <div class="list-item-content">
-                    <span class="list-item-title">${window.escapeHTML(btn.name)}</span>
-                    <span class="list-item-subtitle" style="font-size: 11px;">${window.escapeHTML(btn.desc)}</span>
-                </div>
-                <div class="list-item-arrow" style="display:flex; align-items:center;">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
-            </button>`;
-        }).join('');
-    };
-
-    // Динамічний рендер рейтингу
-    window.renderRatingModal = function() {
-        const listEl = document.getElementById('ratingList');
-        if (!db.ratingData || db.ratingData.length === 0) {
-            listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">Дані рейтингу оновлюються або відсутні...</div>';
-            return;
-        }
-
-        let html = '<div class="list-group" style="margin-bottom: 0; border: none; border-radius: 0;">';
-        db.ratingData.forEach((item, index) => {
-            let rank = index + 1;
-            let rankClass = '';
-            let rankDisplay = rank;
-            
-            if (rank === 1) { rankClass = 'rank-1'; rankDisplay = '🥇'; }
-            else if (rank === 2) { rankClass = 'rank-2'; rankDisplay = '🥈'; }
-            else if (rank === 3) { rankClass = 'rank-3'; rankDisplay = '🥉'; }
-
-            html += `
-            <div class="rating-item ${rankClass}">
-                <div class="rating-rank">${rankDisplay}</div>
-                <div class="rating-info">
-                    <span class="rating-name">${window.escapeHTML(item.name || 'Невідомо')}</span>
-                    <span class="rating-desc">${window.escapeHTML(item.desc || '')}</span>
-                </div>
-                <div class="rating-score">${window.escapeHTML(item.score || '')}</div>
-            </div>`;
-        });
-        html += '</div>';
-        listEl.innerHTML = html;
-    };
-
-    window.openRatingModal = function() {
-        window.renderRatingModal();
-        window.openModalBase('ratingModal');
-    };
 
     window.openModalBase = function(modalId, name = "", code = "") {
         try {
@@ -962,7 +1089,7 @@
         if (!checkOpenModals()) {
             document.body.classList.remove('modal-open');
             document.body.style.top = '';
-            window.scrollTo(0, savedScrollY); 
+            window.scrollTo(0, savedScrollY);
         }
         
         if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal') {
@@ -982,8 +1109,12 @@
         }
     }
 
+    window.openRatingModal = function() {
+        window.openModalBase('ratingModal');
+    }
+
     function checkOpenModals() {
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal'];
+        const modals = ['guideModal', 'descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1119,9 +1250,10 @@
             let newDb = JSON.parse(dataStr);
             if (newDb.error) throw new Error(newDb.error);
             
-            let savedVersion = null;
+            let savedVersion = null; let guideSeen = null;
             try {
                 savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
+                guideSeen = localStorage.getItem('skillhub_guide_flat');
                 localStorage.setItem(CACHE_KEY, dataStr);
             } catch (e) {}
             
@@ -1130,15 +1262,14 @@
             setAppStatus('ok', 'Дані актуальні');
             
             setTimeout(() => {
-                if (db.appVersion && savedVersion !== db.appVersion) {
+                if (!guideSeen) {
+                    window.openModalBase('guideModal');
+                    try { localStorage.setItem('skillhub_guide_flat', 'true'); if (db.appVersion) localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e) {}
+                } else if (db.appVersion && savedVersion !== db.appVersion) {
                     if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
                     try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
                 }
                 enableUI(); window.populateFilters();
-                
-                if (document.getElementById('tab-skillhub').classList.contains('active')) {
-                    window.renderSkillHubTab();
-                }
             }, 400); 
             
         } catch (e) { 
@@ -1153,7 +1284,7 @@
                 if (first) {
                     document.getElementById('loaderSpinner').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'none';
-                    document.getElementById('mainLoaderText').innerHTML = "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button type='button' onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>";
+                    document.getElementById('mainLoaderText').innerHTML = "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>";
                 }
             }
         }
@@ -1275,7 +1406,7 @@
         if (currentPhotoIndex < 0) currentPhotoIndex = currentPhotos.length - 1;
         if (currentPhotoIndex >= currentPhotos.length) currentPhotoIndex = 0;
         updateGalleryImage();
-    }
+    };
 
     function updateGalleryImage() {
         document.getElementById('galleryImage').src = getDirectImageUrl(currentPhotos[currentPhotoIndex].trim()); 
@@ -1283,7 +1414,6 @@
         document.querySelector('.gallery-nav.prev').style.display = currentPhotos.length > 1 ? 'block' : 'none';
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
-
 
     function renderRezervItemServices(item, p) {
         try {
@@ -2155,39 +2285,34 @@
     const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwEHnajgF9C4IvTN5jKMUOrYQybiQnrt5SBBmFFzC3SysV1EzvJoy-PtgFvWlvjGUuZFA/exec";
 
     window.openSellerModal = function() {
-        try {
-            window.openModalBase('sellerModal');
-            
-            // Завантажуємо дані лише якщо вони ще не завантажені
-            if(document.getElementById('store').options.length <= 1) {
-                const scriptTag = document.createElement('script');
-                scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
-                document.body.appendChild(scriptTag);
-            }
-            
-            // Скидаємо форму до початкового стану на випадок якщо її вже відправляли
-            document.getElementById('sellerForm').style.display = 'block';
-            document.getElementById('statusOverlay').style.display = 'none';
-            document.getElementById('submitBtn').disabled = false;
-            document.getElementById('submitBtn').innerText = 'ВІДПРАВИТИ';
-            document.getElementById('sellerForm').reset();
-        } catch (e) { console.error(e); }
+        window.openModalBase('sellerModal');
+        if(document.getElementById('sellerStore').options.length <= 1) {
+            const scriptTag = document.createElement('script');
+            scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
+            document.body.appendChild(scriptTag);
+        }
+        
+        document.getElementById('sellerFormSubmit').style.display = 'block';
+        document.getElementById('sellerStatusOverlay').style.display = 'none';
+        document.getElementById('submitSellerBtn').disabled = false;
+        document.getElementById('submitSellerBtn').innerText = 'ВІДПРАВИТИ';
+        document.getElementById('sellerFormSubmit').reset();
     }
 
     window.handleSellerResponse = function(data) {
-        const s = document.getElementById('store');
-        const r = document.getElementById('reason');
+        const s = document.getElementById('sellerStore');
+        const r = document.getElementById('sellerReason');
         s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
         r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
         data.stores.forEach(item => s.add(new Option(item, item)));
         data.reasons.forEach(item => r.add(new Option(item, item)));
     }
 
-    document.getElementById('sellerForm').onsubmit = function(e) {
+    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
         e.preventDefault();
-        const btn = document.getElementById('submitBtn');
-        const overlay = document.getElementById('statusOverlay');
-        const form = document.getElementById('sellerForm');
+        const btn = document.getElementById('submitSellerBtn');
+        const overlay = document.getElementById('sellerStatusOverlay');
+        const form = document.getElementById('sellerFormSubmit');
         
         btn.disabled = true;
         btn.innerText = 'НАДСИЛАЄМО...';
@@ -2209,6 +2334,10 @@
     };
 
     init();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
+    }
 </script>
 </body>
 </html>
