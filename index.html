@@ -128,6 +128,7 @@
             color: var(--text-muted); cursor: pointer; transition: color 0.2s;
         }
         
+        /* НОВІ ІКОНКИ НАВІГАЦІЇ ЧЕРЕЗ CSS MASK */
         .nav-icon {
             width: 24px; height: 24px;
             background-color: currentColor;
@@ -142,6 +143,7 @@
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
         .nav-item span { font-size: 10px; font-weight: 600; transition: 0.3s; }
+        
         .nav-item.active { color: var(--primary); }
         .nav-item.active .nav-icon { transform: translateY(-2px) scale(1.15); }
         .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
@@ -197,9 +199,9 @@
         .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
         .list-item-value { font-size: 16px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 8px; flex-shrink:0;}
         
-        /* СОВРЕМЕННЫЕ СТРЕЛОЧКИ ДЛЯ МЕНЮ */
+        /* СУЧАСНІ СТРІЛОЧКИ ДЛЯ МЕНЮ */
         .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; }
-        .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; }
+        .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
         .toggle-switch {
             width: 50px; height: 30px; background: var(--border); border-radius: 30px;
@@ -375,24 +377,26 @@
             background-size: 100% 100%; background-repeat: no-repeat;
         }
         
-        /* БЛЕДНЫЕ ЦВЕТА И СТРУКТУРА РЕЙТИНГА */
+        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
         .rating-item {
             display: flex; align-items: center;
             padding: 12px 16px; background: var(--card-bg);
             border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
         }
-        .rating-item.top-1 { border-color: #fbbf24; background: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
-        .rating-item.top-2 { border-color: #94a3b8; background: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
-        .rating-item.top-3 { border-color: #d97706; background: rgba(217, 119, 6, 0.1); border-left: 4px solid #d97706; }
-        .rating-rank { font-size: 20px; font-weight: 800; width: 35px; text-align: center; color: var(--text-muted); }
+        .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); }
+        .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); }
+        .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); }
+        
+        .rating-rank { font-size: 24px; font-weight: 800; width: 35px; text-align: center; color: var(--text-muted); }
         .top-1 .rating-rank { color: #d97706; }
         .top-2 .rating-rank { color: #64748b; }
         .top-3 .rating-rank { color: #b45309; }
-        .rating-info { flex: 1; display: flex; flex-direction: column; padding-left: 8px; gap: 4px; }
+        
+        .rating-info { flex: 1; display: flex; flex-direction: column; padding-left: 8px; gap: 2px; }
         .rating-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
         .rating-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
-        .rating-score { font-size: 16px; font-weight: 800; color: var(--primary); }
-        .rating-desc { font-size: 12px; font-weight: 600; color: var(--text-muted); }
+        .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
+        .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
         [data-theme="dark"] .cert-manual-wrapper { background-color: var(--card-bg); color: var(--text-main); box-shadow: none; border: 1px solid var(--border); }
         [data-theme="dark"] .cert-header { color: var(--text-main); border-color: var(--border); }
@@ -517,7 +521,7 @@
                     <span class="list-item-subtitle">Очистити кеш та завантажити свіжі дані</span>
                 </div>
                 <div class="list-item-arrow">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
                 </div>
             </button>
             
@@ -527,7 +531,7 @@
                     <span class="list-item-subtitle">Надіслати відгук, зауваження або оцінити додаток</span>
                 </div>
                 <div class="list-item-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </button>
         </div>
@@ -1025,13 +1029,16 @@
             }
 
             return `
-            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none;">
-                <div class="list-item-content">
-                    <span class="list-item-title">${btn.emoji} ${btn.name}</span>
+            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center;">
+                <div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; margin-right: 12px;">
+                    ${btn.emoji}
+                </div>
+                <div class="list-item-content" style="flex:1; text-align:left;">
+                    <span class="list-item-title">${btn.name}</span>
                     <span class="list-item-subtitle">${btn.desc}</span>
                 </div>
                 <div class="list-item-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </button>`;
         }).join('');
@@ -1049,20 +1056,22 @@
             return;
         }
 
-        // Групування по номінації (Колонка: Diskription 1)
+        // Групування по номінації, очищення назви від #
         let groups = {};
         db.sellerRatings.forEach(r => {
-            let nom = r.nomination || "Загальний рейтинг";
-            if (!groups[nom]) groups[nom] = [];
-            groups[nom].push(r);
+            let rawNom = r.nomination || "Загальний рейтинг";
+            let cleanNom = rawNom.replace(/\s*#\d+\s*$/, '').trim();
+            if (!groups[cleanNom]) groups[cleanNom] = [];
+            groups[cleanNom].push(r);
         });
 
         let html = "";
         for (let nom in groups) {
             
+            // Сортування по спаданню 
             let sorted = groups[nom].sort((a, b) => {
-                let valA = parseFloat(String(a.result).replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
-                let valB = parseFloat(String(b.result).replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+                let valA = parseFloat(String(a.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+                let valB = parseFloat(String(b.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
                 return valB - valA;
             });
 
@@ -1079,7 +1088,7 @@
                             <span class="rating-name">${item.name}</span>
                             <span class="rating-score">${item.result}</span>
                         </div>
-                        <div class="rating-desc">${nom} #${rank}</div>
+                        <div class="rating-desc">${nom}</div>
                     </div>
                 </div>`;
             });
