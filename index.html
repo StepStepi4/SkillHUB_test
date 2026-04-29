@@ -143,9 +143,10 @@
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 3px; 
             flex: 1; 
-            height: 100%;
+            height: 60px;
+            min-width: 64px;
             background: transparent; border: none; outline: none;
-            border-radius: 0;
+            border-radius: 16px; 
             color: var(--text-muted); cursor: pointer; 
             transition: all 0.3s ease;
             padding: 0;
@@ -156,9 +157,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 60px; /* USER: Трохи ширше */
-            height: 32px; /* Ідеальна висота для "пігулки" */
-            border-radius: 16px; /* Ідеально заокруглені краї (пігулка) */
+            width: 60px; 
+            height: 32px; 
+            border-radius: 16px; 
             background: transparent;
             transition: background 0.3s ease;
         }
@@ -171,7 +172,7 @@
         }
 
         .nav-icon {
-            width: 22px; height: 22px;
+            width: 28px; height: 28px; 
             background-color: currentColor;
             -webkit-mask-size: contain; mask-size: contain;
             -webkit-mask-position: center; mask-position: center;
@@ -285,6 +286,7 @@
         .sugg-item:last-child { border-bottom: none; }
         .sugg-item:active { background: var(--input-bg); }
 
+        /* МОДАЛЬНІ ВІКНА (МАКСИМАЛЬНА ПЛОЩА) */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch;}
         .modal.show { display: flex; opacity: 1; }
         .modal-content { 
@@ -301,6 +303,7 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
         .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
         
+        /* ПРЕМІАЛЬНА КНОПКА ЗАКРИТТЯ "Х" */
         .modal-close { 
             background: var(--card-bg); border: 1px solid var(--border); 
             width: 36px; height: 36px; border-radius: 50%; 
@@ -1087,8 +1090,8 @@
 
         let html = db.skillHubButtons.map(btn => {
             let actionStr = '';
-            let nm = String(btn.name).toLowerCase();
             let linkStr = String(btn.link).trim();
+            let nm = String(btn.name).toLowerCase();
             
             if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
@@ -1627,7 +1630,7 @@
         const servicesNames = item.service ? String(item.service).split('|').map(s => s.trim()).filter(s => s) : [];
         
         const dataForSort = servicesNames.map(name => {
-            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, origName) : "";
+            let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, name) : "";
             const brandMatch = name.match(brandRegex); const brand = exactBrand || (brandMatch ? brandMatch[1] : "");
             let title = name.replace(/^\[(.*?)\]\s*/, "").trim(); let nameClean = normalizeServiceName(name); let isFocus = false;
             
@@ -2192,7 +2195,7 @@
                         } else {
                             let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
                             if (cleanCost === '') priceText = rawCost;
-                            else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA) + " ₴"; }
+                            else { numCost = parseFloat(cleanCost); priceText = isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴"; }
                         }
                     }
                     let cls = 'brand-settings'; let uName = String(m.service).toUpperCase();
