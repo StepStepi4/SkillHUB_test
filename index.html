@@ -112,7 +112,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* ПЛАВАЮЧЕ МЕНЮ (Telegram Style) */
+        /* ПЛАВАЮЧЕ МЕНЮ (Точний Telegram / Material 3 Style) */
         .bottom-nav {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 16px); 
@@ -123,15 +123,15 @@
             height: var(--nav-height);
             background: var(--nav-bg); 
             border: 1px solid var(--border);
-            border-radius: 24px;
+            border-radius: 40px; /* Повністю круглі краї */
             backdrop-filter: blur(25px); 
             -webkit-backdrop-filter: blur(25px);
             display: flex; 
-            justify-content: space-between; 
+            justify-content: space-around; 
             align-items: center;
             z-index: 9990; 
             box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-            padding: 0 8px;
+            padding: 0 16px;
         }
         [data-theme="dark"] .bottom-nav { 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
@@ -141,15 +141,14 @@
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 3px; 
+            gap: 4px; 
             flex: 1; 
-            height: 60px;
-            min-width: 64px;
+            height: 100%;
             background: transparent; border: none; outline: none;
-            border-radius: 16px; 
             color: var(--text-muted); cursor: pointer; 
             transition: all 0.3s ease;
             padding: 0;
+            margin: 0;
         }
         
         .nav-icon-box {
@@ -157,22 +156,22 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            width: 60px; 
-            height: 32px; 
-            border-radius: 16px; 
+            width: 64px; /* Ідеальна ширина пігулки */
+            height: 32px; /* Ідеальна висота пігулки */
+            border-radius: 16px; /* Заокруглення пігулки */
             background: transparent;
-            transition: background 0.3s ease;
+            transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
         
         .nav-item.active .nav-icon-box {
             background: var(--primary-light);
         }
         [data-theme="dark"] .nav-item.active .nav-icon-box {
-            background: rgba(255, 255, 255, 0.12);
+            background: rgba(16, 185, 129, 0.2);
         }
 
         .nav-icon {
-            width: 28px; height: 28px; 
+            width: 24px; height: 24px; /* Повернуто гармонійний розмір іконки */
             background-color: currentColor;
             -webkit-mask-size: contain; mask-size: contain;
             -webkit-mask-position: center; mask-position: center;
@@ -185,11 +184,11 @@
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); }
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
-        .nav-item span { font-size: 11px; font-weight: 500; transition: 0.3s; margin-top: 2px; }
+        .nav-item span { font-size: 11px; font-weight: 600; transition: 0.3s; margin-top: 2px; }
         .nav-item.active { color: var(--text-main); }
         .nav-item.active .nav-icon { color: var(--rozetka-green-dark); }
         [data-theme="dark"] .nav-item.active .nav-icon { color: var(--primary); }
-        .nav-item.active span { font-weight: 700; transform: translateY(-1px); }
+        .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -1093,6 +1092,7 @@
             let linkStr = String(btn.link).trim();
             let nm = String(btn.name).toLowerCase();
             
+            // Якщо є маркер з таблиці
             if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
             } else if (linkStr === "%") {
