@@ -34,7 +34,7 @@
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.08);
             --modal-overlay: rgba(0, 0, 0, 0.5);
-            --nav-height: 80px;
+            --nav-height: 72px;
 
             --clr-support-bg: #fef9c3; --clr-support-text: #854d0e;
             --clr-ekta-bg: #dbeafe; --clr-ekta-text: #1e40af;
@@ -89,7 +89,7 @@
 
         .container { 
             position: relative; width: 100%; max-width: 480px; 
-            padding: 20px 16px; margin-bottom: calc(var(--nav-height) + 20px); 
+            padding: 20px 16px; margin-bottom: calc(var(--nav-height) + 40px); /* Збільшений відступ для плаваючого меню */
             display: flex; flex-direction: column;
         }
 
@@ -112,39 +112,78 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* НИЖНЯ ПАНЕЛЬ НАВІГАЦІЇ */
+        /* НОВЕ ПЛАВАЮЧЕ МЕНЮ (Telegram / iOS Pill Style) */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: var(--nav-height);
-            background: var(--nav-bg); border-top: 0.5px solid rgba(0,0,0,0.1);
-            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 9990; padding-bottom: env(safe-area-inset-bottom);
+            position: fixed; 
+            bottom: calc(env(safe-area-inset-bottom) + 16px); 
+            left: 50%; 
+            transform: translateX(-50%);
+            width: calc(100% - 32px); 
+            max-width: 420px;
+            height: var(--nav-height);
+            background: var(--nav-bg); 
+            border: 1px solid var(--border);
+            border-radius: 36px;
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px);
+            display: flex; 
+            justify-content: space-around; 
+            align-items: center;
+            z-index: 9990; 
+            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            padding: 0 8px;
         }
-        [data-theme="dark"] .bottom-nav { border-top: 0.5px solid rgba(255,255,255,0.15); }
+        [data-theme="dark"] .bottom-nav { 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+            background: rgba(28, 28, 30, 0.85);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; flex: 1; height: 100%; background: transparent; border: none; outline: none;
+            gap: 2px; flex: 1; height: 100%; background: transparent; border: none; outline: none;
             color: var(--text-muted); cursor: pointer; transition: color 0.2s;
         }
         
+        .nav-icon-box {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 52px;
+            height: 32px;
+            border-radius: 16px;
+            transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+        
+        .nav-item.active .nav-icon-box {
+            background: var(--primary-light);
+        }
+
+        [data-theme="dark"] .nav-item.active .nav-icon-box {
+            background: rgba(16, 185, 129, 0.2);
+        }
+        
         .nav-icon {
-            width: 24px; height: 24px;
+            width: 22px; height: 22px;
             background-color: currentColor;
             -webkit-mask-size: contain; mask-size: contain;
             -webkit-mask-position: center; mask-position: center;
             -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-            transition: 0.3s;
+            transition: 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
+
         .icon-search { -webkit-mask-image: url('search.svg'); mask-image: url('search.svg'); }
         .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); }
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
-        .nav-item span { font-size: 10px; font-weight: 600; transition: 0.3s; }
+        .nav-item span { font-size: 11px; font-weight: 600; transition: 0.3s; margin-top: 2px; }
+        
         .nav-item.active { color: var(--primary); }
-        .nav-item.active .nav-icon { transform: translateY(-2px) scale(1.15); }
-        .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
+        .nav-item.active .nav-icon { transform: scale(1.15); color: var(--rozetka-green-dark); }
+        [data-theme="dark"] .nav-item.active .nav-icon { color: var(--primary); }
+        .nav-item.active span { font-weight: 800; }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -249,7 +288,7 @@
             border-radius: 20px 20px 0 0; 
             padding: 20px 16px calc(env(safe-area-inset-bottom) + 20px) 16px; 
             display: flex; flex-direction: column; 
-            height: 96vh; max-height: 96vh; /* Максимальна площа */
+            height: 96vh; max-height: 96vh; 
             transform: translateY(100%); transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
             text-align: left; overscroll-behavior: contain;
         }
@@ -262,7 +301,7 @@
         .modal-close { 
             background: var(--card-bg); border: 1px solid var(--border); 
             width: 36px; height: 36px; border-radius: 50%; 
-            color: var(--text-muted); font-size: 0; /* Приховуємо старий текст ✕ */
+            color: var(--text-muted); font-size: 0; 
             display: flex; justify-content: center; align-items: center; 
             cursor: pointer; transition: 0.2s;
             box-shadow: 0 4px 12px rgba(0,0,0,0.06);
@@ -277,7 +316,7 @@
         .modal-close::before { transform: rotate(45deg); }
         .modal-close::after { transform: rotate(-45deg); }
         .modal-close:active { transform: scale(0.85); background: var(--input-bg); color: var(--danger) !important; border-color: rgba(239, 68, 68, 0.3); }
-
+        
         .modal-body { overflow-y: auto; flex: 1; padding-bottom: 20px; text-align: left; -webkit-overflow-scrolling: touch;}
         
         .tech-info-block { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); overflow: hidden; padding: 4px; }
@@ -298,7 +337,7 @@
         .photo-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px; }
 
         .compare-bar { 
-            position: fixed; bottom: var(--nav-height); left: 0; width: 100%; 
+            position: fixed; bottom: calc(var(--nav-height) + 26px); left: 0; width: 100%; 
             background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; 
             display: flex; justify-content: space-between; align-items: center; 
             transform: translateY(20px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9980;
@@ -328,7 +367,7 @@
         .desc-line:last-child { border-bottom: none; }
         .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
 
-        .floating-top { position: fixed; bottom: calc(var(--nav-height) + 16px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main); pointer-events: none;}
+        .floating-top { position: fixed; bottom: calc(var(--nav-height) + 30px); right: 16px; width: 44px; height: 44px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%; display: flex; justify-content: center; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.1); cursor: pointer; z-index: 9900; opacity: 0; transition: 0.3s; color: var(--text-main); pointer-events: none;}
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
@@ -584,19 +623,19 @@
 
 <nav class="bottom-nav">
     <button class="nav-item active" onclick="window.switchTab('tab-search')">
-        <div class="nav-icon icon-search"></div>
+        <div class="nav-icon-box"><div class="nav-icon icon-search"></div></div>
         <span>Пошук</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-reserves')">
-        <div class="nav-icon icon-rezerv"></div>
+        <div class="nav-icon-box"><div class="nav-icon icon-rezerv"></div></div>
         <span>Резерви</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
-        <div class="nav-icon icon-bulb"></div>
+        <div class="nav-icon-box"><div class="nav-icon icon-bulb"></div></div>
         <span>SkillHUB</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
-        <div class="nav-icon icon-settings"></div>
+        <div class="nav-icon-box"><div class="nav-icon icon-settings"></div></div>
         <span>Опції</span>
     </button>
 </nav>
@@ -614,7 +653,7 @@
     <div class="modal-content">
         <div class="modal-header" style="align-items:flex-start;">
             <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3;"></div>
-            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
         </div>
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
@@ -631,7 +670,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" id="modalTitle">Опис</div>
-            <button class="modal-close" onclick="window.closeModalBase('descModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
         <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
@@ -642,7 +681,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">Довідка</div>
-            <button class="modal-close" onclick="window.closeModalBase('certManualModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('certManualModal')"></button>
         </div>
         <div class="modal-body">
             <div class="cert-manual-wrapper">
@@ -675,7 +714,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">🏆 Рейтинг продавців</div>
-            <button class="modal-close" onclick="window.closeModalBase('ratingModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('ratingModal')"></button>
         </div>
         <div class="modal-body" id="ratingModalBody">
             </div>
@@ -687,7 +726,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title">Результат порівняння</div>
-            <button class="modal-close" onclick="window.closeCompareModal()">✕</button>
+            <button class="modal-close" onclick="window.closeCompareModal()"></button>
         </div>
         <div id="compareModalBody" class="modal-body"></div>
         <button class="btn btn-primary" onclick="window.closeCompareModal()">Закрити</button>
@@ -698,7 +737,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" style="color: var(--text-main);">Зміна продавця</div>
-            <button class="modal-close" onclick="window.closeModalBase('sellerModal')">✕</button>
+            <button class="modal-close" onclick="window.closeModalBase('sellerModal')"></button>
         </div>
         <div class="modal-body">
             <form id="sellerFormSubmit">
@@ -1056,14 +1095,25 @@
             let nm = String(btn.name).toLowerCase();
             let linkStr = String(btn.link).trim();
             
-            // Якщо є точний збіг "заміна продавця" в назві, або в посиланні вказано --, викликаємо внутрішню модалку
-            if (linkStr === "--" || nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
+            // Жорстка перевірка на внутрішні скрипти, якщо є --
+            if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
-            } else if (linkStr === "%" || nm.includes("рейтинг")) {
+            } else if (linkStr === "%") {
                 actionStr = `onclick="window.openRatingModal()"`;
-            } else if (linkStr === "@@" || nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
+            } else if (linkStr === "@@") {
                 actionStr = `onclick="window.openModalBase('certManualModal')"`;
-            } else if (linkStr !== "" && linkStr !== "#") {
+            } else if (linkStr === "" || linkStr === "#") {
+                // Якщо пусто, робимо фолбек по назві
+                if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
+                    actionStr = `onclick="window.openSellerModal()"`;
+                } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
+                    actionStr = `onclick="window.openModalBase('certManualModal')"`;
+                } else if (nm.includes("рейтинг")) {
+                    actionStr = `onclick="window.openRatingModal()"`;
+                } else {
+                    actionStr = ``;
+                }
+            } else {
                 actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
             }
 
@@ -1107,7 +1157,7 @@
         let html = "";
         for (let nom in groups) {
             
-            // Груповий блок для візуального розділення
+            // Груповий блок для візуального розділення (без заголовку)
             html += `<div class="rating-group">`;
             
             // Сортування по спаданню 
