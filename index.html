@@ -128,7 +128,6 @@
             color: var(--text-muted); cursor: pointer; transition: color 0.2s;
         }
         
-        /* НОВІ ІКОНКИ НАВІГАЦІЇ ЧЕРЕЗ CSS MASK */
         .nav-icon {
             width: 24px; height: 24px;
             background-color: currentColor;
@@ -143,7 +142,6 @@
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
         .nav-item span { font-size: 10px; font-weight: 600; transition: 0.3s; }
-        
         .nav-item.active { color: var(--primary); }
         .nav-item.active .nav-icon { transform: translateY(-2px) scale(1.15); }
         .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
@@ -191,7 +189,6 @@
             background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
             outline: none; font-family: inherit;
         }
-        /* Убираем нижнюю границу у последнего элемента */
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
         
@@ -378,39 +375,28 @@
             background-size: 100% 100%; background-repeat: no-repeat;
         }
         
-        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
-        .rating-group {
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
+        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ (Відновлена логіка) */
+        .rating-category-title {
+            font-size: 13px; font-weight: 800; color: var(--text-muted);
+            text-transform: uppercase; margin: 20px 0 10px 0; border-bottom: 1px solid var(--border); padding-bottom: 6px;
         }
-        [data-theme="dark"] .rating-group {
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .rating-group:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
-
         .rating-item {
-            display: flex; align-items: center;
+            display: flex; align-items: center; justify-content: space-between;
             padding: 12px 16px; background: var(--card-bg);
             border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
         }
-        .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); }
-        .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); }
-        .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); }
+        .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
+        .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
+        .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706; }
         
-        .rating-rank { font-size: 24px; font-weight: 800; width: 35px; text-align: center; color: var(--text-muted); }
+        .rating-rank { font-size: 20px; font-weight: 800; width: 35px; text-align: center; color: var(--text-muted); }
         .top-1 .rating-rank { color: #d97706; }
         .top-2 .rating-rank { color: #64748b; }
         .top-3 .rating-rank { color: #b45309; }
         
-        .rating-info { flex: 1; display: flex; flex-direction: column; padding-left: 8px; gap: 2px; }
-        .rating-header-row { display: flex; justify-content: space-between; align-items: center; width: 100%; }
+        .rating-info { flex: 1; padding: 0 12px; }
         .rating-name { font-size: 15px; font-weight: 700; color: var(--text-main); }
-        .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
+        .rating-score { font-size: 16px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
         [data-theme="dark"] .cert-manual-wrapper { background-color: var(--card-bg); color: var(--text-main); box-shadow: none; border: 1px solid var(--border); }
@@ -1036,12 +1022,13 @@
         let html = db.skillHubButtons.map(btn => {
             let actionStr = `onclick="window.open('${btn.link}', '_blank')"`;
             
-            // Жорстка перевірка на внутрішні скрипти, якщо є --
+            // Якщо в таблиці прочерк, пусте місце або решітка – відпрацьовуємо внутрішній скрипт
             if (btn.link === "--" || btn.link === "" || btn.link === "#") {
                 let nm = String(btn.name).toLowerCase();
-                if (nm.includes("заміна продавця") || nm.includes("заменить продавца") || nm.includes("заміна")) {
+                // Надійна перевірка на заміну продавця
+                if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц") || nm.includes("продавц")) {
                     actionStr = `onclick="window.openSellerModal()"`;
-                } else if (nm.includes("об'єднання") || nm.includes("объединение")) {
+                } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
                     actionStr = `onclick="window.openModalBase('certManualModal')"`;
                 } else if (nm.includes("рейтинг")) {
                     actionStr = `onclick="window.openRatingModal()"`;
@@ -1078,21 +1065,24 @@
             return;
         }
 
-        // Групування по номінації (використовуємо оригінальний рядок для групування)
+        // Групуємо безпосередньо по колонці номінації, щоб вивести її ТОЧНО як у таблиці
+        // Але для групування очищуємо від #1, #2 тощо, щоб вони не розбивались на окремі категорії
         let groups = {};
         db.sellerRatings.forEach(r => {
-            let nom = r.nomination || "Загальний рейтинг";
-            if (!groups[nom]) groups[nom] = [];
-            groups[nom].push(r);
+            let rawNom = r.nomination || "Загальний рейтинг";
+            let cleanNom = rawNom.replace(/\s*#\d+\s*$/, '').trim();
+            if (!groups[cleanNom]) groups[cleanNom] = [];
+            groups[cleanNom].push(r);
         });
 
         let html = "";
         for (let nom in groups) {
             
-            // Груповий блок для візуального розділення номінацій
+            // Груповий блок для візуального розділення
             html += `<div class="rating-group">`;
+            html += `<div class="rating-category-title">${nom}</div>`;
             
-            // Сортування по спаданню 
+            // Сортування по спаданню всередині категорії 
             let sorted = groups[nom].sort((a, b) => {
                 let valA = parseFloat(String(a.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
                 let valB = parseFloat(String(b.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
@@ -1104,6 +1094,7 @@
                 let topClass = rank === 1 ? "top-1" : (rank === 2 ? "top-2" : (rank === 3 ? "top-3" : ""));
                 let rankDisplay = rank === 1 ? "🥇" : (rank === 2 ? "🥈" : (rank === 3 ? "🥉" : rank));
                 
+                // Виводимо item.nomination – тобто ТОЧНИЙ рядок з таблиці (з #1, #2 і тд)
                 html += `
                 <div class="rating-item ${topClass}">
                     <div class="rating-rank">${rankDisplay}</div>
