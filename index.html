@@ -74,6 +74,8 @@
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
         }
 
+        button, input, select, textarea { font-family: inherit; }
+
         /* ЗАВАНТАЖУВАЧ */
         .app-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -125,7 +127,7 @@
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             gap: 4px; flex: 1; height: 100%; background: transparent; border: none; outline: none;
-            color: var(--text-muted); cursor: pointer; transition: color 0.2s;
+            color: var(--text-muted); cursor: pointer; transition: color 0.2s; font-family: inherit;
         }
         
         .nav-icon {
@@ -165,7 +167,7 @@
         /* КНОПКИ */
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
-            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
+            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; font-family: inherit;
         }
         .btn-primary { background: var(--primary); color: white; }
         .btn-primary:active { opacity: 0.8; transform: scale(0.98); }
@@ -173,7 +175,7 @@
         .compare-toggle-btn {
             background: transparent; color: var(--primary); border: 1.5px solid var(--primary);
             padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; 
-            cursor: pointer; transition: 0.2s; display: none; align-items: center; gap: 6px;
+            cursor: pointer; transition: 0.2s; display: none; align-items: center; gap: 6px; font-family: inherit;
         }
         .compare-toggle-btn.active { background: var(--primary); color: white; }
 
@@ -185,7 +187,7 @@
         .list-item {
             padding: 16px; display: flex; justify-content: space-between; align-items: center;
             border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text-main);
-            background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
+            background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s; font-family: inherit;
         }
         .list-item:last-child { border-bottom: none; }
         .list-item:active { background: var(--input-bg); }
@@ -345,12 +347,12 @@
         .gallery-nav.prev { left: 10px; }
         .gallery-nav.next { right: 10px; }
         
-        /* КНОПКА ЗАЯВКИ СЯЙВО */
+        /* КНОПКА ЗАЯВКИ СЯЙВО (Використовується і для Зміни продавця) */
         .btn-submit-glow { 
             background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
-            color: white; border: none; font-weight: 800; width: 100%; padding: 16px; border-radius: 12px;
-            font-size: 16px; margin-top: 10px; box-shadow: 0 10px 25px rgba(0, 198, 93, 0.35);
-            transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center;
+            color: white; border: none; font-weight: 800; width: 100%; padding: 20px; border-radius: 18px;
+            font-size: 1.3rem; margin-top: 25px; box-shadow: 0 10px 25px rgba(0, 198, 93, 0.35);
+            transition: all 0.2s ease; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: center; font-family: inherit;
         }
         .btn-submit-glow::before {
             content: ""; position: absolute; top: 0; left: -100%; width: 50%; height: 100%;
@@ -359,11 +361,6 @@
         }
         @keyframes shine { 0% { left: -100%; } 20% { left: 150%; } 100% { left: 150%; } }
         .btn-submit-glow:active { transform: scale(0.96); }
-
-        #sellerStatusOverlay {
-            display: none; text-align: center; padding: 30px 20px; background: var(--card-bg);
-            border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
-        }
 
         /* ІНСТРУКЦІЯ ОБ'ЄДНАННЯ СЕРТИФІКАТІВ */
         .cert-manual-wrapper {
@@ -393,6 +390,14 @@
         [data-theme="dark"] .cert-alert.warning { background-color: rgba(245, 158, 11, 0.1); border-color: #f59e0b; color: #fcd34d; }
         [data-theme="dark"] .cert-alert.info { background-color: rgba(16, 185, 129, 0.1); border-color: #10b981; color: #6ee7b7; }
         [data-theme="dark"] .cert-highlight { background-color: var(--bg); color: var(--text-main); }
+
+        /* Стилі для форми зміни продавця (адаптація Bootstrap) */
+        .custom-form-label {
+            font-weight: 600; font-size: 0.95rem; margin-bottom: 8px; display: block; color: var(--text-main);
+        }
+        .custom-form-input {
+            border-radius: 14px; padding: 15px; border: 1.5px solid var(--border); background-color: var(--input-bg); color: var(--text-main); font-size: 1rem;
+        }
 
     </style>
 </head>
@@ -568,73 +573,7 @@
             <button type="button" class="modal-close" onclick="window.closeModalBase('ratingModal')">✕</button>
         </div>
         <div id="ratingList" class="modal-body" style="padding: 0;">
-            <div class="list-group" style="margin-bottom: 0; border: none; border-radius: 0;">
-                <div class="rating-item rank-1">
-                    <div class="rating-rank">🥇</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Лагун Аліна</span>
-                        <span class="rating-desc">Найбільший обіг #1</span>
-                    </div>
-                    <div class="rating-score">19 999 ₴</div>
-                </div>
-                <div class="rating-item rank-2">
-                    <div class="rating-rank">🥈</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Суслова Поліна</span>
-                        <span class="rating-desc">Найбільший обіг #2</span>
-                    </div>
-                    <div class="rating-score">29 999 ₴</div>
-                </div>
-                <div class="rating-item rank-3">
-                    <div class="rating-rank">🥉</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Жигарев Максим</span>
-                        <span class="rating-desc">Найбільший обіг #3</span>
-                    </div>
-                    <div class="rating-score">39 999 ₴</div>
-                </div>
-                <div class="rating-item">
-                    <div class="rating-rank">4</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Черкашин Владислав</span>
-                        <span class="rating-desc">Найбільший обіг #4</span>
-                    </div>
-                    <div class="rating-score">49 999 ₴</div>
-                </div>
-                <div class="rating-item">
-                    <div class="rating-rank">5</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Риндін Артем</span>
-                        <span class="rating-desc">Найбільший обіг #5</span>
-                    </div>
-                    <div class="rating-score">59 999 ₴</div>
-                </div>
-                <div class="rating-item">
-                    <div class="rating-rank">6</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Чорний Олексій</span>
-                        <span class="rating-desc">Найбільший обіг #6</span>
-                    </div>
-                    <div class="rating-score">69 999 ₴</div>
-                </div>
-                <div class="rating-item">
-                    <div class="rating-rank">7</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Пономаренко Олександра</span>
-                        <span class="rating-desc">Найбільший обіг #7</span>
-                    </div>
-                    <div class="rating-score">79 999 ₴</div>
-                </div>
-                <div class="rating-item">
-                    <div class="rating-rank">8</div>
-                    <div class="rating-info">
-                        <span class="rating-name">Куць Сергій</span>
-                        <span class="rating-desc">Найбільший обіг #8</span>
-                    </div>
-                    <div class="rating-score">89 999 ₴</div>
-                </div>
             </div>
-        </div>
     </div>
 </div>
 
@@ -717,33 +656,34 @@
             <button type="button" class="modal-close" onclick="window.closeModalBase('sellerModal')">✕</button>
         </div>
         <div class="modal-body">
-            <form id="sellerFormSubmit">
-                <div class="input-group">
-                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Магазин</span>
-                    <select id="sellerStore" name="store" required>
+            <form id="sellerForm">
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label class="custom-form-label">Магазин</label>
+                    <select id="store" name="store" class="custom-form-input" required>
                         <option value="" disabled selected>Завантаження списку...</option>
                     </select>
                 </div>
-                <div class="input-group">
-                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Ваше ПІБ</span>
-                    <input type="text" id="sellerFio" name="fio" placeholder="Прізвище Ім'я" required>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label class="custom-form-label">Ваше ПІБ</label>
+                    <input type="text" id="fio" name="fio" class="custom-form-input" placeholder="Прізвище Ім'я" required>
                 </div>
-                <div class="input-group">
-                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Номер рахунку</span>
-                    <input type="text" id="sellerBill" name="bill" placeholder="РО3________" required>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label class="custom-form-label">Номер рахунку</label>
+                    <input type="text" id="bill" name="bill" class="custom-form-input" placeholder="РО3________" required>
                 </div>
-                <div class="input-group">
-                    <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Причина зміни</span>
-                    <select id="sellerReason" name="reason" required>
+                <div class="input-group" style="margin-bottom: 20px;">
+                    <label class="custom-form-label">Причина зміни</label>
+                    <select id="reason" name="reason" class="custom-form-input" required>
                         <option value="" disabled selected>Завантаження причин...</option>
                     </select>
                 </div>
-                <button type="submit" id="submitSellerBtn" class="btn-submit-glow">ВІДПРАВИТИ</button>
+                <button type="submit" id="submitBtn" class="btn-submit-glow">ВІДПРАВИТИ</button>
             </form>
-            <div id="sellerStatusOverlay">
-                <div style="font-size: 3rem; margin-bottom: 10px;">✅</div>
-                <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.2rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
-                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 10px; margin-bottom: 0; line-height: 1.4;">Заявка прийнята, очікуйте на виконання 2-3 дні, а може швидше 😉</p>
+            
+            <div id="statusOverlay" style="display: none; text-align: center; padding: 45px 20px; background: var(--card-bg); border: 2px solid var(--rozetka-green-dark); border-radius: 28px; margin-top: 20px; box-shadow: 0 15px 35px rgba(0,0,0,0.07);">
+                <div style="font-size: 4rem; margin-bottom: 20px;">✅</div>
+                <h5 style="color: var(--rozetka-green-dark); font-weight: 800; margin: 0; font-size: 1.3rem;">УСПІШНО ВІДПРАВЛЕНО!</h5>
+                <p style="font-size: 1rem; color: var(--text-muted); margin-top: 12px; margin-bottom: 0;">Заявка обробляється протягом певного часу</p>
             </div>
         </div>
     </div>
@@ -777,8 +717,8 @@
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    // ДОДАНО skillHubButtons до початкового стану БД
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [] };
+    // Додано ratingData до початкового стану БД
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], ratingData: [] };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -849,7 +789,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], ratingData: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -861,6 +801,7 @@
         data.serviceBrands = data.serviceBrands || {};
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
+        data.ratingData = data.ratingData || [];
         return data;
     }
 
@@ -918,14 +859,11 @@
         if (compareBar) compareBar.classList.remove('show');
         
         if (tabId === 'tab-reserves') window.renderRezervyList();
-        
-        // Відмальовуємо динамічні кнопки, якщо це таб SkillHUB
         if (tabId === 'tab-skillhub') window.renderSkillHubTab();
         
         window.scrollTo(0, 0);
     }
 
-    // НОВА ФУНКЦІЯ: Генерує вкладку SkillHUB з даними з таблиці (без PWA та інших непотрібних)
     window.renderSkillHubTab = function() {
         const listContainer = document.getElementById('skillhubList');
         if (!db.skillHubButtons || db.skillHubButtons.length === 0) {
@@ -937,7 +875,6 @@
             let clickAction = `window.open('${window.escapeForJS(btn.link)}', '_blank')`;
             let nameLower = String(btn.name).toLowerCase();
             
-            // Якщо кнопка має спеціальне ключове слово, підміняємо її дію на відкриття модалки
             if (nameLower.includes("зміна продавця") || nameLower.includes("заміна продавця")) {
                 clickAction = "window.openSellerModal()";
             } else if (nameLower.includes("об'єднання сертифікатів") || nameLower.includes("обєднання сертифікатів") || nameLower.includes("объединение")) {
@@ -962,8 +899,40 @@
         }).join('');
     };
 
-    // ФУНКЦІЯ Відкриття локального модального вікна Рейтингу
+    // Динамічний рендер рейтингу
+    window.renderRatingModal = function() {
+        const listEl = document.getElementById('ratingList');
+        if (!db.ratingData || db.ratingData.length === 0) {
+            listEl.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-muted);">Дані рейтингу оновлюються або відсутні...</div>';
+            return;
+        }
+
+        let html = '<div class="list-group" style="margin-bottom: 0; border: none; border-radius: 0;">';
+        db.ratingData.forEach((item, index) => {
+            let rank = index + 1;
+            let rankClass = '';
+            let rankDisplay = rank;
+            
+            if (rank === 1) { rankClass = 'rank-1'; rankDisplay = '🥇'; }
+            else if (rank === 2) { rankClass = 'rank-2'; rankDisplay = '🥈'; }
+            else if (rank === 3) { rankClass = 'rank-3'; rankDisplay = '🥉'; }
+
+            html += `
+            <div class="rating-item ${rankClass}">
+                <div class="rating-rank">${rankDisplay}</div>
+                <div class="rating-info">
+                    <span class="rating-name">${window.escapeHTML(item.name || 'Невідомо')}</span>
+                    <span class="rating-desc">${window.escapeHTML(item.desc || '')}</span>
+                </div>
+                <div class="rating-score">${window.escapeHTML(item.score || '')}</div>
+            </div>`;
+        });
+        html += '</div>';
+        listEl.innerHTML = html;
+    };
+
     window.openRatingModal = function() {
+        window.renderRatingModal();
         window.openModalBase('ratingModal');
     };
 
@@ -1167,7 +1136,6 @@
                 }
                 enableUI(); window.populateFilters();
                 
-                // Якщо вкладка SkillHUB зараз активна, то одразу її відмальовуємо з новими даними
                 if (document.getElementById('tab-skillhub').classList.contains('active')) {
                     window.renderSkillHubTab();
                 }
@@ -2189,36 +2157,37 @@
     window.openSellerModal = function() {
         try {
             window.openModalBase('sellerModal');
+            
             // Завантажуємо дані лише якщо вони ще не завантажені
-            if(document.getElementById('sellerStore').options.length <= 1) {
+            if(document.getElementById('store').options.length <= 1) {
                 const scriptTag = document.createElement('script');
                 scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
                 document.body.appendChild(scriptTag);
             }
             
             // Скидаємо форму до початкового стану на випадок якщо її вже відправляли
-            document.getElementById('sellerFormSubmit').style.display = 'block';
-            document.getElementById('sellerStatusOverlay').style.display = 'none';
-            document.getElementById('submitSellerBtn').disabled = false;
-            document.getElementById('submitSellerBtn').innerText = 'ВІДПРАВИТИ';
-            document.getElementById('sellerFormSubmit').reset();
+            document.getElementById('sellerForm').style.display = 'block';
+            document.getElementById('statusOverlay').style.display = 'none';
+            document.getElementById('submitBtn').disabled = false;
+            document.getElementById('submitBtn').innerText = 'ВІДПРАВИТИ';
+            document.getElementById('sellerForm').reset();
         } catch (e) { console.error(e); }
     }
 
     window.handleSellerResponse = function(data) {
-        const s = document.getElementById('sellerStore');
-        const r = document.getElementById('sellerReason');
+        const s = document.getElementById('store');
+        const r = document.getElementById('reason');
         s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
         r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
         data.stores.forEach(item => s.add(new Option(item, item)));
         data.reasons.forEach(item => r.add(new Option(item, item)));
     }
 
-    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
+    document.getElementById('sellerForm').onsubmit = function(e) {
         e.preventDefault();
-        const btn = document.getElementById('submitSellerBtn');
-        const overlay = document.getElementById('sellerStatusOverlay');
-        const form = document.getElementById('sellerFormSubmit');
+        const btn = document.getElementById('submitBtn');
+        const overlay = document.getElementById('statusOverlay');
+        const form = document.getElementById('sellerForm');
         
         btn.disabled = true;
         btn.innerText = 'НАДСИЛАЄМО...';
