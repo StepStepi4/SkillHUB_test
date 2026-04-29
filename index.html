@@ -112,7 +112,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* ПЛАВАЮЧЕ МЕНЮ (Telegram Style) */
+        /* ПЛАВАЮЧЕ МЕНЮ (М'яка підсвітка без овалів) */
         .bottom-nav {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 16px); 
@@ -123,14 +123,14 @@
             height: var(--nav-height);
             background: var(--nav-bg); 
             border: 1px solid var(--border);
-            border-radius: 40px; /* Повністю круглі краї */
+            border-radius: 40px; 
             backdrop-filter: blur(25px); 
             -webkit-backdrop-filter: blur(25px);
             display: flex; 
             justify-content: space-around; 
             align-items: center;
             z-index: 9990; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08); /* М'якша тінь */
             padding: 0 16px;
         }
         [data-theme="dark"] .bottom-nav { 
@@ -141,54 +141,60 @@
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 4px; 
+            gap: 5px; 
             flex: 1; 
             height: 100%;
             background: transparent; border: none; outline: none;
             color: var(--text-muted); cursor: pointer; 
-            transition: all 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
             padding: 0;
             margin: 0;
         }
-        
-        .nav-icon-box {
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 64px; /* Ідеальна ширина пігулки */
-            height: 32px; /* Ідеальна висота пігулки */
-            border-radius: 16px; /* Заокруглення пігулки */
-            background: transparent;
-            transition: background 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-        }
-        
-        .nav-item.active .nav-icon-box {
-            background: var(--primary-light);
-        }
-        [data-theme="dark"] .nav-item.active .nav-icon-box {
-            background: rgba(16, 185, 129, 0.2);
-        }
 
         .nav-icon {
-            width: 24px; height: 24px; /* Базовий розмір іконки */
+            width: 24px; height: 24px; 
             background-color: currentColor;
             -webkit-mask-size: contain; mask-size: contain;
             -webkit-mask-position: center; mask-position: center;
             -webkit-mask-repeat: no-repeat; mask-repeat: no-repeat;
-            transition: 0.3s ease;
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
         }
 
         .icon-search { -webkit-mask-image: url('search.svg'); mask-image: url('search.svg'); }
         .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
-        .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); width: 28px; height: 28px; } /* Трохи більша іконка */
+        .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); width: 28px; height: 28px; } 
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
 
-        .nav-item span { font-size: 11px; font-weight: 600; transition: 0.3s; margin-top: 2px; }
-        .nav-item.active { color: var(--text-main); }
-        .nav-item.active .nav-icon { color: var(--rozetka-green-dark); transform: translateY(-1px) scale(1.1); }
-        [data-theme="dark"] .nav-item.active .nav-icon { color: var(--primary); transform: translateY(-1px) scale(1.1); }
-        .nav-item.active span { font-weight: 800; transform: translateY(-1px); }
+        .nav-item span { 
+            font-size: 11px; 
+            font-weight: 500; 
+            transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
+        }
+        
+        /* АКТИВНИЙ СТАН: КОЛІР, ТІНЬ І ЖИРНИЙ ТЕКСТ */
+        .nav-item.active { 
+            color: var(--rozetka-green-dark); 
+        }
+        [data-theme="dark"] .nav-item.active { 
+            color: var(--primary); 
+        }
+        
+        .nav-item.active .nav-icon { 
+            transform: translateY(-2px) scale(1.15); 
+            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35)); /* Легка зелена підсвітка іконки */
+        }
+        [data-theme="dark"] .nav-item.active .nav-icon { 
+            filter: drop-shadow(0px 4px 8px rgba(16, 185, 129, 0.35));
+        }
+        
+        .nav-item.active span { 
+            font-weight: 800; 
+            transform: translateY(-1px); 
+            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); /* Легка зелена підсвітка тексту */
+        }
+        [data-theme="dark"] .nav-item.active span {
+            text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
+        }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -620,19 +626,19 @@
 
 <nav class="bottom-nav">
     <button class="nav-item active" onclick="window.switchTab('tab-search')">
-        <div class="nav-icon-box"><div class="nav-icon icon-search"></div></div>
+        <div class="nav-icon icon-search"></div>
         <span>Пошук</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-reserves')">
-        <div class="nav-icon-box"><div class="nav-icon icon-rezerv"></div></div>
+        <div class="nav-icon icon-rezerv"></div>
         <span>Резерви</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
-        <div class="nav-icon-box"><div class="nav-icon icon-bulb"></div></div>
+        <div class="nav-icon icon-bulb"></div>
         <span>SkillHUB</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
-        <div class="nav-icon-box"><div class="nav-icon icon-settings"></div></div>
+        <div class="nav-icon icon-settings"></div>
         <span>Опції</span>
     </button>
 </nav>
