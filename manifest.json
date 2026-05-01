@@ -1,6 +1,6 @@
 {
-  "name": "SkillHUB TEST",
-  "short_name": "SH Assistant",
+  "name": "SkillHUB",
+  "short_name": "SkillHUB",
   "description": "Твій асистент з техніки і послуг",
   "start_url": "./index.html",
   "display": "standalone",
