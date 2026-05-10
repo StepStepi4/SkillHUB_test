@@ -774,6 +774,8 @@
 </div>
 
 <script>
+    window.currentDevicePrice = 0; // Глобальна ціна пристрою
+
     window.renderIcon = function(val) {
         if (!val) return '';
         let clean = String(val).trim();
@@ -942,26 +944,17 @@
         window.scrollTo(0, 0);
     }
 
-    window.openModalBase = function(modalId, name = "", code = "") {
+    window.openModalBase = function(modalId, name = "", code = "", priceLabel = "") {
         try {
             if (name && modalId === 'descModal') {
                 let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
                 
-                // Знаходимо сервіс, щоб витягнути його вартість для відображення в заголовку
-                let targetService = null;
-                if (window.lastCalculatedServices && window.lastCalculatedServices.length > 0) {
-                    targetService = window.lastCalculatedServices.find(s => s.name === name || s.origName === name);
-                }
-                if (!targetService && window.lastModalServices && window.lastModalServices.length > 0) {
-                    targetService = window.lastModalServices.find(s => s.name === name || s.serviceName === name);
-                }
-                
+                // Вставляємо ціну в заголовок, якщо вона є
                 let priceLabelHtml = "";
-                if (targetService && targetService.label && targetService.label !== "Дізнатись" && targetService.label !== "Обрати пакет") {
-                    priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; margin-left: 10px; background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${targetService.label}</div>`;
+                if (priceLabel && priceLabel !== "Дізнатись" && priceLabel !== "Обрати пакет") {
+                    priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; margin-left: 10px; background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${priceLabel}</div>`;
                 }
 
-                // Виводимо заголовок + ціну
                 document.getElementById('modalTitle').innerHTML = `<div style="display:flex; align-items:flex-start; justify-content:space-between; width:100%; gap:10px;">
                     <span style="line-height:1.2;">${title}</span>
                     ${priceLabelHtml}
@@ -970,7 +963,7 @@
                 const raw = window.findInDb(db.descriptions, name) || "";
 
                 // --- НОВА ФУНКЦІЯ: ОБ'ЄДНАННЯ СЕРТИФІКАТІВ ---
-                let p = parseFloat(document.getElementById('devicePrice').value) || 0;
+                let p = window.currentDevicePrice || parseFloat(document.getElementById('devicePrice').value) || 0;
                 let comboHtml = "";
 
                 if (p > 0) {
@@ -981,69 +974,115 @@
                     });
 
                     // Шукаємо комбінацію лише серед сертифікатів з максимальним діапазоном, меншим за ціну товару
-                    let smallerTariffs = tariffs.filter(t => t.maxPrice > 0 && t.maxPrice < p).sort((a,b) => b.maxPrice - a.maxPrice);
-                    let bestCombo = null;
-                    let bestDiff = Infinity;
+                    let validTariffs = tariffs.filter(t => t.maxPrice > 0 && t.maxPrice < p).sort((a,b) => b.maxPrice - a.maxPrice);
+                    
+                    let allCombos = [];
+                    // Рекурсивна функція для пошуку комбінацій
+                    function findCombos(startIndex, currentCombo, currentSum) {
+                        if (currentSum >= p) {
+                            allCombos.push({ combo: [...currentCombo], sum: currentSum });
+                            return;
+                        }
+                        if (currentCombo.length >= 3) return; // Максимум 3 сертифікати
 
-                    // Знаходимо найкращу комбінацію з двох сертифікатів, що сумарно покривають або трохи перевищують ціну
-                    for (let i = 0; i < smallerTariffs.length; i++) {
-                        for (let j = i; j < smallerTariffs.length; j++) {
-                            let sum = smallerTariffs[i].maxPrice + smallerTariffs[j].maxPrice;
-                            if (sum >= p) {
-                                let diff = sum - p;
-                                if (diff < bestDiff) {
-                                    bestDiff = diff;
-                                    bestCombo = [smallerTariffs[i], smallerTariffs[j]];
-                                }
-                            }
+                        for (let i = startIndex; i < validTariffs.length; i++) {
+                            currentCombo.push(validTariffs[i]);
+                            findCombos(i, currentCombo, currentSum + validTariffs[i].maxPrice);
+                            currentCombo.pop();
+                        }
+                    }
+                    findCombos(0, [], 0);
+
+                    // Сортуємо: 1. Найближча сума до ціни товару. 2. Найменша кількість сертифікатів
+                    allCombos.sort((a, b) => {
+                        if (a.sum !== b.sum) return a.sum - b.sum;
+                        return a.combo.length - b.combo.length;
+                    });
+
+                    // Видаляємо дублікати (якщо різні комбінації складаються з тих самих сертифікатів)
+                    let uniqueCombos = [];
+                    let seenSignatures = new Set();
+                    for (let c of allCombos) {
+                        let sig = c.combo.map(t => t.maxPrice).sort((x, y) => x - y).join('-');
+                        if (!seenSignatures.has(sig)) {
+                            seenSignatures.add(sig);
+                            uniqueCombos.push(c);
                         }
                     }
 
-                    // Якщо комбінацію знайдено - генеруємо HTML з кнопкою та цінами
-                    if (bestCombo && bestCombo.length === 2) {
-                        let totalComboPrice = 0;
-                        
-                        let comboItemsHtml = bestCombo.map(t => {
-                            let minP = t.minPrice || 0;
-                            let maxP = t.maxPrice || 0;
-                            let tName = t.service;
-                            if (!tName.includes(maxP.toString())) {
-                                tName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
-                            }
+                    // Відбираємо максимум 2 найкращі варіанти
+                    let topCombos = uniqueCombos.slice(0, 2);
+
+                    if (topCombos.length > 0) {
+                        let comboVariantsHtml = topCombos.map((comboObj, vIdx) => {
+                            let totalComboPrice = 0;
                             
-                            // Розраховуємо ціну одного сертифікату для комбінації
-                            let tPriceStr = "";
-                            let tPriceNum = 0;
-                            if (t.cost) {
-                                let cStr = String(t.cost).trim();
-                                if (cStr.includes('%')) {
-                                    tPriceNum = Math.round(p * parseFloat(cStr.replace(',', '.'))/100);
-                                } else {
-                                    tPriceNum = parseFloat(cStr.replace(/\s+/g, '').replace(',', '.'));
+                            let comboItemsHtml = comboObj.combo.map(t => {
+                                let minP = t.minPrice || 0;
+                                let maxP = t.maxPrice || 0;
+                                let tName = t.service;
+                                
+                                // Формуємо красиву назву з брендом
+                                let cleanName = tName.replace(/^\[.*?\]\s*/, '').trim();
+                                let brandMatch = tName.match(/^\[(.*?)\]/);
+                                let brand = brandMatch ? brandMatch[1] : "";
+                                let displayName = brand ? `[${brand}] ${cleanName}` : cleanName;
+
+                                if (!displayName.includes(maxP.toString())) {
+                                    displayName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
                                 }
-                                if (!isNaN(tPriceNum)) {
-                                    totalComboPrice += tPriceNum;
-                                    tPriceStr = tPriceNum.toLocaleString('uk-UA') + " ₴";
-                                } else {
-                                    tPriceStr = cStr;
+                                
+                                // Розраховуємо ціну одного сертифікату для комбінації
+                                let tPriceStr = "";
+                                let tPriceNum = 0;
+                                if (t.cost) {
+                                    let cStr = String(t.cost).trim();
+                                    if (cStr.includes('%')) {
+                                        // Для динамічних % сертифікатів рахуємо ціну від його ВЛАСНОГО номіналу
+                                        tPriceNum = Math.round(maxP * parseFloat(cStr.replace(',', '.'))/100);
+                                    } else {
+                                        tPriceNum = parseFloat(cStr.replace(/\s+/g, '').replace(',', '.'));
+                                    }
+                                    if (!isNaN(tPriceNum)) {
+                                        totalComboPrice += tPriceNum;
+                                        tPriceStr = tPriceNum.toLocaleString('uk-UA') + " ₴";
+                                    } else {
+                                        tPriceStr = cStr;
+                                    }
                                 }
-                            }
+
+                                return `
+                                <div style="margin-bottom: 8px; background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;">
+                                        <div style="font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.3;">${displayName}</div>
+                                        <div style="font-size: 14px; font-weight: 800; color: var(--primary); white-space: nowrap;">${tPriceStr}</div>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px;">
+                                        <span style="font-size: 12px; color: var(--text-muted);">Код товару:</span>
+                                        <span style="font-size: 15px; font-weight: 800; color: var(--text-main); cursor: pointer;" onclick="window.copyCode(event, this, '${t.code}')">${t.code} 📋</span>
+                                    </div>
+                                </div>
+                                `;
+                            }).join('');
+
+                            let sumHtml = comboObj.sum.toLocaleString('uk-UA');
 
                             return `
-                            <div style="margin-bottom: 10px; background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
-                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;">
-                                    <div style="font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.3;">${tName}</div>
-                                    <div style="font-size: 14px; font-weight: 800; color: var(--primary); white-space: nowrap; background: var(--input-bg); padding: 4px 8px; border-radius: 6px;">${tPriceStr}</div>
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 11px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; text-align: center;">Варіант ${vIdx + 1}</div>
+                                ${comboItemsHtml}
+                                <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 8px; background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--primary-light);">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);">
+                                        <span>Сума діапазонів:</span>
+                                        <span style="font-weight:700; color:var(--text-main);">${sumHtml} ₴</span>
+                                    </div>
+                                    <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700;">
+                                        <span>Загальна вартість:</span>
+                                        <span style="color:var(--primary); font-size: 16px;">${totalComboPrice.toLocaleString('uk-UA')} ₴</span>
+                                    </div>
                                 </div>
-                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px;">
-                                    <span style="font-size: 12px; color: var(--text-muted);">Код товару:</span>
-                                    <span style="font-size: 15px; font-weight: 800; color: var(--text-main); cursor: pointer;" onclick="window.copyCode(event, this, '${t.code}')">${t.code} 📋</span>
-                                </div>
-                            </div>
-                            `;
+                            </div>`;
                         }).join('');
-
-                        let sumHtml = (bestCombo[0].maxPrice + bestCombo[1].maxPrice).toLocaleString('uk-UA');
 
                         comboHtml = `
                             <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border);">
@@ -1051,18 +1090,8 @@
                                     🛠 Об'єднати сертифікати
                                 </button>
                                 <div style="display: none; background: var(--input-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); animation: fade 0.2s ease;">
-                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; text-align: center;">Варіант для ${p.toLocaleString('uk-UA')} ₴</div>
-                                    ${comboItemsHtml}
-                                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 12px; background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--primary-light);">
-                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);">
-                                            <span>Сума діапазонів:</span>
-                                            <span style="font-weight:700; color:var(--text-main);">${sumHtml} ₴</span>
-                                        </div>
-                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700;">
-                                            <span>Загальна вартість:</span>
-                                            <span style="color:var(--primary); font-size: 16px;">${totalComboPrice.toLocaleString('uk-UA')} ₴</span>
-                                        </div>
-                                    </div>
+                                    <div style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:16px;">Об'єднання для ${p.toLocaleString('uk-UA')} ₴</div>
+                                    ${comboVariantsHtml}
                                 </div>
                             </div>
                         `;
@@ -1516,6 +1545,7 @@
 
     function renderRezervItemServices(item, p) {
         try {
+            window.currentDevicePrice = p; // Зберігаємо ціну
             let techStr = buildTechInfoHTML(item, p);
             document.getElementById('rezervTechInfo').innerHTML = techStr;
             document.getElementById('rezervTechInfo').style.display = techStr ? 'block' : 'none';
@@ -1823,11 +1853,11 @@
         if (compareModeActive && !s.isPackage) cardClass += ' compare-mode';
         if (isSelected) cardClass += ' selected';
         
-        let safeName = window.escapeForJS(s.name); let safeCode = window.escapeForJS(s.code);
+        let safeName = window.escapeForJS(s.name); let safeCode = window.escapeForJS(s.code); let safeLabel = window.escapeForJS(s.label);
         let clickHandler = '';
-        if (disableCompare) clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, true)"`;
-        else if (isModalCtx) clickHandler = `onclick="window.handleModalServiceClick(event, '${safeName}', ${s.isPackage}, '${safeCode}')"`;
-        else clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage})"`;
+        if (disableCompare) clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, true, '${safeLabel}')"`;
+        else if (isModalCtx) clickHandler = `onclick="window.handleModalServiceClick(event, '${safeName}', ${s.isPackage}, '${safeCode}', '${safeLabel}')"`;
+        else clickHandler = `onclick="window.handleServiceClick(event, '${safeName}', '${safeCode}', ${s.isPackage}, false, '${safeLabel}')"`;
             
         let descHtml = s.descToggleHTML || '';
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
@@ -1853,6 +1883,7 @@
     function renderServices() {
         try {
             const p = parseFloat(elPriceInput.value) || 0; 
+            window.currentDevicePrice = p; // Зберігаємо ціну
             
             if (currentCategoryData && currentCategoryData.service) {
                 renderTechInfo(); 
@@ -1944,7 +1975,7 @@
         else window.updateSetupResults(); 
     }
 
-    window.handleServiceClick = function(e, name, code, isPackage, forceNoCompare = false) {
+    window.handleServiceClick = function(e, name, code, isPackage, forceNoCompare = false, priceLabel = "") {
         let target = e.target;
         if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-content')) return;
 
@@ -1959,11 +1990,11 @@
             }
             updateCompareUI(); renderServices(); 
         } else {
-            window.openModal(name, code);
+            window.openModal(name, code, priceLabel);
         }
     }
 
-    window.handleModalServiceClick = function(e, name, isPackage, code) {
+    window.handleModalServiceClick = function(e, name, isPackage, code, priceLabel = "") {
         let target = e.target;
         if (target.closest('.desc-toggle-wrapper') || target.closest('.desc-content')) return; 
         
@@ -1983,7 +2014,7 @@
             else window.updateSetupResults(); 
         } else {
             if (isPackage) {
-                window.openModal(name, code);
+                window.openModal(name, code, priceLabel);
             } else {
                 let toggle = e.currentTarget.querySelector('.desc-toggle-wrapper'); 
                 if(toggle) toggle.click();
@@ -2127,6 +2158,8 @@
                 document.getElementById('modalBody').innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight: 800;">Помилка: Міста для монтажу не завантажено.</div>`; return;
             }
 
+            window.currentDevicePrice = parseFloat(document.getElementById('devicePrice').value) || 0; // Зберігаємо ціну
+
             const cities = db.montazhData.cities.sort((a, b) => String(a).localeCompare(String(b))); const services = db.montazhData.services;
             window.cityStatusMap = new Map();
             cities.forEach(city => {
@@ -2243,6 +2276,7 @@
 
     window.renderDirectListModal = function(targetCategories) {
         try {
+            window.currentDevicePrice = parseFloat(elPriceInput.value) || 0; // Зберігаємо ціну
             if (!Array.isArray(targetCategories)) targetCategories = [targetCategories];
             let matches = db.tariffs.filter(t => {
                 let c = t.cat ? normalizeServiceName(t.cat) : ""; let sName = t.service ? normalizeServiceName(t.service) : "";
@@ -2279,6 +2313,7 @@
 
     window.renderSetupModal = function(targetName, mode = "setup") {
         try {
+            window.currentDevicePrice = parseFloat(elPriceInput.value) || 0; // Зберігаємо ціну
             let setupCats = [...new Set(db.tariffs.filter(t => {
                 if (!t.cat) return false; let c = String(t.cat).toLowerCase();
                 if (mode === "antivirus") return c.includes('антивірус') || c.includes('eset');
@@ -2351,7 +2386,7 @@
         } catch(e) { console.error(e); }
     }
 
-    window.openModal = function(name, code = "") {
+    window.openModal = function(name, code = "", priceLabel = "") {
         let nameClean = normalizeServiceName(name); let u = String(name).toUpperCase(); 
         let isSetupCategory = db.tariffs.some(t => t.cat && normalizeServiceName(t.cat) === nameClean);
         let isStaticEpz = (u.includes('WINDOWS') || u.includes('OFFICE') || u.includes('ESD') || u.includes('[ESD]')) && !u.includes('НАЛАШТУВАННЯ') && !u.includes('ВСТАНОВЛЕННЯ') && !u.includes('АНТИВІРУС');
@@ -2365,7 +2400,7 @@
             else if (isSetupCategory || u.includes('НАЛАШТУВАННЯ') || u.includes('ПЗ') || u.includes('ПОСЛУГИ') || u.includes('ГОДИНА РОБОТИ')) { document.getElementById('modalTitle').innerText = "Налаштування та сервіси"; window.openModalBase('descModal'); window.renderSetupModal(name, "setup"); return; }
         }
 
-        window.openModalBase('descModal', name, code);
+        window.openModalBase('descModal', name, code, priceLabel);
     }
 
     window.showChangelogModal = function(version, changelogText) {
