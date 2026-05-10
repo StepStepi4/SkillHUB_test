@@ -639,7 +639,7 @@
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items:flex-start;">
-            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3;"></div>
+            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
             <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
         </div>
         <div id="rezervItemBody" class="modal-body">
@@ -656,7 +656,7 @@
 <div id="descModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title" id="modalTitle">Опис</div>
+            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
             <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
@@ -667,7 +667,7 @@
 <div id="certManualModal" class="modal">
     <div class="modal-content" style="max-height: 90vh;">
         <div class="modal-header">
-            <div class="modal-title">Довідка</div>
+            <div class="modal-title" style="width: 100%;">Довідка</div>
             <button class="modal-close" onclick="window.closeModalBase('certManualModal')"></button>
         </div>
         <div class="modal-body">
@@ -700,7 +700,7 @@
 <div id="ratingModal" class="modal">
     <div class="modal-content" style="max-height: 85vh;">
         <div class="modal-header">
-            <div class="modal-title">🏆 Рейтинг продавців</div>
+            <div class="modal-title" style="width: 100%;">🏆 Рейтинг продавців</div>
             <button class="modal-close" onclick="window.closeModalBase('ratingModal')"></button>
         </div>
         <div class="modal-body" id="ratingModalBody">
@@ -712,7 +712,7 @@
 <div id="compareModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title">Результат порівняння</div>
+            <div class="modal-title" style="width: 100%;">Результат порівняння</div>
             <button class="modal-close" onclick="window.closeCompareModal()"></button>
         </div>
         <div id="compareModalBody" class="modal-body"></div>
@@ -723,7 +723,7 @@
 <div id="sellerModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
-            <div class="modal-title" style="color: var(--text-main);">Зміна продавця</div>
+            <div class="modal-title" style="color: var(--text-main); width: 100%;">Зміна продавця</div>
             <button class="modal-close" onclick="window.closeModalBase('sellerModal')"></button>
         </div>
         <div class="modal-body">
@@ -946,7 +946,27 @@
         try {
             if (name && modalId === 'descModal') {
                 let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
-                document.getElementById('modalTitle').innerText = title;
+                
+                // Знаходимо сервіс, щоб витягнути його вартість для відображення в заголовку
+                let targetService = null;
+                if (window.lastCalculatedServices && window.lastCalculatedServices.length > 0) {
+                    targetService = window.lastCalculatedServices.find(s => s.name === name || s.origName === name);
+                }
+                if (!targetService && window.lastModalServices && window.lastModalServices.length > 0) {
+                    targetService = window.lastModalServices.find(s => s.name === name || s.serviceName === name);
+                }
+                
+                let priceLabelHtml = "";
+                if (targetService && targetService.label && targetService.label !== "Дізнатись" && targetService.label !== "Обрати пакет") {
+                    priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; margin-left: 10px; background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${targetService.label}</div>`;
+                }
+
+                // Виводимо заголовок + ціну
+                document.getElementById('modalTitle').innerHTML = `<div style="display:flex; align-items:flex-start; justify-content:space-between; width:100%; gap:10px;">
+                    <span style="line-height:1.2;">${title}</span>
+                    ${priceLabelHtml}
+                </div>`;
+                
                 const raw = window.findInDb(db.descriptions, name) || "";
 
                 // --- НОВА ФУНКЦІЯ: ОБ'ЄДНАННЯ СЕРТИФІКАТІВ ---
@@ -979,8 +999,10 @@
                         }
                     }
 
-                    // Якщо комбінацію знайдено - генеруємо HTML з кнопкою
+                    // Якщо комбінацію знайдено - генеруємо HTML з кнопкою та цінами
                     if (bestCombo && bestCombo.length === 2) {
+                        let totalComboPrice = 0;
+                        
                         let comboItemsHtml = bestCombo.map(t => {
                             let minP = t.minPrice || 0;
                             let maxP = t.maxPrice || 0;
@@ -988,12 +1010,34 @@
                             if (!tName.includes(maxP.toString())) {
                                 tName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
                             }
+                            
+                            // Розраховуємо ціну одного сертифікату для комбінації
+                            let tPriceStr = "";
+                            let tPriceNum = 0;
+                            if (t.cost) {
+                                let cStr = String(t.cost).trim();
+                                if (cStr.includes('%')) {
+                                    tPriceNum = Math.round(p * parseFloat(cStr.replace(',', '.'))/100);
+                                } else {
+                                    tPriceNum = parseFloat(cStr.replace(/\s+/g, '').replace(',', '.'));
+                                }
+                                if (!isNaN(tPriceNum)) {
+                                    totalComboPrice += tPriceNum;
+                                    tPriceStr = tPriceNum.toLocaleString('uk-UA') + " ₴";
+                                } else {
+                                    tPriceStr = cStr;
+                                }
+                            }
+
                             return `
                             <div style="margin-bottom: 10px; background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
-                                <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">${tName}</div>
-                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;">
+                                    <div style="font-size: 13px; font-weight: 700; color: var(--text-main); line-height: 1.3;">${tName}</div>
+                                    <div style="font-size: 14px; font-weight: 800; color: var(--primary); white-space: nowrap; background: var(--input-bg); padding: 4px 8px; border-radius: 6px;">${tPriceStr}</div>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(0,0,0,0.05); padding-top: 8px;">
                                     <span style="font-size: 12px; color: var(--text-muted);">Код товару:</span>
-                                    <span style="font-size: 15px; font-weight: 800; color: var(--primary); cursor: pointer;" onclick="window.copyCode(event, this, '${t.code}')">${t.code} 📋</span>
+                                    <span style="font-size: 15px; font-weight: 800; color: var(--text-main); cursor: pointer;" onclick="window.copyCode(event, this, '${t.code}')">${t.code} 📋</span>
                                 </div>
                             </div>
                             `;
@@ -1007,10 +1051,17 @@
                                     🛠 Об'єднати сертифікати
                                 </button>
                                 <div style="display: none; background: var(--input-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); animation: fade 0.2s ease;">
-                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase;">Варіант для ${p.toLocaleString('uk-UA')} ₴</div>
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase; text-align: center;">Варіант для ${p.toLocaleString('uk-UA')} ₴</div>
                                     ${comboItemsHtml}
-                                    <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 8px; font-weight: 500;">
-                                        Сума крайніх діапазонів: <span style="font-weight:700; color:var(--text-main);">${sumHtml} ₴</span>
+                                    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 12px; background: var(--card-bg); padding: 12px; border-radius: 8px; border: 1px solid var(--primary-light);">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 12px; color: var(--text-muted);">
+                                            <span>Сума діапазонів:</span>
+                                            <span style="font-weight:700; color:var(--text-main);">${sumHtml} ₴</span>
+                                        </div>
+                                        <div style="display: flex; justify-content: space-between; align-items: center; font-size: 13px; font-weight: 700;">
+                                            <span>Загальна вартість:</span>
+                                            <span style="color:var(--primary); font-size: 16px;">${totalComboPrice.toLocaleString('uk-UA')} ₴</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -1061,7 +1112,7 @@
 
     window.openRatingModal = function() {
         window.renderRatingModalContent();
-        window.openRatingModalBase('ratingModal');
+        window.openModalBase('ratingModal');
     }
 
     function checkOpenModals() {
