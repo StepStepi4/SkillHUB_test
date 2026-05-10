@@ -948,7 +948,74 @@
                 let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
                 document.getElementById('modalTitle').innerText = title;
                 const raw = window.findInDb(db.descriptions, name) || "";
-                document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу');
+
+                // --- НОВА ФУНКЦІЯ: ОБ'ЄДНАННЯ СЕРТИФІКАТІВ ---
+                let p = parseFloat(document.getElementById('devicePrice').value) || 0;
+                let comboHtml = "";
+
+                if (p > 0) {
+                    let tariffs = db.tariffs.filter(t => {
+                        let n1 = normalizeServiceName(t.service);
+                        let n2 = normalizeServiceName(name);
+                        return n1 === n2 || (t.serviceRu && normalizeServiceName(t.serviceRu) === n2);
+                    });
+
+                    // Шукаємо комбінацію лише серед сертифікатів з максимальним діапазоном, меншим за ціну товару
+                    let smallerTariffs = tariffs.filter(t => t.maxPrice > 0 && t.maxPrice < p).sort((a,b) => b.maxPrice - a.maxPrice);
+                    let bestCombo = null;
+                    let bestDiff = Infinity;
+
+                    // Знаходимо найкращу комбінацію з двох сертифікатів, що сумарно покривають або трохи перевищують ціну
+                    for (let i = 0; i < smallerTariffs.length; i++) {
+                        for (let j = i; j < smallerTariffs.length; j++) {
+                            let sum = smallerTariffs[i].maxPrice + smallerTariffs[j].maxPrice;
+                            if (sum >= p) {
+                                let diff = sum - p;
+                                if (diff < bestDiff) {
+                                    bestDiff = diff;
+                                    bestCombo = [smallerTariffs[i], smallerTariffs[j]];
+                                }
+                            }
+                        }
+                    }
+
+                    // Якщо комбінацію знайдено - генеруємо HTML з кнопкою
+                    if (bestCombo && bestCombo.length === 2) {
+                        comboHtml = `
+                            <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border);">
+                                <button class="btn" style="background: var(--primary-light); color: var(--rozetka-green-dark); font-weight: 800; width: 100%; border: 1px dashed var(--primary);" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">
+                                    🛠 Об'єднати сертифікати
+                                </button>
+                                <div style="display: none; background: var(--input-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); animation: fade 0.2s ease;">
+                                    <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase;">Варіант для ${p.toLocaleString('uk-UA')} ₴</div>
+                                    ${bestCombo.map(t => {
+                                        let minP = t.minPrice || 0;
+                                        let maxP = t.maxPrice || 0;
+                                        let tName = t.service;
+                                        if (!tName.includes(maxP.toString())) {
+                                            tName += \` (\${minP.toLocaleString('uk-UA')} - \${maxP.toLocaleString('uk-UA')})\`;
+                                        }
+                                        return \`
+                                        <div style="margin-bottom: 10px; background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
+                                            <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">\${tName}</div>
+                                            <div style="display: flex; justify-content: space-between; align-items: center;">
+                                                <span style="font-size: 12px; color: var(--text-muted);">Код товару:</span>
+                                                <span style="font-size: 15px; font-weight: 800; color: var(--primary); cursor: pointer;" onclick="window.copyCode(event, this, '\${t.code}')">\${t.code} 📋</span>
+                                            </div>
+                                        </div>
+                                        \`;
+                                    }).join('')}
+                                    <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 8px; font-weight: 500;">
+                                        Сума крайніх діапазонів: <span style="font-weight:700; color:var(--text-main);">\${(bestCombo[0].maxPrice + bestCombo[1].maxPrice).toLocaleString('uk-UA')} ₴</span>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
+                }
+                // --- КІНЕЦЬ НОВОЇ ФУНКЦІЇ ---
+
+                document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml;
                 let dc = document.getElementById('modalBody').querySelector('.desc-content');
                 if(dc) dc.classList.add('show');
             }
