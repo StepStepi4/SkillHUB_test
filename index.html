@@ -9,7 +9,7 @@
     <meta name="theme-color" content="#f2f2f7">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="SkillHUB">
+    <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
     <style>
@@ -553,7 +553,7 @@
     <div id="tab-skillhub" class="app-tab">
         <div class="list-group">
             
-            <button class="list-item" style="background: rgba(16, 185, 129, 0.08); width: 100%; border: none; border-bottom: 1px solid var(--border); font-family: inherit; outline: none; display: flex; align-items: center;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0', '_blank')">
+            <button class="list-item" style="background: transparent; width: 100%; border: none; border-bottom: 1px solid var(--border); font-family: inherit; outline: none; display: flex; align-items: center;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0', '_blank')">
                 <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
                     🌐
                 </div>
@@ -790,6 +790,15 @@
 </div>
 
 <script>
+    window.renderIcon = function(val) {
+        if (!val) return '';
+        let clean = String(val).trim();
+        if (clean.toLowerCase().endsWith('.svg') || clean.toLowerCase().endsWith('.png')) {
+            return `<img src="icons_skillHUB/${clean}" alt="icon" style="width: 100%; height: 100%; object-fit: contain; display: block;">`;
+        }
+        return clean;
+    };
+
     window.addEventListener('error', function(e) {
         const elLoader = document.getElementById('appLoader');
         if (elLoader && !elLoader.classList.contains('hidden')) {
@@ -1120,7 +1129,7 @@
             return `
             <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
                 <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
-                    ${btn.emoji}
+                    ${window.renderIcon(btn.emoji)}
                 </div>
                 <div class="list-item-content" style="flex:1; text-align:left;">
                     <span class="list-item-title">${btn.name}</span>
@@ -1464,7 +1473,7 @@
                             brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px; flex-shrink: 0;">${m.brandText}</div>`;
                         }
                         return `<div class="sugg-item" data-idx="${idx}">
-                            <span style="flex-shrink:0;">${m.icon}</span> 
+                            <span style="flex-shrink:0; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;">${window.renderIcon(m.icon)}</span> 
                             ${brandBadge} 
                             <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
                         </div>`;
@@ -1496,13 +1505,19 @@
             currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
             
             elCatInput.value = item.name;
-            document.getElementById('uaTitle').innerText = item.icon + " " + item.name;
+            document.getElementById('uaTitle').innerHTML = `<div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:24px; height:24px; display:flex; justify-content:center; align-items:center;">${window.renderIcon(item.icon)}</div>
+                <span>${item.name}</span>
+            </div>`;
             document.getElementById('itemCategory').innerText = item.brandText ? "Послуга від " + item.brandText : "Окрема послуга";
         } else {
             currentCategoryData = item;
             currentServiceData = null;
             elCatInput.value = item.ua; 
-            document.getElementById('uaTitle').innerText = item.icon + " " + item.ua; 
+            document.getElementById('uaTitle').innerHTML = `<div style="display:flex; align-items:center; gap:8px;">
+                <div style="width:24px; height:24px; display:flex; justify-content:center; align-items:center;">${window.renderIcon(item.icon)}</div>
+                <span>${item.ua}</span>
+            </div>`; 
             document.getElementById('itemCategory').innerText = item.category || ""; 
         }
         
@@ -1522,7 +1537,7 @@
             else if (t.includes('висок')) s = "color: #f97316; font-weight: 600;";
             else if (t.includes('середн')) s = "color: #eab308; font-weight: 600;";
             else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
-            html += `<div class="tech-row"><div class="tech-icon">⚙️</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
+            html += `<div class="tech-row"><div class="tech-icon" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px;">${window.renderIcon('⚙️')}</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
         }
         
         let calcPrice = item.price ? item.price.toString() : "";
@@ -1541,7 +1556,7 @@
                 hasInfo = true;
                 let isNegarant = f[1].includes('Негарантійні');
                 let rowClasses = isNegarant ? 'tech-row negarant' : 'tech-row';
-                html += `<div class="${rowClasses}"><div class="tech-icon">${f[0]}</div><div class="tech-text-wrap"><div class="tech-label">${f[1]}</div><div class="tech-val">${f[2]}</div></div></div>`;
+                html += `<div class="${rowClasses}"><div class="tech-icon" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px;">${window.renderIcon(f[0])}</div><div class="tech-text-wrap"><div class="tech-label">${f[1]}</div><div class="tech-val">${f[2]}</div></div></div>`;
             }
         });
 
@@ -1555,7 +1570,7 @@
             let photosStr = photosArray.join(',');
             html += `
             <div class="tech-photo-wrapper" onclick="window.openGallery('${photosStr}')">
-                <div class="photo-icon">📸</div>
+                <div class="photo-icon" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px;">${window.renderIcon('📸')}</div>
                 <div class="photo-text">
                     <span class="photo-title">Приклади пошкоджень</span>
                     <span class="photo-subtitle">Переглянути фото (${photosArray.length})</span>
@@ -1599,7 +1614,7 @@
 
             return `
             <div class="desc-line">
-                <div class="desc-icon-box">${e}</div>
+                <div class="desc-icon-box" style="display:flex; align-items:center; justify-content:center;">${window.renderIcon(e)}</div>
                 <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1;">${t}</div>
             </div>`;
         }).join('');
@@ -2257,7 +2272,7 @@
                 let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
                 let prefix = hasEmoji ? "" : "🔹";
                 let border = index !== lines.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
-                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="margin-right:8px;">${prefix}</span><span style="flex:1;">${l}</span></div>`;
+                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="margin-right:8px;">${window.renderIcon(prefix)}</span><span style="flex:1;">${l}</span></div>`;
             }
         });
         html += '</div>';
