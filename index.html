@@ -487,7 +487,7 @@
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
-    <div class="loader-text" id="mainLoaderText">Синхронізація з базою...</div>
+    <div class="loader-text" id="mainLoaderText">Синхронізація з базею...</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -981,6 +981,26 @@
 
                     // Якщо комбінацію знайдено - генеруємо HTML з кнопкою
                     if (bestCombo && bestCombo.length === 2) {
+                        let comboItemsHtml = bestCombo.map(t => {
+                            let minP = t.minPrice || 0;
+                            let maxP = t.maxPrice || 0;
+                            let tName = t.service;
+                            if (!tName.includes(maxP.toString())) {
+                                tName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
+                            }
+                            return `
+                            <div style="margin-bottom: 10px; background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
+                                <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">${tName}</div>
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <span style="font-size: 12px; color: var(--text-muted);">Код товару:</span>
+                                    <span style="font-size: 15px; font-weight: 800; color: var(--primary); cursor: pointer;" onclick="window.copyCode(event, this, '${t.code}')">${t.code} 📋</span>
+                                </div>
+                            </div>
+                            `;
+                        }).join('');
+
+                        let sumHtml = (bestCombo[0].maxPrice + bestCombo[1].maxPrice).toLocaleString('uk-UA');
+
                         comboHtml = `
                             <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border);">
                                 <button class="btn" style="background: var(--primary-light); color: var(--rozetka-green-dark); font-weight: 800; width: 100%; border: 1px dashed var(--primary);" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">
@@ -988,25 +1008,9 @@
                                 </button>
                                 <div style="display: none; background: var(--input-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); animation: fade 0.2s ease;">
                                     <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 12px; font-weight: 600; text-transform: uppercase;">Варіант для ${p.toLocaleString('uk-UA')} ₴</div>
-                                    ${bestCombo.map(t => {
-                                        let minP = t.minPrice || 0;
-                                        let maxP = t.maxPrice || 0;
-                                        let tName = t.service;
-                                        if (!tName.includes(maxP.toString())) {
-                                            tName += \` (\${minP.toLocaleString('uk-UA')} - \${maxP.toLocaleString('uk-UA')})\`;
-                                        }
-                                        return \`
-                                        <div style="margin-bottom: 10px; background: var(--card-bg); border-radius: 8px; padding: 12px; border: 1px solid var(--border);">
-                                            <div style="font-size: 14px; font-weight: 700; color: var(--text-main); margin-bottom: 6px;">\${tName}</div>
-                                            <div style="display: flex; justify-content: space-between; align-items: center;">
-                                                <span style="font-size: 12px; color: var(--text-muted);">Код товару:</span>
-                                                <span style="font-size: 15px; font-weight: 800; color: var(--primary); cursor: pointer;" onclick="window.copyCode(event, this, '\${t.code}')">\${t.code} 📋</span>
-                                            </div>
-                                        </div>
-                                        \`;
-                                    }).join('')}
+                                    ${comboItemsHtml}
                                     <div style="font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 8px; font-weight: 500;">
-                                        Сума крайніх діапазонів: <span style="font-weight:700; color:var(--text-main);">\${(bestCombo[0].maxPrice + bestCombo[1].maxPrice).toLocaleString('uk-UA')} ₴</span>
+                                        Сума крайніх діапазонів: <span style="font-weight:700; color:var(--text-main);">${sumHtml} ₴</span>
                                     </div>
                                 </div>
                             </div>
@@ -1057,7 +1061,7 @@
 
     window.openRatingModal = function() {
         window.renderRatingModalContent();
-        window.openModalBase('ratingModal');
+        window.openRatingModalBase('ratingModal');
     }
 
     function checkOpenModals() {
