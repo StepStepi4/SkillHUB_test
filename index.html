@@ -546,8 +546,11 @@
             <select id="storeFilter" onchange="window.renderRezervyList()">
                 <option value="">-- Оберіть магазин --</option>
             </select>
-            <!-- НОВЕ ПОЛЕ ДЛЯ ПОШУКУ ПО КЛЮЧОВОМУ СЛОВУ -->
-            <input type="text" id="rezervSearchInput" placeholder="Пошук по ключовому слову (напр. мікро)" oninput="window.renderRezervyList()">
+            <!-- НОВЕ ПОЛЕ ДЛЯ ПОШУКУ ПО КЛЮЧОВОМУ СЛОВУ З КНОПКОЮ ОЧИЩЕННЯ -->
+            <div style="position: relative; width: 100%;">
+                <input type="text" id="rezervSearchInput" placeholder="Пошук по ключовому слову (напр. мікро)" oninput="window.handleRezervSearchInput()" style="margin-bottom: 0;">
+                <button id="clearRezervBtn" class="clear-btn" onclick="window.clearRezervSearch()">×</button>
+            </div>
         </div>
         <div id="rezervyList" class="list-group"></div>
     </div>
@@ -1485,6 +1488,28 @@
         }
     }
 
+    // ДОДАНО: Логіка обробки вводу для показу/сховання хрестика
+    window.handleRezervSearchInput = function() {
+        const input = document.getElementById('rezervSearchInput');
+        const btn = document.getElementById('clearRezervBtn');
+        if (input && btn) {
+            btn.style.display = input.value.length > 0 ? 'block' : 'none';
+        }
+        window.renderRezervyList();
+    };
+
+    // ДОДАНО: Функція очищення поля при натисканні на хрестик
+    window.clearRezervSearch = function() {
+        const input = document.getElementById('rezervSearchInput');
+        const btn = document.getElementById('clearRezervBtn');
+        if (input) {
+            input.value = '';
+            if (btn) btn.style.display = 'none';
+            window.renderRezervyList();
+            input.focus(); // Повертаємо курсор назад у поле
+        }
+    };
+
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
         const searchInput = document.getElementById('rezervSearchInput'); // Зчитуємо поле
@@ -1495,7 +1520,7 @@
         
         let matches = db.rezervyData.filter(r => r.store === store);
 
-        // ДОДАНО: Логіка фільтрації за введеним ключовим словом
+        // Логіка фільтрації за введеним ключовим словом
         if (searchTerm) {
             matches = matches.filter(r => 
                 r.name.toLowerCase().includes(searchTerm) || 
