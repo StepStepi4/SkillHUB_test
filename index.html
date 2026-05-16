@@ -240,7 +240,6 @@
             background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
             outline: none; font-family: inherit;
         }
-        .list-group > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
         
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
@@ -252,113 +251,97 @@
         .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
 
         /* =========================================
-           НОВИЙ ДИЗАЙН КНОПОК ДЛЯ ВКЛАДКИ SKILLHUB
+           ДИЗАЙН У СТИЛІ "НОВОЇ ПОШТИ" / "TABLETKI.UA"
            ========================================= */
-        /* Контейнер для сучасних карток */
         #dynamicSkillHubButtons {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px; /* Більше простору між картками */
         }
 
-        /* Сама картка-кнопка */
         .skillhub-card-btn {
             display: flex;
             align-items: center;
             width: 100%;
             background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 20px;
+            border: none; /* Прибираємо жорсткі рамки */
+            border-radius: 24px; /* Дуже м'які кути, як у сучасних додатках */
             padding: 16px;
             text-align: left;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03); /* М'яка тінь для об'єму */
+            transition: transform 0.15s ease, background-color 0.15s ease;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04); /* Ледь помітна тінь */
             outline: none;
             font-family: inherit;
-            position: relative;
-            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        /* Ефект натискання (занурення + зелене свічення) */
         .skillhub-card-btn:active {
-            transform: scale(0.96);
-            box-shadow: 0 2px 8px rgba(0, 160, 70, 0.15);
-            border-color: var(--rozetka-green-light);
-            background: var(--input-bg);
+            transform: scale(0.97);
+            background-color: var(--input-bg);
         }
 
         [data-theme="dark"] .skillhub-card-btn {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            background: var(--card-bg);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05); /* Легка рамка для темної теми */
         }
 
-        /* Обгортка для іконки (з легким градієнтом) */
         .skillhub-icon-wrapper {
-            width: 48px;
-            height: 48px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, var(--primary-light), rgba(16, 185, 129, 0.05));
+            width: 54px;
+            height: 54px;
+            border-radius: 18px; /* Форма "сквіркул" (squircle) */
+            background: var(--input-bg); /* Світло-сірий фон для іконки */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 24px;
+            font-size: 28px;
             flex-shrink: 0;
             margin-right: 16px;
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            transition: 0.3s;
         }
 
         [data-theme="dark"] .skillhub-icon-wrapper {
-            background: rgba(16, 185, 129, 0.1);
+            background: #2c2c2e;
         }
 
-        /* Текстовий блок картки */
         .skillhub-text-content {
             flex: 1;
             display: flex;
             flex-direction: column;
             gap: 4px;
+            padding-right: 10px;
         }
 
         .skillhub-title {
             font-size: 16px;
             font-weight: 700;
             color: var(--text-main);
-            line-height: 1.2;
+            letter-spacing: -0.3px; /* Більш щільний сучасний шрифт */
         }
 
         .skillhub-desc {
             font-size: 13px;
+            font-weight: 500;
             color: var(--text-muted);
             line-height: 1.3;
         }
 
-        /* Стрілочка */
         .skillhub-arrow {
             color: var(--text-muted);
-            opacity: 0.5;
-            transition: 0.3s ease;
+            opacity: 0.3;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-left: 10px;
         }
 
         .skillhub-arrow svg {
-            width: 20px;
-            height: 20px;
+            width: 24px;
+            height: 24px;
             stroke-width: 2.5;
             stroke: currentColor;
             fill: none;
             stroke-linecap: round;
             stroke-linejoin: round;
-        }
-
-        /* Анімація стрілочки при натисканні */
-        .skillhub-card-btn:active .skillhub-arrow {
-            color: var(--rozetka-green-dark);
-            opacity: 1;
-            transform: translateX(4px);
         }
         /* ========================================= */
 
@@ -666,7 +649,7 @@
     </div>
 
     <div id="tab-skillhub" class="app-tab">
-        <!-- З контейнера видалено клас list-group, щоб кнопки виглядали як окремі картки -->
+        <!-- Блок для кнопок-карток -->
         <div id="dynamicSkillHubButtons">
         </div>
     </div>
