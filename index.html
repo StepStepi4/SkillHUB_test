@@ -542,10 +542,12 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div class="input-group">
+        <div class="input-group" style="display: flex; flex-direction: column; gap: 10px;">
             <select id="storeFilter" onchange="window.renderRezervyList()">
                 <option value="">-- Оберіть магазин --</option>
             </select>
+            <!-- НОВЕ ПОЛЕ ДЛЯ ПОШУКУ ПО КЛЮЧОВОМУ СЛОВУ -->
+            <input type="text" id="rezervSearchInput" placeholder="Пошук по ключовому слову (напр. мікро)" oninput="window.renderRezervyList()">
         </div>
         <div id="rezervyList" class="list-group"></div>
     </div>
@@ -1485,10 +1487,22 @@
 
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
+        const searchInput = document.getElementById('rezervSearchInput'); // Зчитуємо поле
+        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : ''; // Беремо текст з пошуку
         const cont = document.getElementById('rezervyList');
+        
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
-        const matches = db.rezervyData.filter(r => r.store === store);
+        let matches = db.rezervyData.filter(r => r.store === store);
+
+        // ДОДАНО: Логіка фільтрації за введеним ключовим словом
+        if (searchTerm) {
+            matches = matches.filter(r => 
+                r.name.toLowerCase().includes(searchTerm) || 
+                r.cat.toLowerCase().includes(searchTerm)
+            );
+        }
+
         if (matches.length === 0) { safeUpdateHTML(cont, `<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Немає товарів</div>`); return; }
 
         matches.sort((a, b) => b.price - a.price);
