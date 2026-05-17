@@ -481,82 +481,70 @@
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
         /* ========================================================== */
-        /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
+        /* --- SPOTLIGHT ПОШУК (НОВИЙ СУЧАСНИЙ ВАРІАНТ) --- */
         /* ========================================================== */
         
         /* Кнопка виклику пошуку поруч із вибором магазину */
         .reserves-search-trigger {
             width: 53px; height: 53px; flex-shrink: 0;
-            background: var(--primary); color: white;
-            border: none; border-radius: 12px;
+            background: var(--card-bg); color: var(--primary);
+            border: 2px solid var(--primary); border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
+            cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.15);
         }
-        .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
+        [data-theme="dark"] .reserves-search-trigger {
+            background: var(--input-bg);
+        }
+        .reserves-search-trigger:active { transform: scale(0.92); background: var(--primary-light); }
 
-        /* Сама випадаюча панель (ховається за межами екрану зверху) */
-        .top-search-panel {
-            position: fixed; top: 0; left: 0; width: 100%; /* Тепер top завжди 0, ховаємо через transform */
-            background: var(--nav-bg); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 100000; /* Перекриває ВСЕ, включно з модалками */
-            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
-            display: flex; gap: 10px; align-items: center; 
-            border-bottom: 1px solid var(--border);
-            
-            /* --- НОВА АНІМАЦІЯ: ЗМЕНШЕННЯ-ЗБІЛЬШЕННЯ ТА ВИЇЗД --- */
-            transform: translateY(-150%) scale(0.85); /* Ховаємо вгору і зменшуємо */
-            opacity: 0;
-            pointer-events: none; /* Щоб не перекривала кліки, коли схована */
-            
-            /* Пружиниста анімація для transform і плавна для opacity */
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+        /* Темний розмитий фон поверх усього екрану */
+        .spotlight-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); 
+            backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            z-index: 100000; opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+            display: flex; flex-direction: column; align-items: center; padding-top: 15vh;
         }
-        [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
-        
-        /* Клас, який активує анімацію випадання */
-        .top-search-panel.show { 
-            transform: translateY(0) scale(1); /* Повертаємо на місце у 100% розмір */
-            opacity: 1;
-            pointer-events: auto; /* Вмикаємо кліки */
+        .spotlight-overlay.show { opacity: 1; pointer-events: auto; }
+
+        /* Сам блок пошуку в центрі екрану */
+        .spotlight-search-box {
+            width: 90%; max-width: 420px;
+            background: var(--card-bg); border-radius: 24px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3), 0 0 0 2px rgba(16, 185, 129, 0.5);
+            transform: translateY(-40px) scale(0.8);
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            display: flex; align-items: center; padding: 8px 20px;
         }
-        
-        .top-search-content {
-            flex: 1; position: relative; display: flex; align-items: center;
+        .spotlight-overlay.show .spotlight-search-box { transform: translateY(0) scale(1); }
+
+        .spotlight-input {
+            flex: 1; border: none; background: transparent; padding: 16px 12px;
+            font-size: 18px; color: var(--text-main); font-weight: 600; outline: none;
         }
-        .top-search-content input {
-            width: 100%; padding: 12px 40px 12px 16px; margin: 0;
-            border-radius: 12px; border: 2px solid var(--primary);
-            background: var(--card-bg); font-size: 16px; color: var(--text-main);
-            outline: none; box-shadow: 0 0 0 3px var(--primary-light);
-        }
-        /* Кнопка "Х" для очищення вводу */
-        .top-search-clear {
-            position: absolute; right: 10px; width: 24px; height: 24px;
-            background: var(--text-muted); color: white; border: none; border-radius: 50%;
-            font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer;
+        .spotlight-input::placeholder { color: var(--text-muted); font-weight: 500; }
+
+        .spotlight-clear {
+            width: 32px; height: 32px; border-radius: 50%; border: none;
+            background: var(--input-bg); color: var(--text-muted);
+            font-size: 20px; font-weight: bold; cursor: pointer;
             display: none; align-items: center; justify-content: center; padding-bottom: 2px;
+            transition: 0.2s; flex-shrink: 0;
         }
-        .top-search-clear:active { background: var(--danger); }
-        
-        /* Кнопка скасування/закриття панелі */
-        .top-search-close {
-            background: transparent; border: none; color: var(--text-muted);
-            font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
+        .spotlight-clear:active { background: var(--danger); color: white; transform: scale(0.9); }
+
+        /* Лічильник знайдених товарів */
+        .spotlight-count {
+            margin-top: 20px; padding: 8px 16px; border-radius: 20px;
+            background: rgba(255,255,255,0.2); color: white; font-weight: 700; font-size: 14px;
+            transform: translateY(20px); opacity: 0; transition: 0.4s ease 0.1s;
         }
+        [data-theme="dark"] .spotlight-count { background: rgba(0,0,0,0.4); }
+        .spotlight-overlay.show .spotlight-count { transform: translateY(0); opacity: 1; }
 
     </style>
 </head>
 <body>
-
-<div id="topSearchPanel" class="top-search-panel">
-    <div class="top-search-content">
-        <input type="text" id="topReservesSearchInput" placeholder="Пошук у резервах..." autocomplete="off">
-        <button id="clearTopSearchBtn" class="top-search-clear">×</button>
-    </div>
-    <button id="closeTopSearchBtn" class="top-search-close">Скасувати</button>
-</div>
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
@@ -619,7 +607,7 @@
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
             </select>
-            <button id="openTopSearchBtn" class="reserves-search-trigger">
+            <button id="openSpotlightBtn" class="reserves-search-trigger">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
         </div>
@@ -710,6 +698,15 @@
 
 <div class="floating-top" id="scrollTopBtn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</div>
+
+<div id="spotlightOverlay" class="spotlight-overlay">
+    <div class="spotlight-search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:22px; height:22px; flex-shrink:0;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        <input type="text" id="spotlightInput" class="spotlight-input" placeholder="Шукати в резервах..." autocomplete="off">
+        <button id="spotlightClearBtn" class="spotlight-clear">×</button>
+    </div>
+    <div id="spotlightCount" class="spotlight-count" style="display: none;">Знайдено: 0</div>
 </div>
 
 <div id="rezervItemModal" class="modal">
@@ -1549,10 +1546,15 @@
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
         const cont = document.getElementById('rezervyList');
-        const searchInput = document.getElementById('topReservesSearchInput');
+        const searchInput = document.getElementById('spotlightInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+        const countDisplay = document.getElementById('spotlightCount');
 
-        if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
+        if (!store) { 
+            safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); 
+            if(countDisplay) countDisplay.style.display = 'none';
+            return; 
+        }
         
         let matches = db.rezervyData.filter(r => r.store === store);
 
@@ -1563,6 +1565,11 @@
                 let catName = r.cat.toLowerCase();
                 return shortName.includes(searchQuery) || catName.includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
             });
+        }
+
+        if(countDisplay) {
+            countDisplay.style.display = 'block';
+            countDisplay.innerText = `Знайдено: ${matches.length}`;
         }
 
         if (matches.length === 0) { safeUpdateHTML(cont, `<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Немає товарів</div>`); return; }
@@ -1583,41 +1590,45 @@
         safeUpdateHTML(cont, html);
     }
 
-    // --- ЛОГІКА ДЛЯ ВЕРХНЬОЇ ПАНЕЛІ ПОШУКУ ---
-    const topPanel = document.getElementById('topSearchPanel');
-    const openTopBtn = document.getElementById('openTopSearchBtn');
-    const closeTopBtn = document.getElementById('closeTopSearchBtn');
-    const topInput = document.getElementById('topReservesSearchInput');
-    const clearTopBtn = document.getElementById('clearTopSearchBtn');
+    // --- ЛОГІКА ДЛЯ SPOTLIGHT ПОШУКУ ---
+    const sOverlay = document.getElementById('spotlightOverlay');
+    const sInput = document.getElementById('spotlightInput');
+    const sBtn = document.getElementById('openSpotlightBtn');
+    const sClear = document.getElementById('spotlightClearBtn');
 
-    // Відкриття панелі при кліку на лупу
-    openTopBtn.onclick = () => {
-        topPanel.classList.add('show');
-        setTimeout(() => topInput.focus(), 300);
+    // Відкриття Spotlight
+    sBtn.onclick = () => {
+        const store = document.getElementById('storeFilter').value;
+        if(!store) {
+            alert("Спочатку оберіть магазин!");
+            return;
+        }
+        sOverlay.classList.add('show');
+        setTimeout(() => sInput.focus(), 100);
     };
 
-    // Закриття панелі
-    closeTopBtn.onclick = () => {
-        topPanel.classList.remove('show');
-        topInput.value = '';
-        clearTopBtn.style.display = 'none';
-        window.renderRezervyList(); // Скидаємо фільтр
+    // Закриття при кліку повз вікно
+    sOverlay.onclick = (e) => {
+        if(e.target === sOverlay) {
+            sOverlay.classList.remove('show');
+            sInput.blur();
+        }
     };
 
     // Подія при введенні тексту (показ хрестика і фільтрація)
-    topInput.addEventListener('input', () => {
-        clearTopBtn.style.display = topInput.value.length > 0 ? 'flex' : 'none';
+    sInput.addEventListener('input', () => {
+        sClear.style.display = sInput.value.length > 0 ? 'flex' : 'none';
         window.renderRezervyList();
     });
 
-    // Клік по "Х" в пошуку
-    clearTopBtn.onclick = () => {
-        topInput.value = '';
-        clearTopBtn.style.display = 'none';
-        topInput.focus();
+    // Очищення інпуту
+    sClear.onclick = () => {
+        sInput.value = '';
+        sClear.style.display = 'none';
+        sInput.focus();
         window.renderRezervyList();
     };
-    // -----------------------------------------
+    // -----------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
