@@ -112,7 +112,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* ПЛАВАЮЧЕ МЕНЮ (М'яка підсвітка без овалів) */
+        /* ПЛАВАЮЧЕ МЕНЮ */
         .bottom-nav {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 16px); 
@@ -130,7 +130,7 @@
             justify-content: space-around; 
             align-items: center;
             z-index: 9990; 
-            box-shadow: 0 8px 32px rgba(0,0,0,0.08); /* М'якша тінь */
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
             padding: 0 16px;
         }
         [data-theme="dark"] .bottom-nav { 
@@ -171,7 +171,6 @@
             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
         }
         
-        /* АКТИВНИЙ СТАН: КОЛІР, ТІНЬ І ЖИРНИЙ ТЕКСТ */
         .nav-item.active { 
             color: var(--rozetka-green-dark); 
         }
@@ -181,7 +180,7 @@
         
         .nav-item.active .nav-icon { 
             transform: translateY(-2px) scale(1.15); 
-            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35)); /* Легка зелена підсвітка іконки */
+            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35));
         }
         [data-theme="dark"] .nav-item.active .nav-icon { 
             filter: drop-shadow(0px 4px 8px rgba(16, 185, 129, 0.35));
@@ -190,7 +189,7 @@
         .nav-item.active span { 
             font-weight: 800; 
             transform: translateY(-1px); 
-            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); /* Легка зелена підсвітка тексту */
+            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2);
         }
         [data-theme="dark"] .nav-item.active span {
             text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
@@ -214,6 +213,89 @@
         
         .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
+
+        /* --- АНІМОВАНИЙ ПОШУК ДЛЯ РЕЗЕРВІВ --- */
+        .reserves-header {
+            position: relative;
+        }
+        .reserves-header select {
+            padding-right: 60px; /* Місце для кнопки лупи */
+        }
+        .reserves-search-wrapper {
+            position: absolute;
+            top: 0;
+            right: 0;
+            height: 100%;
+            width: 53px; /* Початковий розмір кнопки */
+            background: var(--primary);
+            border-radius: 12px;
+            transition: width 0.4s cubic-bezier(0.68, -0.2, 0.265, 1.3), background 0.3s ease, border-color 0.3s;
+            display: flex;
+            align-items: center;
+            overflow: hidden;
+            z-index: 5;
+        }
+        .reserves-search-wrapper.active {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .reserves-search-input {
+            flex: 1;
+            height: 100%;
+            background: transparent;
+            border: none;
+            outline: none;
+            padding: 0 10px 0 20px;
+            color: var(--text-main);
+            font-size: 16px;
+            font-family: inherit;
+            font-weight: 500;
+            width: 0;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.2s 0.1s;
+        }
+        .reserves-search-wrapper.active .reserves-search-input {
+            width: 100%;
+            opacity: 1;
+            visibility: visible;
+        }
+        .reserves-search-btn {
+            width: 53px;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            transition: color 0.3s;
+            padding: 0;
+        }
+        .reserves-search-wrapper.active .reserves-search-btn {
+            color: var(--primary);
+        }
+        .reserves-search-clear {
+            width: 30px;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            display: none; /* Flex when active and has text */
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            flex-shrink: 0;
+            padding-bottom: 2px;
+            transition: color 0.2s;
+        }
+        .reserves-search-clear:active { color: var(--danger); }
+        /* ----------------------------------- */
 
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
@@ -240,6 +322,7 @@
             background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s;
             outline: none; font-family: inherit;
         }
+        .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
         
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
@@ -249,143 +332,6 @@
         
         .list-item-arrow { color: var(--text-muted); display: flex; align-items: center; justify-content: center; margin-left: auto; }
         .list-item-arrow svg { width: 18px; height: 18px; stroke-width: 2.5; stroke: currentColor; fill: none; stroke-linecap: round; stroke-linejoin: round; }
-
-        /* =========================================
-           БЕЗШОВНИЙ СУЧАСНИЙ ДИЗАЙН (СУПЕР ПРЕМІУМ)
-           ========================================= */
-        #dynamicSkillHubButtons {
-            display: flex;
-            flex-direction: column;
-            gap: 4px; /* Мінімальний відступ, бо тепер вони безшовні */
-            padding: 0 4px; /* Даємо трохи повітря по краях */
-        }
-
-        /* Сама кнопка: прозорий фон, без рамок, ефект з'являється лише при натисканні */
-        .skillhub-card-btn {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            background: transparent;
-            border: none; 
-            border-radius: 20px; 
-            padding: 12px 10px;
-            text-align: left;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
-            outline: none;
-            font-family: inherit;
-            -webkit-tap-highlight-color: transparent;
-            position: relative;
-        }
-
-        /* Легкий розділювач між елементами (градієнтний) */
-        .skillhub-card-btn:not(:last-child)::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            right: 0;
-            width: calc(100% - 76px); /* Починається після іконки */
-            height: 1px;
-            background: linear-gradient(90deg, var(--border) 0%, transparent 100%);
-            opacity: 0.6;
-        }
-
-        /* Ефект "м'якого вдавлювання" при натисканні */
-        .skillhub-card-btn:active {
-            transform: scale(0.96);
-            background-color: var(--card-bg); /* М'яка біла/темна підкладка */
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.04);
-            z-index: 2; /* Щоб тінь перекривала сусідні елементи */
-        }
-        .skillhub-card-btn:active::after {
-            opacity: 0; /* Ховаємо лінію при натисканні */
-        }
-
-        [data-theme="dark"] .skillhub-card-btn:active {
-            background: rgba(255, 255, 255, 0.05);
-            box-shadow: none;
-        }
-
-        /* Обгортка для іконки: ефект сяйва та об'єму */
-        .skillhub-icon-wrapper {
-            width: 52px;
-            height: 52px;
-            border-radius: 18px; /* Форма сквіркула */
-            background: linear-gradient(135deg, var(--card-bg) 0%, var(--input-bg) 100%);
-            box-shadow: 
-                0 8px 16px rgba(16, 185, 129, 0.12), /* Легке зелене сяйво */
-                inset 0 2px 0 rgba(255, 255, 255, 0.8), /* Відблиск зверху */
-                inset 0 -1px 0 rgba(0, 0, 0, 0.02); /* Тінь знизу */
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            flex-shrink: 0;
-            margin-right: 16px;
-            transition: transform 0.4s ease;
-        }
-
-        /* Анімація іконки при натисканні всієї картки */
-        .skillhub-card-btn:active .skillhub-icon-wrapper {
-            transform: scale(0.9);
-        }
-
-        [data-theme="dark"] .skillhub-icon-wrapper {
-            background: linear-gradient(135deg, #2c2c2e 0%, #1c1c1e 100%);
-            box-shadow: 
-                0 8px 16px rgba(16, 185, 129, 0.1), 
-                inset 0 1px 0 rgba(255, 255, 255, 0.05);
-        }
-
-        /* Текстовий блок картки */
-        .skillhub-text-content {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            gap: 3px;
-            padding-right: 10px;
-        }
-
-        .skillhub-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
-            letter-spacing: -0.3px;
-        }
-
-        .skillhub-desc {
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--text-muted);
-            line-height: 1.3;
-        }
-
-        /* Сучасна мінімалістична стрілочка */
-        .skillhub-arrow {
-            color: var(--text-muted);
-            opacity: 0.3;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .skillhub-arrow svg {
-            width: 20px;
-            height: 20px;
-            stroke-width: 3;
-            stroke: currentColor;
-            fill: none;
-            stroke-linecap: round;
-            stroke-linejoin: round;
-        }
-
-        .skillhub-card-btn:active .skillhub-arrow {
-            color: var(--primary);
-            opacity: 1;
-            transform: translateX(4px);
-        }
-        /* ========================================= */
 
         .toggle-switch {
             width: 50px; height: 30px; background: var(--border); border-radius: 30px;
@@ -623,7 +569,7 @@
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
-    <div class="loader-text" id="mainLoaderText">Синхронізація з базею...</div>
+    <div class="loader-text" id="mainLoaderText">Синхронізація даних...</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -678,22 +624,25 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div class="input-group" style="display: flex; flex-direction: column; gap: 10px;">
+        <div class="input-group reserves-header">
             <select id="storeFilter" onchange="window.renderRezervyList()">
                 <option value="">-- Оберіть магазин --</option>
             </select>
-            <div style="position: relative; width: 100%;">
-                <input type="text" id="rezervSearchInput" placeholder="Пошук по ключовому слову (напр. мікро)" oninput="window.handleRezervSearchInput()" style="margin-bottom: 0;">
-                <button id="clearRezervBtn" class="clear-btn" onclick="window.clearRezervSearch()">×</button>
+            
+            <div class="reserves-search-wrapper" id="reservesSearchWrapper">
+                <input type="text" id="reservesSearchInput" class="reserves-search-input" placeholder="Пошук у резервах..." autocomplete="off">
+                <button class="reserves-search-clear" id="reservesSearchClear">&times;</button>
+                <button class="reserves-search-btn" id="reservesSearchBtn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                </button>
             </div>
         </div>
         <div id="rezervyList" class="list-group"></div>
     </div>
 
     <div id="tab-skillhub" class="app-tab">
-        <!-- Блок для безшовних карток -->
-        <div id="dynamicSkillHubButtons">
-        </div>
+        <div class="list-group" id="dynamicSkillHubButtons">
+            </div>
     </div>
 
     <div id="tab-settings" class="app-tab">
@@ -1098,7 +1047,6 @@
             if (name && modalId === 'descModal') {
                 let title = name.replace(/🇺🇦\s*/g, '').replace(/^UA\s+/i, '').replace(/^\[.*?\]\s*/, ''); 
                 
-                // Вставляємо ціну в заголовок, якщо вона є
                 let priceLabelHtml = "";
                 if (priceLabel && priceLabel !== "Дізнатись" && priceLabel !== "Обрати пакет") {
                     priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; margin-left: 10px; background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${priceLabel}</div>`;
@@ -1111,7 +1059,7 @@
                 
                 const raw = window.findInDb(db.descriptions, name) || "";
 
-                // --- НОВА ФУНКЦІЯ: ОБ'ЄДНАННЯ СЕРТИФІКАТІВ ---
+                // Об'єднання сертифікатів
                 let p = window.currentDevicePrice || parseFloat(document.getElementById('devicePrice').value) || 0;
                 let comboHtml = "";
 
@@ -1122,17 +1070,15 @@
                         return n1 === n2 || (t.serviceRu && normalizeServiceName(t.serviceRu) === n2);
                     });
 
-                    // Шукаємо комбінацію лише серед сертифікатів з максимальним діапазоном, меншим за ціну товару
                     let validTariffs = tariffs.filter(t => t.maxPrice > 0 && t.maxPrice < p).sort((a,b) => b.maxPrice - a.maxPrice);
-                    
                     let allCombos = [];
-                    // Рекурсивна функція для пошуку комбінацій (від 2 до 4 сертифікатів)
+                    
                     function findCombos(startIndex, currentCombo, currentSum) {
                         if (currentSum >= p) {
                             allCombos.push({ combo: [...currentCombo], sum: currentSum });
                             return;
                         }
-                        if (currentCombo.length >= 4) return; // Максимум 4 сертифікати дозволено
+                        if (currentCombo.length >= 4) return;
 
                         for (let i = startIndex; i < validTariffs.length; i++) {
                             currentCombo.push(validTariffs[i]);
@@ -1142,7 +1088,6 @@
                     }
                     findCombos(0, [], 0);
 
-                    // Сортуємо: 1. Найближча сума до ціни товару. 2. Найменша кількість сертифікатів
                     allCombos.sort((a, b) => {
                         let diffA = a.sum - p;
                         let diffB = b.sum - p;
@@ -1150,7 +1095,6 @@
                         return a.combo.length - b.combo.length;
                     });
 
-                    // Видаляємо дублікати (якщо різні комбінації складаються з тих самих сертифікатів)
                     let uniqueCombos = [];
                     let seenSignatures = new Set();
                     for (let c of allCombos) {
@@ -1161,7 +1105,6 @@
                         }
                     }
 
-                    // Відбираємо максимум 2 найкращі варіанти
                     let topCombos = uniqueCombos.slice(0, 2);
 
                     if (topCombos.length > 0) {
@@ -1173,7 +1116,6 @@
                                 let maxP = t.maxPrice || 0;
                                 let tName = t.service;
                                 
-                                // Формуємо красиву назву з брендом
                                 let cleanName = tName.replace(/^\[.*?\]\s*/, '').trim();
                                 let brandMatch = tName.match(/^\[(.*?)\]/);
                                 let brand = brandMatch ? brandMatch[1] : "";
@@ -1183,13 +1125,11 @@
                                     displayName += ` (${minP.toLocaleString('uk-UA')} - ${maxP.toLocaleString('uk-UA')})`;
                                 }
                                 
-                                // Розраховуємо ціну одного сертифікату для комбінації
                                 let tPriceStr = "";
                                 let tPriceNum = 0;
                                 if (t.cost) {
                                     let cStr = String(t.cost).trim();
                                     if (cStr.includes('%')) {
-                                        // Для динамічних % сертифікатів рахуємо ціну від його ВЛАСНОГО номіналу
                                         tPriceNum = Math.round(maxP * parseFloat(cStr.replace(',', '.'))/100);
                                     } else {
                                         tPriceNum = parseFloat(cStr.replace(/\s+/g, '').replace(',', '.'));
@@ -1242,7 +1182,7 @@
                         comboHtml = `
                             <div style="margin-top: 24px; padding-top: 16px; border-top: 1px dashed var(--border);">
                                 <button class="btn" style="background: var(--primary-light); color: var(--rozetka-green-dark); font-weight: 800; width: 100%; border: 1px dashed var(--primary);" onclick="this.nextElementSibling.style.display='block'; this.style.display='none';">
-                                    🛠 Об'єднати сертифікати
+                                    🧩 Об'єднати сертифікати
                                 </button>
                                 <div style="display: none; background: var(--input-bg); padding: 16px; border-radius: 12px; border: 1px solid var(--border); animation: fade 0.2s ease;">
                                     <div style="text-align:center; font-size:13px; color:var(--text-muted); font-weight:600; margin-bottom:16px;">Об'єднання для ${p.toLocaleString('uk-UA')} ₴</div>
@@ -1252,7 +1192,6 @@
                         `;
                     }
                 }
-                // --- КІНЕЦЬ НОВОЇ ФУНКЦІЇ ---
 
                 document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml;
                 let dc = document.getElementById('modalBody').querySelector('.desc-content');
@@ -1387,7 +1326,6 @@
         txt.innerText = text;
     }
 
-    // --- ОНОВЛЕНИЙ ДИНАМІЧНИЙ РЕНДЕР КНОПОК SKILLHUB ---
     window.renderSkillHubTab = function() {
         const container = document.getElementById('dynamicSkillHubButtons');
         if (!container || !db.skillHubButtons) return;
@@ -1397,7 +1335,6 @@
             let linkStr = String(btn.link).trim();
             let nm = String(btn.name).toLowerCase();
             
-            // Якщо є маркер з таблиці
             if (linkStr === "--") {
                 actionStr = `onclick="window.openSellerModal()"`;
             } else if (linkStr === "%") {
@@ -1416,18 +1353,17 @@
                 }
             }
 
-            // Вставляємо новий HTML-шаблон безшовної картки
             return `
-            <button class="skillhub-card-btn" ${actionStr}>
-                <div class="skillhub-icon-wrapper">
+            <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
+                <div style="font-size: 32px; display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; flex-shrink: 0; margin-right: 12px;">
                     ${window.renderIcon(btn.emoji)}
                 </div>
-                <div class="skillhub-text-content">
-                    <span class="skillhub-title">${btn.name}</span>
-                    <span class="skillhub-desc">${btn.desc}</span>
+                <div class="list-item-content" style="flex:1; text-align:left;">
+                    <span class="list-item-title">${btn.name}</span>
+                    <span class="list-item-subtitle">${btn.desc}</span>
                 </div>
-                <div class="skillhub-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                <div class="list-item-arrow" style="margin-left: auto;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </button>`;
         }).join('');
@@ -1435,7 +1371,6 @@
         safeUpdateHTML(container, html);
     };
 
-    // --- ДИНАМІЧНИЙ РЕНДЕР РЕЙТИНГУ ---
     window.renderRatingModalContent = function() {
         const container = document.getElementById('ratingModalBody');
         if (!container) return;
@@ -1497,7 +1432,7 @@
                 window.buildServiceSearchList();
                 enableUI(); window.populateFilters();
                 window.renderSkillHubTab();
-                setAppStatus('ok', 'Офлайн (З кешу)');
+                setAppStatus('ok', 'Готовий до роботи');
                 refreshData(false); 
             } catch(e) { await refreshData(true); }
         } else await refreshData(true); 
@@ -1554,7 +1489,7 @@
                 }
                 enableUI(); window.populateFilters();
                 window.renderSkillHubTab();
-                if(currentCategoryData || currentServiceData) renderServices(); // Оновлюємо сервіси, якщо ми на екрані пошуку
+                if(currentCategoryData || currentServiceData) renderServices(); 
                 if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
             }, 400); 
             
@@ -1625,44 +1560,23 @@
         }
     }
 
-    // Логіка обробки вводу для показу/сховання хрестика
-    window.handleRezervSearchInput = function() {
-        const input = document.getElementById('rezervSearchInput');
-        const btn = document.getElementById('clearRezervBtn');
-        if (input && btn) {
-            btn.style.display = input.value.length > 0 ? 'block' : 'none';
-        }
-        window.renderRezervyList();
-    };
-
-    // Функція очищення поля при натисканні на хрестик
-    window.clearRezervSearch = function() {
-        const input = document.getElementById('rezervSearchInput');
-        const btn = document.getElementById('clearRezervBtn');
-        if (input) {
-            input.value = '';
-            if (btn) btn.style.display = 'none';
-            window.renderRezervyList();
-            input.focus(); // Повертаємо курсор назад у поле
-        }
-    };
-
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
-        const searchInput = document.getElementById('rezervSearchInput'); // Зчитуємо поле
-        const searchTerm = searchInput ? searchInput.value.toLowerCase().trim() : ''; // Беремо текст з пошуку
         const cont = document.getElementById('rezervyList');
-        
+        const searchInput = document.getElementById('reservesSearchInput');
+        const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
+
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
         let matches = db.rezervyData.filter(r => r.store === store);
 
-        // Логіка фільтрації за введеним ключовим словом
-        if (searchTerm) {
-            matches = matches.filter(r => 
-                r.name.toLowerCase().includes(searchTerm) || 
-                r.cat.toLowerCase().includes(searchTerm)
-            );
+        // Фільтрація по пошуку
+        if (searchQuery) {
+            matches = matches.filter(r => {
+                let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
+                let catName = r.cat.toLowerCase();
+                return shortName.includes(searchQuery) || catName.includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
+            });
         }
 
         if (matches.length === 0) { safeUpdateHTML(cont, `<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Немає товарів</div>`); return; }
@@ -1682,6 +1596,50 @@
         }).join('');
         safeUpdateHTML(cont, html);
     }
+
+    // --- ЛОГІКА АНІМОВАНОГО ПОШУКУ В РЕЗЕРВАХ ---
+    const resSearchWrapper = document.getElementById('reservesSearchWrapper');
+    const resSearchInput = document.getElementById('reservesSearchInput');
+    const resSearchBtn = document.getElementById('reservesSearchBtn');
+    const resSearchClear = document.getElementById('reservesSearchClear');
+
+    resSearchBtn.onclick = (e) => {
+        e.preventDefault();
+        if (!resSearchWrapper.classList.contains('active')) {
+            resSearchWrapper.classList.add('active');
+            setTimeout(() => resSearchInput.focus(), 300);
+        } else {
+            if(resSearchInput.value.trim() === '') {
+                 resSearchWrapper.classList.remove('active');
+            }
+        }
+    };
+
+    resSearchInput.addEventListener('input', () => {
+        if (resSearchInput.value.length > 0) {
+            resSearchClear.style.display = 'flex';
+        } else {
+            resSearchClear.style.display = 'none';
+        }
+        window.renderRezervyList();
+    });
+
+    resSearchClear.onclick = (e) => {
+        e.preventDefault();
+        resSearchInput.value = '';
+        resSearchClear.style.display = 'none';
+        resSearchInput.focus();
+        window.renderRezervyList();
+    };
+
+    document.addEventListener('click', (e) => {
+        if (resSearchWrapper && resSearchWrapper.classList.contains('active')) {
+            if (!resSearchWrapper.contains(e.target) && resSearchInput.value.trim() === '') {
+                resSearchWrapper.classList.remove('active');
+            }
+        }
+    });
+    // ---------------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
@@ -2610,10 +2568,8 @@
         lines.forEach((line, index) => {
             const l = line.trim();
             if (l) {
-                let hasEmoji = /^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/.test(l);
-                let prefix = hasEmoji ? "" : "🔹";
                 let border = index !== lines.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
-                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="margin-right:8px;">${window.renderIcon(prefix)}</span><span style="flex:1;">${l}</span></div>`;
+                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="flex:1;">${l}</span></div>`;
             }
         });
         html += '</div>';
