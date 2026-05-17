@@ -180,7 +180,7 @@
         
         .nav-item.active .nav-icon { 
             transform: translateY(-2px) scale(1.15); 
-            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35));
+            filter: drop-shadow(0px 4px 8px rgba(0, 160, 70, 0.35)); 
         }
         [data-theme="dark"] .nav-item.active .nav-icon { 
             filter: drop-shadow(0px 4px 8px rgba(16, 185, 129, 0.35));
@@ -189,7 +189,7 @@
         .nav-item.active span { 
             font-weight: 800; 
             transform: translateY(-1px); 
-            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2);
+            text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); 
         }
         [data-theme="dark"] .nav-item.active span {
             text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
@@ -213,89 +213,6 @@
         
         .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
-
-        /* --- АНІМОВАНИЙ ПОШУК ДЛЯ РЕЗЕРВІВ --- */
-        .reserves-header {
-            position: relative;
-        }
-        .reserves-header select {
-            padding-right: 60px; /* Місце для кнопки лупи */
-        }
-        .reserves-search-wrapper {
-            position: absolute;
-            top: 0;
-            right: 0;
-            height: 100%;
-            width: 53px; /* Початковий розмір кнопки */
-            background: var(--primary);
-            border-radius: 12px;
-            transition: width 0.4s cubic-bezier(0.68, -0.2, 0.265, 1.3), background 0.3s ease, border-color 0.3s;
-            display: flex;
-            align-items: center;
-            overflow: hidden;
-            z-index: 5;
-        }
-        .reserves-search-wrapper.active {
-            width: 100%;
-            background: var(--input-bg);
-            border: 1px solid var(--primary);
-            box-shadow: 0 0 0 3px var(--primary-light);
-        }
-        .reserves-search-input {
-            flex: 1;
-            height: 100%;
-            background: transparent;
-            border: none;
-            outline: none;
-            padding: 0 10px 0 20px;
-            color: var(--text-main);
-            font-size: 16px;
-            font-family: inherit;
-            font-weight: 500;
-            width: 0;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.2s 0.1s;
-        }
-        .reserves-search-wrapper.active .reserves-search-input {
-            width: 100%;
-            opacity: 1;
-            visibility: visible;
-        }
-        .reserves-search-btn {
-            width: 53px;
-            height: 100%;
-            background: transparent;
-            border: none;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            transition: color 0.3s;
-            padding: 0;
-        }
-        .reserves-search-wrapper.active .reserves-search-btn {
-            color: var(--primary);
-        }
-        .reserves-search-clear {
-            width: 30px;
-            height: 100%;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 24px;
-            display: none; /* Flex when active and has text */
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            flex-shrink: 0;
-            padding-bottom: 2px;
-            transition: color 0.2s;
-        }
-        .reserves-search-clear:active { color: var(--danger); }
-        /* ----------------------------------- */
 
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
@@ -563,9 +480,72 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
+        /* ========================================================== */
+        /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
+        /* ========================================================== */
+        
+        /* Кнопка виклику пошуку поруч із вибором магазину */
+        .reserves-search-trigger {
+            width: 53px; height: 53px; flex-shrink: 0;
+            background: var(--primary); color: white;
+            border: none; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
+        .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
+
+        /* Сама випадаюча панель (ховається за межами екрану зверху) */
+        .top-search-panel {
+            position: fixed; top: -150px; left: 0; width: 100%;
+            background: var(--nav-bg); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 100000; /* Перекриває ВСЕ, включно з модалками */
+            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transition: top 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex; gap: 10px; align-items: center; 
+            border-bottom: 1px solid var(--border);
+        }
+        [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 20px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
+        
+        /* Клас, який активує анімацію випадання */
+        .top-search-panel.show { top: 0; }
+        
+        .top-search-content {
+            flex: 1; position: relative; display: flex; align-items: center;
+        }
+        .top-search-content input {
+            width: 100%; padding: 12px 40px 12px 16px; margin: 0;
+            border-radius: 12px; border: 2px solid var(--primary);
+            background: var(--card-bg); font-size: 16px; color: var(--text-main);
+            outline: none; box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        /* Кнопка "Х" для очищення вводу */
+        .top-search-clear {
+            position: absolute; right: 10px; width: 24px; height: 24px;
+            background: var(--text-muted); color: white; border: none; border-radius: 50%;
+            font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer;
+            display: none; align-items: center; justify-content: center; padding-bottom: 2px;
+        }
+        .top-search-clear:active { background: var(--danger); }
+        
+        /* Кнопка скасування/закриття панелі */
+        .top-search-close {
+            background: transparent; border: none; color: var(--text-muted);
+            font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
+        }
+
     </style>
 </head>
 <body>
+
+<div id="topSearchPanel" class="top-search-panel">
+    <div class="top-search-content">
+        <input type="text" id="topReservesSearchInput" placeholder="Пошук у резервах..." autocomplete="off">
+        <button id="clearTopSearchBtn" class="top-search-clear">×</button>
+    </div>
+    <button id="closeTopSearchBtn" class="top-search-close">Скасувати</button>
+</div>
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
@@ -624,18 +604,13 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div class="input-group reserves-header">
-            <select id="storeFilter" onchange="window.renderRezervyList()">
+        <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
+            <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
             </select>
-            
-            <div class="reserves-search-wrapper" id="reservesSearchWrapper">
-                <input type="text" id="reservesSearchInput" class="reserves-search-input" placeholder="Пошук у резервах..." autocomplete="off">
-                <button class="reserves-search-clear" id="reservesSearchClear">&times;</button>
-                <button class="reserves-search-btn" id="reservesSearchBtn">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
-                </button>
-            </div>
+            <button id="openTopSearchBtn" class="reserves-search-trigger">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width:20px; height:20px;"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </button>
         </div>
         <div id="rezervyList" class="list-group"></div>
     </div>
@@ -1563,7 +1538,7 @@
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
         const cont = document.getElementById('rezervyList');
-        const searchInput = document.getElementById('reservesSearchInput');
+        const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
@@ -1597,49 +1572,41 @@
         safeUpdateHTML(cont, html);
     }
 
-    // --- ЛОГІКА АНІМОВАНОГО ПОШУКУ В РЕЗЕРВАХ ---
-    const resSearchWrapper = document.getElementById('reservesSearchWrapper');
-    const resSearchInput = document.getElementById('reservesSearchInput');
-    const resSearchBtn = document.getElementById('reservesSearchBtn');
-    const resSearchClear = document.getElementById('reservesSearchClear');
+    // --- ЛОГІКА ДЛЯ ВЕРХНЬОЇ ПАНЕЛІ ПОШУКУ ---
+    const topPanel = document.getElementById('topSearchPanel');
+    const openTopBtn = document.getElementById('openTopSearchBtn');
+    const closeTopBtn = document.getElementById('closeTopSearchBtn');
+    const topInput = document.getElementById('topReservesSearchInput');
+    const clearTopBtn = document.getElementById('clearTopSearchBtn');
 
-    resSearchBtn.onclick = (e) => {
-        e.preventDefault();
-        if (!resSearchWrapper.classList.contains('active')) {
-            resSearchWrapper.classList.add('active');
-            setTimeout(() => resSearchInput.focus(), 300);
-        } else {
-            if(resSearchInput.value.trim() === '') {
-                 resSearchWrapper.classList.remove('active');
-            }
-        }
+    // Відкриття панелі при кліку на лупу
+    openTopBtn.onclick = () => {
+        topPanel.classList.add('show');
+        setTimeout(() => topInput.focus(), 300);
     };
 
-    resSearchInput.addEventListener('input', () => {
-        if (resSearchInput.value.length > 0) {
-            resSearchClear.style.display = 'flex';
-        } else {
-            resSearchClear.style.display = 'none';
-        }
+    // Закриття панелі
+    closeTopBtn.onclick = () => {
+        topPanel.classList.remove('show');
+        topInput.value = '';
+        clearTopBtn.style.display = 'none';
+        window.renderRezervyList(); // Скидаємо фільтр
+    };
+
+    // Подія при введенні тексту (показ хрестика і фільтрація)
+    topInput.addEventListener('input', () => {
+        clearTopBtn.style.display = topInput.value.length > 0 ? 'flex' : 'none';
         window.renderRezervyList();
     });
 
-    resSearchClear.onclick = (e) => {
-        e.preventDefault();
-        resSearchInput.value = '';
-        resSearchClear.style.display = 'none';
-        resSearchInput.focus();
+    // Клік по "Х" в пошуку
+    clearTopBtn.onclick = () => {
+        topInput.value = '';
+        clearTopBtn.style.display = 'none';
+        topInput.focus();
         window.renderRezervyList();
     };
-
-    document.addEventListener('click', (e) => {
-        if (resSearchWrapper && resSearchWrapper.classList.contains('active')) {
-            if (!resSearchWrapper.contains(e.target) && resSearchInput.value.trim() === '') {
-                resSearchWrapper.classList.remove('active');
-            }
-        }
-    });
-    // ---------------------------------------------
+    // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
