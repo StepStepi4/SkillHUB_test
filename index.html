@@ -1810,16 +1810,30 @@ window.showChangelogModal = function(version, changelog) {
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
     }
-    <div id="changelogModal" class="modal">
+   if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(console.error);
+    });
+}
+</script>
+
+<div id="changelogModal" class="modal">
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" id="changelogTitle" style="width: 100%;">Оновлення</div>
-            <button class="modal-close" onclick="window.closeModalBase('changelogModal')"></button>
+            <button class="modal-close"
+                onclick="window.closeModalBase('changelogModal')"></button>
         </div>
-        <div id="changelogBody" class="modal-body" style="padding-bottom: 20px;"></div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('changelogModal')">Зрозуміло</button>
+
+        <div id="changelogBody" class="modal-body"
+            style="padding-bottom: 20px;"></div>
+
+        <button class="btn btn-primary"
+            onclick="window.closeModalBase('changelogModal')">
+            Зрозуміло
+        </button>
     </div>
 </div>
-</script>
+
 </body>
 </html>
