@@ -762,7 +762,7 @@
 
               <div class="cert-example">
                 <h3>📋 Приклад вирішення</h3>
-                <p>Товар коштує <span class="cert-highlight">17 499 ₴</span>. Ідеально до нього продати <em>Сервіс (15 001 - 20 000)</em>, але його немає на залишку. Робимо наступні кроки:</p>
+                <p>Товар коштує <span class="cert-highlight">17 499 ₴</span>. Ідеально до нього продати <em>Сервіс (15 001 - 20 000)</em>, але його нет на залишку. Робимо наступні кроки:</p>
 
                 <ul class="cert-steps">
                   <li><strong>Обираємо декілька менших за діапазоном позицій</strong><br> Наприклад: <em>Сервіс (10 001 - <span class="brace-highlight">15 000</span>)</em> та <em>Сервіс (2 001 - <span class="brace-highlight">3 000</span>)</em>.</li>
@@ -899,7 +899,6 @@
 
     // === ЛОГІКА НАВЧАННЯ (АВТОРИЗАЦІЯ) ===
     window.checkEducationAuth = function() {
-        // Перевіряємо обидва сховища
         let isAuthLocal = localStorage.getItem('skillhub_edu_auth');
         let isAuthSession = sessionStorage.getItem('skillhub_edu_auth');
         const iframe = document.getElementById('eduIframe');
@@ -907,11 +906,24 @@
         if (isAuthLocal === 'true' || isAuthSession === 'true') {
             iframe.style.display = 'block';
             if (!iframe.src || iframe.src === window.location.href) {
-                iframe.src = 'education.html'; // Шлях до вашого нового файлу
+                iframe.src = 'education.html'; 
             }
         } else {
             iframe.style.display = 'none';
             window.openModalBase('eduLoginModal');
+            
+            // РОЗУМНЕ АВТОЗАПОВНЕННЯ ПРИ ВІДКРИТТІ
+            let savedLogin = localStorage.getItem('skillhub_edu_saved_login');
+            let savedPass = localStorage.getItem('skillhub_edu_saved_pass');
+            if (savedLogin && savedPass) {
+                document.getElementById('eduLoginInput').value = savedLogin;
+                document.getElementById('eduPassInput').value = savedPass;
+                document.getElementById('eduRememberMe').checked = true;
+            } else {
+                document.getElementById('eduLoginInput').value = '';
+                document.getElementById('eduPassInput').value = '';
+                document.getElementById('eduRememberMe').checked = false;
+            }
         }
     }
 
@@ -920,7 +932,7 @@
         let isAuthLocal = localStorage.getItem('skillhub_edu_auth');
         let isAuthSession = sessionStorage.getItem('skillhub_edu_auth');
         if (isAuthLocal !== 'true' && isAuthSession !== 'true') {
-            window.switchTab('tab-search'); // Повертаємо на головну, якщо закрили без входу
+            window.switchTab('tab-search'); 
         }
     }
 
@@ -939,17 +951,20 @@
         const isValid = db.educationAuth && db.educationAuth.some(user => user.login === login && String(user.pass) === String(pass));
 
         if (isValid) {
-            // Зберігаємо сесію назавжди або тільки до закриття вкладки
             if (remember) {
                 localStorage.setItem('skillhub_edu_auth', 'true');
+                // Зберігаємо зв'язку логін-пароль для майбутнього автозаповнення
+                localStorage.setItem('skillhub_edu_saved_login', login);
+                localStorage.setItem('skillhub_edu_saved_pass', pass);
             } else {
                 sessionStorage.setItem('skillhub_edu_auth', 'true');
+                // Якщо користувач увійшов в інший тимчасовий акаунт БЕЗ збереження,
+                // зачищаємо попередні автозаповнення, щоб не плутати користувача
+                localStorage.removeItem('skillhub_edu_saved_login');
+                localStorage.removeItem('skillhub_edu_saved_pass');
             }
             
             errEl.style.display = 'none';
-            document.getElementById('eduLoginInput').value = '';
-            document.getElementById('eduPassInput').value = '';
-            document.getElementById('eduRememberMe').checked = false; // Очищуємо чекбокс для наступного разу
             window.closeModalBase('eduLoginModal');
             
             const iframe = document.getElementById('eduIframe');
@@ -962,9 +977,13 @@
     }
 
     window.logoutEducation = function() {
-        // Очищуємо обидва сховища
+        // Видаляємо лише статус активної сесії авторизації
         localStorage.removeItem('skillhub_edu_auth');
         sessionStorage.removeItem('skillhub_edu_auth');
+        
+        // Збережені дані в `localStorage` (skillhub_edu_saved_login/pass) НЕ ВИДАЛЯЄМО!
+        // Вони підставляться браузерним методом при наступному натисканні на вкладку "Навчання"
+        
         document.getElementById('eduIframe').style.display = 'none';
         document.getElementById('eduIframe').src = '';
         window.switchTab('tab-search');
@@ -1066,7 +1085,7 @@
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
         data.sellerRatings = data.sellerRatings || [];
-        data.educationAuth = data.educationAuth || []; // ДОДАНО
+        data.educationAuth = data.educationAuth || []; 
         return data;
     }
 
@@ -1075,7 +1094,7 @@
         'tab-reserves': 'Активні резерви',
         'tab-skillhub': 'SkillHUB',
         'tab-settings': 'Налаштування',
-        'tab-education': 'Навчання' // ДОДАНО
+        'tab-education': 'Навчання' 
     };
 
     const elCatInput = document.getElementById('catInput');
@@ -1126,7 +1145,6 @@
         
         if (tabId === 'tab-reserves') window.renderRezervyList();
 
-        // Перевірка авторизації для вкладки "Навчання"
         if (tabId === 'tab-education') {
             window.checkEducationAuth();
         }
@@ -1151,7 +1169,6 @@
                 
                 const raw = window.findInDb(db.descriptions, name) || "";
 
-                // Об'єднання сертифікатів
                 let p = window.currentDevicePrice || parseFloat(document.getElementById('devicePrice').value) || 0;
                 let comboHtml = "";
 
@@ -1285,7 +1302,6 @@
                     }
                 }
 
-                // Згенерувати або замінити вміст опису (використовую твій існуючий generateDescToggleHTML або просто виводжу raw)
                 let tempBody = (typeof generateDescToggleHTML === 'function') 
                     ? generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml
                     : raw + comboHtml;
@@ -1336,7 +1352,7 @@
     }
 
     function checkOpenModals() {
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'objectionsModal', 'eduLoginModal']; // ДОДАНО eduLoginModal
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'objectionsModal', 'eduLoginModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1731,7 +1747,6 @@
         }
     });
 
-    // Тренажер заперечень (заглушка)
     const mockObjections = [
         { obj: "Ні, дякую! Мені це не потрібно!", ans: ["Звичайно, рішення повністю за вами..."] },
         { obj: "Дорого!", ans: ["Розумію вас, це додаткові витрати..."] },
