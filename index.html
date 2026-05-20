@@ -706,6 +706,12 @@
                 <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Пароль</span>
                 <input type="password" id="eduPassInput" placeholder="Введіть пароль">
             </div>
+            
+            <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 16px; cursor: pointer;">
+                <input type="checkbox" id="eduRememberMe" style="width: 24px; height: 24px; padding: 0; border-radius: 4px; appearance: checkbox; -webkit-appearance: checkbox; cursor: pointer; flex-shrink: 0; outline: none; border: none; background: transparent;">
+                <label for="eduRememberMe" style="font-size: 14px; font-weight: 600; color: var(--text-main); cursor: pointer; user-select: none;">Запам'ятати мене</label>
+            </div>
+            
             <div id="eduAuthError" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align: center; display: none;">Невірний логін або пароль</div>
             <button class="btn-submit-glow" onclick="window.authEducation()">УВІЙТИ</button>
         </div>
@@ -874,7 +880,7 @@
     window.currentDevicePrice = 0; 
 
     // НОВИЙ APP SCRIPT
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwKXTYY0WP1-4NrwKFITgrhM8frHpgNTg4X_9gOyfIKdex0OatvOqLM855wOU5xVyvp3Q/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyC80nCkWSk2OqcWwBeId1QqREd_hgDvcoHxAWR4T0Find6QjDOQ5clouTU7gPvq4ENGA/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -893,10 +899,12 @@
 
     // === ЛОГІКА НАВЧАННЯ (АВТОРИЗАЦІЯ) ===
     window.checkEducationAuth = function() {
-        let isAuth = localStorage.getItem('skillhub_edu_auth');
+        // Перевіряємо обидва сховища
+        let isAuthLocal = localStorage.getItem('skillhub_edu_auth');
+        let isAuthSession = sessionStorage.getItem('skillhub_edu_auth');
         const iframe = document.getElementById('eduIframe');
         
-        if (isAuth === 'true') {
+        if (isAuthLocal === 'true' || isAuthSession === 'true') {
             iframe.style.display = 'block';
             if (!iframe.src || iframe.src === window.location.href) {
                 iframe.src = 'education.html'; // Шлях до вашого нового файлу
@@ -909,7 +917,9 @@
 
     window.closeEduLogin = function() {
         window.closeModalBase('eduLoginModal');
-        if (localStorage.getItem('skillhub_edu_auth') !== 'true') {
+        let isAuthLocal = localStorage.getItem('skillhub_edu_auth');
+        let isAuthSession = sessionStorage.getItem('skillhub_edu_auth');
+        if (isAuthLocal !== 'true' && isAuthSession !== 'true') {
             window.switchTab('tab-search'); // Повертаємо на головну, якщо закрили без входу
         }
     }
@@ -917,6 +927,7 @@
     window.authEducation = function() {
         const login = document.getElementById('eduLoginInput').value.trim();
         const pass = document.getElementById('eduPassInput').value.trim();
+        const remember = document.getElementById('eduRememberMe').checked;
         const errEl = document.getElementById('eduAuthError');
 
         if (!login || !pass) {
@@ -928,10 +939,17 @@
         const isValid = db.educationAuth && db.educationAuth.some(user => user.login === login && String(user.pass) === String(pass));
 
         if (isValid) {
-            localStorage.setItem('skillhub_edu_auth', 'true');
+            // Зберігаємо сесію назавжди або тільки до закриття вкладки
+            if (remember) {
+                localStorage.setItem('skillhub_edu_auth', 'true');
+            } else {
+                sessionStorage.setItem('skillhub_edu_auth', 'true');
+            }
+            
             errEl.style.display = 'none';
             document.getElementById('eduLoginInput').value = '';
             document.getElementById('eduPassInput').value = '';
+            document.getElementById('eduRememberMe').checked = false; // Очищуємо чекбокс для наступного разу
             window.closeModalBase('eduLoginModal');
             
             const iframe = document.getElementById('eduIframe');
@@ -944,7 +962,9 @@
     }
 
     window.logoutEducation = function() {
+        // Очищуємо обидва сховища
         localStorage.removeItem('skillhub_edu_auth');
+        sessionStorage.removeItem('skillhub_edu_auth');
         document.getElementById('eduIframe').style.display = 'none';
         document.getElementById('eduIframe').src = '';
         window.switchTab('tab-search');
