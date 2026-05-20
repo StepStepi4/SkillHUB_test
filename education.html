@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Навчання</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: transparent; /* Iframe приймає фон батьківського вікна */
+            color: #000;
+            margin: 0; padding: 20px;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh;
+        }
+        .edu-card {
+            background-color: #ffffff;
+            border-radius: 16px; border: 1px solid #e5e5ea;
+            padding: 40px 20px; text-align: center; width: 100%; max-width: 400px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        .btn-logout {
+            background-color: #ef4444; color: white; border: none;
+            padding: 12px 24px; border-radius: 12px; font-weight: 600;
+            margin-top: 20px; cursor: pointer; transition: 0.2s;
+        }
+        .btn-logout:active { opacity: 0.8; transform: scale(0.95); }
+        
+        @media (prefers-color-scheme: dark) {
+            body { color: #fff; }
+            .edu-card { background-color: #1c1c1e; border-color: #38383a; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="edu-card">
+        <div style="font-size: 60px; margin-bottom: 20px;">🎓</div>
+        <h3 style="margin-bottom: 10px; font-weight: 800; margin-top:0;">Навчання</h3>
+        <p style="color: #8e8e93; font-size: 14px; line-height: 1.5;">Контент доповнюється. Незабаром тут з'являться матеріали.</p>
+        
+        <button class="btn-logout" onclick="window.parent.logoutEducation()">Вийти з акаунту</button>
+    </div>
+
+</body>
+</html>
