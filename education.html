@@ -62,16 +62,15 @@
 
         <div class="select-group">
             <label for="brandSelect">Оберіть сервіс:</label>
-            <select id="brandSelect" onchange="console.log('Обрано:', this.value)">
+            <select id="brandSelect">
                 <option value="">Завантаження...</option>
             </select>
         </div>
         
-        <button class="btn-logout" onclick="if(window.parent && window.parent.logoutEducation) window.parent.logoutEducation()">Вийти з акаунту</button>
+        <button class="btn-logout" onclick="window.parent.logoutEducation && window.parent.logoutEducation()">Вийти з акаунту</button>
     </div>
 
     <script>
-        // Встав сюда свой URL из Google Apps Script (без лишних символов в конце)
         const API_URL = 'https://script.google.com/macros/s/AKfycbyC80nCkWSk2OqcWwBeId1QqREd_hgDvcoHxAWR4T0Find6QjDOQ5clouTU7gPvq4ENGA/exec';
 
         async function initDropdown() {
@@ -79,18 +78,22 @@
             
             try {
                 const response = await fetch(API_URL);
+                if (!response.ok) throw new Error('Network response was not ok');
+                
                 const data = await response.json();
                 
-                // Очищаем список
+                // Очищаємо список
                 select.innerHTML = '<option value="">-- Оберіть продукт --</option>';
                 
-                // Заполняем данными из trainingData (колонка E)
-                if (data.trainingData && data.trainingData.length > 0) {
+                // Перевіряємо наявність даних
+                if (data && data.trainingData && Array.isArray(data.trainingData) && data.trainingData.length > 0) {
                     data.trainingData.forEach(item => {
-                        const option = document.createElement('option');
-                        option.value = item.name;
-                        option.textContent = item.name;
-                        select.appendChild(option);
+                        if(item.name) {
+                            const option = document.createElement('option');
+                            option.value = item.name;
+                            option.textContent = item.name;
+                            select.appendChild(option);
+                        }
                     });
                 } else {
                     select.innerHTML = '<option value="">Дані відсутні</option>';
@@ -101,7 +104,7 @@
             }
         }
 
-        // Запуск при загрузке
+        // Запуск при завантаженні
         document.addEventListener('DOMContentLoaded', initDropdown);
     </script>
 </body>
