@@ -739,7 +739,7 @@
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
-            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
+            <button class="modal-close" onclick="window.('descModal')"></button>
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
         <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
@@ -935,7 +935,16 @@
             window.switchTab('tab-search'); 
         }
     }
-
+window.showChangelogModal = function(version, changelog) {
+    // Встановлюємо заголовок
+    document.getElementById('changelogTitle').innerText = "Версія " + version;
+    
+    // Встановлюємо вміст (changelog може бути текстом або HTML)
+    document.getElementById('changelogBody').innerHTML = changelog || "Список змін відсутній.";
+    
+    // Використовуємо вашу існуючу логіку відкриття модалок
+    window.openModalBase('changelogModal');
+};
     window.authEducation = function() {
         const login = document.getElementById('eduLoginInput').value.trim();
         const pass = document.getElementById('eduPassInput').value.trim();
@@ -1801,6 +1810,16 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
     }
+    <div id="changelogModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="changelogTitle" style="width: 100%;">Оновлення</div>
+            <button class="modal-close" onclick="window.closeModalBase('changelogModal')"></button>
+        </div>
+        <div id="changelogBody" class="modal-body" style="padding-bottom: 20px;"></div>
+        <button class="btn btn-primary" onclick="window.closeModalBase('changelogModal')">Зрозуміло</button>
+    </div>
+</div>
 </script>
 </body>
 </html>
