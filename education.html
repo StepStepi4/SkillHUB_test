@@ -1,21 +1,21 @@
 <script>
-    // URL твоего опубликованного веб-приложения (из деплоя Google Apps Script)
-    const WEB_APP_URL = 'URL_ВАШЕГО_WEB_APP'; 
+    // URL исправлен: убрали лишнюю 'L' в конце
+    const WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbwKXTYY0WP1-4NrwKFITgrhM8frHpgNTg4X_9gOyfIKdex0OatvOqLM855wOU5xVyvp3Q/exec';
 
     async function loadDropdown() {
         const select = document.getElementById('brandSelect');
         
         try {
-            // Запрос данных из твоего скрипта
-            const response = await fetch('https://script.google.com/macros/s/AKfycbwKXTYY0WP1-4NrwKFITgrhM8frHpgNTg4X_9gOyfIKdex0OatvOqLM855wOU5xVyvp3Q/execL');
+            // Используем переменную WEB_APP_URL для удобства
+            const response = await fetch(WEB_APP_URL);
             const data = await response.json();
             
             // Проверяем, есть ли данные
             if (data && data.trainingData) {
-                // Очищаем текущие опции (кроме первой "Оберіть продукт")
+                // Очищаем текущие опции
                 select.innerHTML = '<option value="">-- Оберіть продукт --</option>';
                 
-                // Добавляем новые опции из колонки E (названия сервісів)
+                // Заполняем выпадающий список
                 data.trainingData.forEach(item => {
                     if (item.name) {
                         const option = document.createElement('option');
@@ -31,6 +31,6 @@
         }
     }
 
-    // Запускаем загрузку при открытии страницы
+    // Запускаем функцию при загрузке
     window.onload = loadDropdown;
 </script>
