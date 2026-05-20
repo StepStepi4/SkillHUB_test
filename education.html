@@ -34,3 +34,41 @@
     // Запускаем функцию при загрузке
     window.onload = loadDropdown;
 </script>
+<script>
+    // --- ГЛОБАЛЬНЕ ОГОЛОШЕННЯ ФУНКЦІЇ ---
+    // Вставляй цей блок першим у секції <script>
+    window.showChangelogModal = function(version, changelog) {
+        console.log("Відкриваємо модалку змін:", version);
+        
+        // Перевіряємо, чи існує модальне вікно, якщо ні - створюємо його
+        const modalId = 'changelogModal';
+        let modal = document.getElementById(modalId);
+        
+        if (!modal) {
+            modal = document.createElement('div');
+            modal.id = modalId;
+            modal.className = 'modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <div class="modal-title">Оновлення ${version}</div>
+                        <button class="modal-close" onclick="window.closeModalBase('${modalId}')"></button>
+                    </div>
+                    <div class="modal-body" style="white-space: pre-line;">${changelog}</div>
+                    <button class="btn btn-primary" onclick="window.closeModalBase('${modalId}')">Зрозуміло</button>
+                </div>
+            `;
+            document.body.appendChild(modal);
+        } else {
+            // Оновлюємо текст, якщо вікно вже було створено
+            modal.querySelector('.modal-body').innerText = changelog;
+            modal.querySelector('.modal-title').innerText = "Оновлення " + version;
+        }
+        
+        window.openModalBase(modalId);
+    };
+
+    // Далі йде решта твого коду:
+    // const API_URL = ...
+    // let db = ...
+    // ...
