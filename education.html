@@ -2,110 +2,274 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Навчання</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Навчання - SkillHUB</title>
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: transparent;
-            color: #000;
-            margin: 0; padding: 20px;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; height: 90vh;
-        }
-        
-        .edu-card {
-            background-color: #ffffff;
-            border-radius: 16px; border: 1px solid #e5e5ea;
-            padding: 40px 20px; text-align: center; width: 100%; max-width: 400px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            /* СВІТЛА ТЕМА */
+            --bg: #f2f2f7; 
+            --card-bg: #ffffff;
+            --text-main: #000000; 
+            --text-muted: #8e8e93; 
+            --primary: #10b981; 
+            --border: #e5e5ea;
+            --input-bg: #f9fafb;
+            --shadow: rgba(0, 0, 0, 0.05);
         }
 
-        .select-group { text-align: left; margin-bottom: 20px; }
-        
-        label {
-            display: block; margin-bottom: 8px;
-            font-size: 14px; font-weight: 600; color: #333;
+        [data-theme="dark"] {
+            /* ТЕМНА ТЕМА */
+            --bg: #000000; 
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff; 
+            --text-muted: #98989d; 
+            --primary: #10b981;
+            --border: #38383a;
+            --input-bg: #2c2c2e;
+            --shadow: rgba(0, 0, 0, 0.5);
         }
 
-        select {
-            width: 100%; padding: 12px 16px; border-radius: 12px;
-            border: 1px solid #e5e5ea; background-color: #f9f9f9;
-            font-family: 'Inter', sans-serif; font-size: 16px; cursor: pointer;
-            appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23666%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E');
-            background-repeat: no-repeat; background-position: right 16px top 50%; background-size: 12px auto;
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
+            min-height: 100vh; -webkit-font-smoothing: antialiased;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        .btn-logout {
-            background-color: #ef4444; color: white; border: none;
-            padding: 12px 24px; border-radius: 12px; font-weight: 600;
-            margin-top: 10px; cursor: pointer; transition: 0.2s; width: 100%;
+        .container { 
+            position: relative; width: 100%; max-width: 480px; 
+            padding: 20px 16px; margin-bottom: 40px; 
+            display: flex; flex-direction: column;
+        }
+
+        /* --- ШАПКА --- */
+        .header-nav { 
+            display: flex; justify-content: space-between; align-items: center; 
+            margin-bottom: 24px; 
         }
         
-        .btn-logout:active { opacity: 0.8; transform: scale(0.95); }
-        
-        @media (prefers-color-scheme: dark) {
-            body { color: #fff; }
-            .edu-card { background-color: #1c1c1e; border-color: #38383a; }
-            label { color: #d1d1d6; }
-            select { background-color: #2c2c2e; border-color: #38383a; color: #fff; background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23ffffff%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E'); }
+        .header-left {
+            display: flex; align-items: center; gap: 15px;
         }
+
+        .action-btn { 
+            width: 40px; height: 40px; border-radius: 50%; background: var(--card-bg); 
+            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; color: var(--text-main); text-decoration: none;
+            transition: 0.2s; box-shadow: 0 4px 10px var(--shadow);
+        }
+        .action-btn:active { transform: scale(0.95); background: var(--input-bg); }
+        .action-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round;}
+        
+        h2 { margin: 0; font-size: 24px; font-weight: 800; }
+
+        /* Кнопка Виходу */
+        .logout-btn {
+            background: transparent; border: none; color: var(--text-muted); 
+            font-weight: 600; font-size: 14px; cursor: pointer; padding: 8px 12px;
+            display: flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .logout-btn:active { color: #ef4444; }
+
+        /* --- ФОРМА ВИБОРУ --- */
+        .input-group { margin-bottom: 24px; }
+        select { 
+            width: 100%; padding: 16px 20px; border-radius: 16px; 
+            font-size: 16px; font-family: inherit; font-weight: 700; 
+            background: var(--card-bg); color: var(--text-main); 
+            border: 2px solid var(--primary); outline: none; transition: 0.2s; 
+            -webkit-appearance: none; appearance: none; cursor: pointer;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%2310b981' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 16px center;
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.15);
+        }
+        select:active { transform: scale(0.98); }
+
+        /* --- КОНТЕЙНЕР ОПИСАНИЯ --- */
+        .desc-container {
+            background: var(--card-bg); border-radius: 20px; padding: 24px 20px;
+            border: 1px solid var(--border); display: none; flex-direction: column; gap: 16px;
+            box-shadow: 0 10px 30px var(--shadow);
+        }
+
+        .desc-main-title {
+            font-size: 20px; font-weight: 900; color: var(--primary);
+            text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
+        }
+
+        /* Креативное разделение строк */
+        .desc-line { 
+            display: flex; align-items: center; gap: 16px;
+            padding: 14px 0; border-bottom: 1.5px dashed var(--border);
+        }
+        .desc-line:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        /* Крупные эмодзи */
+        .desc-emoji { 
+            font-size: 32px; /* Эмодзи крупнее текста */
+            line-height: 1; 
+            flex-shrink: 0; 
+            display: flex; align-items: center; justify-content: center;
+            width: 44px; height: 44px;
+            background: var(--input-bg); border-radius: 12px; /* Небольшой фон под эмодзи */
+        }
+        
+        .desc-text { 
+            flex: 1; font-size: 15px; font-weight: 600; color: var(--text-main); 
+            line-height: 1.4;
+        }
+
+        /* --- КНОПКА ТЕСТА --- */
+        .btn-test {
+            width: 100%; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800;
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white; border: none; cursor: pointer; transition: 0.2s;
+            margin-top: 24px; display: none; text-align: center; 
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .btn-test:active { transform: scale(0.96); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
+
     </style>
 </head>
 <body>
 
-    <div class="edu-card">
-        <div style="font-size: 50px; margin-bottom: 10px;">🎓</div>
-        <h3 style="margin-bottom: 20px; font-weight: 800; margin-top:0;">Навчання</h3>
-
-        <div class="select-group">
-            <label for="brandSelect">Оберіть сервіс:</label>
-            <select id="brandSelect">
-                <option value="">Завантаження...</option>
-            </select>
+<div class="container">
+    <!-- Шапка с кнопкой назад и кнопкой выхода -->
+    <div class="header-nav">
+        <div class="header-left">
+            <a href="index.html" class="action-btn">
+                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
+            </a>
+            <h2>Навчання</h2>
         </div>
-        
-        <button class="btn-logout" onclick="window.parent.logoutEducation && window.parent.logoutEducation()">Вийти з акаунту</button>
+        <button class="logout-btn" onclick="logout()">
+            Вийти
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        </button>
     </div>
 
-    <script>
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyC80nCkWSk2OqcWwBeId1QqREd_hgDvcoHxAWR4T0Find6QjDOQ5clouTU7gPvq4ENGA/exec';
+    <!-- Выпадающее меню -->
+    <div class="input-group">
+        <select id="typeSelect" onchange="renderContent()">
+            <option value="" disabled selected>Оберіть тему для навчання...</option>
+        </select>
+    </div>
 
-        async function initDropdown() {
-            const select = document.getElementById('brandSelect');
-            
-            try {
-                const response = await fetch(API_URL);
-                if (!response.ok) throw new Error('Network response was not ok');
-                
-                const data = await response.json();
-                
-                // Очищаємо список
-                select.innerHTML = '<option value="">-- Оберіть продукт --</option>';
-                
-                // Перевіряємо наявність даних
-                if (data && data.trainingData && Array.isArray(data.trainingData) && data.trainingData.length > 0) {
-                    data.trainingData.forEach(item => {
-                        if(item.name) {
-                            const option = document.createElement('option');
-                            option.value = item.name;
-                            option.textContent = item.name;
-                            select.appendChild(option);
-                        }
-                    });
-                } else {
-                    select.innerHTML = '<option value="">Дані відсутні</option>';
-                }
-            } catch (error) {
-                console.error("Помилка завантаження даних:", error);
-                select.innerHTML = '<option value="">Помилка сервера</option>';
+    <!-- Блок с описанием -->
+    <div id="contentBox" class="desc-container"></div>
+    
+    <!-- Кнопка теста -->
+    <button id="testBtn" class="btn-test" onclick="startTest()">📝 Пройти тест</button>
+
+</div>
+
+<script>
+    // 1. ПЕРЕВЕРКА АВТОРИЗАЦИИ (БЕЗОПАСНОСТЬ)
+    const savedLogin = localStorage.getItem('edu_saved_login');
+    const savedPass = localStorage.getItem('edu_saved_pass');
+    const tempAuth = sessionStorage.getItem('edu_temp_auth');
+
+    // Если нет активной сессии - возвращаем на главную страницу
+    if (!tempAuth && (!savedLogin || !savedPass)) {
+        window.location.href = 'index.html';
+    }
+
+    // Применяем тему (светлая/темная), которую выбрал пользователь в index.html
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', currentTheme);
+
+    // Функция выхода (сброс сессии)
+    function logout() {
+        localStorage.removeItem('edu_saved_login');
+        localStorage.removeItem('edu_saved_pass');
+        sessionStorage.removeItem('edu_temp_auth');
+        window.location.href = 'index.html';
+    }
+
+    // 2. ЗАГРУЗКА ДАННЫХ
+    let educationMaterials = [];
+    const cachedData = localStorage.getItem('skillhub_v1_flat');
+    
+    if (cachedData) {
+        try {
+            const db = JSON.parse(cachedData);
+            if (db.educationData && db.educationData.materials) {
+                educationMaterials = db.educationData.materials;
             }
+        } catch (e) {
+            console.error("Помилка читання кешу");
         }
+    }
 
-        // Запуск при завантаженні
-        document.addEventListener('DOMContentLoaded', initDropdown);
-    </script>
+    // 3. ЗАПОЛНЕНИЕ ВЫПАДАЮЩЕГО СПИСКА
+    const selectEl = document.getElementById('typeSelect');
+    if (educationMaterials.length > 0) {
+        educationMaterials.forEach((mat, idx) => {
+            let opt = document.createElement('option');
+            opt.value = idx;
+            opt.innerText = mat.type; // Значение из колонки E (Типи сервісів)
+            selectEl.appendChild(opt);
+        });
+    } else {
+        selectEl.innerHTML = '<option disabled selected>Немає даних для навчання</option>';
+    }
+
+    // 4. ОТОБРАЖЕНИЕ КРЕАТИВНОГО КОНТЕНТА
+    function renderContent() {
+        const idx = selectEl.value;
+        const box = document.getElementById('contentBox');
+        const btn = document.getElementById('testBtn');
+
+        if (!idx || !educationMaterials[idx]) return;
+
+        const material = educationMaterials[idx];
+        const rawText = material.desc; // Описание из колонки H
+        
+        let html = `<div class="desc-main-title">${material.type}</div>`;
+
+        // Разбиваем текст на строки по символу | или по обычным переносам строк (Enter)
+        const lines = rawText.replace(/\|/g, '\n').split(/\r?\n/);
+
+        lines.forEach(line => {
+            const l = line.trim();
+            if (!l) return; // Пропускаем пустые строки
+
+            // Ищем эмодзи в самом начале строки с помощью регулярного выражения
+            const emojiMatch = l.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+            
+            // Если эмодзи есть, берем его. Если нет, ставим стандартный маркер 📌
+            let emoji = emojiMatch ? emojiMatch[0] : "📌";
+            
+            // Убираем эмодзи из текста, чтобы он не дублировался
+            let text = emojiMatch ? l.replace(emoji, '').trim() : l;
+
+            // Формируем красивую строку
+            html += `
+                <div class="desc-line">
+                    <div class="desc-emoji">${emoji}</div>
+                    <div class="desc-text">${text}</div>
+                </div>
+            `;
+        });
+
+        // Вставляем результат на экран и показываем кнопку теста
+        box.innerHTML = html;
+        box.style.display = 'flex';
+        btn.style.display = 'block';
+    }
+
+    // 5. КНОПКА ТЕСТА
+    function startTest() {
+        alert("Модуль тестів успішно підключено! Тести будуть додані в наступному оновленні.");
+        // Позже здесь мы напишем код для запуска тестов
+    }
+
+</script>
 </body>
 </html>
