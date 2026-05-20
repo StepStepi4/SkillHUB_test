@@ -164,6 +164,8 @@
         .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); width: 28px; height: 28px; } 
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
+        /* Іконка для навчання */
+        .icon-education { -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 10v6M2 10l10-5 10 5-10 5z'/%3E%3Cpath d='M6 12v5c3 3 9 3 12 0v-5'/%3E%3C/svg%3E"); mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M22 10v6M2 10l10-5 10 5-10 5z'/%3E%3Cpath d='M6 12v5c3 3 9 3 12 0v-5'/%3E%3C/svg%3E"); }
 
         .nav-item span { 
             font-size: 11px; 
@@ -307,7 +309,6 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
         .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
         
-        /* ПРЕМІАЛЬНА КНОПКА ЗАКРИТТЯ "Х" */
         .modal-close { 
             background: var(--card-bg); border: 1px solid var(--border); 
             width: 36px; height: 36px; border-radius: 50%; 
@@ -392,7 +393,8 @@
         #compareModal { z-index: 100040; }
         #ratingModal { z-index: 100045; }
         #galleryModal { z-index: 100060; }
-        #objectionsModal { z-index: 100070; } /* Нова модалка для тренажера */
+        #objectionsModal { z-index: 100070; }
+        #eduLoginModal { z-index: 100080; } /* Z-index для логіну */
         
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
@@ -599,6 +601,10 @@
         <div class="list-group" id="dynamicSkillHubButtons"></div>
     </div>
 
+    <div id="tab-education" class="app-tab" style="height: calc(100vh - var(--nav-height) - 150px); padding: 0;">
+        <iframe id="eduIframe" src="" style="width: 100%; height: 100%; border: none; display: none; border-radius: 16px;"></iframe>
+    </div>
+
     <div id="tab-settings" class="app-tab">
         <div class="list-group">
             <div class="list-item">
@@ -665,6 +671,10 @@
         <div class="nav-icon icon-bulb"></div>
         <span>SkillHUB</span>
     </button>
+    <button class="nav-item" onclick="window.switchTab('tab-education')">
+        <div class="nav-icon icon-education"></div>
+        <span>Навчання</span>
+    </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
         <div class="nav-icon icon-settings"></div>
         <span>Опції</span>
@@ -678,6 +688,28 @@
 
 <div class="floating-top" id="scrollTopBtn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
+</div>
+
+<div id="eduLoginModal" class="modal">
+    <div class="modal-content" style="max-height: 80vh;">
+        <div class="modal-header">
+            <div class="modal-title" style="width: 100%;">Вхід до Навчання</div>
+            <button class="modal-close" onclick="window.closeEduLogin()"></button>
+        </div>
+        <div class="modal-body" style="padding-top: 10px;">
+            <div style="text-align: center; margin-bottom: 24px; font-size: 50px;">🔐</div>
+            <div class="input-group">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Логін</span>
+                <input type="text" id="eduLoginInput" placeholder="Введіть ваш логін з таблиці">
+            </div>
+            <div class="input-group">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Пароль</span>
+                <input type="password" id="eduPassInput" placeholder="Введіть пароль">
+            </div>
+            <div id="eduAuthError" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 16px; text-align: center; display: none;">Невірний логін або пароль</div>
+            <button class="btn-submit-glow" onclick="window.authEducation()">УВІЙТИ</button>
+        </div>
+    </div>
 </div>
 
 <div id="rezervItemModal" class="modal">
@@ -839,7 +871,85 @@
 </div>
 
 <script>
-    window.currentDevicePrice = 0; // Глобальна ціна пристрою
+    window.currentDevicePrice = 0; 
+
+    // НОВИЙ APP SCRIPT
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyC80nCkWSk2OqcWwBeId1QqREd_hgDvcoHxAWR4T0Find6QjDOQ5clouTU7gPvq4ENGA/exec';
+    const CACHE_KEY = 'skillhub_v1_flat'; 
+    const SEEN_VERSION_KEY = 'skillhub_version_flat';
+    
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], educationAuth: [] };
+    let currentCategoryData = null;
+    let currentServiceData = null; 
+    let savedScrollY = 0; 
+    
+    let isCompareMode = false;
+    let compareSelection = [];
+    window.lastCalculatedServices = [];
+    let isModalCompareMode = false;
+    let modalCompareSelection = [];
+    window.lastModalServices = [];
+    window.allServicesSearchList = [];
+
+    // === ЛОГІКА НАВЧАННЯ (АВТОРИЗАЦІЯ) ===
+    window.checkEducationAuth = function() {
+        let isAuth = localStorage.getItem('skillhub_edu_auth');
+        const iframe = document.getElementById('eduIframe');
+        
+        if (isAuth === 'true') {
+            iframe.style.display = 'block';
+            if (!iframe.src || iframe.src === window.location.href) {
+                iframe.src = 'education.html'; // Шлях до вашого нового файлу
+            }
+        } else {
+            iframe.style.display = 'none';
+            window.openModalBase('eduLoginModal');
+        }
+    }
+
+    window.closeEduLogin = function() {
+        window.closeModalBase('eduLoginModal');
+        if (localStorage.getItem('skillhub_edu_auth') !== 'true') {
+            window.switchTab('tab-search'); // Повертаємо на головну, якщо закрили без входу
+        }
+    }
+
+    window.authEducation = function() {
+        const login = document.getElementById('eduLoginInput').value.trim();
+        const pass = document.getElementById('eduPassInput').value.trim();
+        const errEl = document.getElementById('eduAuthError');
+
+        if (!login || !pass) {
+            errEl.innerText = "Заповніть всі поля";
+            errEl.style.display = 'block';
+            return;
+        }
+
+        const isValid = db.educationAuth && db.educationAuth.some(user => user.login === login && String(user.pass) === String(pass));
+
+        if (isValid) {
+            localStorage.setItem('skillhub_edu_auth', 'true');
+            errEl.style.display = 'none';
+            document.getElementById('eduLoginInput').value = '';
+            document.getElementById('eduPassInput').value = '';
+            window.closeModalBase('eduLoginModal');
+            
+            const iframe = document.getElementById('eduIframe');
+            iframe.src = 'education.html'; 
+            iframe.style.display = 'block';
+        } else {
+            errEl.innerText = "Невірний логін або пароль";
+            errEl.style.display = 'block';
+        }
+    }
+
+    window.logoutEducation = function() {
+        localStorage.removeItem('skillhub_edu_auth');
+        document.getElementById('eduIframe').style.display = 'none';
+        document.getElementById('eduIframe').src = '';
+        window.switchTab('tab-search');
+    }
+    // ===================================
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -864,23 +974,6 @@
             elLoader.querySelector('.spinner').style.display = 'none';
         }
     });
-
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxbKgUqNSN6sOcVUHizIq5kbvylv6hvOLYIuTGRYTwih0_V9cdG1-Bep6E4M3F-RRYL_g/exec';
-    const CACHE_KEY = 'skillhub_v1_flat'; 
-    const SEEN_VERSION_KEY = 'skillhub_version_flat';
-    
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
-    let currentCategoryData = null;
-    let currentServiceData = null; 
-    let savedScrollY = 0; 
-    
-    let isCompareMode = false;
-    let compareSelection = [];
-    window.lastCalculatedServices = [];
-    let isModalCompareMode = false;
-    let modalCompareSelection = [];
-    window.lastModalServices = [];
-    window.allServicesSearchList = [];
 
     window.buildServiceSearchList = function() {
         let uniqueMap = new Map();
@@ -940,7 +1033,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], educationAuth: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -953,6 +1046,7 @@
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
         data.sellerRatings = data.sellerRatings || [];
+        data.educationAuth = data.educationAuth || []; // ДОДАНО
         return data;
     }
 
@@ -960,7 +1054,8 @@
         'tab-search': 'SkillHUB Assistant',
         'tab-reserves': 'Активні резерви',
         'tab-skillhub': 'SkillHUB',
-        'tab-settings': 'Налаштування'
+        'tab-settings': 'Налаштування',
+        'tab-education': 'Навчання' // ДОДАНО
     };
 
     const elCatInput = document.getElementById('catInput');
@@ -992,8 +1087,6 @@
         else toggle.classList.remove('active');
     }
 
-    const brandRegex = /^\[(.*?)\]/;
-
     window.switchTab = function(tabId) {
         document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
@@ -1012,6 +1105,11 @@
         if (compareBar) compareBar.classList.remove('show');
         
         if (tabId === 'tab-reserves') window.renderRezervyList();
+
+        // Перевірка авторизації для вкладки "Навчання"
+        if (tabId === 'tab-education') {
+            window.checkEducationAuth();
+        }
         
         window.scrollTo(0, 0);
     }
@@ -1167,7 +1265,12 @@
                     }
                 }
 
-                document.getElementById('modalBody').innerHTML = generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml;
+                // Згенерувати або замінити вміст опису (використовую твій існуючий generateDescToggleHTML або просто виводжу raw)
+                let tempBody = (typeof generateDescToggleHTML === 'function') 
+                    ? generateDescToggleHTML(raw, code).replace('display: none;', 'display: block;').replace('Детальніше', 'Опис сервісу') + comboHtml
+                    : raw + comboHtml;
+                
+                document.getElementById('modalBody').innerHTML = tempBody;
                 let dc = document.getElementById('modalBody').querySelector('.desc-content');
                 if(dc) dc.classList.add('show');
             }
@@ -1213,7 +1316,7 @@
     }
 
     function checkOpenModals() {
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'objectionsModal'];
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'objectionsModal', 'eduLoginModal']; // ДОДАНО eduLoginModal
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1265,11 +1368,6 @@
         return "";
     }
 
-    function debounce(func, wait) {
-        let timeout;
-        return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func.apply(this, args), wait); };
-    }
-
     window.copyCode = function(e, el, code) {
         if (e) e.stopPropagation(); 
         const fallbackCopy = () => {
@@ -1316,7 +1414,6 @@
             } else if (linkStr === "@@") {
                 actionStr = `onclick="window.openModalBase('certManualModal')"`;
             } else if (linkStr === "!!") {
-                // НОВИЙ ТРИГЕР ДЛЯ ТРЕНАЖЕРА
                 actionStr = `onclick="window.openObjectionsTrainer()"`;
             } else if (linkStr !== "" && linkStr !== "#") {
                 actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
@@ -1614,51 +1711,22 @@
         }
     });
 
-    /* ========================================================== */
-    /* --- ЛОГІКА ТРЕНАЖЕРА ЗАПЕРЕЧЕНЬ --- */
-    /* ========================================================== */
-
-    // Макет даних (згідно твого скріншоту). Пізніше замінимо на дані з таблиці.
+    // Тренажер заперечень (заглушка)
     const mockObjections = [
-        { 
-            obj: "Ні, дякую! Мені це не потрібно!", 
-            ans: [
-                "Звичайно, рішення повністю за вами, я лише маю вас попередити про можливості. Дозвольте тільки уточнити: ви відмовляєтесь, бо на 100% впевнені в стабільності нашої електромережі?",
-                "Я теж раніше так думав, поки не побачив вартість запчастин зараз. Цей захист коштує, наприклад, 800 гривень на два роки. Це близько 30 гривень на місяць — ціна однієї поїздки в транспорті!"
-            ]
-        },
-        {
-            obj: "Дорого!",
-            ans: [
-                "Розумію вас, це додаткові витрати до вартості самої техніки. Але давайте подивимось на цифри. Наприклад, якщо через перепад напруги згорить плата управління або двигун, заміна...",
-                "Зверніть увагу: до цієї ціни входить не тільки сам ремонт. Уявіть, що щось стається: просто виклик майстра для діагностики зараз коштує від 500 гривень. А якщо це велика техніка..."
-            ]
-        },
-        {
-            obj: "Звичайної гарантії вистачить!",
-            ans: [
-                "Ви абсолютно праві, від заводського браку ви захищені. Але, як показує статистика сервісних центрів, заводський брак виявляється у перші кілька тижнів роботи. А далі починається...",
-                "Згоден, на перший рік базової гарантії зазвичай вистачає. Але найцікавіше починається потім. Сучасна техніка має певний ресурс, і дуже часто поломки трапляються на 13-й чи 14-й місяць..."
-            ]
-        }
+        { obj: "Ні, дякую! Мені це не потрібно!", ans: ["Звичайно, рішення повністю за вами..."] },
+        { obj: "Дорого!", ans: ["Розумію вас, це додаткові витрати..."] },
+        { obj: "Звичайної гарантії вистачить!", ans: ["Ви абсолютно праві..."] }
     ];
 
     window.openObjectionsTrainer = function() {
         const chatArea = document.getElementById('trainerChatArea');
         const actionsArea = document.getElementById('trainerActionsArea');
-        
-        // Скидаємо чат до початкового стану
         chatArea.innerHTML = `
             <div class="msg-bubble msg-manager" style="align-self: center; border-radius: 18px; background: var(--input-bg); color: var(--text-muted); border: 1px solid var(--border); box-shadow: none; font-size: 12px; text-align: center;">
                 Оберіть заперечення клієнта внизу, щоб побачити варіанти відповідей 👇
             </div>
         `;
-        
-        // Рендеримо кнопки з доступними запереченнями
-        actionsArea.innerHTML = mockObjections.map((item, index) => {
-            return `<button class="obj-btn" onclick="window.handleObjectionClick(${index})">🗣 ${item.obj}</button>`;
-        }).join('');
-
+        actionsArea.innerHTML = mockObjections.map((item, index) => `<button class="obj-btn" onclick="window.handleObjectionClick(${index})">🗣 ${item.obj}</button>`).join('');
         window.openModalBase('objectionsModal');
     };
 
@@ -1666,119 +1734,32 @@
         const item = mockObjections[index];
         const chatArea = document.getElementById('trainerChatArea');
         const actionsArea = document.getElementById('trainerActionsArea');
-
-        // Блокуємо кнопки на час анімації
         const btns = actionsArea.querySelectorAll('.obj-btn');
         btns.forEach(b => b.style.pointerEvents = 'none');
 
-        // 1. Повідомлення клієнта
         chatArea.insertAdjacentHTML('beforeend', `<div class="msg-bubble msg-client">${item.obj}</div>`);
         chatArea.scrollTop = chatArea.scrollHeight;
-
-        // 2. Індикатор "менеджер друкує..."
         const typingId = 'typing-' + Date.now();
         chatArea.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="typing-indicator"><span></span><span></span><span></span></div>`);
         chatArea.scrollTop = chatArea.scrollHeight;
 
-        // 3. Через секунду показуємо відповідь
         setTimeout(() => {
             const typingEl = document.getElementById(typingId);
             if (typingEl) typingEl.remove();
-
             const msgId = 'msg-' + Date.now();
-            let navHtml = '';
-            
-            // Якщо відповідей більше однієї, додаємо блок перемикання
-            if (item.ans.length > 1) {
-                navHtml = `
-                <div class="ans-nav">
-                    <span id="ans-count-${msgId}">Варіант 1 з ${item.ans.length}</span>
-                    <button class="ans-nav-btn" onclick="window.nextObjectionAnswer('${msgId}', ${index}, 1)">Наступний ⏭</button>
-                </div>`;
-            }
-
             chatArea.insertAdjacentHTML('beforeend', `
                 <div class="msg-bubble msg-manager" id="${msgId}" data-current-ans="0">
                     <div id="ans-text-${msgId}">${item.ans[0]}</div>
-                    ${navHtml}
                 </div>
             `);
             chatArea.scrollTop = chatArea.scrollHeight;
-
-            // Знімаємо блокування кнопок
             btns.forEach(b => b.style.pointerEvents = 'auto');
         }, 1200);
     };
 
-    window.nextObjectionAnswer = function(msgId, objIndex, direction) {
-        const item = mockObjections[objIndex];
-        const msgEl = document.getElementById(msgId);
-        if (!msgEl) return;
-
-        let currentAns = parseInt(msgEl.getAttribute('data-current-ans'));
-        currentAns += direction;
-        
-        // Зациклюємо варіанти
-        if (currentAns >= item.ans.length) currentAns = 0;
-        if (currentAns < 0) currentAns = item.ans.length - 1;
-
-        msgEl.setAttribute('data-current-ans', currentAns);
-        
-        // Оновлюємо текст і лічильник
-        document.getElementById(`ans-text-${msgId}`).innerText = item.ans[currentAns];
-        document.getElementById(`ans-count-${msgId}`).innerText = `Варіант ${currentAns + 1} з ${item.ans.length}`;
-    };
-
-    /* ========================================================== */
-
     window.openSellerModal = function() {
         window.openModalBase('sellerModal');
-        if(document.getElementById('sellerStore').options.length <= 1) {
-            const scriptTag = document.createElement('script');
-            scriptTag.src = `${SELLER_SCRIPT_URL}?action=getFormData&callback=handleSellerResponse`;
-            document.body.appendChild(scriptTag);
-        }
-        
-        document.getElementById('sellerFormSubmit').style.display = 'block';
-        document.getElementById('sellerStatusOverlay').style.display = 'none';
-        document.getElementById('submitSellerBtn').disabled = false;
-        document.getElementById('submitSellerBtn').innerText = 'ВІДПРАВИТИ';
-        document.getElementById('sellerFormSubmit').reset();
     }
-
-    window.handleSellerResponse = function(data) {
-        const s = document.getElementById('sellerStore');
-        const r = document.getElementById('sellerReason');
-        s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
-        r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
-        data.stores.forEach(item => s.add(new Option(item, item)));
-        data.reasons.forEach(item => r.add(new Option(item, item)));
-    }
-
-    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitSellerBtn');
-        const overlay = document.getElementById('sellerStatusOverlay');
-        const form = document.getElementById('sellerFormSubmit');
-        
-        btn.disabled = true;
-        btn.innerText = 'НАДСИЛАЄМО...';
-
-        fetch(SELLER_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: new FormData(this)
-        })
-        .then(() => {
-            form.style.display = 'none';
-            overlay.style.display = 'block';
-        })
-        .catch(() => {
-            alert("Помилка відправки.");
-            btn.disabled = false;
-            btn.innerText = 'ВІДПРАВИТИ';
-        });
-    };
 
     init();
 
