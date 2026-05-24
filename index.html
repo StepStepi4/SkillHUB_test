@@ -632,7 +632,7 @@
 
     <div id="tab-search" class="app-tab active">
         <div class="input-group">
-            <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
+            <input type="text" id="catInput" ... >pe="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
             <button id="clearAllBtn" class="clear-btn">×</button>
             <div id="customSuggestions" class="suggestions"></div>
         </div>
@@ -2552,12 +2552,9 @@
             btn.innerText = 'ВІДПРАВИТИ';
         });
     };
-
+document.addEventListener('DOMContentLoaded', function() {
     init();
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
-    }
+});
 </script>
 </body>
 </html>
