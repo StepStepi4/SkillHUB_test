@@ -71,7 +71,10 @@
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
-            min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
+            min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease;
+            /* Захист від копіювання тексту */
+            -webkit-user-select: none;
+            user-select: none;
         }
 
         /* ЗАВАНТАЖУВАЧ */
@@ -164,7 +167,6 @@
         .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); width: 28px; height: 28px; } 
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
-        .icon-education { -webkit-mask-image: url('education.svg'); mask-image: url('education.svg'); }
 
         .nav-item span { 
             font-size: 11px; 
@@ -393,7 +395,6 @@
         #compareModal { z-index: 100040; }
         #ratingModal { z-index: 100045; }
         #galleryModal { z-index: 100060; }
-        #eduLoginModal { z-index: 100070; }
         
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
@@ -486,7 +487,6 @@
         /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
         /* ========================================================== */
         
-        /* Кнопка виклику пошуку поруч із вибором магазину */
         .reserves-search-trigger {
             width: 53px; height: 53px; flex-shrink: 0;
             background: var(--primary); color: white;
@@ -496,44 +496,36 @@
         }
         .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
 
-        /* Сама випадаюча панель (ховається за межами екрану зверху) */
         .top-search-panel {
-            position: fixed; top: 0; left: 0; width: 100%; /* Тепер top завжди 0, ховаємо через transform */
+            position: fixed; top: 0; left: 0; width: 100%; 
             background: var(--nav-bg); 
             backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 100000; /* Перекриває ВСЕ, включно з модалками */
+            z-index: 100000; 
             padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
             box-shadow: 0 4px 30px rgba(0,0,0,0.15);
             display: flex; gap: 10px; align-items: center; 
             border-bottom: 1px solid var(--border);
             
-            /* --- НОВА АНІМАЦІЯ: ЗМЕНШЕННЯ-ЗБІЛЬШЕННЯ ТА ВИЇЗД --- */
-            transform: translateY(-150%) scale(0.85); /* Ховаємо вгору і зменшуємо */
+            transform: translateY(-150%) scale(0.85); 
             opacity: 0;
-            pointer-events: none; /* Щоб не перекривала кліки, коли схована */
-            
-            /* Пружиниста анімація для transform і плавна для opacity */
+            pointer-events: none; 
             transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
         
-        /* Клас, який активує анімацію випадання */
         .top-search-panel.show { 
-            transform: translateY(0) scale(1); /* Повертаємо на місце у 100% розмір */
+            transform: translateY(0) scale(1); 
             opacity: 1;
-            pointer-events: auto; /* Вмикаємо кліки */
+            pointer-events: auto; 
         }
         
-        .top-search-content {
-            flex: 1; position: relative; display: flex; align-items: center;
-        }
+        .top-search-content { flex: 1; position: relative; display: flex; align-items: center; }
         .top-search-content input {
             width: 100%; padding: 12px 40px 12px 16px; margin: 0;
             border-radius: 12px; border: 2px solid var(--primary);
             background: var(--card-bg); font-size: 16px; color: var(--text-main);
             outline: none; box-shadow: 0 0 0 3px var(--primary-light);
         }
-        /* Кнопка "Х" для очищення вводу */
         .top-search-clear {
             position: absolute; right: 10px; width: 24px; height: 24px;
             background: var(--text-muted); color: white; border: none; border-radius: 50%;
@@ -542,10 +534,44 @@
         }
         .top-search-clear:active { background: var(--danger); }
         
-        /* Кнопка скасування/закриття панелі */
         .top-search-close {
             background: transparent; border: none; color: var(--text-muted);
             font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
+        }
+
+        /* ========================================================== */
+        /* --- СТИЛІ ВНУТРІШНЬОГО БРАУЗЕРА (НОВЕ) --- */
+        /* ========================================================== */
+        #internalBrowserModal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: var(--bg); z-index: 1000000; display: none; flex-direction: column;
+        }
+        #internalBrowserModal.show { display: flex; }
+        .ib-toolbar {
+            height: 56px; background: var(--nav-bg); backdrop-filter: blur(10px);
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 0 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+            padding-top: env(safe-area-inset-top);
+            box-sizing: content-box;
+        }
+        .ib-nav-btns { display: flex; gap: 16px; }
+        .ib-btn {
+            background: transparent; border: none; color: var(--primary);
+            font-size: 24px; cursor: pointer; padding: 5px; font-weight: bold;
+        }
+        .ib-btn:active { opacity: 0.5; }
+        .ib-iframe-wrapper { flex: 1; position: relative; width: 100%; }
+        #ibIframe { width: 100%; height: 100%; border: none; background: #fff; }
+
+        /* ЗАХИСТ ВІД СКРІНШОТІВ ТА ДРУКУ */
+        @media print {
+            body { display: none !important; }
+        }
+        .no-screenshot {
+            filter: blur(15px);
+            pointer-events: none;
+            opacity: 0;
+            transition: 0.1s;
         }
 
     </style>
@@ -665,7 +691,7 @@
                 </div>
             </button>
             
-            <button class="list-item" onclick="window.open('https://forms.gle/aSYSoVy1ew3voSih7', '_blank')">
+            <button class="list-item" onclick="window.openInternalBrowser('https://forms.gle/aSYSoVy1ew3voSih7')">
                 <div class="list-item-content">
                     <span class="list-item-title">💬 Зворотній зв'язок</span>
                     <span class="list-item-subtitle">Надіслати відгук, зауваження або оцінити додаток</span>
@@ -699,10 +725,6 @@
         <div class="nav-icon icon-bulb"></div>
         <span>SkillHUB</span>
     </button>
-    <button class="nav-item" onclick="window.openEduLoginModal()">
-        <div class="nav-icon icon-education"></div>
-        <span>Навчання</span>
-    </button>
     <button class="nav-item" onclick="window.switchTab('tab-settings')">
         <div class="nav-icon icon-settings"></div>
         <span>Опції</span>
@@ -718,6 +740,19 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
+<div id="internalBrowserModal">
+    <div class="ib-toolbar">
+        <div class="ib-nav-btns">
+            <button class="ib-btn" onclick="window.ibGoBack()">❮</button>
+            <button class="ib-btn" onclick="window.ibGoForward()">❯</button>
+        </div>
+        <div style="font-weight: 700; font-size: 14px; color: var(--text-main);">Внутрішній перегляд</div>
+        <button class="ib-btn" onclick="window.closeInternalBrowser()" style="color: var(--text-main); font-size: 32px; line-height: 1;">×</button>
+    </div>
+    <div class="ib-iframe-wrapper">
+        <iframe id="ibIframe" sandbox="allow-scripts allow-same-origin allow-forms allow-popups"></iframe>
+    </div>
+</div>
 <div id="rezervItemModal" class="modal">
     <div class="modal-content" style="max-height: 95vh;">
         <div class="modal-header" style="align-items:flex-start;">
@@ -845,34 +880,6 @@
     </div>
 </div>
 
-<div id="eduLoginModal" class="modal">
-    <div class="modal-content" style="height: auto; min-height: 40vh; border-radius: 24px;">
-        <div class="modal-header">
-            <div class="modal-title" style="width: 100%;">Авторизація</div>
-            <button class="modal-close" onclick="window.closeModalBase('eduLoginModal')"></button>
-        </div>
-        <div class="modal-body">
-            <div class="input-group">
-                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Логін</span>
-                <input type="text" id="eduLoginInput" placeholder="Введіть логін">
-            </div>
-            <div class="input-group">
-                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Пароль</span>
-                <input type="password" id="eduPassInput" placeholder="Введіть пароль">
-            </div>
-            
-            <label style="display:flex; align-items:center; gap: 10px; margin-bottom: 20px; cursor: pointer;">
-                <input type="checkbox" id="eduRememberCheck" style="width: 20px; height: 20px; padding: 0; margin: 0; cursor: pointer;">
-                <span style="font-size: 14px; font-weight: 600; color: var(--text-main);">Запам'ятати мене</span>
-            </label>
-
-            <div id="eduAuthError" style="color: var(--danger); font-size: 13px; font-weight: 600; margin-bottom: 15px; display: none;">Невірний логін або пароль!</div>
-
-            <button class="btn btn-primary" onclick="window.processEduLogin()">Увійти</button>
-        </div>
-    </div>
-</div>
-
 <div id="galleryModal" class="modal" style="background: rgba(0,0,0,0.9); z-index: 100060;">
     <div class="modal-content" style="background:transparent; box-shadow:none; padding:0; height:100%; max-width:100%; justify-content:center; align-items:center;">
         <div style="position:absolute; top:20px; right:20px; z-index:1000000;">
@@ -888,6 +895,48 @@
 </div>
 
 <script>
+    // ==========================================
+    // ЛОГІКА ВНУТРІШНЬОГО БРАУЗЕРА ТА ЗАХИСТУ
+    // ==========================================
+    window.openInternalBrowser = function(url) {
+        const modal = document.getElementById('internalBrowserModal');
+        const iframe = document.getElementById('ibIframe');
+        iframe.src = url;
+        modal.classList.add('show');
+        document.body.classList.add('modal-open');
+    }
+
+    window.closeInternalBrowser = function() {
+        const modal = document.getElementById('internalBrowserModal');
+        const iframe = document.getElementById('ibIframe');
+        modal.classList.remove('show');
+        iframe.src = 'about:blank'; // Очищаємо iframe для звільнення пам'яті
+        document.body.classList.remove('modal-open');
+    }
+
+    window.ibGoBack = function() {
+        try {
+            document.getElementById('ibIframe').contentWindow.history.back();
+        } catch(e) { console.log("CORS block"); }
+    }
+
+    window.ibGoForward = function() {
+        try {
+            document.getElementById('ibIframe').contentWindow.history.forward();
+        } catch(e) { console.log("CORS block"); }
+    }
+
+    // Захист: коли додаток ховається в фон (згортається), ми розмиваємо його, 
+    // щоб в системному меню "останні додатки" не було видно тексту.
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) document.body.classList.add('no-screenshot');
+        else document.body.classList.remove('no-screenshot');
+    });
+    window.addEventListener('blur', () => document.body.classList.add('no-screenshot'));
+    window.addEventListener('focus', () => document.body.classList.remove('no-screenshot'));
+    // ==========================================
+
+
     window.currentDevicePrice = 0; // Глобальна ціна пристрою
 
     // --- ФУНКЦІЯ АНТИ-МЕРЕХТІННЯ ---
@@ -915,11 +964,11 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxsL_ZstlmiBQGuJ92SHJPfbu3CZu8xQjO6QnEk4NT0HivG2a-GHRgh_CDCSm2UVHcSQw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxbKgUqNSN6sOcVUHizIq5kbvylv6hvOLYIuTGRYTwih0_V9cdG1-Bep6E4M3F-RRYL_g/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], educationData: { users: [], materials: [] } };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -990,7 +1039,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], educationData: {users:[], materials:[]} };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -1003,7 +1052,6 @@
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
         data.sellerRatings = data.sellerRatings || [];
-        data.educationData = data.educationData || { users: [], materials: [] };
         return data;
     }
 
@@ -1263,8 +1311,8 @@
     }
 
     function checkOpenModals() {
-        // --- ДОБАВЛЕНА eduLoginModal ---
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'eduLoginModal'];
+        // Додано internalBrowserModal у список перевірок
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'internalBrowserModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1367,7 +1415,10 @@
             } else if (linkStr === "@@") {
                 actionStr = `onclick="window.openModalBase('certManualModal')"`;
             } else if (linkStr !== "" && linkStr !== "#") {
-                actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
+                // ===============================================
+                // ТУТ ЗМІНЕНО: тепер відкриваємо внутрішній браузер
+                // ===============================================
+                actionStr = `onclick="window.openInternalBrowser('${linkStr}')"`;
             } else {
                 if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
                     actionStr = `onclick="window.openSellerModal()"`;
@@ -1622,34 +1673,29 @@
         safeUpdateHTML(cont, html);
     }
 
-    // --- ЛОГІКА ДЛЯ ВЕРХНЬОЇ ПАНЕЛІ ПОШУКУ ---
     const topPanel = document.getElementById('topSearchPanel');
     const openTopBtn = document.getElementById('openTopSearchBtn');
     const closeTopBtn = document.getElementById('closeTopSearchBtn');
     const topInput = document.getElementById('topReservesSearchInput');
     const clearTopBtn = document.getElementById('clearTopSearchBtn');
 
-    // Відкриття панелі при кліку на лупу
     openTopBtn.onclick = () => {
         topPanel.classList.add('show');
         setTimeout(() => topInput.focus(), 300);
     };
 
-    // Закриття панелі
     closeTopBtn.onclick = () => {
         topPanel.classList.remove('show');
         topInput.value = '';
         clearTopBtn.style.display = 'none';
-        window.renderRezervyList(); // Скидаємо фільтр
+        window.renderRezervyList();
     };
 
-    // Подія при введенні тексту (показ хрестика і фільтрація)
     topInput.addEventListener('input', () => {
         clearTopBtn.style.display = topInput.value.length > 0 ? 'flex' : 'none';
         window.renderRezervyList();
     });
 
-    // Клік по "Х" в пошуку
     clearTopBtn.onclick = () => {
         topInput.value = '';
         clearTopBtn.style.display = 'none';
@@ -1657,7 +1703,6 @@
         window.renderRezervyList();
     };
     
-    // Закриття панелі при кліку в порожнє місце
     document.addEventListener('click', function(event) {
         if (topPanel.classList.contains('show')) {
             if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
@@ -2656,57 +2701,6 @@
             btn.disabled = false;
             btn.innerText = 'ВІДПРАВИТИ';
         });
-    };
-
-    // --- ЛОГИКА АВТОРИЗАЦИИ НАВЧАННЯ ---
-    window.openEduLoginModal = function() {
-        const savedLogin = localStorage.getItem('edu_saved_login');
-        const savedPass = localStorage.getItem('edu_saved_pass');
-        
-        if (savedLogin && savedPass && db.educationData) {
-            const isValid = db.educationData.users.some(u => u.login === savedLogin && u.pass === savedPass);
-            if (isValid) {
-                window.location.href = 'education.html';
-                return;
-            }
-        }
-        
-        document.getElementById('eduLoginInput').value = savedLogin || "";
-        document.getElementById('eduPassInput').value = savedPass || "";
-        document.getElementById('eduRememberCheck').checked = !!savedLogin;
-        document.getElementById('eduAuthError').style.display = 'none';
-        
-        window.openModalBase('eduLoginModal');
-    };
-
-    window.processEduLogin = function() {
-        const login = document.getElementById('eduLoginInput').value.trim();
-        const pass = document.getElementById('eduPassInput').value.trim();
-        const remember = document.getElementById('eduRememberCheck').checked;
-        const errEl = document.getElementById('eduAuthError');
-
-        if (!db.educationData || !db.educationData.users) {
-            errEl.innerText = "База даних ще завантажується...";
-            errEl.style.display = 'block';
-            return;
-        }
-
-        const isValid = db.educationData.users.some(u => u.login === login && u.pass === pass);
-
-        if (isValid) {
-            if (remember) {
-                localStorage.setItem('edu_saved_login', login);
-                localStorage.setItem('edu_saved_pass', pass);
-            } else {
-                localStorage.removeItem('edu_saved_login');
-                localStorage.removeItem('edu_saved_pass');
-                sessionStorage.setItem('edu_temp_auth', 'true'); 
-            }
-            window.location.href = 'education.html';
-        } else {
-            errEl.innerText = "Невірний логін або пароль!";
-            errEl.style.display = 'block';
-        }
     };
 
     init();
