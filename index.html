@@ -294,7 +294,7 @@
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch;}
         .modal.show { display: flex; opacity: 1; }
         .modal-content { 
-            background: var(--bg); width: 100%; max-width: 480px; margin: 0 auto;
+            background: var(--bg); width: 100%; max-width: 480px; margin: 0 opacity auto;
             border-radius: 24px 24px 0 0; 
             padding: 20px 16px calc(env(safe-area-inset-bottom) + 20px) 16px; 
             display: flex; flex-direction: column; 
@@ -662,6 +662,16 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
                 </div>
             </button>
+
+            <button class="list-item" onclick="window.open('./Education.html', '_blank')">
+                <div class="list-item-content">
+                    <span class="list-item-title">🎓 Навчальний портал</span>
+                    <span class="list-item-subtitle">Пройти тестування та вивчити матеріали</span>
+                </div>
+                <div class="list-item-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+            </button>
             
             <button class="list-item" onclick="window.open('https://forms.gle/aSYSoVy1ew3voSih7', '_blank')">
                 <div class="list-item-content">
@@ -881,7 +891,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxbKgUqNSN6sOcVUHizIq5kbvylv6hvOLYIuTGRYTwih0_V9cdG1-Bep6E4M3F-RRYL_g/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwHxmYCvF3aHKCXLiaceMprSkn-dL9OrqN3J_FS-wii1IZNz2GixgXynD9d5jlUoDQRPg/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1537,7 +1547,7 @@
         if (db.rezervyData) {
             const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
             let h = '<option value="">-- Оберіть магазин --</option>';
-            stores.forEach(s => { if (s && s !== "Не вказано") h += `<option value="${s}">${s}</option>`; });
+            stores.forEach(s => { if (s && s !== "Не вказано") h += `<option value="${s}">${s}</option>'; });
             
             let currentStoreSelVal = storeSel.value;
             let currentDefaultSelVal = defaultSel.value;
