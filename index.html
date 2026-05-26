@@ -664,6 +664,16 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.92-10.24l5.58 5.58"/></svg>
                 </div>
             </button>
+
+            <button class="list-item" onclick="window.openEduLoginModal()">
+                <div class="list-item-content">
+                    <span class="list-item-title">🎓 Навчальний портал</span>
+                    <span class="list-item-subtitle">Пройти тестування та вивчити матеріали</span>
+                </div>
+                <div class="list-item-arrow">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </div>
+            </button>
             
             <button class="list-item" onclick="window.open('https://forms.gle/aSYSoVy1ew3voSih7', '_blank')">
                 <div class="list-item-content">
@@ -742,7 +752,9 @@
             <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
         </div>
         <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+        <div style="display: flex; gap: 10px; width: 100%;">
+            <button class="btn btn-primary" style="flex: 1;" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+        </div>
     </div>
 </div>
 
@@ -848,10 +860,13 @@
 <div id="eduLoginModal" class="modal">
     <div class="modal-content" style="height: auto; min-height: 40vh; border-radius: 24px;">
         <div class="modal-header">
-            <div class="modal-title" style="width: 100%;">Авторизація</div>
+            <div class="modal-title" style="width: 100%;">Авторизація навчання</div>
             <button class="modal-close" onclick="window.closeModalBase('eduLoginModal')"></button>
         </div>
         <div class="modal-body">
+            <div style="font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 16px; text-align: center;">
+                Введіть логін і пароль для входу до порталу навчання
+            </div>
             <div class="input-group">
                 <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Логін</span>
                 <input type="text" id="eduLoginInput" placeholder="Введіть логін">
@@ -915,7 +930,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxkNmNSwDxo7PgTze5bDMgkYxOs3gSzgUxQ8y2ydZlv35YP-zr9RyU7nsfQAydWxEV6rA/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzrYbhxpeWT8raJdM507tBC_PWw9SWleym95qgn4u0s2Hfu22RikrZSArF6YI5oAOJmTQ/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1263,7 +1278,6 @@
     }
 
     function checkOpenModals() {
-        // --- ДОБАВЛЕНА eduLoginModal ---
         const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'eduLoginModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
@@ -1419,8 +1433,8 @@
             html += `<div class="rating-group">`;
             
             let sorted = groups[nom].sort((a, b) => {
-                let valA = parseFloat(String(a.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
-                let valB = parseFloat(String(b.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+                let valA = parseFloat(String(a.result).replace(/[^\d.,,-]/g, '').replace(',', '.')) || 0;
+                let valB = parseFloat(String(b.result).replace(/[^\d.,,-]/g, '').replace(',', '.')) || 0;
                 return valB - valA;
             });
 
@@ -2664,7 +2678,7 @@
         const savedPass = localStorage.getItem('edu_saved_pass');
         
         if (savedLogin && savedPass && db.educationData) {
-            const isValid = db.educationData.users.some(u => u.login === savedLogin && u.pass === savedPass);
+            const isValid = db.educationData.users.some(u => String(u.login).trim() === String(savedLogin).trim() && String(u.pass).trim() === String(savedPass).trim());
             if (isValid) {
                 window.location.href = 'education.html';
                 return;
@@ -2691,7 +2705,7 @@
             return;
         }
 
-        const isValid = db.educationData.users.some(u => u.login === login && u.pass === pass);
+        const isValid = db.educationData.users.some(u => String(u.login).trim() === login && String(u.pass).trim() === pass);
 
         if (isValid) {
             if (remember) {
