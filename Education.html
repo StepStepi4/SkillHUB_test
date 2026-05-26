@@ -3,276 +3,518 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Навчання - SkillHUB</title>
-    
+    <title>SkillHUB Навчання</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        
-        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-
         :root {
-            /* СВІТЛА ТЕМА */
-            --bg: #f2f2f7; 
+            --primary: #00a046;
+            --primary-light: #e6f6ec;
+            --bg: #f2f2f7;
             --card-bg: #ffffff;
-            --text-main: #000000; 
-            --text-muted: #8e8e93; 
-            --primary: #10b981; 
-            --primary-light: #d1fae5;
+            --text-main: #000000;
+            --text-muted: #8e8e93;
             --border: #e5e5ea;
-            --input-bg: #f9fafb;
-            --shadow: rgba(0, 0, 0, 0.05);
             --danger: #ef4444;
         }
 
-        [data-theme="dark"] {
-            /* ТЕМНА ТЕМА */
-            --bg: #000000; 
-            --card-bg: #1c1c1e;
-            --text-main: #ffffff; 
-            --text-muted: #98989d; 
-            --primary: #10b981;
-            --primary-light: rgba(16, 185, 129, 0.2);
-            --border: #38383a;
-            --input-bg: #2c2c2e;
-            --shadow: rgba(0, 0, 0, 0.5);
-            --danger: #ff453a;
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0; padding: 0;
+            display: flex; flex-direction: column; align-items: center;
+            min-height: 100vh;
         }
 
-        body { 
-            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
-            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
-            min-height: 100vh; -webkit-font-smoothing: antialiased;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        .container { 
-            position: relative; width: 100%; max-width: 480px; 
-            padding: 20px 16px; margin-bottom: 40px; 
+        .app-container {
+            width: 100%; max-width: 480px;
+            background: var(--card-bg);
+            min-height: 100vh;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
             display: flex; flex-direction: column;
         }
 
-        /* --- НОВА ШАПКА --- */
-        .header-nav { 
-            display: flex; justify-content: space-between; align-items: stretch; 
-            margin-bottom: 24px; 
+        /* Екрани */
+        .screen { display: none; padding: 24px 20px; animation: fadeIn 0.3s ease; flex: 1; }
+        .screen.active { display: flex; flex-direction: column; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Заголовки */
+        .header { text-align: center; margin-bottom: 24px; }
+        .header h1 { font-size: 22px; font-weight: 800; margin: 0 0 8px 0; line-height: 1.2;}
+        .header p { font-size: 14px; color: var(--text-muted); margin: 0; }
+
+        /* Форми та інпути */
+        .input-group { margin-bottom: 16px; width: 100%; }
+        input {
+            width: 100%; padding: 16px; border-radius: 12px;
+            border: 1px solid var(--border); background: var(--input-bg, #f9fafb);
+            font-size: 16px; font-family: inherit; outline: none; transition: 0.2s;
         }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+
+        .btn {
+            width: 100%; padding: 16px; border-radius: 12px;
+            font-size: 16px; font-weight: 700; border: none; cursor: pointer;
+            transition: 0.2s; text-align: center;
+        }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
+        .btn-outline:active { background: var(--primary-light); }
+
+        /* Списки */
+        .list-item {
+            padding: 16px; border: 1px solid var(--border); border-radius: 16px;
+            margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
+            transition: 0.2s; background: var(--card-bg);
+        }
+        .list-item:active { background: var(--bg); transform: scale(0.98); }
+        .list-item-title { font-size: 16px; font-weight: 600; }
         
-        .header-left {
-            display: flex; align-items: stretch; gap: 12px;
+        /* Відображення матеріалу (Опис) */
+        .material-content {
+            background: var(--card-bg); border-radius: 16px;
+            border: 1px solid var(--border); padding: 0 16px; margin-bottom: 24px;
+        }
+        .mat-line {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border);
+        }
+        .mat-line:last-child { border-bottom: none; }
+        .mat-emoji { font-size: 42px; margin-bottom: 12px; }
+        .mat-text { font-size: 15px; color: var(--text-main); line-height: 1.5; font-weight: 500;}
+
+        /* Прогрес бар тесту */
+        .progress-wrapper { position: relative; width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin: 10px 0 30px 0; }
+        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s ease; }
+        .progress-dot {
+            position: absolute; top: 50%; width: 16px; height: 16px; background: var(--primary);
+            border-radius: 50%; transform: translate(-50%, -50%); transition: left 0.3s ease;
+            box-shadow: 0 2px 6px rgba(0, 160, 70, 0.4); border: 2px solid white;
         }
 
-        .action-btn { 
-            width: 40px; height: 40px; border-radius: 50%; background: var(--card-bg); 
-            border: 1px solid var(--border); display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; color: var(--text-main); text-decoration: none;
-            transition: 0.2s; box-shadow: 0 4px 10px var(--shadow); align-self: center; flex-shrink: 0;
+        /* Опції тесту */
+        .test-question { font-size: 18px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; text-align: center;}
+        .test-option {
+            padding: 16px; border: 2px solid var(--border); border-radius: 12px;
+            margin-bottom: 12px; cursor: pointer; font-size: 15px; font-weight: 500;
+            display: flex; gap: 12px; align-items: center; transition: 0.2s;
         }
-        .action-btn:active { transform: scale(0.95); background: var(--input-bg); }
-        .action-btn svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 2.5; fill: none; stroke-linecap: round; stroke-linejoin: round;}
-        
-        .header-text-block {
-            display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0;
-        }
-        h2 { margin: 0; font-size: 24px; font-weight: 800; line-height: 1; letter-spacing: -0.5px; }
-        .subtitle { font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; }
+        .test-option.selected { border-color: var(--primary); background: var(--primary-light); }
+        .opt-letter { font-weight: 800; color: var(--text-muted); width: 24px; }
+        .test-option.selected .opt-letter { color: var(--primary); }
 
-        /* Кнопка Виходу (тільки іконка для економії місця) */
-        .logout-btn {
-            background: transparent; border: none; color: var(--danger); 
-            cursor: pointer; padding: 8px; display: flex; align-items: center; 
-            justify-content: center; transition: 0.2s; align-self: center; border-radius: 50%;
+        /* Лоадер */
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--card-bg); display: flex; flex-direction: column;
+            align-items: center; justify-content: center; z-index: 1000;
         }
-        .logout-btn:active { background: var(--danger-bg); transform: scale(0.9); }
+        .spinner {
+            width: 40px; height: 40px; border: 4px solid var(--border);
+            border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
+        }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* --- ФОРМА ВИБОРУ (ОНОВЛЕНО ЯК ПОЛЕ ПОШУКУ) --- */
-        .input-group { margin-bottom: 24px; position: relative; }
-        select { 
-            width: 100%; padding: 16px 20px; border-radius: 12px; 
-            font-size: 16px; font-family: inherit; font-weight: 500; 
-            background: var(--input-bg); color: var(--text-main); 
-            border: 1px solid var(--border); outline: none; transition: 0.2s; 
-            -webkit-appearance: none; appearance: none; cursor: pointer;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center;
+        /* Навігація назад */
+        .back-nav {
+            display: flex; align-items: center; gap: 8px; color: var(--text-muted);
+            font-weight: 600; font-size: 14px; margin-bottom: 20px; cursor: pointer;
         }
-        select:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        select:invalid { color: var(--text-muted); } /* Щоб перший пункт був сірим як placeholder */
-
-        /* --- КОНТЕЙНЕР ОПИСУ --- */
-        .desc-container {
-            background: var(--card-bg); border-radius: 20px; padding: 24px 20px;
-            border: 1px solid var(--border); display: none; flex-direction: column; gap: 16px;
-            box-shadow: 0 10px 30px var(--shadow);
-        }
-
-        .desc-main-title {
-            font-size: 20px; font-weight: 900; color: var(--primary);
-            text-align: center; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px;
-        }
-
-        /* Креативне розділення рядків */
-        .desc-line { 
-            display: flex; align-items: center; gap: 16px;
-            padding: 14px 0; border-bottom: 1.5px dashed var(--border);
-        }
-        .desc-line:last-child { border-bottom: none; padding-bottom: 0; }
-        
-        /* Великі емодзі */
-        .desc-emoji { 
-            font-size: 32px; 
-            line-height: 1; 
-            flex-shrink: 0; 
-            display: flex; align-items: center; justify-content: center;
-            width: 44px; height: 44px;
-            background: var(--input-bg); border-radius: 12px;
-        }
-        
-        .desc-text { 
-            flex: 1; font-size: 15px; font-weight: 600; color: var(--text-main); 
-            line-height: 1.4;
-        }
-
-        /* --- КНОПКА ТЕСТУ --- */
-        .btn-test {
-            width: 100%; padding: 18px; border-radius: 16px; font-size: 16px; font-weight: 800;
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white; border: none; cursor: pointer; transition: 0.2s;
-            margin-top: 24px; display: none; text-align: center; 
-            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.3);
-            text-transform: uppercase; letter-spacing: 1px;
-        }
-        .btn-test:active { transform: scale(0.96); box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2); }
-
+        .back-nav svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <div class="header-nav">
-        <div class="header-left">
-            <a href="index.html" class="action-btn">
-                <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg>
-            </a>
-            <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-            <div class="header-text-block">
-                <h2>Навчання</h2>
-                <div class="subtitle">Харківський регіон <span style="font-size: 14px; margin-left: 4px;">🫶</span></div>
+<div class="app-container">
+    
+    <div id="loader" class="loader-overlay">
+        <div class="spinner"></div>
+        <div style="font-weight: 600; color: var(--text-muted);" id="loader-text">Синхронізація з базою...</div>
+    </div>
+
+    <div id="screen-login" class="screen">
+        <div class="header" style="margin-top: 40px;">
+            <h1>SkillHUB Навчання</h1>
+            <p>Введіть логін і пароль для входу до порталу навчання</p>
+        </div>
+        <div class="input-group">
+            <input type="text" id="loginInput" placeholder="Логін">
+        </div>
+        <div class="input-group">
+            <input type="password" id="passInput" placeholder="Пароль">
+        </div>
+        <p id="loginError" style="color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; display: none; margin-top: 0;"></p>
+        <button class="btn btn-primary" onclick="handleLogin()" style="margin-top: 10px;">Увійти</button>
+    </div>
+
+    <div id="screen-products" class="screen">
+        <div class="header" style="text-align: left;">
+            <h1>Оберіть продукт</h1>
+            <p>Доступні напрямки для навчання</p>
+        </div>
+        <div id="products-list"></div>
+    </div>
+
+    <div id="screen-services" class="screen">
+        <div class="back-nav" onclick="showScreen('screen-products')">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg> Назад до продуктів
+        </div>
+        <div class="header" style="text-align: left;">
+            <h1 id="selected-product-title">Назва продукту</h1>
+            <p>Оберіть сервіс для вивчення</p>
+        </div>
+        <div id="services-list"></div>
+    </div>
+
+    <div id="screen-material" class="screen" style="padding-bottom: 100px;">
+        <div class="back-nav" onclick="showScreen('screen-services')">
+            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg> Назад
+        </div>
+        <div class="header">
+            <h1 id="mat-title" style="font-size: 20px;">Назва сервісу</h1>
+        </div>
+        <div class="material-content" id="mat-content">
+            </div>
+        
+        <div style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: center; z-index: 10;">
+            <div style="width: 100%; max-width: 440px;">
+                <button class="btn btn-primary" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
             </div>
         </div>
-        <button class="logout-btn" onclick="logout()" title="Вийти">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                <polyline points="16 17 21 12 16 7"></polyline>
-                <line x1="21" y1="12" x2="9" y2="12"></line>
-            </svg>
-        </button>
     </div>
 
-    <div class="input-group">
-        <select id="typeSelect" onchange="renderContent()" required>
-            <option value="" disabled selected>Яку техніку чи послугу шукаємо?</option>
-        </select>
+    <div id="screen-test" class="screen">
+        <div class="header">
+            <h1 style="font-size: 18px;">Тестування</h1>
+        </div>
+        <div class="progress-wrapper">
+            <div class="progress-fill" id="test-progress"></div>
+            <div class="progress-dot" id="test-dot"></div>
+        </div>
+        
+        <div id="question-container" style="flex: 1;">
+            <div class="test-question" id="test-q-text">Запитання?</div>
+            <div id="test-options"></div>
+        </div>
+        
+        <button class="btn btn-primary" id="btn-next-question" onclick="submitAnswer()" style="margin-top: 20px;" disabled>Відповісти</button>
     </div>
 
-    <div id="contentBox" class="desc-container"></div>
-    
-    <button id="testBtn" class="btn-test" onclick="startTest()">📝 Пройти тест</button>
+    <div id="screen-result" class="screen" style="justify-content: center; align-items: center; text-align: center;">
+        <div id="result-emoji" style="font-size: 60px; margin-bottom: 20px;">🎯</div>
+        <h1 id="result-title" style="margin: 0 0 10px 0;">Результат</h1>
+        <p id="result-desc" style="color: var(--text-muted); font-size: 15px; margin-bottom: 30px; line-height: 1.5;"></p>
+        
+        <div style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-primary" id="btn-result-action">Продовжити</button>
+        </div>
+    </div>
 
 </div>
 
 <script>
-    // 1. БЕЗПЕКА (Перевірка авторизації)
-    const savedLogin = localStorage.getItem('edu_saved_login');
-    const savedPass = localStorage.getItem('edu_saved_pass');
-    const tempAuth = sessionStorage.getItem('edu_temp_auth');
+    // ТВОЄ ПОСИЛАННЯ НА GOOGLE APPS SCRIPT
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwHxmYCvF3aHKCXLiaceMprSkn-dL9OrqN3J_FS-wii1IZNz2GixgXynD9d5jlUoDQRPg/exec';
 
-    if (!tempAuth && (!savedLogin || !savedPass)) {
-        window.location.href = 'index.html';
-    }
-
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    document.documentElement.setAttribute('data-theme', currentTheme);
-
-    function logout() {
-        localStorage.removeItem('edu_saved_login');
-        localStorage.removeItem('edu_saved_pass');
-        sessionStorage.removeItem('edu_temp_auth');
-        window.location.href = 'index.html';
-    }
-
-    // 2. ЗАВАНТАЖЕННЯ ДАНИХ (Беремо з вкладки "Типи сервісів", обробленої в trainingData)
-    let educationMaterials = [];
-    const cachedData = localStorage.getItem('skillhub_v1_flat');
+    // Глобальний стан
+    let db = null;
+    let currentUser = null;
+    let currentMaterials = [];
+    let currentServiceObj = null;
     
-    if (cachedData) {
-        try {
-            const db = JSON.parse(cachedData);
-            // db.trainingData містить дані з вкладки "Типи сервісів" (E - name, F - desc)
-            if (db.trainingData && db.trainingData.length > 0) {
-                educationMaterials = db.trainingData;
-            }
-        } catch (e) {
-            console.error("Помилка читання кешу", e);
+    // Стан тесту
+    let testData = {
+        questions: [],
+        currentIndex: 0,
+        score: 0,
+        attempts: 1
+    };
+
+    // Завантаження бази даних при відкритті
+    window.onload = function() {
+        fetch(API_URL + '?nocache=' + Date.now(), { mode: 'cors' })
+            .then(res => res.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+                db = data.educationData;
+                document.getElementById('loader').style.display = 'none';
+                showScreen('screen-login');
+            })
+            .catch(err => {
+                document.getElementById('loader-text').innerHTML = "Помилка завантаження.<br>" + err.message;
+                document.querySelector('.spinner').style.display = 'none';
+                console.error(err);
+            });
+    };
+
+    function showScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    // --- 1. АВТОРИЗАЦІЯ ---
+    function handleLogin() {
+        const login = document.getElementById('loginInput').value.trim();
+        const pass = document.getElementById('passInput').value.trim();
+        const errEl = document.getElementById('loginError');
+
+        if(!login || !pass) {
+            errEl.innerText = "Будь ласка, заповніть всі поля";
+            errEl.style.display = 'block';
+            return;
+        }
+
+        const user = db.users.find(u => u.login === login && u.pass === pass);
+        if (user) {
+            currentUser = user.login;
+            errEl.style.display = 'none';
+            renderProducts();
+        } else {
+            errEl.innerText = "Невірний логін або пароль";
+            errEl.style.display = 'block';
         }
     }
 
-    // 3. ЗАПОВНЕННЯ ВИТІКАЮЧОГО МЕНЮ (Колонка E)
-    const selectEl = document.getElementById('typeSelect');
-    if (educationMaterials.length > 0) {
-        educationMaterials.forEach((mat, idx) => {
-            let opt = document.createElement('option');
-            opt.value = idx;
-            opt.innerText = mat.name; // Назва сервісу (Колонка E)
-            selectEl.appendChild(opt);
-        });
-    } else {
-        selectEl.innerHTML = '<option disabled selected>Немає даних для навчання</option>';
+    // --- 2. ВИБІР ПРОДУКТУ ---
+    function renderProducts() {
+        const listEl = document.getElementById('products-list');
+        const products = [...new Set(db.materials.map(m => m.product))];
+        
+        let html = products.map(prod => `
+            <div class="list-item" onclick="renderServices('${escapeHtml(prod)}')">
+                <span class="list-item-title">📦 ${escapeHtml(prod)}</span>
+                <span style="color: var(--text-muted);">❯</span>
+            </div>
+        `).join('');
+        
+        listEl.innerHTML = html;
+        showScreen('screen-products');
     }
 
-    // 4. ВІДОБРАЖЕННЯ ОПИСУ (Колонка F)
-    function renderContent() {
-        const idx = selectEl.value;
-        const box = document.getElementById('contentBox');
-        const btn = document.getElementById('testBtn');
-
-        if (!idx || !educationMaterials[idx]) return;
-
-        const material = educationMaterials[idx];
-        const rawText = material.desc; // Опис (Колонка F)
+    // --- 3. ВИБІР СЕРВІСУ ---
+    function renderServices(productName) {
+        document.getElementById('selected-product-title').innerText = productName;
+        const listEl = document.getElementById('services-list');
         
-        let html = `<div class="desc-main-title">${material.name}</div>`;
+        currentMaterials = db.materials
+            .filter(m => m.product === productName)
+            .sort((a, b) => a.priority - b.priority);
 
-        // Розбиваємо текст на рядки
-        const lines = rawText.replace(/\|/g, '\n').split(/\r?\n/);
+        let html = currentMaterials.map((mat, idx) => `
+            <div class="list-item" onclick="openMaterial(${idx})">
+                <span class="list-item-title">📄 ${escapeHtml(mat.serviceName)}</span>
+                <span style="color: var(--text-muted);">❯</span>
+            </div>
+        `).join('');
+        
+        listEl.innerHTML = html;
+        showScreen('screen-services');
+    }
+
+    // --- 4. МАТЕРІАЛ ---
+    function openMaterial(idx) {
+        currentServiceObj = currentMaterials[idx];
+        document.getElementById('mat-title').innerText = currentServiceObj.serviceName;
+        
+        const contentEl = document.getElementById('mat-content');
+        let lines = currentServiceObj.description.split('\n');
+        let html = '';
+        
+        // Пошук емодзі на початку рядка
+        const emojiRegex = /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(.*)/u;
 
         lines.forEach(line => {
-            const l = line.trim();
-            if (!l) return;
-
-            // Шукаємо емодзі на початку рядка
-            const emojiMatch = l.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+            line = line.trim();
+            if(!line) return;
             
-            let emoji = emojiMatch ? emojiMatch[0] : "📌";
-            let text = emojiMatch ? l.replace(emoji, '').trim() : l;
+            let match = line.match(emojiRegex);
+            if (match) {
+                html += `
+                <div class="mat-line">
+                    <div class="mat-emoji">${match[1]}</div>
+                    <div class="mat-text">${escapeHtml(match[2].trim())}</div>
+                </div>`;
+            } else {
+                html += `
+                <div class="mat-line">
+                    <div class="mat-text">${escapeHtml(line)}</div>
+                </div>`;
+            }
+        });
+        
+        contentEl.innerHTML = html;
+        showScreen('screen-material');
+    }
 
-            html += `
-                <div class="desc-line">
-                    <div class="desc-emoji">${emoji}</div>
-                    <div class="desc-text">${text}</div>
-                </div>
-            `;
+    // --- 5. ТЕСТУВАННЯ ---
+    function parseTestRaw(rawText) {
+        let lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+        let questions = [];
+        let currQ = null;
+        
+        // Виявлення відповіді (напр: "a) ...", "1/a) ...", "1. a) ...")
+        const answerRegex = /^(?:\d+[\/\.])?\s*([a-zа-яA-ZА-Я])\)\s*(.*)/i;
+
+        lines.forEach(line => {
+            let ansMatch = line.match(answerRegex);
+            if (ansMatch) {
+                if (currQ) {
+                    let letter = ansMatch[1].toLowerCase();
+                    let text = ansMatch[2];
+                    let isCorrect = text.includes('(+)');
+                    text = text.replace(/\(\+\)/g, '').trim(); // Прибираємо (+)
+                    currQ.options.push({ letter, text, isCorrect, selected: false });
+                }
+            } else {
+                // Це питання. Прибираємо цифри (напр: "1. Запитання?")
+                let qText = line.replace(/^\d+[\.\/]\s*/, '').trim();
+                currQ = { text: qText, options: [] };
+                questions.push(currQ);
+            }
+        });
+        return questions;
+    }
+
+    function startTest() {
+        testData.questions = parseTestRaw(currentServiceObj.testRaw);
+        if (testData.questions.length === 0) {
+            alert("Тест для цього сервісу відсутній.");
+            return;
+        }
+        testData.currentIndex = 0;
+        testData.score = 0;
+        renderQuestion();
+        showScreen('screen-test');
+    }
+
+    function renderQuestion() {
+        let q = testData.questions[testData.currentIndex];
+        document.getElementById('test-q-text').innerText = q.text;
+        
+        let progressPercent = (testData.currentIndex / testData.questions.length) * 100;
+        document.getElementById('test-progress').style.width = progressPercent + '%';
+        document.getElementById('test-dot').style.left = progressPercent + '%';
+
+        let optionsHtml = q.options.map((opt, idx) => `
+            <div class="test-option" id="opt-${idx}" onclick="toggleOption(${idx})">
+                <span class="opt-letter">${opt.letter})</span>
+                <span style="flex:1;">${escapeHtml(opt.text)}</span>
+            </div>
+        `).join('');
+        
+        document.getElementById('test-options').innerHTML = optionsHtml;
+        document.getElementById('btn-next-question').disabled = true;
+    }
+
+    function toggleOption(optIdx) {
+        let q = testData.questions[testData.currentIndex];
+        q.options[optIdx].selected = !q.options[optIdx].selected;
+        
+        let el = document.getElementById(`opt-${optIdx}`);
+        if (q.options[optIdx].selected) el.classList.add('selected');
+        else el.classList.remove('selected');
+
+        let hasSelection = q.options.some(o => o.selected);
+        document.getElementById('btn-next-question').disabled = !hasSelection;
+    }
+
+    function submitAnswer() {
+        let q = testData.questions[testData.currentIndex];
+        
+        // Множинний вибір: всі правильні обрані, жодного неправильного
+        let isFullyCorrect = true;
+        q.options.forEach(opt => {
+            if (opt.isCorrect && !opt.selected) isFullyCorrect = false;
+            if (!opt.isCorrect && opt.selected) isFullyCorrect = false;
         });
 
-        box.innerHTML = html;
-        box.style.display = 'flex';
-        btn.style.display = 'block';
+        if (isFullyCorrect) testData.score++;
+        testData.currentIndex++;
+        
+        if (testData.currentIndex < testData.questions.length) {
+            renderQuestion();
+        } else {
+            document.getElementById('test-progress').style.width = '100%';
+            document.getElementById('test-dot').style.left = '100%';
+            setTimeout(showResults, 400);
+        }
     }
 
-    // 5. КНОПКА ТЕСТУ
-    function startTest() {
-        alert("Модуль тестів успішно підключено! Тести будуть додані в наступному оновленні.");
+    // --- 6. РЕЗУЛЬТАТИ ТА ЗБЕРЕЖЕННЯ ---
+    function showResults() {
+        let total = testData.questions.length;
+        let percent = Math.round((testData.score / total) * 100);
+        
+        const titleEl = document.getElementById('result-title');
+        const descEl = document.getElementById('result-desc');
+        const emojiEl = document.getElementById('result-emoji');
+        const btnAction = document.getElementById('btn-result-action');
+
+        showScreen('screen-result');
+        btnAction.disabled = true;
+        btnAction.innerText = "Збереження результату...";
+
+        let payload = {
+            action: "saveScore",
+            login: currentUser,
+            serviceName: currentServiceObj.serviceName,
+            score: percent,
+            attempts: testData.attempts
+        };
+
+        // POST запит до Google Apps Script
+        fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: JSON.stringify(payload)
+        })
+        .then(res => res.json())
+        .then(response => {
+            btnAction.disabled = false;
+            if (percent >= 80) {
+                emojiEl.innerText = "🏆";
+                titleEl.innerText = "Вітаємо!";
+                titleEl.style.color = "var(--primary)";
+                descEl.innerHTML = `Ви пройшли тест на <b>${percent}%</b> (${testData.score} з ${total}).<br>Результат успішно записано!`;
+                btnAction.classList.remove('btn-outline');
+                btnAction.classList.add('btn-primary');
+                btnAction.innerText = "Опрацювати наступний сервіс";
+                btnAction.onclick = () => {
+                    testData.attempts = 1; 
+                    showScreen('screen-services');
+                };
+            } else {
+                emojiEl.innerText = "📖";
+                titleEl.innerText = "Спробуйте ще раз";
+                titleEl.style.color = "var(--danger)";
+                descEl.innerHTML = `Ваш результат: <b>${percent}%</b>.<br>Для проходження потрібно мінімум 80%. Будь ласка, перечитайте матеріал та спробуйте знову.`;
+                btnAction.classList.remove('btn-primary');
+                btnAction.classList.add('btn-outline');
+                btnAction.innerText = "Перечитати матеріал";
+                btnAction.onclick = () => {
+                    testData.attempts++; 
+                    showScreen('screen-material');
+                };
+            }
+        })
+        .catch(err => {
+            alert("Помилка збереження результату: " + err.message);
+            btnAction.disabled = false;
+            btnAction.innerText = "Продовжити (Не збережено)";
+            btnAction.onclick = () => showScreen('screen-services');
+        });
     }
 
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
 </script>
 </body>
 </html>
