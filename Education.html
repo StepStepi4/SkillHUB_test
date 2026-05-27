@@ -60,11 +60,11 @@
         /* ВВОД И ФОРМЫ */
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
-        input { 
+        input[type="text"], input[type="password"] { 
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 500;
             background: var(--input-bg); border: 1px solid var(--border); outline: none; transition: 0.2s;
         }
-        input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
         /* КНОПКИ */
         .btn {
@@ -80,6 +80,11 @@
         .btn-secondary { background: var(--border); color: var(--text-main); margin-bottom: 12px;}
         .btn-secondary:active { background: #d1d5db; }
 
+        /* ПРОГРЕСС БАР КУРСА */
+        .course-progress-wrapper { background: var(--border); border-radius: 8px; height: 8px; width: 100%; margin-bottom: 24px; overflow: hidden; }
+        .course-progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+        .progress-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-align: right; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
+
         /* СПИСКИ (КУРСЫ / ПРОДУКТЫ) */
         .list-card {
             background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
@@ -90,23 +95,50 @@
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
         .list-card-icon { font-size: 24px; }
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
+        
+        /* Выделение пройденного продукта */
+        .list-card.completed { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
 
         /* ТЕОРИЯ (ОПИСАНИЕ) */
         .theory-box { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
-        .theory-line { padding: 16px; font-size: 15px; line-height: 1.6; color: var(--text-main); font-weight: 500; border-bottom: 1px solid var(--border); }
+        .theory-line { padding: 16px; border-bottom: 1px solid var(--border); }
         .theory-line:last-child { border-bottom: none; }
         
-        /* ТЕСТЫ */
+        /* ТЕСТЫ - НОВЫЙ ДИЗАЙН ВЫБОРА */
         .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
         
         .answer-label {
-            display: flex; align-items: center; gap: 12px; padding: 14px 16px;
-            background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px;
-            margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-weight: 500; font-size: 15px;
+            display: flex; align-items: center; gap: 14px; padding: 16px;
+            background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px;
+            margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 15px; color: var(--text-main);
         }
-        .answer-label:hover { border-color: var(--primary); }
-        .answer-label input { width: 20px; height: 20px; margin: 0; cursor: pointer; flex-shrink: 0; accent-color: var(--primary); }
+        .answer-label:hover { border-color: var(--primary-light); background: var(--input-bg); }
+        .answer-label.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
+
+        .answer-label input[type="radio"],
+        .answer-label input[type="checkbox"] {
+            appearance: none; -webkit-appearance: none;
+            width: 22px; height: 22px; flex-shrink: 0;
+            border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center;
+            transition: all 0.2s ease; background: #fff;
+        }
+        .answer-label input[type="radio"] { border-radius: 50%; }
+        .answer-label input[type="checkbox"] { border-radius: 6px; }
+
+        .answer-label input[type="radio"]::before {
+            content: ""; width: 10px; height: 10px; border-radius: 50%; transform: scale(0);
+            transition: 0.2s transform ease-in-out; box-shadow: inset 10px 10px var(--card-bg); background-color: var(--card-bg);
+        }
+        .answer-label input[type="checkbox"]::before {
+            content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.2s transform ease-in-out;
+            background-color: transparent;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat;
+        }
+
+        .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
+        .answer-label input:checked::before { transform: scale(1); }
         
         .nav-header { display: flex; align-items: center; margin-bottom: 24px; gap: 12px; }
         .back-btn { background: transparent; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--border); transition: 0.2s;}
@@ -125,7 +157,9 @@
 <div class="container">
 
     <div id="loginView" class="view">
-        <div class="big-emoji">🧑‍🎓</div>
+        <div class="big-emoji">
+            <img src="edu.svg" alt="Education" style="width: 80px; height: 80px; display: block; margin: 0 auto; margin-bottom: 10px;">
+        </div>
         <h1>Вхід у Навчання</h1>
         <p class="subtitle">Увійдіть, щоб розпочати вивчення матеріалів</p>
         
@@ -156,10 +190,13 @@
     </div>
 
     <div id="productView" class="view">
-        <div class="nav-header">
+        <div class="nav-header" style="margin-bottom: 16px;">
             <button class="back-btn" onclick="switchView('courseView')">❮</button>
             <h2 id="productViewTitle" style="margin:0; font-size: 18px; font-weight: 700; line-height: 1.2;"></h2>
         </div>
+        
+        <div id="courseProgressContainer"></div>
+
         <p class="subtitle" style="text-align: left; margin-top: -10px;">Оберіть продукт для вивчення:</p>
         <div id="productList"></div>
     </div>
@@ -199,30 +236,39 @@
 </div>
 
 <script>
-    // URL твоего развернутого скрипта
     const API_URL = 'https://script.google.com/macros/s/AKfycby1nr0YOhCuDnUWUeHVUUHiWXpYbnreCL30gzSVtacaLwDuggSXsIDm-c2p3-dVcxGy/exec';
     
     let db = null;
     let currentUser = null;
-    let coursesMap = {}; // Сгруппированные курсы
+    let coursesMap = {}; 
     let currentCourseName = "";
     let currentProductData = null;
     let parsedQuestions = [];
 
-    // Инициализация при загрузке
+    // Локальное сохранение прогресса
+    function getUserProgress() {
+        try { return JSON.parse(localStorage.getItem('skillhub_edu_progress_' + currentUser) || '{}'); } 
+        catch(e) { return {}; }
+    }
+
+    function saveUserProgress(productName) {
+        let p = getUserProgress();
+        p[productName] = true;
+        localStorage.setItem('skillhub_edu_progress_' + currentUser, JSON.stringify(p));
+    }
+
     window.onload = async () => {
         try {
             const response = await fetch(API_URL + '?nocache=' + Date.now());
             const data = await response.json();
             
             if (data.error) throw new Error(data.error);
-            db = data.educationData; // Используем блок educationData из скрипта
+            db = data.educationData; 
             
             if (!db || !db.users || !db.courses) {
                 throw new Error("Дані навчання не знайдені в таблиці.");
             }
 
-            // Группируем продукты по курсам
             db.courses.forEach(c => {
                 if (!coursesMap[c.course]) coursesMap[c.course] = [];
                 coursesMap[c.course].push(c);
@@ -270,7 +316,6 @@
         switchView('loginView');
     }
 
-    // Отрисовка курсов
     function renderCourses() {
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
@@ -297,16 +342,35 @@
         
         const list = document.getElementById('productList');
         const products = coursesMap[name];
+        let progress = getUserProgress();
 
-        list.innerHTML = products.map((p, index) => `
-            <div class="list-card" onclick="openProduct(${index})">
+        // Подсчет и вывод шкалы прогресса
+        let completedCount = products.filter(p => progress[p.product]).length;
+        let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
+        
+        document.getElementById('courseProgressContainer').innerHTML = `
+            <span class="progress-text">Пройдено: ${completedCount} з ${products.length} (${percent}%)</span>
+            <div class="course-progress-wrapper">
+                <div class="course-progress-bar" style="width: ${percent}%;"></div>
+            </div>
+        `;
+
+        // Отрисовка списка продуктов с учетом прогресса
+        list.innerHTML = products.map((p, index) => {
+            let isCompleted = progress[p.product];
+            let cardClass = isCompleted ? "list-card completed" : "list-card";
+            let icon = isCompleted ? "✅" : "📄";
+            
+            return `
+            <div class="${cardClass}" onclick="openProduct(${index})">
                 <div class="list-card-title">
-                    <div class="list-card-icon">📄</div>
+                    <div class="list-card-icon">${icon}</div>
                     <span>${p.product}</span>
                 </div>
                 <div class="list-card-arrow">❯</div>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
         switchView('productView');
     }
@@ -315,46 +379,52 @@
         currentProductData = coursesMap[currentCourseName][index];
         document.getElementById('theoryTitle').innerText = currentProductData.product;
         
-        // Красивое форматирование теории с линиями
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
         
-        // Разбиваем на строки и оборачиваем каждую в theory-line
+        // Розумний парсер теорії (центрування емодзі та збільшення їх розміру)
         const formattedHTML = rawInfo.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0)
-            .map(line => `<div class="theory-line">${line}</div>`)
+            .map(line => {
+                let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+                if (match) {
+                    let emoji = match[0];
+                    let text = line.replace(emoji, '').trim();
+                    return `
+                    <div class="theory-line" style="display: flex; align-items: center; gap: 14px;">
+                        <div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0;">${emoji}</div>
+                        <div style="flex: 1; font-size: 15px; font-weight: 500; line-height: 1.5;">${text}</div>
+                    </div>`;
+                } else {
+                    return `<div class="theory-line" style="font-size: 15px; line-height: 1.5; font-weight: 500;">${line}</div>`;
+                }
+            })
             .join('');
 
         contentBox.innerHTML = formattedHTML;
 
-        // Рандомный емодзи для красоты
         const emojis = ['🎓', '💡', '🚀', '🧠', '📘'];
         document.getElementById('theoryEmoji').innerText = emojis[Math.floor(Math.random() * emojis.length)];
 
         switchView('theoryView');
     }
 
-    // ПАРСЕР ТЕСТОВ (Понимает нумерацию 1. 2. и ответы 1/a) (+))
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
         let questions = [];
         let currentQ = null;
 
         lines.forEach(line => {
-            // Проверяем, вопрос ли это (начинается с цифры и точки)
             let qMatch = line.match(/^(\d+)\.\s*(.*)/);
             if (qMatch) {
                 if (currentQ) questions.push(currentQ);
                 currentQ = { text: qMatch[2], answers: [], type: 'radio' };
             } else {
-                // Проверяем, ответ ли это (начинается с цифры, слеша, буквы и скобки)
                 let aMatch = line.match(/^\d+\/[a-zа-яA-ZА-Я0-9]\)\s*(.*)/);
                 if (aMatch && currentQ) {
                     let ansText = aMatch[1];
                     let isCorrect = false;
-                    
-                    // Проверяем наличие (+)
                     if (ansText.includes('(+)')) {
                         isCorrect = true;
                         ansText = ansText.replace(/\(\+\)/g, '').trim();
@@ -365,13 +435,25 @@
         });
         if (currentQ) questions.push(currentQ);
 
-        // Определяем тип (radio или checkbox) на основе количества правильных ответов
         questions.forEach(q => {
             let correctCount = q.answers.filter(a => a.correct).length;
             if (correctCount > 1) q.type = 'checkbox';
         });
 
         return questions;
+    }
+
+    function updateSelection(qIndex) {
+        let q = parsedQuestions[qIndex];
+        q.answers.forEach((ans, aIndex) => {
+            let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
+            let input = document.getElementById(`q${qIndex}_a${aIndex}`);
+            if (input.checked) {
+                label.classList.add('selected');
+            } else {
+                label.classList.remove('selected');
+            }
+        });
     }
 
     function startTest() {
@@ -391,8 +473,8 @@
         container.innerHTML = parsedQuestions.map((q, qIndex) => {
             
             let answersHtml = q.answers.map((ans, aIndex) => `
-                <label class="answer-label">
-                    <input type="${q.type}" name="q_${qIndex}" id="q${qIndex}_a${aIndex}">
+                <label class="answer-label" id="lbl_q${qIndex}_a${aIndex}">
+                    <input type="${q.type}" name="q_${qIndex}" id="q${qIndex}_a${aIndex}" onchange="updateSelection(${qIndex})">
                     <span>${ans.text}</span>
                 </label>
             `).join('');
@@ -413,7 +495,6 @@
     async function submitTest() {
         let correctCount = 0;
 
-        // Подсчет результатов
         parsedQuestions.forEach((q, qIndex) => {
             let isQuestionCorrect = true;
             let answeredAnything = false;
@@ -421,31 +502,32 @@
             q.answers.forEach((ans, aIndex) => {
                 let isChecked = document.getElementById(`q${qIndex}_a${aIndex}`).checked;
                 if (isChecked) answeredAnything = true;
-                
-                // Если чекбокс отмечен неверно (выбрал неправильный или не выбрал правильный)
                 if (isChecked !== ans.correct) {
                     isQuestionCorrect = false;
                 }
             });
 
-            // Вопрос засчитывается, только если все галочки стоят идеально правильно
             if (isQuestionCorrect && answeredAnything) {
                 correctCount++;
             }
         });
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
-        let passed = totalScore >= 80; // Проходной балл 80%
+        let passed = totalScore >= 80; 
 
-        // Настройка экрана результата
-        document.getElementById('resultEmoji').innerText = passed ? '🎉' : '💔';
-        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Тест не складено';
+        // Оновлюємо локальний прогрес
+        if (passed) {
+            saveUserProgress(currentProductData.product);
+        }
+
+        document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
+        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
         document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
         document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:20px; color: var(--text-main);">${totalScore}%</strong><br><span style="font-size:13px;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
 
         let actionHtml = '';
         if (passed) {
-            actionHtml = `<button class="btn btn-glow" onclick="switchView('productView')">ПЕРЕЙТИ ДАЛІ</button>`;
+            actionHtml = `<button class="btn btn-glow" onclick="openCourse('${currentCourseName}')">ПЕРЕЙТИ ДАЛІ</button>`;
         } else {
             actionHtml = `
                 <button class="btn btn-glow" style="margin-bottom: 12px;" onclick="startTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
@@ -454,7 +536,6 @@
         }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
 
-        // Отправка в Google Таблицу (показываем лоадер во время отправки)
         document.getElementById('loader').style.display = 'flex';
         document.querySelector('#loader div:nth-child(2)').innerText = "Збереження результату...";
 
@@ -464,7 +545,7 @@
                 mode: 'no-cors',
                 body: JSON.stringify({
                     login: currentUser,
-                    product: currentProductData.product, // Название колонки
+                    product: currentProductData.product, 
                     score: totalScore
                 })
             });
