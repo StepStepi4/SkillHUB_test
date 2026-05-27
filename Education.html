@@ -237,6 +237,7 @@
 
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycby1nr0YOhCuDnUWUeHVUUHiWXpYbnreCL30gzSVtacaLwDuggSXsIDm-c2p3-dVcxGy/exec';
+    const CACHE_KEY = 'skillhub_v1_flat'; // Ключ пам'яті (спільний з index.html)
     
     let db = null;
     let currentUser = null;
@@ -245,7 +246,7 @@
     let currentProductData = null;
     let parsedQuestions = [];
 
-    // Локальное сохранение прогресса
+    // Локальне збереження прогресу
     function getUserProgress() {
         try { return JSON.parse(localStorage.getItem('skillhub_edu_progress_' + currentUser) || '{}'); } 
         catch(e) { return {}; }
@@ -259,16 +260,34 @@
 
     window.onload = async () => {
         try {
-            const response = await fetch(API_URL + '?nocache=' + Date.now());
-            const data = await response.json();
+            // 1. МОМЕНТАЛЬНИЙ ЗАПУСК: беремо дані з кешу
+            let cachedData = localStorage.getItem(CACHE_KEY);
+            if (cachedData) {
+                let parsedDb = JSON.parse(cachedData);
+                if (parsedDb && parsedDb.educationData) {
+                    db = parsedDb.educationData;
+                }
+            }
             
-            if (data.error) throw new Error(data.error);
-            db = data.educationData; 
-            
+            // 2. Якщо кешу немає (наприклад, вперше відкрили сторінку напряму), вантажимо з мережі
+            if (!db || !db.courses || db.courses.length === 0) {
+                if (!navigator.onLine) throw new Error("Немає інтернету. Відкрийте спочатку головну сторінку для завантаження бази.");
+                
+                const response = await fetch(API_URL + '?nocache=' + Date.now());
+                const data = await response.json();
+                
+                if (data.error) throw new Error(data.error);
+                db = data.educationData; 
+                
+                // Зберігаємо в кеш
+                localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+            }
+
             if (!db || !db.users || !db.courses) {
                 throw new Error("Дані навчання не знайдені в таблиці.");
             }
 
+            // Групуємо курси
             db.courses.forEach(c => {
                 if (!coursesMap[c.course]) coursesMap[c.course] = [];
                 coursesMap[c.course].push(c);
@@ -344,7 +363,7 @@
         const products = coursesMap[name];
         let progress = getUserProgress();
 
-        // Подсчет и вывод шкалы прогресса
+        // Шкала прогресу
         let completedCount = products.filter(p => progress[p.product]).length;
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
         
@@ -355,7 +374,6 @@
             </div>
         `;
 
-        // Отрисовка списка продуктов с учетом прогресса
         list.innerHTML = products.map((p, index) => {
             let isCompleted = progress[p.product];
             let cardClass = isCompleted ? "list-card completed" : "list-card";
@@ -382,7 +400,7 @@
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
         
-        // Розумний парсер теорії (центрування емодзі та збільшення їх розміру)
+        // Розумний парсер теорії (збільшення і центрування емодзі)
         const formattedHTML = rawInfo.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0)
@@ -515,7 +533,7 @@
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
 
-        // Оновлюємо локальний прогрес
+        // Локальне збереження для галочок
         if (passed) {
             saveUserProgress(currentProductData.product);
         }
@@ -536,28 +554,24 @@
         }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
 
-        document.getElementById('loader').style.display = 'flex';
-        document.querySelector('#loader div:nth-child(2)').innerText = "Збереження результату...";
+        // ВІДОБРАЖАЄМО РЕЗУЛЬТАТ МИТТЄВО (БЕЗ ЛОАДЕРА)
+        switchView('resultView');
 
-        try {
-            await fetch(API_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                body: JSON.stringify({
-                    login: currentUser,
-                    product: currentProductData.product, 
-                    score: totalScore
-                })
-            });
-        } catch (e) {
-            console.error("Помилка відправки:", e);
-        } finally {
-            document.getElementById('loader').style.display = 'none';
-            document.querySelector('#loader div:nth-child(2)').innerText = "Завантаження модуля...";
-            switchView('resultView');
+        // Фонова відправка в таблицю (тільки якщо є інтернет)
+        if (navigator.onLine) {
+            try {
+                fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({
+                        login: currentUser,
+                        product: currentProductData.product, 
+                        score: totalScore
+                    })
+                }).catch(e => console.log("Фонова відправка не вдалася:", e));
+            } catch (e) {}
         }
     }
-
 </script>
 </body>
 </html>
