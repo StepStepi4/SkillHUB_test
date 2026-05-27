@@ -3,518 +3,480 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>SkillHUB Навчання</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <title>Навчання - SkillHUB</title>
+    <meta name="theme-color" content="#f2f2f7">
     <style>
-        :root {
-            --primary: #00a046;
-            --primary-light: #e6f6ec;
-            --bg: #f2f2f7;
-            --card-bg: #ffffff;
-            --text-main: #000000;
-            --text-muted: #8e8e93;
-            --border: #e5e5ea;
-            --danger: #ef4444;
-        }
-
-        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0; padding: 0;
-            display: flex; flex-direction: column; align-items: center;
-            min-height: 100vh;
+        *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        :root {
+            --bg: #f2f2f7; 
+            --card-bg: #ffffff;
+            --text-main: #111827; 
+            --text-muted: #6b7280; 
+            --primary: #10b981; 
+            --primary-light: #d1fae5;
+            --border: #e5e7eb;
+            --input-bg: #f9fafb;
+            --danger: #ef4444;
+            --success: #10b981;
+            
+            --rozetka-green-light: #00c65d;
+            --rozetka-green-dark: #00a046;
         }
 
-        .app-container {
-            width: 100%; max-width: 480px;
-            background: var(--card-bg);
-            min-height: 100vh;
+        body { 
+            font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
+            margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
+            min-height: 100vh; -webkit-font-smoothing: antialiased; 
+        }
+
+        .container { 
+            width: 100%; max-width: 480px; 
+            padding: 24px 16px; margin: 0 auto;
             position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.05);
-            display: flex; flex-direction: column;
         }
 
-        /* Екрани */
-        .screen { display: none; padding: 24px 20px; animation: fadeIn 0.3s ease; flex: 1; }
-        .screen.active { display: flex; flex-direction: column; }
+        /* АНИМАЦИИ ЭКРАНОВ */
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Заголовки */
-        .header { text-align: center; margin-bottom: 24px; }
-        .header h1 { font-size: 22px; font-weight: 800; margin: 0 0 8px 0; line-height: 1.2;}
-        .header p { font-size: 14px; color: var(--text-muted); margin: 0; }
+        /* ЛОАДЕР */
+        .loader-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999;
+        }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* Форми та інпути */
-        .input-group { margin-bottom: 16px; width: 100%; }
-        input {
-            width: 100%; padding: 16px; border-radius: 12px;
-            border: 1px solid var(--border); background: var(--input-bg, #f9fafb);
-            font-size: 16px; font-family: inherit; outline: none; transition: 0.2s;
+        /* ТИПОГРАФИКА */
+        h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
+        p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
+        .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
+
+        /* ВВОД И ФОРМЫ */
+        .input-group { margin-bottom: 16px; }
+        .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
+        input { 
+            width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 500;
+            background: var(--input-bg); border: 1px solid var(--border); outline: none; transition: 0.2s;
         }
         input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
+        /* КНОПКИ */
         .btn {
-            width: 100%; padding: 16px; border-radius: 12px;
-            font-size: 16px; font-weight: 700; border: none; cursor: pointer;
-            transition: 0.2s; text-align: center;
+            width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700;
+            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
+            text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
-        .btn-outline { background: transparent; border: 2px solid var(--primary); color: var(--primary); }
-        .btn-outline:active { background: var(--primary-light); }
+        .btn-glow {
+            background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
+            color: white; box-shadow: 0 8px 20px rgba(0, 198, 93, 0.3);
+        }
+        .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
+        .btn-secondary { background: var(--border); color: var(--text-main); margin-bottom: 12px;}
+        .btn-secondary:active { background: #d1d5db; }
 
-        /* Списки */
-        .list-item {
-            padding: 16px; border: 1px solid var(--border); border-radius: 16px;
-            margin-bottom: 12px; cursor: pointer; display: flex; align-items: center; justify-content: space-between;
-            transition: 0.2s; background: var(--card-bg);
+        /* СПИСКИ (КУРСЫ / ПРОДУКТЫ) */
+        .list-card {
+            background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
+            margin-bottom: 12px; padding: 16px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; justify-content: space-between;
         }
-        .list-item:active { background: var(--bg); transform: scale(0.98); }
-        .list-item-title { font-size: 16px; font-weight: 600; }
+        .list-card:active { transform: scale(0.98); background: var(--input-bg); }
+        .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
+        .list-card-icon { font-size: 24px; }
+        .list-card-arrow { color: var(--text-muted); font-weight: bold; }
+
+        /* ТЕОРИЯ (ОПИСАНИЕ) */
+        .theory-box { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
+        .theory-line { padding: 16px; font-size: 15px; line-height: 1.6; color: var(--text-main); font-weight: 500; border-bottom: 1px solid var(--border); }
+        .theory-line:last-child { border-bottom: none; }
         
-        /* Відображення матеріалу (Опис) */
-        .material-content {
-            background: var(--card-bg); border-radius: 16px;
-            border: 1px solid var(--border); padding: 0 16px; margin-bottom: 24px;
+        /* ТЕСТЫ */
+        .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
+        .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
+        
+        .answer-label {
+            display: flex; align-items: center; gap: 12px; padding: 14px 16px;
+            background: var(--input-bg); border: 1px solid var(--border); border-radius: 12px;
+            margin-bottom: 10px; cursor: pointer; transition: 0.2s; font-weight: 500; font-size: 15px;
         }
-        .mat-line {
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            text-align: center; padding: 20px 0; border-bottom: 1px solid var(--border);
-        }
-        .mat-line:last-child { border-bottom: none; }
-        .mat-emoji { font-size: 42px; margin-bottom: 12px; }
-        .mat-text { font-size: 15px; color: var(--text-main); line-height: 1.5; font-weight: 500;}
-
-        /* Прогрес бар тесту */
-        .progress-wrapper { position: relative; width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin: 10px 0 30px 0; }
-        .progress-fill { position: absolute; top: 0; left: 0; height: 100%; background: var(--primary); border-radius: 3px; transition: width 0.3s ease; }
-        .progress-dot {
-            position: absolute; top: 50%; width: 16px; height: 16px; background: var(--primary);
-            border-radius: 50%; transform: translate(-50%, -50%); transition: left 0.3s ease;
-            box-shadow: 0 2px 6px rgba(0, 160, 70, 0.4); border: 2px solid white;
-        }
-
-        /* Опції тесту */
-        .test-question { font-size: 18px; font-weight: 700; margin-bottom: 20px; line-height: 1.4; text-align: center;}
-        .test-option {
-            padding: 16px; border: 2px solid var(--border); border-radius: 12px;
-            margin-bottom: 12px; cursor: pointer; font-size: 15px; font-weight: 500;
-            display: flex; gap: 12px; align-items: center; transition: 0.2s;
-        }
-        .test-option.selected { border-color: var(--primary); background: var(--primary-light); }
-        .opt-letter { font-weight: 800; color: var(--text-muted); width: 24px; }
-        .test-option.selected .opt-letter { color: var(--primary); }
-
-        /* Лоадер */
-        .loader-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--card-bg); display: flex; flex-direction: column;
-            align-items: center; justify-content: center; z-index: 1000;
-        }
-        .spinner {
-            width: 40px; height: 40px; border: 4px solid var(--border);
-            border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px;
-        }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
-
-        /* Навігація назад */
-        .back-nav {
-            display: flex; align-items: center; gap: 8px; color: var(--text-muted);
-            font-weight: 600; font-size: 14px; margin-bottom: 20px; cursor: pointer;
-        }
-        .back-nav svg { width: 18px; height: 18px; stroke: currentColor; stroke-width: 2.5; fill: none; }
+        .answer-label:hover { border-color: var(--primary); }
+        .answer-label input { width: 20px; height: 20px; margin: 0; cursor: pointer; flex-shrink: 0; accent-color: var(--primary); }
+        
+        .nav-header { display: flex; align-items: center; margin-bottom: 24px; gap: 12px; }
+        .back-btn { background: transparent; border: none; font-size: 24px; color: var(--text-muted); cursor: pointer; padding: 0; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--card-bg); border: 1px solid var(--border); transition: 0.2s;}
+        .back-btn:active { background: var(--input-bg); transform: scale(0.9); }
+        
+        #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
     </style>
 </head>
 <body>
 
-<div class="app-container">
-    
-    <div id="loader" class="loader-overlay">
-        <div class="spinner"></div>
-        <div style="font-weight: 600; color: var(--text-muted);" id="loader-text">Синхронізація з базою...</div>
-    </div>
+<div id="loader" class="loader-overlay">
+    <div class="spinner"></div>
+    <div style="font-weight: 600; color: var(--text-muted);">Завантаження модуля...</div>
+</div>
 
-    <div id="screen-login" class="screen">
-        <div class="header" style="margin-top: 40px;">
-            <h1>SkillHUB Навчання</h1>
-            <p>Введіть логін і пароль для входу до порталу навчання</p>
-        </div>
+<div class="container">
+
+    <div id="loginView" class="view">
+        <div class="big-emoji">🧑‍🎓</div>
+        <h1>Вхід у Навчання</h1>
+        <p class="subtitle">Увійдіть, щоб розпочати вивчення матеріалів</p>
+        
+        <div id="errorMsg">Невірний логін або пароль!</div>
+
         <div class="input-group">
-            <input type="text" id="loginInput" placeholder="Логін">
+            <span class="input-label">Логін</span>
+            <input type="text" id="loginInput" placeholder="Введіть ваш логін" autocapitalize="off">
         </div>
-        <div class="input-group">
-            <input type="password" id="passInput" placeholder="Пароль">
+        <div class="input-group" style="margin-bottom: 24px;">
+            <span class="input-label">Пароль</span>
+            <input type="password" id="passInput" placeholder="Введіть пароль">
         </div>
-        <p id="loginError" style="color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; display: none; margin-top: 0;"></p>
-        <button class="btn btn-primary" onclick="handleLogin()" style="margin-top: 10px;">Увійти</button>
+
+        <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
+        <button class="btn btn-secondary" style="margin-top: 12px;" onclick="window.location.href='index.html'">Повернутися назад</button>
     </div>
 
-    <div id="screen-products" class="screen">
-        <div class="header" style="text-align: left;">
-            <h1>Оберіть продукт</h1>
-            <p>Доступні напрямки для навчання</p>
-        </div>
-        <div id="products-list"></div>
-    </div>
-
-    <div id="screen-services" class="screen">
-        <div class="back-nav" onclick="showScreen('screen-products')">
-            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg> Назад до продуктів
-        </div>
-        <div class="header" style="text-align: left;">
-            <h1 id="selected-product-title">Назва продукту</h1>
-            <p>Оберіть сервіс для вивчення</p>
-        </div>
-        <div id="services-list"></div>
-    </div>
-
-    <div id="screen-material" class="screen" style="padding-bottom: 100px;">
-        <div class="back-nav" onclick="showScreen('screen-services')">
-            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"></polyline></svg> Назад
-        </div>
-        <div class="header">
-            <h1 id="mat-title" style="font-size: 20px;">Назва сервісу</h1>
-        </div>
-        <div class="material-content" id="mat-content">
+    <div id="courseView" class="view">
+        <div class="nav-header" style="justify-content: space-between;">
+            <div>
+                <h2 style="margin:0; font-size: 22px; font-weight: 800;">Ваші курси</h2>
+                <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;" id="userWelcome"></div>
             </div>
-        
-        <div style="position: fixed; bottom: 0; left: 0; width: 100%; padding: 16px; background: var(--card-bg); border-top: 1px solid var(--border); display: flex; justify-content: center; z-index: 10;">
-            <div style="width: 100%; max-width: 440px;">
-                <button class="btn btn-primary" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
-            </div>
+            <button class="back-btn" onclick="logout()" title="Вийти">🚪</button>
         </div>
+        <div id="courseList"></div>
     </div>
 
-    <div id="screen-test" class="screen">
-        <div class="header">
-            <h1 style="font-size: 18px;">Тестування</h1>
+    <div id="productView" class="view">
+        <div class="nav-header">
+            <button class="back-btn" onclick="switchView('courseView')">❮</button>
+            <h2 id="productViewTitle" style="margin:0; font-size: 18px; font-weight: 700; line-height: 1.2;"></h2>
         </div>
-        <div class="progress-wrapper">
-            <div class="progress-fill" id="test-progress"></div>
-            <div class="progress-dot" id="test-dot"></div>
-        </div>
-        
-        <div id="question-container" style="flex: 1;">
-            <div class="test-question" id="test-q-text">Запитання?</div>
-            <div id="test-options"></div>
-        </div>
-        
-        <button class="btn btn-primary" id="btn-next-question" onclick="submitAnswer()" style="margin-top: 20px;" disabled>Відповісти</button>
+        <p class="subtitle" style="text-align: left; margin-top: -10px;">Оберіть продукт для вивчення:</p>
+        <div id="productList"></div>
     </div>
 
-    <div id="screen-result" class="screen" style="justify-content: center; align-items: center; text-align: center;">
-        <div id="result-emoji" style="font-size: 60px; margin-bottom: 20px;">🎯</div>
-        <h1 id="result-title" style="margin: 0 0 10px 0;">Результат</h1>
-        <p id="result-desc" style="color: var(--text-muted); font-size: 15px; margin-bottom: 30px; line-height: 1.5;"></p>
-        
-        <div style="width: 100%; display: flex; flex-direction: column; gap: 12px;">
-            <button class="btn btn-primary" id="btn-result-action">Продовжити</button>
+    <div id="theoryView" class="view">
+        <div class="nav-header">
+            <button class="back-btn" onclick="switchView('productView')">❮</button>
+            <h2 id="theoryTitle" style="margin:0; font-size: 18px; font-weight: 700;"></h2>
         </div>
+        
+        <div class="big-emoji" id="theoryEmoji">💡</div>
+        
+        <div id="theoryContent" class="theory-box"></div>
+        
+        <button class="btn btn-glow" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
+    </div>
+
+    <div id="testView" class="view">
+        <div class="nav-header">
+            <button class="back-btn" onclick="switchView('theoryView')">❮</button>
+            <h2 style="margin:0; font-size: 18px; font-weight: 700;">Тестування</h2>
+        </div>
+        
+        <div id="testContainer"></div>
+        
+        <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
+    </div>
+
+    <div id="resultView" class="view">
+        <div class="big-emoji" id="resultEmoji">🏆</div>
+        <h1 id="resultTitle">Результат</h1>
+        <p class="subtitle" id="resultSubtitle" style="font-size: 16px; margin-bottom: 30px;"></p>
+        
+        <div id="resultActionContainer"></div>
     </div>
 
 </div>
 
 <script>
-    // ТВОЄ ПОСИЛАННЯ НА GOOGLE APPS SCRIPT
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxkNmNSwDxo7PgTze5bDMgkYxOs3gSzgUxQ8y2ydZlv35YP-zr9RyU7nsfQAydWxEV6rA/exec';
-
-    // Глобальний стан
+    // URL твоего развернутого скрипта
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyZRysYyAsBLnrIEJQJ6hllIJ1XbZcP_DYLKPi33FnazPAXb40NJRut_oE-SEjq6LCtLw/exec';
+    
     let db = null;
     let currentUser = null;
-    let currentMaterials = [];
-    let currentServiceObj = null;
-    
-    // Стан тесту
-    let testData = {
-        questions: [],
-        currentIndex: 0,
-        score: 0,
-        attempts: 1
-    };
+    let coursesMap = {}; // Сгруппированные курсы
+    let currentCourseName = "";
+    let currentProductData = null;
+    let parsedQuestions = [];
 
-    // Завантаження бази даних при відкритті
-    window.onload = function() {
-        fetch(API_URL + '?nocache=' + Date.now(), { mode: 'cors' })
-            .then(res => res.json())
-            .then(data => {
-                if (data.error) throw new Error(data.error);
-                db = data.educationData;
-                document.getElementById('loader').style.display = 'none';
-                showScreen('screen-login');
-            })
-            .catch(err => {
-                document.getElementById('loader-text').innerHTML = "Помилка завантаження.<br>" + err.message;
-                document.querySelector('.spinner').style.display = 'none';
-                console.error(err);
+    // Инициализация при загрузке
+    window.onload = async () => {
+        try {
+            const response = await fetch(API_URL + '?nocache=' + Date.now());
+            const data = await response.json();
+            
+            if (data.error) throw new Error(data.error);
+            db = data.educationData; // Используем блок educationData из скрипта
+            
+            if (!db || !db.users || !db.courses) {
+                throw new Error("Дані навчання не знайдені в таблиці.");
+            }
+
+            // Группируем продукты по курсам
+            db.courses.forEach(c => {
+                if (!coursesMap[c.course]) coursesMap[c.course] = [];
+                coursesMap[c.course].push(c);
             });
+
+            document.getElementById('loader').style.display = 'none';
+            switchView('loginView');
+
+        } catch (e) {
+            document.querySelector('.spinner').style.display = 'none';
+            document.querySelector('#loader div:nth-child(2)').innerHTML = `<span style="color: var(--danger)">Помилка завантаження: ${e.message}</span>`;
+        }
     };
 
-    function showScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
+    function switchView(viewId) {
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        document.getElementById(viewId).classList.add('active');
         window.scrollTo(0, 0);
     }
 
-    // --- 1. АВТОРИЗАЦІЯ ---
     function handleLogin() {
-        const login = document.getElementById('loginInput').value.trim();
-        const pass = document.getElementById('passInput').value.trim();
-        const errEl = document.getElementById('loginError');
+        const l = document.getElementById('loginInput').value.trim();
+        const p = document.getElementById('passInput').value.trim();
+        const err = document.getElementById('errorMsg');
 
-        if(!login || !pass) {
-            errEl.innerText = "Будь ласка, заповніть всі поля";
-            errEl.style.display = 'block';
+        if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
+
+        const user = db.users.find(u => u.login === l && u.pass === p);
+        if (user) {
+            currentUser = user.login;
+            err.style.display = 'none';
+            document.getElementById('userWelcome').innerText = `Користувач: ${currentUser}`;
+            renderCourses();
+            switchView('courseView');
+        } else {
+            err.innerText = "Невірний логін або пароль!";
+            err.style.display = 'block';
+        }
+    }
+
+    function logout() {
+        currentUser = null;
+        document.getElementById('loginInput').value = '';
+        document.getElementById('passInput').value = '';
+        switchView('loginView');
+    }
+
+    // Отрисовка курсов
+    function renderCourses() {
+        const list = document.getElementById('courseList');
+        const courseNames = Object.keys(coursesMap);
+        
+        if (courseNames.length === 0) {
+            list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px;">Курси відсутні</div>';
             return;
         }
 
-        const user = db.users.find(u => u.login === login && u.pass === pass);
-        if (user) {
-            currentUser = user.login;
-            errEl.style.display = 'none';
-            renderProducts();
-        } else {
-            errEl.innerText = "Невірний логін або пароль";
-            errEl.style.display = 'block';
-        }
-    }
-
-    // --- 2. ВИБІР ПРОДУКТУ ---
-    function renderProducts() {
-        const listEl = document.getElementById('products-list');
-        const products = [...new Set(db.materials.map(m => m.product))];
-        
-        let html = products.map(prod => `
-            <div class="list-item" onclick="renderServices('${escapeHtml(prod)}')">
-                <span class="list-item-title">📦 ${escapeHtml(prod)}</span>
-                <span style="color: var(--text-muted);">❯</span>
+        list.innerHTML = courseNames.map(name => `
+            <div class="list-card" onclick="openCourse('${name}')">
+                <div class="list-card-title">
+                    <div class="list-card-icon">📘</div>
+                    <span>${name}</span>
+                </div>
+                <div class="list-card-arrow">❯</div>
             </div>
         `).join('');
-        
-        listEl.innerHTML = html;
-        showScreen('screen-products');
     }
 
-    // --- 3. ВИБІР СЕРВІСУ ---
-    function renderServices(productName) {
-        document.getElementById('selected-product-title').innerText = productName;
-        const listEl = document.getElementById('services-list');
+    function openCourse(name) {
+        currentCourseName = name;
+        document.getElementById('productViewTitle').innerText = name;
         
-        currentMaterials = db.materials
-            .filter(m => m.product === productName)
-            .sort((a, b) => a.priority - b.priority);
+        const list = document.getElementById('productList');
+        const products = coursesMap[name];
 
-        let html = currentMaterials.map((mat, idx) => `
-            <div class="list-item" onclick="openMaterial(${idx})">
-                <span class="list-item-title">📄 ${escapeHtml(mat.serviceName)}</span>
-                <span style="color: var(--text-muted);">❯</span>
+        list.innerHTML = products.map((p, index) => `
+            <div class="list-card" onclick="openProduct(${index})">
+                <div class="list-card-title">
+                    <div class="list-card-icon">📄</div>
+                    <span>${p.product}</span>
+                </div>
+                <div class="list-card-arrow">❯</div>
             </div>
         `).join('');
-        
-        listEl.innerHTML = html;
-        showScreen('screen-services');
+
+        switchView('productView');
     }
 
-    // --- 4. МАТЕРІАЛ ---
-    function openMaterial(idx) {
-        currentServiceObj = currentMaterials[idx];
-        document.getElementById('mat-title').innerText = currentServiceObj.serviceName;
+    function openProduct(index) {
+        currentProductData = coursesMap[currentCourseName][index];
+        document.getElementById('theoryTitle').innerText = currentProductData.product;
         
-        const contentEl = document.getElementById('mat-content');
-        let lines = currentServiceObj.description.split('\n');
-        let html = '';
+        // Красивое форматирование теории с линиями
+        const contentBox = document.getElementById('theoryContent');
+        const rawInfo = currentProductData.info || "Опис відсутній...";
         
-        // Пошук емодзі на початку рядка
-        const emojiRegex = /^(\p{Emoji_Presentation}|\p{Emoji}\uFE0F)(.*)/u;
+        // Разбиваем на строки и оборачиваем каждую в theory-line
+        const formattedHTML = rawInfo.split('\n')
+            .map(line => line.trim())
+            .filter(line => line.length > 0)
+            .map(line => `<div class="theory-line">${line}</div>`)
+            .join('');
 
-        lines.forEach(line => {
-            line = line.trim();
-            if(!line) return;
-            
-            let match = line.match(emojiRegex);
-            if (match) {
-                html += `
-                <div class="mat-line">
-                    <div class="mat-emoji">${match[1]}</div>
-                    <div class="mat-text">${escapeHtml(match[2].trim())}</div>
-                </div>`;
-            } else {
-                html += `
-                <div class="mat-line">
-                    <div class="mat-text">${escapeHtml(line)}</div>
-                </div>`;
-            }
-        });
-        
-        contentEl.innerHTML = html;
-        showScreen('screen-material');
+        contentBox.innerHTML = formattedHTML;
+
+        // Рандомный емодзи для красоты
+        const emojis = ['🎓', '💡', '🚀', '🧠', '📘'];
+        document.getElementById('theoryEmoji').innerText = emojis[Math.floor(Math.random() * emojis.length)];
+
+        switchView('theoryView');
     }
 
-    // --- 5. ТЕСТУВАННЯ ---
-    function parseTestRaw(rawText) {
-        let lines = rawText.split('\n').map(l => l.trim()).filter(l => l);
+    // ПАРСЕР ТЕСТОВ (Понимает нумерацию 1. 2. и ответы 1/a) (+))
+    function parseTestString(testStr) {
+        let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
         let questions = [];
-        let currQ = null;
-        
-        // Виявлення відповіді (напр: "a) ...", "1/a) ...", "1. a) ...")
-        const answerRegex = /^(?:\d+[\/\.])?\s*([a-zа-яA-ZА-Я])\)\s*(.*)/i;
+        let currentQ = null;
 
         lines.forEach(line => {
-            let ansMatch = line.match(answerRegex);
-            if (ansMatch) {
-                if (currQ) {
-                    let letter = ansMatch[1].toLowerCase();
-                    let text = ansMatch[2];
-                    let isCorrect = text.includes('(+)');
-                    text = text.replace(/\(\+\)/g, '').trim(); // Прибираємо (+)
-                    currQ.options.push({ letter, text, isCorrect, selected: false });
-                }
+            // Проверяем, вопрос ли это (начинается с цифры и точки)
+            let qMatch = line.match(/^(\d+)\.\s*(.*)/);
+            if (qMatch) {
+                if (currentQ) questions.push(currentQ);
+                currentQ = { text: qMatch[2], answers: [], type: 'radio' };
             } else {
-                // Це питання. Прибираємо цифри (напр: "1. Запитання?")
-                let qText = line.replace(/^\d+[\.\/]\s*/, '').trim();
-                currQ = { text: qText, options: [] };
-                questions.push(currQ);
+                // Проверяем, ответ ли это (начинается с цифры, слеша, буквы и скобки)
+                let aMatch = line.match(/^\d+\/[a-zа-яA-ZА-Я0-9]\)\s*(.*)/);
+                if (aMatch && currentQ) {
+                    let ansText = aMatch[1];
+                    let isCorrect = false;
+                    
+                    // Проверяем наличие (+)
+                    if (ansText.includes('(+)')) {
+                        isCorrect = true;
+                        ansText = ansText.replace(/\(\+\)/g, '').trim();
+                    }
+                    currentQ.answers.push({ text: ansText, correct: isCorrect });
+                }
             }
         });
+        if (currentQ) questions.push(currentQ);
+
+        // Определяем тип (radio или checkbox) на основе количества правильных ответов
+        questions.forEach(q => {
+            let correctCount = q.answers.filter(a => a.correct).length;
+            if (correctCount > 1) q.type = 'checkbox';
+        });
+
         return questions;
     }
 
     function startTest() {
-        testData.questions = parseTestRaw(currentServiceObj.testRaw);
-        if (testData.questions.length === 0) {
-            alert("Тест для цього сервісу відсутній.");
+        if (!currentProductData.test || currentProductData.test.trim() === "") {
+            alert("Тест для цього продукту відсутній.");
             return;
         }
-        testData.currentIndex = 0;
-        testData.score = 0;
-        renderQuestion();
-        showScreen('screen-test');
+
+        parsedQuestions = parseTestString(currentProductData.test);
+        
+        if (parsedQuestions.length === 0) {
+            alert("Помилка обробки тесту. Перевірте формат у таблиці.");
+            return;
+        }
+
+        const container = document.getElementById('testContainer');
+        container.innerHTML = parsedQuestions.map((q, qIndex) => {
+            
+            let answersHtml = q.answers.map((ans, aIndex) => `
+                <label class="answer-label">
+                    <input type="${q.type}" name="q_${qIndex}" id="q${qIndex}_a${aIndex}">
+                    <span>${ans.text}</span>
+                </label>
+            `).join('');
+
+            let hint = q.type === 'checkbox' ? `<span style="font-size:12px; font-weight:normal; color:var(--text-muted); display:block; margin-top:4px;">(Множинний вибір)</span>` : '';
+
+            return `
+                <div class="question-card">
+                    <div class="question-title">${qIndex + 1}. ${q.text} ${hint}</div>
+                    ${answersHtml}
+                </div>
+            `;
+        }).join('');
+
+        switchView('testView');
     }
 
-    function renderQuestion() {
-        let q = testData.questions[testData.currentIndex];
-        document.getElementById('test-q-text').innerText = q.text;
-        
-        let progressPercent = (testData.currentIndex / testData.questions.length) * 100;
-        document.getElementById('test-progress').style.width = progressPercent + '%';
-        document.getElementById('test-dot').style.left = progressPercent + '%';
+    async function submitTest() {
+        let correctCount = 0;
 
-        let optionsHtml = q.options.map((opt, idx) => `
-            <div class="test-option" id="opt-${idx}" onclick="toggleOption(${idx})">
-                <span class="opt-letter">${opt.letter})</span>
-                <span style="flex:1;">${escapeHtml(opt.text)}</span>
-            </div>
-        `).join('');
-        
-        document.getElementById('test-options').innerHTML = optionsHtml;
-        document.getElementById('btn-next-question').disabled = true;
-    }
+        // Подсчет результатов
+        parsedQuestions.forEach((q, qIndex) => {
+            let isQuestionCorrect = true;
+            let answeredAnything = false;
 
-    function toggleOption(optIdx) {
-        let q = testData.questions[testData.currentIndex];
-        q.options[optIdx].selected = !q.options[optIdx].selected;
-        
-        let el = document.getElementById(`opt-${optIdx}`);
-        if (q.options[optIdx].selected) el.classList.add('selected');
-        else el.classList.remove('selected');
+            q.answers.forEach((ans, aIndex) => {
+                let isChecked = document.getElementById(`q${qIndex}_a${aIndex}`).checked;
+                if (isChecked) answeredAnything = true;
+                
+                // Если чекбокс отмечен неверно (выбрал неправильный или не выбрал правильный)
+                if (isChecked !== ans.correct) {
+                    isQuestionCorrect = false;
+                }
+            });
 
-        let hasSelection = q.options.some(o => o.selected);
-        document.getElementById('btn-next-question').disabled = !hasSelection;
-    }
-
-    function submitAnswer() {
-        let q = testData.questions[testData.currentIndex];
-        
-        // Множинний вибір: всі правильні обрані, жодного неправильного
-        let isFullyCorrect = true;
-        q.options.forEach(opt => {
-            if (opt.isCorrect && !opt.selected) isFullyCorrect = false;
-            if (!opt.isCorrect && opt.selected) isFullyCorrect = false;
+            // Вопрос засчитывается, только если все галочки стоят идеально правильно
+            if (isQuestionCorrect && answeredAnything) {
+                correctCount++;
+            }
         });
 
-        if (isFullyCorrect) testData.score++;
-        testData.currentIndex++;
-        
-        if (testData.currentIndex < testData.questions.length) {
-            renderQuestion();
+        let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
+        let passed = totalScore >= 80; // Проходной балл 80%
+
+        // Настройка экрана результата
+        document.getElementById('resultEmoji').innerText = passed ? '🎉' : '💔';
+        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Тест не складено';
+        document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:20px; color: var(--text-main);">${totalScore}%</strong><br><span style="font-size:13px;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
+
+        let actionHtml = '';
+        if (passed) {
+            actionHtml = `<button class="btn btn-glow" onclick="switchView('productView')">ПЕРЕЙТИ ДАЛІ</button>`;
         } else {
-            document.getElementById('test-progress').style.width = '100%';
-            document.getElementById('test-dot').style.left = '100%';
-            setTimeout(showResults, 400);
+            actionHtml = `
+                <button class="btn btn-glow" style="margin-bottom: 12px;" onclick="startTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
+                <button class="btn btn-secondary" onclick="switchView('theoryView')">ПОВТОРИТИ ТЕОРІЮ</button>
+            `;
+        }
+        document.getElementById('resultActionContainer').innerHTML = actionHtml;
+
+        // Отправка в Google Таблицу (показываем лоадер во время отправки)
+        document.getElementById('loader').style.display = 'flex';
+        document.querySelector('#loader div:nth-child(2)').innerText = "Збереження результату...";
+
+        try {
+            await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                body: JSON.stringify({
+                    login: currentUser,
+                    product: currentProductData.product, // Название колонки
+                    score: totalScore
+                })
+            });
+        } catch (e) {
+            console.error("Помилка відправки:", e);
+        } finally {
+            document.getElementById('loader').style.display = 'none';
+            document.querySelector('#loader div:nth-child(2)').innerText = "Завантаження модуля...";
+            switchView('resultView');
         }
     }
 
-    // --- 6. РЕЗУЛЬТАТИ ТА ЗБЕРЕЖЕННЯ ---
-    function showResults() {
-        let total = testData.questions.length;
-        let percent = Math.round((testData.score / total) * 100);
-        
-        const titleEl = document.getElementById('result-title');
-        const descEl = document.getElementById('result-desc');
-        const emojiEl = document.getElementById('result-emoji');
-        const btnAction = document.getElementById('btn-result-action');
-
-        showScreen('screen-result');
-        btnAction.disabled = true;
-        btnAction.innerText = "Збереження результату...";
-
-        let payload = {
-            action: "saveScore",
-            login: currentUser,
-            serviceName: currentServiceObj.serviceName,
-            score: percent,
-            attempts: testData.attempts
-        };
-
-        // POST запит до Google Apps Script
-        fetch(API_URL, {
-            method: 'POST',
-            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify(payload)
-        })
-        .then(res => res.json())
-        .then(response => {
-            btnAction.disabled = false;
-            if (percent >= 80) {
-                emojiEl.innerText = "🏆";
-                titleEl.innerText = "Вітаємо!";
-                titleEl.style.color = "var(--primary)";
-                descEl.innerHTML = `Ви пройшли тест на <b>${percent}%</b> (${testData.score} з ${total}).<br>Результат успішно записано!`;
-                btnAction.classList.remove('btn-outline');
-                btnAction.classList.add('btn-primary');
-                btnAction.innerText = "Опрацювати наступний сервіс";
-                btnAction.onclick = () => {
-                    testData.attempts = 1; 
-                    showScreen('screen-services');
-                };
-            } else {
-                emojiEl.innerText = "📖";
-                titleEl.innerText = "Спробуйте ще раз";
-                titleEl.style.color = "var(--danger)";
-                descEl.innerHTML = `Ваш результат: <b>${percent}%</b>.<br>Для проходження потрібно мінімум 80%. Будь ласка, перечитайте матеріал та спробуйте знову.`;
-                btnAction.classList.remove('btn-primary');
-                btnAction.classList.add('btn-outline');
-                btnAction.innerText = "Перечитати матеріал";
-                btnAction.onclick = () => {
-                    testData.attempts++; 
-                    showScreen('screen-material');
-                };
-            }
-        })
-        .catch(err => {
-            alert("Помилка збереження результату: " + err.message);
-            btnAction.disabled = false;
-            btnAction.innerText = "Продовжити (Не збережено)";
-            btnAction.onclick = () => showScreen('screen-services');
-        });
-    }
-
-    function escapeHtml(str) {
-        if (!str) return '';
-        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    }
 </script>
 </body>
 </html>
