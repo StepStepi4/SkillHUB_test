@@ -321,7 +321,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzzC4iZAI4xZdX9egrLYKTXNOPXGEwo1Cb7rkvrnT_7Zm6CXwGA3CxFsGKnvhDCHZZ0lg/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzCGfTmtjSSdUp3EFXETcBkHT3wMrTNaSJug7YkrkfX7Qmb3RNEhT1IwShB8VH4nvM0cA/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -337,9 +337,9 @@
     let deadlineInterval;
     window.isDeadlinePassed = false;
 
-    // 💡 ВИПРАВЛЕНО: Додано \s для видалення всіх пробілів і переносів рядків, щоб ідеально збігалося з Backend!
+    // Жорстке очищення: залишаємо лише букви та цифри для 100% порівняння з Backend
     function getCleanName(str) {
-        return String(str).replace(/[✦«»"'`\s]/g, '').replace(/[\u1000-\uFFFF]/g, '').trim().toLowerCase();
+        return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
@@ -632,7 +632,6 @@
                 }
             }
             
-            // 💡 ВИТЯГУЄМО ТІЛЬКИ ІМ'Я
             let fullName = user.name && user.name !== "undefined" ? user.name : currentUser;
             let nameParts = fullName.trim().split(/\s+/);
             let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
@@ -726,7 +725,6 @@
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
 
-        // 💡 ТОПОВИЙ ПРОГРЕС БАР І ДВІ КАРТКИ ЗАМІСТЬ ТРЬОХ
         let textColor = globalPercent > 45 ? '#ffffff' : 'var(--text-main)';
         let textShadow = globalPercent > 45 ? '0 1px 3px rgba(0,0,0,0.3)' : 'none';
 
@@ -784,7 +782,6 @@
 
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
         
-        // 💡 ТОПОВИЙ ПРОГРЕС БАР ДЛЯ КУРСУ
         let textColor = percent > 45 ? '#ffffff' : 'var(--text-main)';
         let textShadow = percent > 45 ? '0 1px 3px rgba(0,0,0,0.3)' : 'none';
 
@@ -950,7 +947,6 @@
 
             let hint = q.type === 'checkbox' ? `<span style="font-size:12px; font-weight:normal; color:var(--text-muted); display:block; margin-top:4px;">(Множинний вибір)</span>` : '';
 
-            // 💡 ВАЖЛИВО: Прибрали написи "Питання X."
             return `
                 <div class="question-card">
                     <div class="question-title">${q.text} ${hint}</div>
