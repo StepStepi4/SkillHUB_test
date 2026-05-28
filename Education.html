@@ -294,7 +294,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycby-fm_tHbLG7yMoZ84VyV5G_Q4VR8XFO5wiiZbbGvGEJ7R8XS22MimQ4y43yW-wAcBP/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycby5CUYAE6FODEUITWpzRw948uM-B70UT028TxIzmzhamg3g6bSjk-USssHvUIi59bYW6Q/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -318,7 +318,7 @@
     // ОФЛАЙН ЧЕРГА
     function saveOfflineResult(login, product, score) {
         let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
-        queue.push({ login, product, score, timestamp: Date.now() });
+        queue.push({ action: 'save_score', login: login, product: product, score: score, timestamp: Date.now() });
         localStorage.setItem('skillhub_offline_queue', JSON.stringify(queue));
     }
 
@@ -358,6 +358,15 @@
                 if (currentUser) {
                     let user = db.users.find(u => u.login === currentUser);
                     if (user) {
+                        // ПЕРЕВІРКА СЕСІЇ (SESSION LOCK)
+                        let myToken = localStorage.getItem('skillhub_session_token');
+                        if (db.activeSessions && db.activeSessions[currentUser]) {
+                            if (myToken && db.activeSessions[currentUser] !== myToken) {
+                                logout(true); // Примусовий вихід (хтось зайшов з іншого пристрою)
+                                return;
+                            }
+                        }
+
                         buildCoursesMap(user);
                         if (document.getElementById('courseView').classList.contains('active')) {
                             renderCourses(user);
@@ -419,7 +428,7 @@
         document.getElementById(viewId).classList.add('active');
         window.scrollTo(0, 0);
 
-        // Ховаємо плаваючу кнопку "В бота" ТІЛЬКИ під час тесту
+        // Ховаємо плаваючу кнопку ТІЛЬКИ під час тесту
         const exitBtn = document.getElementById('floatingExitBtn');
         if (viewId === 'testView') {
             exitBtn.style.display = 'none';
@@ -462,6 +471,30 @@
             currentUser = user.login;
             err.style.display = 'none';
             
+            // SESSION LOCK: Створення токену пристрою
+            let myToken = localStorage.getItem('skillhub_session_token');
+            if (!myToken) {
+                myToken = Date.now().toString() + Math.random().toString(36).substr(2);
+                localStorage.setItem('skillhub_session_token', myToken);
+            }
+
+            // Відправляємо токен на сервер (якщо ми логінимося вручну)
+            if (!isAuto && navigator.onLine) {
+                try {
+                    fetch(API_URL, {
+                        method: 'POST',
+                        mode: 'no-cors',
+                        body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken })
+                    });
+                } catch(e) {}
+            } else if (isAuto && db.activeSessions && db.activeSessions[currentUser]) {
+                // Перевірка при авто-логіні
+                if (db.activeSessions[currentUser] !== myToken) {
+                    logout(true); // Хтось інший зайшов
+                    return;
+                }
+            }
+            
             // Виводимо ФІО (або логін, якщо ФІО порожнє) + Сердечко як на головній
             let displayName = user.name && user.name !== "undefined" ? user.name : currentUser;
             document.getElementById('userWelcome').innerHTML = `Вітаємо, ${displayName} <span style="font-size: 14px; margin-left: 4px;">🫶</span>`;
@@ -496,12 +529,26 @@
     }
 
     // Вихід
-    function logout() {
+    function logout(forced = false) {
+        if (forced) {
+            alert("Ваш акаунт було відкрито на іншому пристрої. Виконано вихід.");
+        } else if (currentUser && navigator.onLine) {
+            // Очищаємо сесію на сервері при свідомому виході
+            try {
+                fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    body: JSON.stringify({ action: 'set_session', login: currentUser, token: '' })
+                });
+            } catch(e) {}
+        }
+
         currentUser = null;
         coursesMap = {}; 
         document.getElementById('loginInput').value = '';
         document.getElementById('passInput').value = '';
         localStorage.removeItem('skillhub_edu_creds');
+        localStorage.removeItem('skillhub_session_token');
         switchView('loginView');
     }
 
@@ -852,6 +899,7 @@
                     method: 'POST',
                     mode: 'no-cors',
                     body: JSON.stringify({
+                        action: 'save_score',
                         login: currentUser,
                         product: currentProductData.product, 
                         score: totalScore
