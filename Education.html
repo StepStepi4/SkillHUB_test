@@ -236,8 +236,8 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: ЗАМІНИ ТУТ ПОСИЛАННЯ ПІСЛЯ НОВОГО РОЗГОРТАННЯ!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzVD8ljR7tRz7mAtM7dLcttUqO2Oev-tuQ93uiWHdAq-SxHswqYAdYzUu8BMMcJmHQLIQ/exec';
+    // ⚠️ ВАЖЛИВО: ЗАМІНИ ТУТ ПОСИЛАННЯ НА СВІЙ НОВИЙ API
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz_hP-q8Xj-AnKPpeejXZl2b2VwIcl_M6QfjRwaA06IGV9fKNjytv8GqiW9o4cvrh5ufg/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -270,7 +270,7 @@
                 }
             }
             
-            // Якщо кешу немає (наприклад, вперше відкрили сторінку), вантажимо з мережі
+            // Якщо кешу немає, вантажимо з мережі
             if (!db || !db.courses || db.courses.length === 0) {
                 if (!navigator.onLine) throw new Error("Немає інтернету. Відкрийте спочатку головну сторінку для завантаження бази.");
                 
@@ -315,15 +315,16 @@
             err.style.display = 'none';
             document.getElementById('userWelcome').innerText = `Користувач: ${currentUser}`;
             
-            // 💡 ВАЖЛИВО: Очищуємо і наново формуємо coursesMap лише для призначених курсів!
             coursesMap = {}; 
             let currentUserAssigned = user.assigned || [];
             
             db.courses.forEach(c => {
-                // Перевіряємо, чи є цей продукт у масиві призначених (враховуючи регістр і пробіли)
-                let isAssigned = currentUserAssigned.some(assignedName => 
-                    assignedName.toLowerCase() === c.product.toLowerCase().trim()
-                );
+                // 💡 РОЗУМНИЙ ФІЛЬТР: видаляємо всі лапки і спецсимволи перед порівнянням
+                let isAssigned = currentUserAssigned.some(assignedName => {
+                    let aClean = String(assignedName).replace(/[✦«»"'`]/g, '').trim().toLowerCase();
+                    let pClean = String(c.product).replace(/[✦«»"'`]/g, '').trim().toLowerCase();
+                    return aClean === pClean;
+                });
                 
                 if (isAssigned) {
                     if (!coursesMap[c.course]) coursesMap[c.course] = [];
@@ -341,7 +342,7 @@
 
     function logout() {
         currentUser = null;
-        coursesMap = {}; // Скидаємо курси при виході
+        coursesMap = {}; 
         document.getElementById('loginInput').value = '';
         document.getElementById('passInput').value = '';
         switchView('loginView');
@@ -412,7 +413,6 @@
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
         
-        // Розумний парсер теорії (збільшення і центрування емодзі)
         const formattedHTML = rawInfo.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0)
@@ -545,7 +545,6 @@
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
 
-        // Локальне збереження для галочок
         if (passed) {
             saveUserProgress(currentProductData.product);
         }
@@ -566,10 +565,8 @@
         }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
 
-        // ВІДОБРАЖАЄМО РЕЗУЛЬТАТ МИТТЄВО (БЕЗ ЛОАДЕРА)
         switchView('resultView');
 
-        // Фонова відправка в таблицю (тільки якщо є інтернет)
         if (navigator.onLine) {
             try {
                 fetch(API_URL, {
