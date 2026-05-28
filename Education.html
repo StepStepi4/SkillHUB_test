@@ -508,7 +508,7 @@
             }
             
             let displayName = user.name && user.name !== "undefined" ? user.name : currentUser;
-            document.getElementById('userWelcome').innerHTML = `Вітаємо, ${displayName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
+            document.getElementById('userWelcome').innerHTML = `Вітаю, ${displayName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
             
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('skillhub_edu_creds', JSON.stringify({login: l, pass: p}));
