@@ -236,8 +236,9 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycby1nr0YOhCuDnUWUeHVUUHiWXpYbnreCL30gzSVtacaLwDuggSXsIDm-c2p3-dVcxGy/exec';
-    const CACHE_KEY = 'skillhub_v1_flat'; // Ключ пам'яті (спільний з index.html)
+    // ⚠️ ВАЖЛИВО: ЗАМІНИ ТУТ ПОСИЛАННЯ ПІСЛЯ НОВОГО РОЗГОРТАННЯ!
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzudsRj1EzQZQT4EUScNJDeg_lD3HSXus6BrMfErR-CaLsybBzIhmtaoT8mJAXsQSwaLw/exec';
+    const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
     let currentUser = null;
@@ -260,7 +261,7 @@
 
     window.onload = async () => {
         try {
-            // 1. МОМЕНТАЛЬНИЙ ЗАПУСК: беремо дані з кешу
+            // МОМЕНТАЛЬНИЙ ЗАПУСК: беремо дані з кешу
             let cachedData = localStorage.getItem(CACHE_KEY);
             if (cachedData) {
                 let parsedDb = JSON.parse(cachedData);
@@ -269,7 +270,7 @@
                 }
             }
             
-            // 2. Якщо кешу немає (наприклад, вперше відкрили сторінку напряму), вантажимо з мережі
+            // Якщо кешу немає (наприклад, вперше відкрили сторінку), вантажимо з мережі
             if (!db || !db.courses || db.courses.length === 0) {
                 if (!navigator.onLine) throw new Error("Немає інтернету. Відкрийте спочатку головну сторінку для завантаження бази.");
                 
@@ -279,19 +280,12 @@
                 if (data.error) throw new Error(data.error);
                 db = data.educationData; 
                 
-                // Зберігаємо в кеш
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
             }
 
             if (!db || !db.users || !db.courses) {
                 throw new Error("Дані навчання не знайдені в таблиці.");
             }
-
-            // Групуємо курси
-            db.courses.forEach(c => {
-                if (!coursesMap[c.course]) coursesMap[c.course] = [];
-                coursesMap[c.course].push(c);
-            });
 
             document.getElementById('loader').style.display = 'none';
             switchView('loginView');
@@ -320,6 +314,23 @@
             currentUser = user.login;
             err.style.display = 'none';
             document.getElementById('userWelcome').innerText = `Користувач: ${currentUser}`;
+            
+            // 💡 ВАЖЛИВО: Очищуємо і наново формуємо coursesMap лише для призначених курсів!
+            coursesMap = {}; 
+            let currentUserAssigned = user.assigned || [];
+            
+            db.courses.forEach(c => {
+                // Перевіряємо, чи є цей продукт у масиві призначених (враховуючи регістр і пробіли)
+                let isAssigned = currentUserAssigned.some(assignedName => 
+                    assignedName.toLowerCase() === c.product.toLowerCase().trim()
+                );
+                
+                if (isAssigned) {
+                    if (!coursesMap[c.course]) coursesMap[c.course] = [];
+                    coursesMap[c.course].push(c);
+                }
+            });
+
             renderCourses();
             switchView('courseView');
         } else {
@@ -330,6 +341,7 @@
 
     function logout() {
         currentUser = null;
+        coursesMap = {}; // Скидаємо курси при виході
         document.getElementById('loginInput').value = '';
         document.getElementById('passInput').value = '';
         switchView('loginView');
@@ -340,7 +352,7 @@
         const courseNames = Object.keys(coursesMap);
         
         if (courseNames.length === 0) {
-            list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px;">Курси відсутні</div>';
+            list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
             return;
         }
 
