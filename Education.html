@@ -201,6 +201,7 @@
 
 <div class="container">
 
+    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -230,6 +231,7 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
+    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -266,6 +268,7 @@
         <div id="courseList"></div>
     </div>
 
+    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -280,6 +283,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -296,6 +300,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -309,6 +314,7 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -320,8 +326,8 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzCGfTmtjSSdUp3EFXETcBkHT3wMrTNaSJug7YkrkfX7Qmb3RNEhT1IwShB8VH4nvM0cA/exec'; 
+    // ⚠️ ВАЖЛИВО: Переконайся, що тут актуальне посилання після нового розгортання!
+    const API_URL = 'https://script.google.com/macros/s/AKfycbytPCVEUvMPUvaO2E8-A8dYH6-QFG6ZdR7qLjMCmuIcZuOxipRNWuy4CVjaAt1HDH06/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -337,7 +343,7 @@
     let deadlineInterval;
     window.isDeadlinePassed = false;
 
-    // Жорстке очищення: залишаємо лише букви та цифри для 100% порівняння з Backend
+    // Жорстке очищення: залишаємо лише букви та цифри для 100% порівняння з бекендом
     function getCleanName(str) {
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
