@@ -91,6 +91,7 @@
         /* ПРОГРЕС БАР КУРСУ */
         .course-progress-wrapper { background: var(--border); border-radius: 8px; height: 8px; width: 100%; margin-bottom: 24px; overflow: hidden; }
         .course-progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+        .progress-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-align: right; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
 
         /* СПИСКИ (КУРСИ / ПРОДУКТИ) */
         .list-card {
@@ -142,25 +143,15 @@
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
-        /* КРАСИВА НАВІГАЦІЯ ТА ШАПКА */
+        /* ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
-        
-        /* СУПЕР КНОПКА НАЗАД В КАРТЦІ ТЕОРІЇ ТА КАБІНЕТІ */
-        .back-btn-sleek {
-            background: var(--card-bg);
-            border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            width: 40px; height: 40px; border-radius: 12px;
-            display: flex; justify-content: center; align-items: center;
-            color: var(--text-main); transition: all 0.2s; cursor: pointer;
-        }
-        .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
 
         .timer-box { font-size: 16px; font-weight: 800; color: var(--danger); background: var(--danger-bg); padding: 8px 14px; border-radius: 10px; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
-        /* ПЛАВАЮЧА КНОПКА "НАЗАД" ЗНИЗУ */
+        /* ПЛАВАЮЧА КНОПКА "В БОТА" ЗНИЗУ */
         .floating-exit {
             position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
@@ -184,6 +175,7 @@
 
 <div class="container">
 
+    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -213,6 +205,7 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
+    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -223,7 +216,7 @@
                 </div>
             </div>
             
-            <button class="back-btn-sleek" onclick="logout()" title="Вийти з акаунту" style="border: none; background: transparent; box-shadow: none; color: var(--danger);">
+            <button onclick="logout()" title="Вийти з акаунту" style="border: none; background: transparent; box-shadow: none; color: var(--danger); cursor: pointer;">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -236,12 +229,13 @@
         <div id="courseList"></div>
     </div>
 
+    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
                 <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
                 <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
-                    <h2 id="productViewTitle" style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; color: var(--text-main);"></h2>
+                    <h2 id="productViewTitle" style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main);"></h2>
                 </div>
             </div>
         </div>
@@ -250,13 +244,14 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
-        <div class="nav-header">
-            <div class="nav-header-left">
-                <button class="back-btn-sleek" onclick="switchView('productView')">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
-                </button>
-                <h2 id="theoryTitle" style="margin:0; font-size: 16px; font-weight: 700;"></h2>
+        <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
+            <div style="display: flex; gap: 12px; align-items: stretch;">
+                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
+                    <h2 id="theoryTitle" style="margin: 0; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main);"></h2>
+                </div>
             </div>
         </div>
         
@@ -266,6 +261,7 @@
         <button class="btn btn-glow" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -279,6 +275,7 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -307,6 +304,15 @@
     // Універсальний очисник рядків (видаляє емодзі, лапки та ✦) для порівняння
     function getCleanName(str) {
         return String(str).replace(/[✦«»"'`]/g, '').replace(/[\u1000-\uFFFF]/g, '').trim().toLowerCase();
+    }
+
+    // Розумний парсер емодзі для виводу в заголовках
+    function formatWithCustomEmoji(name, defaultIcon) {
+        let match = name.trim().match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
+        if (match) {
+            return { icon: match[0], title: name.replace(match[0], '').trim() };
+        }
+        return { icon: defaultIcon, title: name.trim() };
     }
 
     // Перемішування масиву (для питань та відповідей)
@@ -437,12 +443,13 @@
         }
     };
 
+    // Переключення екранів
     function switchView(viewId) {
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         window.scrollTo(0, 0);
 
-        // Плаваюча кнопка є скрізь, КРІМ ТЕСТУ
+        // Ховаємо плаваючу кнопку ТІЛЬКИ під час тесту
         const exitBtn = document.getElementById('floatingExitBtn');
         if (viewId === 'testView') {
             exitBtn.style.display = 'none';
@@ -464,7 +471,6 @@
             
             if (isAssigned) {
                 if (!coursesMap[c.course]) coursesMap[c.course] = [];
-                // Запобігання дублікатам
                 if (!coursesMap[c.course].some(existing => existing.product === c.product)) {
                     coursesMap[c.course].push(c);
                 }
@@ -508,7 +514,7 @@
             }
             
             let displayName = user.name && user.name !== "undefined" ? user.name : currentUser;
-            document.getElementById('userWelcome').innerHTML = `Вітаю, ${displayName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
+            document.getElementById('userWelcome').innerHTML = `Вітаємо, ${displayName} <span style="font-size: 14px; margin-left: 4px;">🫶</span>`;
             
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('skillhub_edu_creds', JSON.stringify({login: l, pass: p}));
@@ -609,7 +615,7 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-val">${avgScore}%</div>
-                    <div class="stat-label">Середній бал</div>
+                    <div class="stat-label">Сер. бал</div>
                 </div>
             </div>
             <div class="course-progress-wrapper" style="margin-bottom: 24px;">
@@ -617,21 +623,25 @@
             </div>
         `;
 
-        list.innerHTML = courseNames.map(name => `
+        list.innerHTML = courseNames.map(name => {
+            let parsed = formatWithCustomEmoji(name, '📘');
+            return `
             <div class="list-card" onclick="openCourse('${name}')">
                 <div class="list-card-title">
-                    <div class="list-card-icon">📘</div>
-                    <span>${name}</span>
+                    <div class="list-card-icon">${parsed.icon}</div>
+                    <span>${parsed.title}</span>
                 </div>
                 <div class="list-card-arrow">❯</div>
             </div>
-        `).join('');
+            `;
+        }).join('');
     }
 
     // Продукти
     function openCourse(name) {
         currentCourseName = name;
-        document.getElementById('productViewTitle').innerText = name;
+        let parsedCourse = formatWithCustomEmoji(name, '');
+        document.getElementById('productViewTitle').innerText = parsedCourse.title;
         
         const list = document.getElementById('productList');
         const products = coursesMap[name];
@@ -652,10 +662,7 @@
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
         
         document.getElementById('courseProgressContainer').innerHTML = `
-            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
-                <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Прогрес</span>
-                <span style="font-size: 14px; font-weight: 800; color: var(--text-main);">${completedCount} / ${products.length} <span style="color:var(--primary); margin-left:4px;">(${percent}%)</span></span>
-            </div>
+            <span class="progress-text">Пройдено: ${completedCount} з ${products.length} (${percent}%)</span>
             <div class="course-progress-wrapper">
                 <div class="course-progress-bar" style="width: ${percent}%;"></div>
             </div>
@@ -671,14 +678,15 @@
                 if (score >= 80) isCompleted = true;
             }
 
+            let parsed = formatWithCustomEmoji(p.product, '📄');
             let cardClass = isCompleted ? "list-card completed" : "list-card";
-            let icon = isCompleted ? "✅" : "📄";
+            let icon = isCompleted ? "✅" : parsed.icon;
             
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
                 <div class="list-card-title">
                     <div class="list-card-icon">${icon}</div>
-                    <span>${p.product}</span>
+                    <span>${parsed.title}</span>
                 </div>
                 <div class="list-card-arrow">❯</div>
             </div>
@@ -691,7 +699,8 @@
     // Теорія
     function openProduct(index) {
         currentProductData = coursesMap[currentCourseName][index];
-        document.getElementById('theoryTitle').innerText = currentProductData.product;
+        let parsed = formatWithCustomEmoji(currentProductData.product, '');
+        document.getElementById('theoryTitle').innerText = parsed.title;
         
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
@@ -757,6 +766,7 @@
         return questions;
     }
 
+    // Візуальне виділення відповіді
     function updateSelection(qIndex) {
         let q = parsedQuestions[qIndex];
         q.answers.forEach((ans, aIndex) => {
@@ -770,6 +780,7 @@
         });
     }
 
+    // Оновлення таймера
     function updateTimerUI() {
         let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
         let s = (timeRemaining % 60).toString().padStart(2, '0');
@@ -799,7 +810,7 @@
             return;
         }
 
-        // SHUFFLE
+        // ПЕРЕМІШУВАННЯ ПИТАНЬ І ВІДПОВІДЕЙ (SHUFFLE)
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => shuffleArray(q.answers));
 
@@ -823,7 +834,7 @@
             `;
         }).join('');
 
-        // ТАЙМЕР
+        // ТАЙМЕР (30 сек на питання)
         clearInterval(testTimerInterval);
         timeRemaining = parsedQuestions.length * 30; 
         updateTimerUI();
@@ -866,7 +877,7 @@
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
 
-        // Кешування локально (для миттєвої галочки)
+        // Оновлюємо локальний кеш бази
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
         if (!currentUserObj.results) currentUserObj.results = {};
@@ -901,6 +912,7 @@
 
         switchView('resultView');
 
+        // Відправляємо дані
         if (navigator.onLine) {
             try {
                 fetch(API_URL, {
