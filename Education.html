@@ -31,6 +31,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
+            padding-bottom: 80px; /* Місце для плаваючої кнопки */
         }
 
         .container { 
@@ -81,6 +82,12 @@
         .btn-secondary { background: var(--border); color: var(--text-main); margin-bottom: 12px;}
         .btn-secondary:active { background: #d1d5db; }
 
+        /* ДАШБОРД СТАТИСТИКИ (ОСОБИСТИЙ КАБІНЕТ) */
+        .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
+        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
+        .stat-val { font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+        .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        
         /* ПРОГРЕС БАР КУРСУ */
         .course-progress-wrapper { background: var(--border); border-radius: 8px; height: 8px; width: 100%; margin-bottom: 24px; overflow: hidden; }
         .course-progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.5s ease-out; }
@@ -115,8 +122,7 @@
         .answer-label:hover { border-color: var(--primary-light); background: var(--input-bg); }
         .answer-label.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
 
-        .answer-label input[type="radio"],
-        .answer-label input[type="checkbox"] {
+        .answer-label input[type="radio"], .answer-label input[type="checkbox"] {
             appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0;
             border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center;
             transition: all 0.2s ease; background: #fff;
@@ -138,29 +144,48 @@
         .answer-label input:checked::before { transform: scale(1); }
         
         /* КРАСИВА НАВІГАЦІЯ */
-        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; background: var(--card-bg); padding: 12px 16px; border-radius: 16px; border: 1px solid var(--border); box-shadow: 0 4px 10px rgba(0,0,0,0.02); }
+        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
-        .back-btn { background: var(--input-bg); border: 1px solid var(--border); font-size: 16px; color: var(--text-main); cursor: pointer; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; transition: all 0.2s ease; font-weight: bold;}
-        .back-btn:hover { border-color: var(--primary); color: var(--primary); }
-        .back-btn:active { transform: scale(0.9); background: var(--primary-light); }
-        .exit-btn { font-size: 13px; font-weight: 700; color: var(--danger); background: var(--danger-bg); padding: 8px 14px; border-radius: 10px; border: none; cursor: pointer; transition: 0.2s; text-decoration: none; display: inline-block;}
-        .exit-btn:active { transform: scale(0.95); background: rgba(239, 68, 68, 0.15); }
         
+        /* СУПЕР КНОПКА НАЗАД ДЛЯ ТЕОРІЇ ТА КАБІНЕТУ */
+        .back-btn-sleek {
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 44px; height: 44px; border-radius: 14px;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--text-main); transition: all 0.2s; cursor: pointer;
+        }
+        .back-btn-sleek:active { transform: scale(0.92); background: rgba(0,0,0,0.05); }
+
         .timer-box { font-size: 16px; font-weight: 800; color: var(--danger); background: var(--danger-bg); padding: 8px 14px; border-radius: 10px; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
+        
+        /* ПЛАВАЮЧА КНОПКА "В БОТА" ЗНИЗУ */
+        .floating-exit {
+            position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 9000;
+            cursor: pointer; transition: 0.2s; color: var(--text-main); font-size: 24px;
+        }
+        .floating-exit:active { transform: scale(0.9); background: var(--input-bg); }
     </style>
 </head>
 <body>
 
 <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
-    <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Завантаження модуля...</div>
+    <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
+</div>
+
+<div class="floating-exit" id="floatingExitBtn" onclick="window.location.href='index.html'" style="display: none;">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </div>
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <img src="edu.svg" alt="Education" style="width: 80px; height: 80px; display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -185,32 +210,30 @@
         </label>
 
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
-        <button class="btn btn-secondary" style="margin-top: 12px;" onclick="window.location.href='index.html'">Вийти в бота</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ -->
     <div id="courseView" class="view">
-        <div class="nav-header">
-            <div class="nav-header-left">
-                <button class="back-btn" onclick="logout()" title="Вийти">🚪</button>
-                <div>
-                    <h2 style="margin:0; font-size: 18px; font-weight: 800;">Ваші курси</h2>
-                    <div style="font-size: 11px; color: var(--text-muted); font-weight: 600;" id="userWelcome"></div>
-                </div>
+        <div class="nav-header" style="justify-content: space-between;">
+            <div>
+                <h2 style="margin:0; font-size: 22px; font-weight: 800;">Ваші курси</h2>
+                <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;" id="userWelcome"></div>
             </div>
-            <button class="exit-btn" onclick="window.location.href='index.html'">В бота</button>
+            <button class="back-btn-sleek" onclick="logout()" title="Вийти" style="width:40px; height:40px;">🚪</button>
         </div>
+        
+        <div id="globalStatsContainer"></div>
+        
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="margin-bottom: 16px;">
             <div class="nav-header-left">
-                <button class="back-btn" onclick="switchView('courseView')">❮</button>
+                <button class="back-btn-sleek" onclick="switchView('courseView')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
                 <h2 id="productViewTitle" style="margin:0; font-size: 16px; font-weight: 700; line-height: 1.2;"></h2>
             </div>
-            <button class="exit-btn" onclick="window.location.href='index.html'">В бота</button>
         </div>
         
         <div id="courseProgressContainer"></div>
@@ -219,14 +242,14 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div class="nav-header-left">
-                <button class="back-btn" onclick="switchView('productView')">❮</button>
+                <button class="back-btn-sleek" onclick="switchView('productView')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                </button>
                 <h2 id="theoryTitle" style="margin:0; font-size: 16px; font-weight: 700;"></h2>
             </div>
-            <button class="exit-btn" onclick="window.location.href='index.html'">В бота</button>
         </div>
         
         <div class="big-emoji" id="theoryEmoji">💡</div>
@@ -235,11 +258,9 @@
         <button class="btn btn-glow" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ -->
     <div id="testView" class="view">
-        <div class="nav-header">
+        <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
-                <!-- Кнопки "Назад" спеціально немає -->
                 <span style="font-size: 22px;">⏱</span>
                 <h2 style="margin:0; font-size: 16px; font-weight: 700;">Тестування</h2>
             </div>
@@ -250,7 +271,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -262,8 +282,8 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: Заміни посилання на свій поточний API
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz_hP-q8Xj-AnKPpeejXZl2b2VwIcl_M6QfjRwaA06IGV9fKNjytv8GqiW9o4cvrh5ufg/exec'; 
+    // ⚠️ ВАЖЛИВО: Заміни посилання на свій поточний API ПІСЛЯ НОВОГО РОЗГОРТАННЯ
+    const API_URL = 'https://script.google.com/macros/s/AKfycby-fm_tHbLG7yMoZ84VyV5G_Q4VR8XFO5wiiZbbGvGEJ7R8XS22MimQ4y43yW-wAcBP/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -277,23 +297,29 @@
     let testTimerInterval;
     let timeRemaining = 0;
 
-    function getUserProgress() {
-        try { return JSON.parse(localStorage.getItem('skillhub_edu_progress_' + currentUser) || '{}'); } 
-        catch(e) { return {}; }
-    }
-
-    function saveUserProgress(productName) {
-        let p = getUserProgress();
-        p[productName] = true;
-        localStorage.setItem('skillhub_edu_progress_' + currentUser, JSON.stringify(p));
-    }
-
     // Перемішування масиву
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             [array[i], array[j]] = [array[j], array[i]];
         }
+    }
+
+    // Фонове оновлення даних, щоб позбутися видалених результатів та підтягнути нові призначення
+    async function fetchFreshDataSilent() {
+        if (!navigator.onLine) return;
+        try {
+            const response = await fetch(API_URL + '?nocache=' + Date.now());
+            const data = await response.json();
+            if (!data.error) {
+                db = data.educationData;
+                localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                // Якщо користувач у кабінеті, непомітно оновлюємо шкалу
+                if (currentUser && document.getElementById('courseView').classList.contains('active')) {
+                    handleLogin(true, true); 
+                }
+            }
+        } catch(e) {}
     }
 
     window.onload = async () => {
@@ -323,14 +349,15 @@
 
             document.getElementById('loader').style.display = 'none';
             
-            // АВТОЛОГІН
+            // АВТОЛОГІН ТА ПАМ'ЯТЬ СЕСІЇ
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
             if (savedCreds) {
                 let parsed = JSON.parse(savedCreds);
                 document.getElementById('loginInput').value = parsed.login;
                 document.getElementById('passInput').value = parsed.pass;
                 document.getElementById('rememberMe').checked = true;
-                handleLogin(true); // Автоматичний вхід
+                handleLogin(true); 
+                fetchFreshDataSilent(); // Запускаємо фонову синхронізацію
             } else {
                 switchView('loginView');
             }
@@ -345,9 +372,17 @@
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         window.scrollTo(0, 0);
+
+        // Ховаємо плаваючу кнопку "В бота" під час тесту (щоб не було шляху назад) та на екрані логіну
+        const exitBtn = document.getElementById('floatingExitBtn');
+        if (viewId === 'testView' || viewId === 'loginView') {
+            exitBtn.style.display = 'none';
+        } else {
+            exitBtn.style.display = 'flex';
+        }
     }
 
-    function handleLogin(isAuto = false) {
+    function handleLogin(isAuto = false, isSilentUpdate = false) {
         const l = document.getElementById('loginInput').value.trim();
         const p = document.getElementById('passInput').value.trim();
         const err = document.getElementById('errorMsg');
@@ -358,9 +393,11 @@
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
-            document.getElementById('userWelcome').innerText = `Вітаємо, ${currentUser}`;
             
-            // Збереження даних сесії
+            // Виводимо ФІО або логін
+            let displayName = user.name && user.name !== "undefined" ? user.name : currentUser;
+            document.getElementById('userWelcome').innerText = `Вітаємо, ${displayName} 👋`;
+            
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('skillhub_edu_creds', JSON.stringify({login: l, pass: p}));
             } else {
@@ -383,14 +420,15 @@
                 }
             });
 
-            renderCourses();
-            if (!isAuto) {
+            renderCourses(user);
+            
+            if (!isAuto && !isSilentUpdate) {
                 document.getElementById('loader').style.display = 'flex';
                 setTimeout(() => {
                     document.getElementById('loader').style.display = 'none';
                     switchView('courseView');
                 }, 300);
-            } else {
+            } else if (!isSilentUpdate) {
                 switchView('courseView');
             }
         } else {
@@ -412,14 +450,61 @@
         switchView('loginView');
     }
 
-    function renderCourses() {
+    // Дашборд та Курси
+    function renderCourses(user) {
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
         
         if (courseNames.length === 0) {
+            document.getElementById('globalStatsContainer').innerHTML = '';
             list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
             return;
         }
+
+        // РАХУЄМО ЗАГАЛЬНУ СТАТИСТИКУ ІЗ БАЗИ ДАНИХ (БЕЗ ЛОКАЛЬНОГО СХОВИЩА)
+        let userResults = user.results || {};
+        let totalAssigned = 0;
+        let totalCompleted = 0;
+        let totalScoreSum = 0;
+        let scoreCount = 0;
+
+        Object.values(coursesMap).flat().forEach(p => {
+            totalAssigned++;
+            let cleanP = String(p.product).replace(/[✦«»"'`]/g, '').trim().toLowerCase();
+            let resStr = userResults[cleanP];
+            if (resStr) {
+                let parts = resStr.split('/');
+                if (parts.length === 2) {
+                    let score = parseInt(parts[1].replace('%', '')) || 0;
+                    totalScoreSum += score;
+                    scoreCount++;
+                    if (score >= 80) totalCompleted++;
+                }
+            }
+        });
+
+        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
+        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
+
+        document.getElementById('globalStatsContainer').innerHTML = `
+            <div class="stats-dashboard">
+                <div class="stat-item">
+                    <div class="stat-val">${globalPercent}%</div>
+                    <div class="stat-label">Прогрес</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
+                    <div class="stat-label">Пройдено</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-val">${avgScore}%</div>
+                    <div class="stat-label">Сер. бал</div>
+                </div>
+            </div>
+            <div class="course-progress-wrapper" style="margin-bottom: 24px;">
+                <div class="course-progress-bar" style="width: ${globalPercent}%;"></div>
+            </div>
+        `;
 
         list.innerHTML = courseNames.map(name => `
             <div class="list-card" onclick="openCourse('${name}')">
@@ -438,9 +523,20 @@
         
         const list = document.getElementById('productList');
         const products = coursesMap[name];
-        let progress = getUserProgress();
+        
+        let currentUserObj = db.users.find(u => u.login === currentUser);
+        let userResults = currentUserObj.results || {};
 
-        let completedCount = products.filter(p => progress[p.product]).length;
+        let completedCount = 0;
+        products.forEach(p => {
+            let cleanP = String(p.product).replace(/[✦«»"'`]/g, '').trim().toLowerCase();
+            let resStr = userResults[cleanP];
+            if (resStr) {
+                let score = parseInt(resStr.split('/')[1]) || 0;
+                if (score >= 80) completedCount++;
+            }
+        });
+
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
         
         document.getElementById('courseProgressContainer').innerHTML = `
@@ -451,7 +547,15 @@
         `;
 
         list.innerHTML = products.map((p, index) => {
-            let isCompleted = progress[p.product];
+            let cleanP = String(p.product).replace(/[✦«»"'`]/g, '').trim().toLowerCase();
+            let resStr = userResults[cleanP];
+            let isCompleted = false;
+            
+            if (resStr) {
+                let score = parseInt(resStr.split('/')[1]) || 0;
+                if (score >= 80) isCompleted = true;
+            }
+
             let cardClass = isCompleted ? "list-card completed" : "list-card";
             let icon = isCompleted ? "✅" : "📄";
             
@@ -577,7 +681,7 @@
             return;
         }
 
-        // ПЕРЕМІШУВАННЯ ПИТАНЬ І ВІДПОВІДЕЙ
+        // ПЕРЕМІШУВАННЯ ПИТАНЬ І ВІДПОВІДЕЙ (SHUFFLE)
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => shuffleArray(q.answers));
 
@@ -601,9 +705,9 @@
             `;
         }).join('');
 
-        // ТАЙМЕР
+        // ТАЙМЕР (30 сек на питання)
         clearInterval(testTimerInterval);
-        timeRemaining = parsedQuestions.length * 30; // 30 секунд на кожне питання
+        timeRemaining = parsedQuestions.length * 30; 
         updateTimerUI();
         
         testTimerInterval = setInterval(() => {
@@ -620,7 +724,7 @@
     }
 
     async function submitTest() {
-        clearInterval(testTimerInterval); // Зупиняємо таймер
+        clearInterval(testTimerInterval); 
         let correctCount = 0;
 
         parsedQuestions.forEach((q, qIndex) => {
@@ -643,9 +747,23 @@
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
 
-        if (passed) {
-            saveUserProgress(currentProductData.product);
-        }
+        // Оновлюємо локальну базу даних, щоб галочка з'явилася миттєво
+        let cleanP = String(currentProductData.product).replace(/[✦«»"'`]/g, '').trim().toLowerCase();
+        let currentUserObj = db.users.find(u => u.login === currentUser);
+        if (!currentUserObj.results) currentUserObj.results = {};
+        
+        let oldRes = currentUserObj.results[cleanP] || "0/0%";
+        let attempts = parseInt(oldRes.split('/')[0]) || 0;
+        let oldScore = parseInt(oldRes.split('/')[1]) || 0;
+        
+        attempts++;
+        let bestScore = Math.max(oldScore, totalScore);
+        currentUserObj.results[cleanP] = `${attempts}/${bestScore}%`;
+        
+        // Зберігаємо змінений кеш (щоб і без інтернету результати залишались)
+        let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+        fullCache.educationData = db;
+        localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
 
         document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
         document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
@@ -665,6 +783,7 @@
 
         switchView('resultView');
 
+        // Фонова відправка в таблицю
         if (navigator.onLine) {
             try {
                 fetch(API_URL, {
