@@ -81,6 +81,7 @@
             color: white; box-shadow: 0 8px 20px rgba(0, 198, 93, 0.3);
         }
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
+        .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
         /* ДАШБОРД СТАТИСТИКИ */
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
@@ -91,7 +92,6 @@
         /* ПРОГРЕС БАР КУРСУ */
         .course-progress-wrapper { background: var(--border); border-radius: 8px; height: 8px; width: 100%; margin-bottom: 24px; overflow: hidden; }
         .course-progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.5s ease-out; }
-        .progress-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-align: right; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
 
         /* СПИСКИ (КУРСИ / ПРОДУКТИ) */
         .list-card {
@@ -110,48 +110,48 @@
         .theory-line { padding: 16px; border-bottom: 1px solid var(--border); }
         .theory-line:last-child { border-bottom: none; }
         
-        /* ТЕСТИ */
+        /* АКУРАТНІ ТЕСТИ */
         .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
         
         .answer-label {
-            display: flex; align-items: center; gap: 14px; padding: 16px;
-            background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px;
-            margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 15px; color: var(--text-main);
+            display: flex; align-items: center; gap: 12px; padding: 14px;
+            background: var(--card-bg); border: 1.5px solid var(--input-bg); border-radius: 12px;
+            margin-bottom: 8px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 14px; color: var(--text-main);
         }
         .answer-label:hover { border-color: var(--primary-light); background: var(--input-bg); }
         .answer-label.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
 
         .answer-label input[type="radio"], .answer-label input[type="checkbox"] {
-            appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0;
+            appearance: none; -webkit-appearance: none; width: 20px; height: 20px; flex-shrink: 0;
             border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center;
             transition: all 0.2s ease; background: #fff;
         }
         .answer-label input[type="radio"] { border-radius: 50%; }
         .answer-label input[type="checkbox"] { border-radius: 6px; }
 
-        .answer-label input[type="radio"]::before {
-            content: ""; width: 10px; height: 10px; border-radius: 50%; transform: scale(0);
-            transition: 0.2s transform ease-in-out; box-shadow: inset 10px 10px var(--card-bg); background-color: var(--card-bg);
-        }
-        .answer-label input[type="checkbox"]::before {
-            content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.2s transform ease-in-out; background-color: transparent;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
-            background-size: contain; background-repeat: no-repeat;
-        }
+        .answer-label input[type="radio"]::before { content: ""; width: 10px; height: 10px; border-radius: 50%; transform: scale(0); transition: 0.2s transform ease-in-out; box-shadow: inset 10px 10px var(--card-bg); background-color: var(--card-bg); }
+        .answer-label input[type="checkbox"]::before { content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.2s transform ease-in-out; background-color: transparent; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E"); background-size: contain; background-repeat: no-repeat; }
 
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
-        /* ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
+        
+        .back-btn-sleek {
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            width: 44px; height: 44px; border-radius: 14px;
+            display: flex; justify-content: center; align-items: center;
+            color: var(--text-main); transition: all 0.2s; cursor: pointer;
+        }
+        .back-btn-sleek:active { transform: scale(0.92); background: rgba(0,0,0,0.05); }
 
         .timer-box { font-size: 16px; font-weight: 800; color: var(--danger); background: var(--danger-bg); padding: 8px 14px; border-radius: 10px; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
-        /* ПЛАВАЮЧА КНОПКА "В БОТА" ЗНИЗУ */
         .floating-exit {
             position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
@@ -175,7 +175,6 @@
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -205,31 +204,42 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
                 <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
                 <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0;">
-                    <h2 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; color: var(--text-main);">Ваші курси 📚</h2>
+                    <h2 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; color: var(--text-main);">Ваші курси</h2>
                     <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;" id="userWelcome"></div>
                 </div>
             </div>
             
-            <button onclick="logout()" title="Вийти з акаунту" style="border: none; background: transparent; box-shadow: none; color: var(--danger); cursor: pointer;">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-                    <polyline points="16 17 21 12 16 7"></polyline>
-                    <line x1="21" y1="12" x2="9" y2="12"></line>
-                </svg>
-            </button>
+            <div style="display: flex; gap: 8px;">
+                <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="border: none; background: transparent; box-shadow: none; color: var(--primary); cursor: pointer;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
+                    </svg>
+                </button>
+                <button class="back-btn-sleek" onclick="logout()" title="Вийти з акаунту" style="border: none; background: transparent; box-shadow: none; color: var(--danger); cursor: pointer;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                        <polyline points="16 17 21 12 16 7"></polyline>
+                        <line x1="21" y1="12" x2="9" y2="12"></line>
+                    </svg>
+                </button>
+            </div>
         </div>
         
+        <div id="deadlineContainer" style="display:none; background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 12px; padding: 12px 16px; align-items: center; justify-content: center; gap: 8px; margin-bottom: 20px;">
+            <span style="font-size:18px;">⏳</span>
+            <span id="deadlineText" style="font-size: 14px; font-weight: 700; color: var(--danger);"></span>
+        </div>
+
         <div id="globalStatsContainer"></div>
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -244,7 +254,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -258,10 +267,9 @@
         <div class="big-emoji" id="theoryEmoji">💡</div>
         <div id="theoryContent" class="theory-box"></div>
         
-        <button class="btn btn-glow" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
+        <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -275,7 +283,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -288,7 +295,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx3eI_xGGDbKeYKLi7Wit-xgNKCY4RSKkJ_qlm54b9LCKMIG0yi6Zqm9YlMloCWZSv8/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxopDfd0kbfadQZn0fyHYNytOU1qo1n_4FAela4L_eE8ISiVTltKrQBzgpzSP12wjmSvQ/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -300,13 +307,17 @@
     
     let testTimerInterval;
     let timeRemaining = 0;
+    
+    // Дедлайн
+    let deadlineInterval;
+    window.isDeadlinePassed = false;
 
-    // Універсальний очисник рядків (видаляє емодзі, лапки та ✦) для порівняння
+    // Універсальний очисник рядків (видаляє емодзі, лапки та ✦)
     function getCleanName(str) {
         return String(str).replace(/[✦«»"'`]/g, '').replace(/[\u1000-\uFFFF]/g, '').trim().toLowerCase();
     }
 
-    // Розумний парсер емодзі для виводу в заголовках
+    // Парсер для виводу емодзі
     function formatWithCustomEmoji(name, defaultIcon) {
         let match = name.trim().match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
         if (match) {
@@ -315,7 +326,7 @@
         return { icon: defaultIcon, title: name.trim() };
     }
 
-    // Перемішування масиву (для питань та відповідей)
+    // Перемішування масиву
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -323,11 +334,10 @@
         }
     }
 
-    // Логіка плаваючої кнопки назад
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
         if (activeView === 'loginView' || activeView === 'courseView') {
-            window.location.href = 'index.html'; // Назад у бота
+            window.location.href = 'index.html'; 
         } else if (activeView === 'productView') {
             switchView('courseView');
         } else if (activeView === 'theoryView') {
@@ -364,6 +374,103 @@
         localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
     }
 
+    // ЛОГІКА ДЕДЛАЙНУ
+    function getDeadlineMs(deadlineValue) {
+        if (!deadlineValue || String(deadlineValue).trim() === "") return null;
+        let val = String(deadlineValue).trim();
+
+        // Якщо це дата у форматі DD.MM.YYYY
+        let dateMatch = val.match(/^(\d{2})\.(\d{2})\.(\d{4})/);
+        if (dateMatch) {
+            let dateObj = new Date(`${dateMatch[3]}-${dateMatch[2]}-${dateMatch[1]}T23:59:59`);
+            if (!isNaN(dateObj.getTime())) return dateObj.getTime();
+        }
+
+        // Якщо це просто цифра (кількість днів від старту сесії)
+        let days = parseFloat(val);
+        if (!isNaN(days)) {
+            let anchorKey = 'skillhub_dl_anchor_' + currentUser;
+            let anchorTime = localStorage.getItem(anchorKey);
+            if (!anchorTime) {
+                anchorTime = Date.now();
+                localStorage.setItem(anchorKey, anchorTime);
+            }
+            return parseInt(anchorTime) + (days * 24 * 60 * 60 * 1000);
+        }
+        return null;
+    }
+
+    function startDeadlineTimer() {
+        clearInterval(deadlineInterval);
+        let user = db.users.find(u => u.login === currentUser);
+        if (!user) return;
+        
+        let dlMs = getDeadlineMs(user.deadline);
+
+        if (!dlMs) {
+            document.getElementById('deadlineContainer').style.display = 'none';
+            window.isDeadlinePassed = false;
+            updateTestButtonState();
+            return;
+        }
+
+        document.getElementById('deadlineContainer').style.display = 'flex';
+
+        deadlineInterval = setInterval(() => {
+            let now = Date.now();
+            let diff = dlMs - now;
+
+            if (diff <= 0) {
+                document.getElementById('deadlineText').innerText = "Доступ до тестів закрито 🔒";
+                document.getElementById('deadlineText').style.color = "var(--danger)";
+                document.getElementById('deadlineContainer').style.background = "rgba(239, 68, 68, 0.1)";
+                document.getElementById('deadlineContainer').style.borderColor = "rgba(239, 68, 68, 0.2)";
+                window.isDeadlinePassed = true;
+                clearInterval(deadlineInterval);
+                updateTestButtonState();
+            } else {
+                let d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+                let m = Math.floor((diff / 1000 / 60) % 60);
+                document.getElementById('deadlineText').innerText = `Дедлайн: ${d}д ${h}г ${m}хв`;
+                document.getElementById('deadlineText').style.color = "var(--text-main)";
+                document.getElementById('deadlineContainer').style.background = "var(--input-bg)";
+                document.getElementById('deadlineContainer').style.borderColor = "var(--border)";
+                window.isDeadlinePassed = false;
+                updateTestButtonState();
+            }
+        }, 1000);
+    }
+
+    function updateTestButtonState() {
+        const btn = document.getElementById('startTestButton');
+        if (!btn) return;
+        if (window.isDeadlinePassed) {
+            btn.disabled = true;
+            btn.innerText = "ЧАС ВИЧЕРПАНО 🔒";
+            btn.style.opacity = "0.6";
+            btn.style.cursor = "not-allowed";
+        } else {
+            btn.disabled = false;
+            btn.innerText = "ПРОЙТИ ТЕСТ";
+            btn.style.opacity = "1";
+            btn.style.cursor = "pointer";
+        }
+    }
+
+    // Примусове оновлення (Кнопка Refresh)
+    async function forceRefresh() {
+        if (!navigator.onLine) {
+            alert("Немає підключення до інтернету!");
+            return;
+        }
+        document.getElementById('loaderText').innerText = "Оновлення даних...";
+        document.getElementById('loader').style.display = 'flex';
+        await fetchFreshDataSilent();
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('loaderText').innerText = "Синхронізація з базою...";
+    }
+
     // Фонове оновлення даних
     async function fetchFreshDataSilent() {
         if (!navigator.onLine) return;
@@ -380,11 +487,10 @@
                 if (currentUser) {
                     let user = db.users.find(u => u.login === currentUser);
                     if (user) {
-                        // ПЕРЕВІРКА СЕСІЇ (SESSION LOCK)
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
                             if (myToken && db.activeSessions[currentUser] !== myToken) {
-                                logout(true); // Примусовий вихід
+                                logout(true); 
                                 return;
                             }
                         }
@@ -392,6 +498,7 @@
                         buildCoursesMap(user);
                         if (document.getElementById('courseView').classList.contains('active')) {
                             renderCourses(user);
+                            startDeadlineTimer();
                         } else if (document.getElementById('productView').classList.contains('active')) {
                             openCourse(currentCourseName);
                         }
@@ -401,7 +508,6 @@
         } catch(e) {}
     }
 
-    // Запуск додатку
     window.onload = async () => {
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
@@ -443,13 +549,11 @@
         }
     };
 
-    // Переключення екранів
     function switchView(viewId) {
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         window.scrollTo(0, 0);
 
-        // Ховаємо плаваючу кнопку ТІЛЬКИ під час тесту
         const exitBtn = document.getElementById('floatingExitBtn');
         if (viewId === 'testView') {
             exitBtn.style.display = 'none';
@@ -478,7 +582,6 @@
         });
     }
 
-    // Авторизація
     function handleLogin(isAuto = false) {
         const l = document.getElementById('loginInput').value.trim();
         const p = document.getElementById('passInput').value.trim();
@@ -491,7 +594,6 @@
             currentUser = user.login;
             err.style.display = 'none';
             
-            // SESSION LOCK
             let myToken = localStorage.getItem('skillhub_session_token');
             if (!myToken) {
                 myToken = Date.now().toString() + Math.random().toString(36).substr(2);
@@ -514,7 +616,7 @@
             }
             
             let displayName = user.name && user.name !== "undefined" ? user.name : currentUser;
-            document.getElementById('userWelcome').innerHTML = `Вітаю, ${displayName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
+            document.getElementById('userWelcome').innerHTML = `Вітаємо, ${displayName} <span style="font-size: 14px; margin-left: 4px;">🫶</span>`;
             
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('skillhub_edu_creds', JSON.stringify({login: l, pass: p}));
@@ -524,6 +626,7 @@
             
             buildCoursesMap(user);
             renderCourses(user);
+            startDeadlineTimer();
             
             if (!isAuto) {
                 document.getElementById('loader').style.display = 'flex';
@@ -544,7 +647,6 @@
         }
     }
 
-    // Вихід
     function logout(forced = false) {
         if (forced) {
             alert("Ваш акаунт було відкрито на іншому пристрої. Виконано вихід.");
@@ -558,6 +660,7 @@
             } catch(e) {}
         }
 
+        clearInterval(deadlineInterval);
         currentUser = null;
         coursesMap = {}; 
         document.getElementById('loginInput').value = '';
@@ -567,7 +670,6 @@
         switchView('loginView');
     }
 
-    // Дашборд та Курси
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
@@ -615,7 +717,7 @@
                 </div>
                 <div class="stat-item">
                     <div class="stat-val">${avgScore}%</div>
-                    <div class="stat-label">Середній бал бал</div>
+                    <div class="stat-label">Сер. бал</div>
                 </div>
             </div>
             <div class="course-progress-wrapper" style="margin-bottom: 24px;">
@@ -637,7 +739,6 @@
         }).join('');
     }
 
-    // Продукти
     function openCourse(name) {
         currentCourseName = name;
         let parsedCourse = formatWithCustomEmoji(name, '');
@@ -662,7 +763,10 @@
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
         
         document.getElementById('courseProgressContainer').innerHTML = `
-            <span class="progress-text">Пройдено: ${completedCount} з ${products.length} (${percent}%)</span>
+            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px;">
+                <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Прогрес</span>
+                <span style="font-size: 14px; font-weight: 800; color: var(--text-main);">${completedCount} / ${products.length} <span style="color:var(--primary); margin-left:4px;">(${percent}%)</span></span>
+            </div>
             <div class="course-progress-wrapper">
                 <div class="course-progress-bar" style="width: ${percent}%;"></div>
             </div>
@@ -696,7 +800,6 @@
         switchView('productView');
     }
 
-    // Теорія
     function openProduct(index) {
         currentProductData = coursesMap[currentCourseName][index];
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
@@ -729,10 +832,10 @@
         const emojis = ['🎓', '💡', '🚀', '🧠', '📘'];
         document.getElementById('theoryEmoji').innerText = emojis[Math.floor(Math.random() * emojis.length)];
 
+        updateTestButtonState();
         switchView('theoryView');
     }
 
-    // Парсер тестів
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
         let questions = [];
@@ -766,7 +869,6 @@
         return questions;
     }
 
-    // Візуальне виділення відповіді
     function updateSelection(qIndex) {
         let q = parsedQuestions[qIndex];
         q.answers.forEach((ans, aIndex) => {
@@ -780,7 +882,6 @@
         });
     }
 
-    // Оновлення таймера
     function updateTimerUI() {
         let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
         let s = (timeRemaining % 60).toString().padStart(2, '0');
@@ -796,8 +897,9 @@
         }
     }
 
-    // Запуск тесту
     function startTest() {
+        if (window.isDeadlinePassed) return;
+
         if (!currentProductData.test || currentProductData.test.trim() === "") {
             alert("Тест для цього продукту відсутній.");
             return;
@@ -810,7 +912,6 @@
             return;
         }
 
-        // ПЕРЕМІШУВАННЯ ПИТАНЬ І ВІДПОВІДЕЙ (SHUFFLE)
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => shuffleArray(q.answers));
 
@@ -826,15 +927,15 @@
 
             let hint = q.type === 'checkbox' ? `<span style="font-size:12px; font-weight:normal; color:var(--text-muted); display:block; margin-top:4px;">(Множинний вибір)</span>` : '';
 
+            // Прибрано написи "Питання X."
             return `
                 <div class="question-card">
-                    <div class="question-title">Питання ${qIndex + 1}. ${q.text} ${hint}</div>
+                    <div class="question-title">${q.text} ${hint}</div>
                     ${answersHtml}
                 </div>
             `;
         }).join('');
 
-        // ТАЙМЕР (30 сек на питання)
         clearInterval(testTimerInterval);
         timeRemaining = parsedQuestions.length * 30; 
         updateTimerUI();
@@ -852,7 +953,6 @@
         switchView('testView');
     }
 
-    // Завершення тесту
     async function submitTest() {
         clearInterval(testTimerInterval); 
         let correctCount = 0;
@@ -877,7 +977,6 @@
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
 
-        // Оновлюємо локальний кеш бази
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
         if (!currentUserObj.results) currentUserObj.results = {};
@@ -912,7 +1011,6 @@
 
         switchView('resultView');
 
-        // Відправляємо дані
         if (navigator.onLine) {
             try {
                 fetch(API_URL, {
