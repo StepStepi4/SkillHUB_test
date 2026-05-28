@@ -83,7 +83,6 @@
         .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* НОВИЙ СУЧАСНИЙ ПРОГРЕС БАР */
         .modern-progress-wrapper {
             position: relative;
             background: var(--input-bg);
@@ -201,7 +200,6 @@
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -231,7 +229,6 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -268,7 +265,6 @@
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -283,7 +279,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -300,7 +295,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -314,7 +308,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -343,7 +336,6 @@
     let deadlineInterval;
     window.isDeadlinePassed = false;
 
-    // Жорстке очищення: залишаємо лише букви та цифри для 100% порівняння з бекендом
     function getCleanName(str) {
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
@@ -531,6 +523,7 @@
         } catch(e) {}
     }
 
+    // 💡 РОЗУМНА ПЕРЕВІРКА КЕШУ ДО АВТОВХОДУ
     window.onload = async () => {
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
@@ -543,23 +536,44 @@
 
             document.getElementById('loader').style.display = 'none';
 
-            if (!db || !db.courses || db.courses.length === 0) {
-                if (!navigator.onLine) {
-                    document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
-                    return;
+            let savedCreds = localStorage.getItem('skillhub_edu_creds');
+            let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
+            
+            let needFreshDb = false;
+            
+            // Якщо бази взагалі немає або вона порожня
+            if (!db || !db.users || db.users.length === 0 || !db.courses || db.courses.length === 0) {
+                needFreshDb = true;
+            } else if (parsedCreds) {
+                // Якщо база є, перевіряємо, чи є у цій СТАРІЙ базі наш збережений користувач з паролем
+                let userExists = db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass);
+                if (!userExists) {
+                    // Користувача немає в старому кеші (можливо, щойно додали або змінили пароль) - треба дочекатись оновлення бази!
+                    needFreshDb = true;
                 }
-                document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent();
-                document.getElementById('loader').style.display = 'none';
-            } else {
-                fetchFreshDataSilent();
             }
 
-            let savedCreds = localStorage.getItem('skillhub_edu_creds');
-            if (savedCreds) {
-                let parsed = JSON.parse(savedCreds);
-                document.getElementById('loginInput').value = parsed.login;
-                document.getElementById('passInput').value = parsed.pass;
+            if (needFreshDb) {
+                if (!navigator.onLine) {
+                    if (!db) {
+                        document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
+                        return;
+                    }
+                } else {
+                    document.getElementById('loaderText').innerText = "Оновлення даних...";
+                    document.getElementById('loader').style.display = 'flex';
+                    await fetchFreshDataSilent(); // Чекаємо на нову базу
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('loaderText').innerText = "Синхронізація з базою...";
+                }
+            } else {
+                fetchFreshDataSilent(); // Оновлюємо у фоні, оскільки кеш валідний
+            }
+
+            // Тільки тепер намагаємось увійти
+            if (parsedCreds) {
+                document.getElementById('loginInput').value = parsedCreds.login;
+                document.getElementById('passInput').value = parsedCreds.pass;
                 document.getElementById('rememberMe').checked = true;
                 handleLogin(true); 
             } else {
@@ -612,7 +626,8 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users.find(u => u.login === l && u.pass === p);
+        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
+        
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
