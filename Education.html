@@ -121,7 +121,7 @@
         }
         .list-card:active { transform: scale(0.98); background: var(--input-bg); }
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
-        .list-card-icon { font-size: 24px; }
+        .list-card-icon { font-size: 24px; flex-shrink: 0;}
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
         .list-card.completed { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
 
@@ -523,7 +523,6 @@
         } catch(e) {}
     }
 
-    // 💡 РОЗУМНА ПЕРЕВІРКА КЕШУ ДО АВТОВХОДУ
     window.onload = async () => {
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
@@ -541,14 +540,11 @@
             
             let needFreshDb = false;
             
-            // Якщо бази взагалі немає або вона порожня
             if (!db || !db.users || db.users.length === 0 || !db.courses || db.courses.length === 0) {
                 needFreshDb = true;
             } else if (parsedCreds) {
-                // Якщо база є, перевіряємо, чи є у цій СТАРІЙ базі наш збережений користувач з паролем
                 let userExists = db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass);
                 if (!userExists) {
-                    // Користувача немає в старому кеші (можливо, щойно додали або змінили пароль) - треба дочекатись оновлення бази!
                     needFreshDb = true;
                 }
             }
@@ -562,15 +558,14 @@
                 } else {
                     document.getElementById('loaderText').innerText = "Оновлення даних...";
                     document.getElementById('loader').style.display = 'flex';
-                    await fetchFreshDataSilent(); // Чекаємо на нову базу
+                    await fetchFreshDataSilent();
                     document.getElementById('loader').style.display = 'none';
                     document.getElementById('loaderText').innerText = "Синхронізація з базою...";
                 }
             } else {
-                fetchFreshDataSilent(); // Оновлюємо у фоні, оскільки кеш валідний
+                fetchFreshDataSilent();
             }
 
-            // Тільки тепер намагаємось увійти
             if (parsedCreds) {
                 document.getElementById('loginInput').value = parsedCreds.login;
                 document.getElementById('passInput').value = parsedCreds.pass;
@@ -766,15 +761,44 @@
             </div>
         `;
 
+        // 💡 ОНОВЛЕННЯ 1: ЛІЧИЛЬНИКИ ПРОГРЕСУ ДЛЯ КОЖНОГО КУРСУ
         list.innerHTML = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
+            
+            let courseProducts = coursesMap[name] || [];
+            let cTotal = courseProducts.length;
+            let cPassed = 0;
+
+            courseProducts.forEach(p => {
+                let cleanP = getCleanName(p.product);
+                let resStr = userResults[cleanP];
+                if (resStr) {
+                    let score = parseInt(resStr.split('/')[1]) || 0;
+                    if (score >= 80) cPassed++;
+                }
+            });
+
+            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
+            let cardClass = isCourseDone ? "list-card completed" : "list-card";
+            
+            // Стандартний сірий бейдж
+            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
+
+            // Якщо пройдено все - зелений бейдж
+            if (isCourseDone) {
+                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
+            }
+
             return `
-            <div class="list-card" onclick="openCourse('${name}')">
-                <div class="list-card-title">
+            <div class="${cardClass}" onclick="openCourse('${name}')">
+                <div class="list-card-title" style="flex: 1;">
                     <div class="list-card-icon">${parsed.icon}</div>
-                    <span>${parsed.title}</span>
+                    <span style="font-size: 15px;">${parsed.title}</span>
                 </div>
-                <div class="list-card-arrow">❯</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    ${statusBadge}
+                    <div class="list-card-arrow">❯</div>
+                </div>
             </div>
             `;
         }).join('');
@@ -813,14 +837,21 @@
             </div>
         `;
 
+        // 💡 ОНОВЛЕННЯ 2: БЕЙДЖИ З РЕЗУЛЬТАТАМИ ДЛЯ КОЖНОГО ПРОДУКТУ
         list.innerHTML = products.map((p, index) => {
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             let isCompleted = false;
+            let badgeHtml = '';
             
             if (resStr) {
                 let score = parseInt(resStr.split('/')[1]) || 0;
-                if (score >= 80) isCompleted = true;
+                if (score >= 80) {
+                    isCompleted = true;
+                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 3px 6px; border-radius: 6px; margin-top: 4px; display: inline-block;">Пройдено: ${score}%</div>`;
+                } else if (score > 0) {
+                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--danger); background: var(--danger-bg); padding: 3px 6px; border-radius: 6px; margin-top: 4px; display: inline-block;">Спроба: ${score}%</div>`;
+                }
             }
 
             let parsed = formatWithCustomEmoji(p.product, '📄');
@@ -829,9 +860,12 @@
             
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
-                <div class="list-card-title">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                     <div class="list-card-icon">${icon}</div>
-                    <span>${parsed.title}</span>
+                    <div style="display: flex; flex-direction: column; justify-content: center;">
+                        <span style="font-size: 15px; font-weight: 700; color: var(--text-main);">${parsed.title}</span>
+                        ${badgeHtml}
+                    </div>
                 </div>
                 <div class="list-card-arrow">❯</div>
             </div>
