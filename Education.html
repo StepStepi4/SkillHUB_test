@@ -6,10 +6,12 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     <style>
+        /* Підключення шрифту Inter для сучасного вигляду */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+        /* Оголошення кольорової палітри (Світла тема для зручності читання) */
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
@@ -31,7 +33,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 80px; /* Місце для плаваючої кнопки */
+            padding-bottom: 80px; /* Місце для плаваючої кнопки знизу */
         }
 
         .container { 
@@ -45,7 +47,7 @@
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ЛОАДЕР */
+        /* ЛОАДЕР ЗАВАНТАЖЕННЯ */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -54,12 +56,12 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* ТИПОГРАФІКА */
+        /* ТИПОГРАФІКА ТА ІКОНКИ */
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
-        /* ВВЕДЕННЯ ТА ФОРМИ */
+        /* ПОЛЯ ВВЕДЕННЯ (ЛОГІН ТА ПАРОЛЬ) */
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         input[type="text"], input[type="password"] { 
@@ -79,8 +81,6 @@
             color: white; box-shadow: 0 8px 20px rgba(0, 198, 93, 0.3);
         }
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
-        .btn-secondary { background: var(--border); color: var(--text-main); margin-bottom: 12px;}
-        .btn-secondary:active { background: #d1d5db; }
 
         /* ДАШБОРД СТАТИСТИКИ (ОСОБИСТИЙ КАБІНЕТ) */
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
@@ -143,7 +143,7 @@
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
-        /* КРАСИВА НАВІГАЦІЯ */
+        /* КРАСИВА НАВІГАЦІЯ ТА ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
         
@@ -175,20 +175,27 @@
 </head>
 <body>
 
+<!-- Лоадер -->
 <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
     <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
 
+<!-- Плаваюча кнопка "Назад в бота" -->
 <div class="floating-exit" id="floatingExitBtn" onclick="window.location.href='index.html'" style="display: none;">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </div>
 
 <div class="container">
 
+    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
-            <img src="edu.svg" alt="Education" style="width: 80px; height: 80px; display: block; margin: 0 auto; margin-bottom: 10px;">
+            <!-- Векторна іконка Навчання (Замість edu.svg) -->
+            <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
+                <path d="M6 12v5c3 3 9 3 12 0v-5"></path>
+            </svg>
         </div>
         <h1>Вхід у Навчання</h1>
         <p class="subtitle">Увійдіть, щоб розпочати вивчення матеріалів</p>
@@ -204,6 +211,7 @@
             <input type="password" id="passInput" placeholder="Введіть пароль">
         </div>
         
+        <!-- Чекбокс запам'ятати мене -->
         <label style="display:flex; align-items:center; gap:8px; font-size:14px; color:var(--text-muted); cursor:pointer; margin-bottom: 24px; font-weight: 500;">
             <input type="checkbox" id="rememberMe" style="width:18px; height:18px; accent-color:var(--primary); margin:0;" checked>
             Запамʼятати мене
@@ -212,13 +220,25 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
+    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
-        <div class="nav-header" style="justify-content: space-between;">
-            <div>
-                <h2 style="margin:0; font-size: 22px; font-weight: 800;">Ваші курси</h2>
-                <div style="font-size: 13px; color: var(--text-muted); font-weight: 600;" id="userWelcome"></div>
+        <!-- Оновлена шапка з синьо-жовтою смугою та іконкою виходу -->
+        <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
+            <div style="display: flex; gap: 12px; align-items: stretch;">
+                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0;">
+                    <h2 style="margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; line-height: 1; color: var(--text-main);">Ваші курси</h2>
+                    <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;" id="userWelcome"></div>
+                </div>
             </div>
-            <button class="back-btn-sleek" onclick="logout()" title="Вийти" style="width:40px; height:40px;">🚪</button>
+            
+            <button class="back-btn-sleek" onclick="logout()" title="Вийти з акаунту" style="border: none; background: transparent; box-shadow: none; color: var(--danger);">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
         </div>
         
         <div id="globalStatsContainer"></div>
@@ -226,6 +246,7 @@
         <div id="courseList"></div>
     </div>
 
+    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="margin-bottom: 16px;">
             <div class="nav-header-left">
@@ -242,6 +263,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div class="nav-header-left">
@@ -258,6 +280,7 @@
         <button class="btn btn-glow" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -271,6 +294,7 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -282,7 +306,7 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: Заміни посилання на свій поточний API ПІСЛЯ НОВОГО РОЗГОРТАННЯ
+    // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
     const API_URL = 'https://script.google.com/macros/s/AKfycby-fm_tHbLG7yMoZ84VyV5G_Q4VR8XFO5wiiZbbGvGEJ7R8XS22MimQ4y43yW-wAcBP/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
@@ -293,11 +317,10 @@
     let currentProductData = null;
     let parsedQuestions = [];
     
-    // Змінні для таймера
     let testTimerInterval;
     let timeRemaining = 0;
 
-    // Перемішування масиву
+    // Перемішування масиву (для питань та відповідей)
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -305,7 +328,7 @@
         }
     }
 
-    // Фонове оновлення даних, щоб позбутися видалених результатів та підтягнути нові призначення
+    // Фонове оновлення даних
     async function fetchFreshDataSilent() {
         if (!navigator.onLine) return;
         try {
@@ -314,7 +337,7 @@
             if (!data.error) {
                 db = data.educationData;
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-                // Якщо користувач у кабінеті, непомітно оновлюємо шкалу
+                // Якщо користувач у кабінеті, непомітно оновлюємо дані
                 if (currentUser && document.getElementById('courseView').classList.contains('active')) {
                     handleLogin(true, true); 
                 }
@@ -322,6 +345,7 @@
         } catch(e) {}
     }
 
+    // Запуск додатку
     window.onload = async () => {
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
@@ -357,7 +381,7 @@
                 document.getElementById('passInput').value = parsed.pass;
                 document.getElementById('rememberMe').checked = true;
                 handleLogin(true); 
-                fetchFreshDataSilent(); // Запускаємо фонову синхронізацію
+                fetchFreshDataSilent(); // Фонова синхронізація
             } else {
                 switchView('loginView');
             }
@@ -368,12 +392,13 @@
         }
     };
 
+    // Переключення екранів
     function switchView(viewId) {
         document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
         document.getElementById(viewId).classList.add('active');
         window.scrollTo(0, 0);
 
-        // Ховаємо плаваючу кнопку "В бота" під час тесту (щоб не було шляху назад) та на екрані логіну
+        // Ховаємо плаваючу кнопку "В бота" під час тесту та на екрані логіну
         const exitBtn = document.getElementById('floatingExitBtn');
         if (viewId === 'testView' || viewId === 'loginView') {
             exitBtn.style.display = 'none';
@@ -382,6 +407,7 @@
         }
     }
 
+    // Авторизація
     function handleLogin(isAuto = false, isSilentUpdate = false) {
         const l = document.getElementById('loginInput').value.trim();
         const p = document.getElementById('passInput').value.trim();
@@ -394,10 +420,11 @@
             currentUser = user.login;
             err.style.display = 'none';
             
-            // Виводимо ФІО або логін
+            // Виводимо ФІО (або логін, якщо ФІО порожнє) + Сердечко як на головній
             let displayName = user.name && user.name !== "undefined" ? user.name : currentUser;
-            document.getElementById('userWelcome').innerText = `Вітаємо, ${displayName} 👋`;
+            document.getElementById('userWelcome').innerHTML = `Вітаємо, ${displayName} <span style="font-size: 14px; margin-left: 4px;">🫶</span>`;
             
+            // Збереження даних
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('skillhub_edu_creds', JSON.stringify({login: l, pass: p}));
             } else {
@@ -441,6 +468,7 @@
         }
     }
 
+    // Вихід
     function logout() {
         currentUser = null;
         coursesMap = {}; 
@@ -461,7 +489,7 @@
             return;
         }
 
-        // РАХУЄМО ЗАГАЛЬНУ СТАТИСТИКУ ІЗ БАЗИ ДАНИХ (БЕЗ ЛОКАЛЬНОГО СХОВИЩА)
+        // Загальна статистика з БД
         let userResults = user.results || {};
         let totalAssigned = 0;
         let totalCompleted = 0;
@@ -517,6 +545,7 @@
         `).join('');
     }
 
+    // Продукти
     function openCourse(name) {
         currentCourseName = name;
         document.getElementById('productViewTitle').innerText = name;
@@ -573,6 +602,7 @@
         switchView('productView');
     }
 
+    // Теорія
     function openProduct(index) {
         currentProductData = coursesMap[currentCourseName][index];
         document.getElementById('theoryTitle').innerText = currentProductData.product;
@@ -607,6 +637,7 @@
         switchView('theoryView');
     }
 
+    // Парсер тестів
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
         let questions = [];
@@ -640,6 +671,7 @@
         return questions;
     }
 
+    // Візуальне виділення відповіді
     function updateSelection(qIndex) {
         let q = parsedQuestions[qIndex];
         q.answers.forEach((ans, aIndex) => {
@@ -653,6 +685,7 @@
         });
     }
 
+    // Оновлення таймера
     function updateTimerUI() {
         let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
         let s = (timeRemaining % 60).toString().padStart(2, '0');
@@ -668,6 +701,7 @@
         }
     }
 
+    // Запуск тесту
     function startTest() {
         if (!currentProductData.test || currentProductData.test.trim() === "") {
             alert("Тест для цього продукту відсутній.");
@@ -681,7 +715,7 @@
             return;
         }
 
-        // ПЕРЕМІШУВАННЯ ПИТАНЬ І ВІДПОВІДЕЙ (SHUFFLE)
+        // ПЕРЕМІШУВАННЯ ПИТАНЬ І ВІДПОВІДЕЙ
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => shuffleArray(q.answers));
 
@@ -723,6 +757,7 @@
         switchView('testView');
     }
 
+    // Завершення тесту
     async function submitTest() {
         clearInterval(testTimerInterval); 
         let correctCount = 0;
@@ -760,7 +795,6 @@
         let bestScore = Math.max(oldScore, totalScore);
         currentUserObj.results[cleanP] = `${attempts}/${bestScore}%`;
         
-        // Зберігаємо змінений кеш (щоб і без інтернету результати залишались)
         let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
         fullCache.educationData = db;
         localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
