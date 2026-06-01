@@ -33,7 +33,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 80px; 
+            padding-bottom: 80px; /* Місце для плаваючої кнопки знизу */
         }
 
         .container { 
@@ -42,10 +42,12 @@
             position: relative;
         }
 
+        /* АНІМАЦІЇ ЕКРАНІВ */
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ЛОАДЕР ЗАВАНТАЖЕННЯ */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -54,10 +56,12 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
+        /* ТИПОГРАФІКА ТА ІКОНКИ */
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
+        /* ПОЛЯ ВВЕДЕННЯ (ЛОГІН ТА ПАРОЛЬ) */
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         input[type="text"], input[type="password"] { 
@@ -66,6 +70,7 @@
         }
         input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
+        /* КНОПКИ */
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700;
             cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
@@ -78,42 +83,18 @@
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
         .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
+        /* ДАШБОРД СТАТИСТИКИ */
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
         .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
-        .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+        .stat-val { font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
-        .modern-progress-wrapper {
-            position: relative;
-            background: var(--input-bg);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            height: 40px;
-            width: 100%;
-            margin-bottom: 24px;
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .modern-progress-bar {
-            position: absolute;
-            top: 0; left: 0; bottom: 0;
-            background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
-            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
-            z-index: 1;
-            border-radius: 16px;
-        }
-        .modern-progress-text {
-            position: relative;
-            z-index: 2;
-            font-size: 16px;
-            font-weight: 800;
-            letter-spacing: 0.5px;
-            transition: color 0.3s;
-        }
+        /* ПРОГРЕС БАР КУРСУ */
+        .course-progress-wrapper { background: var(--border); border-radius: 8px; height: 8px; width: 100%; margin-bottom: 24px; overflow: hidden; }
+        .course-progress-bar { background: var(--primary); height: 100%; width: 0%; transition: width 0.5s ease-out; }
+        .progress-text { font-size: 13px; font-weight: 700; color: var(--text-muted); text-align: right; margin-bottom: 8px; display: block; text-transform: uppercase; letter-spacing: 0.5px;}
 
+        /* СПИСКИ (КУРСИ / ПРОДУКТИ) */
         .list-card {
             background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
             margin-bottom: 12px; padding: 16px; cursor: pointer; transition: 0.2s;
@@ -121,44 +102,56 @@
         }
         .list-card:active { transform: scale(0.98); background: var(--input-bg); }
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
-        .list-card-icon { font-size: 24px; flex-shrink: 0;}
+        .list-card-icon { font-size: 24px; }
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
         .list-card.completed { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
 
+        /* ТЕОРІЯ (ОПИС) */
         .theory-box { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
         .theory-line { padding: 16px; border-bottom: 1px solid var(--border); }
         .theory-line:last-child { border-bottom: none; }
         
+        /* ТЕСТИ */
         .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
         
         .answer-label {
             display: flex; align-items: center; gap: 14px; padding: 16px;
-            background: var(--card-bg); border: 1.5px solid var(--input-bg); border-radius: 12px;
-            margin-bottom: 8px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 14px; color: var(--text-main);
+            background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px;
+            margin-bottom: 12px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 15px; color: var(--text-main);
         }
         .answer-label:hover { border-color: var(--primary-light); background: var(--input-bg); }
         .answer-label.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
 
         .answer-label input[type="radio"], .answer-label input[type="checkbox"] {
-            appearance: none; -webkit-appearance: none; width: 20px; height: 20px; flex-shrink: 0;
+            appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0;
             border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center;
             transition: all 0.2s ease; background: #fff;
         }
         .answer-label input[type="radio"] { border-radius: 50%; }
         .answer-label input[type="checkbox"] { border-radius: 6px; }
 
-        .answer-label input[type="radio"]::before { content: ""; width: 10px; height: 10px; border-radius: 50%; transform: scale(0); transition: 0.2s transform ease-in-out; box-shadow: inset 10px 10px var(--card-bg); background-color: var(--card-bg); }
-        .answer-label input[type="checkbox"]::before { content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.2s transform ease-in-out; background-color: transparent; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E"); background-size: contain; background-repeat: no-repeat; }
+        .answer-label input[type="radio"]::before {
+            content: ""; width: 10px; height: 10px; border-radius: 50%; transform: scale(0);
+            transition: 0.2s transform ease-in-out; box-shadow: inset 10px 10px var(--card-bg); background-color: var(--card-bg);
+        }
+        .answer-label input[type="checkbox"]::before {
+            content: ""; width: 12px; height: 12px; transform: scale(0); transition: 0.2s transform ease-in-out; background-color: transparent;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'%3E%3C/polyline%3E%3C/svg%3E");
+            background-size: contain; background-repeat: no-repeat;
+        }
 
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
+        /* КРАСИВА НАВІГАЦІЯ ТА ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
         
+        /* СУПЕР КНОПКА НАЗАД */
         .back-btn-sleek {
-            background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            background: rgba(255,255,255,0.8);
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
             width: 44px; height: 44px; border-radius: 14px;
             display: flex; justify-content: center; align-items: center;
@@ -170,6 +163,7 @@
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
+        /* ПЛАВАЮЧА КНОПКА "В БОТА" ЗНИЗУ */
         .floating-exit {
             position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
@@ -185,6 +179,15 @@
             gap: 8px; margin-bottom: 20px;
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
+        
+        /* КНОПКА СИМУЛЯТОРА */
+        .sim-btn {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%);
+            border: 1px solid #7dd3fc;
+            border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px; cursor: pointer; transition: 0.2s;
+        }
+        .sim-btn:active { transform: scale(0.98); background: #bae6fd; }
     </style>
 </head>
 <body>
@@ -262,6 +265,18 @@
         </div>
 
         <div id="globalStatsContainer"></div>
+
+        <div class="sim-btn" onclick="window.location.href='Simulator.html'">
+            <div style="display: flex; align-items: center; gap: 14px;">
+                <div style="font-size: 32px;">💬</div>
+                <div style="display: flex; flex-direction: column;">
+                    <span style="font-size: 16px; font-weight: 800; color: #0369a1;">Тренажер заперечень</span>
+                    <span style="font-size: 12px; font-weight: 600; color: #0284c7;">Інтерактивний чат-симулятор</span>
+                </div>
+            </div>
+            <div style="color: #0369a1; font-weight: bold; font-size: 18px;">❯</div>
+        </div>
+
         <div id="courseList"></div>
     </div>
 
@@ -319,8 +334,8 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: Переконайся, що тут актуальне посилання після нового розгортання!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbytPCVEUvMPUvaO2E8-A8dYH6-QFG6ZdR7qLjMCmuIcZuOxipRNWuy4CVjaAt1HDH06/exec'; 
+    // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
+    const API_URL = 'https://script.google.com/macros/s/AKfycbznfrG3jJupWyqd_IexjIJSRiigirVFlcqJ0TYn7a0Yf_DmmDZrkNO7LdHutUR6IE6qiw/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -337,7 +352,7 @@
     window.isDeadlinePassed = false;
 
     function getCleanName(str) {
-        return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
+        return String(str).replace(/[✦«»"'`]/g, '').replace(/[\u1000-\uFFFF]/g, '').trim().toLowerCase();
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
@@ -535,40 +550,23 @@
 
             document.getElementById('loader').style.display = 'none';
 
-            let savedCreds = localStorage.getItem('skillhub_edu_creds');
-            let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
-            
-            let needFreshDb = false;
-            
-            if (!db || !db.users || db.users.length === 0 || !db.courses || db.courses.length === 0) {
-                needFreshDb = true;
-            } else if (parsedCreds) {
-                let userExists = db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass);
-                if (!userExists) {
-                    needFreshDb = true;
-                }
-            }
-
-            if (needFreshDb) {
+            if (!db || !db.courses || db.courses.length === 0) {
                 if (!navigator.onLine) {
-                    if (!db) {
-                        document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
-                        return;
-                    }
-                } else {
-                    document.getElementById('loaderText').innerText = "Оновлення даних...";
-                    document.getElementById('loader').style.display = 'flex';
-                    await fetchFreshDataSilent();
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('loaderText').innerText = "Синхронізація з базою...";
+                    document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
+                    return;
                 }
+                document.getElementById('loader').style.display = 'flex';
+                await fetchFreshDataSilent();
+                document.getElementById('loader').style.display = 'none';
             } else {
                 fetchFreshDataSilent();
             }
 
-            if (parsedCreds) {
-                document.getElementById('loginInput').value = parsedCreds.login;
-                document.getElementById('passInput').value = parsedCreds.pass;
+            let savedCreds = localStorage.getItem('skillhub_edu_creds');
+            if (savedCreds) {
+                let parsed = JSON.parse(savedCreds);
+                document.getElementById('loginInput').value = parsed.login;
+                document.getElementById('passInput').value = parsed.pass;
                 document.getElementById('rememberMe').checked = true;
                 handleLogin(true); 
             } else {
@@ -621,8 +619,7 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
-        
+        const user = db.users.find(u => u.login === l && u.pass === p);
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
@@ -728,13 +725,18 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let parts = resStr.split('/');
-                if (parts.length === 2) {
-                    let score = parseInt(parts[1].replace('%', '')) || 0;
-                    totalScoreSum += score;
-                    scoreCount++;
-                    if (score >= 80) totalCompleted++;
+                let match = resStr.match(/(\d+)\s*\/\s*(\d+)%/);
+                let score = 0;
+                if (match) {
+                    score = parseInt(match[2], 10) || 0;
+                } else {
+                    let scoreMatch = resStr.match(/(\d+)%/);
+                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
                 }
+                
+                totalScoreSum += score;
+                scoreCount++;
+                if (score >= 80) totalCompleted++;
             }
         });
 
@@ -761,44 +763,15 @@
             </div>
         `;
 
-        // 💡 ОНОВЛЕННЯ 1: ЛІЧИЛЬНИКИ ПРОГРЕСУ ДЛЯ КОЖНОГО КУРСУ
         list.innerHTML = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
-            
-            let courseProducts = coursesMap[name] || [];
-            let cTotal = courseProducts.length;
-            let cPassed = 0;
-
-            courseProducts.forEach(p => {
-                let cleanP = getCleanName(p.product);
-                let resStr = userResults[cleanP];
-                if (resStr) {
-                    let score = parseInt(resStr.split('/')[1]) || 0;
-                    if (score >= 80) cPassed++;
-                }
-            });
-
-            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
-            let cardClass = isCourseDone ? "list-card completed" : "list-card";
-            
-            // Стандартний сірий бейдж
-            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
-
-            // Якщо пройдено все - зелений бейдж
-            if (isCourseDone) {
-                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
-            }
-
             return `
-            <div class="${cardClass}" onclick="openCourse('${name}')">
-                <div class="list-card-title" style="flex: 1;">
+            <div class="list-card" onclick="openCourse('${name}')">
+                <div class="list-card-title">
                     <div class="list-card-icon">${parsed.icon}</div>
-                    <span style="font-size: 15px;">${parsed.title}</span>
+                    <span>${parsed.title}</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    ${statusBadge}
-                    <div class="list-card-arrow">❯</div>
-                </div>
+                <div class="list-card-arrow">❯</div>
             </div>
             `;
         }).join('');
@@ -820,13 +793,19 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let score = parseInt(resStr.split('/')[1]) || 0;
+                let match = resStr.match(/(\d+)\s*\/\s*(\d+)%/);
+                let score = 0;
+                if (match) {
+                    score = parseInt(match[2], 10) || 0;
+                } else {
+                    let scoreMatch = resStr.match(/(\d+)%/);
+                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
+                }
                 if (score >= 80) completedCount++;
             }
         });
 
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
-        
         let textColor = percent > 45 ? '#ffffff' : 'var(--text-main)';
         let textShadow = percent > 45 ? '0 1px 3px rgba(0,0,0,0.3)' : 'none';
 
@@ -837,21 +816,21 @@
             </div>
         `;
 
-        // 💡 ОНОВЛЕННЯ 2: БЕЙДЖИ З РЕЗУЛЬТАТАМИ ДЛЯ КОЖНОГО ПРОДУКТУ
         list.innerHTML = products.map((p, index) => {
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             let isCompleted = false;
-            let badgeHtml = '';
             
             if (resStr) {
-                let score = parseInt(resStr.split('/')[1]) || 0;
-                if (score >= 80) {
-                    isCompleted = true;
-                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 3px 6px; border-radius: 6px; margin-top: 4px; display: inline-block;">Пройдено: ${score}%</div>`;
-                } else if (score > 0) {
-                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--danger); background: var(--danger-bg); padding: 3px 6px; border-radius: 6px; margin-top: 4px; display: inline-block;">Спроба: ${score}%</div>`;
+                let match = resStr.match(/(\d+)\s*\/\s*(\d+)%/);
+                let score = 0;
+                if (match) {
+                    score = parseInt(match[2], 10) || 0;
+                } else {
+                    let scoreMatch = resStr.match(/(\d+)%/);
+                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
                 }
+                if (score >= 80) isCompleted = true;
             }
 
             let parsed = formatWithCustomEmoji(p.product, '📄');
@@ -860,12 +839,9 @@
             
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
-                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
+                <div class="list-card-title">
                     <div class="list-card-icon">${icon}</div>
-                    <div style="display: flex; flex-direction: column; justify-content: center;">
-                        <span style="font-size: 15px; font-weight: 700; color: var(--text-main);">${parsed.title}</span>
-                        ${badgeHtml}
-                    </div>
+                    <span>${parsed.title}</span>
                 </div>
                 <div class="list-card-arrow">❯</div>
             </div>
@@ -1056,8 +1032,20 @@
         if (!currentUserObj.results) currentUserObj.results = {};
         
         let oldRes = currentUserObj.results[cleanP] || "0/0%";
-        let attempts = parseInt(oldRes.split('/')[0]) || 0;
-        let oldScore = parseInt(oldRes.split('/')[1]) || 0;
+        let attempts = 0;
+        let oldScore = 0;
+        
+        let match = oldRes.match(/(\d+)\s*\/\s*(\d+)%/);
+        if (match) {
+            attempts = parseInt(match[1], 10) || 0;
+            oldScore = parseInt(match[2], 10) || 0;
+        } else {
+            let scoreMatch = oldRes.match(/(\d+)%/);
+            if (scoreMatch) {
+                oldScore = parseInt(scoreMatch[1], 10) || 0;
+                attempts = 1;
+            }
+        }
         
         attempts++;
         let bestScore = Math.max(oldScore, totalScore);
