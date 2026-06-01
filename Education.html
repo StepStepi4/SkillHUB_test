@@ -6,10 +6,12 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     <style>
+        /* Підключення шрифту Inter для сучасного вигляду */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+        /* Оголошення кольорової палітри */
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
@@ -78,7 +80,7 @@
 
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
         .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
-        .stat-val { font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+        .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
         .modern-progress-wrapper {
@@ -183,13 +185,6 @@
             gap: 8px; margin-bottom: 20px;
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
-        
-        .sim-btn {
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border: 1px solid #7dd3fc;
-            border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between;
-            margin-bottom: 24px; cursor: pointer; transition: 0.2s;
-        }
-        .sim-btn:active { transform: scale(0.98); background: #bae6fd; }
     </style>
 </head>
 <body>
@@ -205,7 +200,6 @@
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -235,7 +229,6 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -269,23 +262,9 @@
         </div>
 
         <div id="globalStatsContainer"></div>
-
-        <!-- КНОПКА СИМУЛЯТОРА -->
-        <div class="sim-btn" onclick="window.location.href='Simulator.html'">
-            <div style="display: flex; align-items: center; gap: 14px;">
-                <div style="font-size: 32px;">💬</div>
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 16px; font-weight: 800; color: #0369a1;">Тренажер заперечень</span>
-                    <span style="font-size: 12px; font-weight: 600; color: #0284c7;">Інтерактивний чат-симулятор</span>
-                </div>
-            </div>
-            <div style="color: #0369a1; font-weight: bold; font-size: 18px;">❯</div>
-        </div>
-
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -300,7 +279,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -317,7 +295,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -331,7 +308,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -343,7 +319,7 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
+    // ⚠️ ВАЖЛИВО: Переконайся, що тут актуальне посилання після нового розгортання!
     const API_URL = 'https://script.google.com/macros/s/AKfycbz0F74o34AWiSHSNi-6AxGyVeFsluY1f9yOiBUQ7bpmyql9sg-Au9-wp85tcm12clHJBg/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
@@ -356,12 +332,12 @@
     
     let testTimerInterval;
     let timeRemaining = 0;
+    
     let deadlineInterval;
     window.isDeadlinePassed = false;
 
-    // Універсальний очисник рядків (видаляє емодзі, лапки та ✦)
     function getCleanName(str) {
-        return String(str).replace(/[✦«»"'`]/g, '').replace(/[\u1000-\uFFFF]/g, '').trim().toLowerCase();
+        return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
@@ -559,23 +535,40 @@
 
             document.getElementById('loader').style.display = 'none';
 
-            if (!db || !db.courses || db.courses.length === 0) {
-                if (!navigator.onLine) {
-                    document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
-                    return;
+            let savedCreds = localStorage.getItem('skillhub_edu_creds');
+            let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
+            
+            let needFreshDb = false;
+            
+            if (!db || !db.users || db.users.length === 0 || !db.courses || db.courses.length === 0) {
+                needFreshDb = true;
+            } else if (parsedCreds) {
+                let userExists = db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass);
+                if (!userExists) {
+                    needFreshDb = true;
                 }
-                document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent();
-                document.getElementById('loader').style.display = 'none';
+            }
+
+            if (needFreshDb) {
+                if (!navigator.onLine) {
+                    if (!db) {
+                        document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
+                        return;
+                    }
+                } else {
+                    document.getElementById('loaderText').innerText = "Оновлення даних...";
+                    document.getElementById('loader').style.display = 'flex';
+                    await fetchFreshDataSilent();
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('loaderText').innerText = "Синхронізація з базою...";
+                }
             } else {
                 fetchFreshDataSilent();
             }
 
-            let savedCreds = localStorage.getItem('skillhub_edu_creds');
-            if (savedCreds) {
-                let parsed = JSON.parse(savedCreds);
-                document.getElementById('loginInput').value = parsed.login;
-                document.getElementById('passInput').value = parsed.pass;
+            if (parsedCreds) {
+                document.getElementById('loginInput').value = parsedCreds.login;
+                document.getElementById('passInput').value = parsedCreds.pass;
                 document.getElementById('rememberMe').checked = true;
                 handleLogin(true); 
             } else {
@@ -594,7 +587,7 @@
         window.scrollTo(0, 0);
 
         const exitBtn = document.getElementById('floatingExitBtn');
-        if (viewId === 'testView' || viewId === 'loginView') {
+        if (viewId === 'testView') {
             exitBtn.style.display = 'none';
         } else {
             exitBtn.style.display = 'flex';
@@ -628,7 +621,8 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users.find(u => u.login === l && u.pass === p);
+        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
+        
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
@@ -734,18 +728,13 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let match = resStr.match(/(\d+)\s*\/\s*(\d+)%/);
-                let score = 0;
-                if (match) {
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = resStr.match(/(\d+)%/);
-                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
+                let parts = resStr.split('/');
+                if (parts.length === 2) {
+                    let score = parseInt(parts[1].replace('%', '')) || 0;
+                    totalScoreSum += score;
+                    scoreCount++;
+                    if (score >= 80) totalCompleted++;
                 }
-                
-                totalScoreSum += score;
-                scoreCount++;
-                if (score >= 80) totalCompleted++;
             }
         });
 
@@ -772,15 +761,44 @@
             </div>
         `;
 
+        // 💡 ОНОВЛЕННЯ 1: ЛІЧИЛЬНИКИ ПРОГРЕСУ ДЛЯ КОЖНОГО КУРСУ
         list.innerHTML = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
+            
+            let courseProducts = coursesMap[name] || [];
+            let cTotal = courseProducts.length;
+            let cPassed = 0;
+
+            courseProducts.forEach(p => {
+                let cleanP = getCleanName(p.product);
+                let resStr = userResults[cleanP];
+                if (resStr) {
+                    let score = parseInt(resStr.split('/')[1]) || 0;
+                    if (score >= 80) cPassed++;
+                }
+            });
+
+            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
+            let cardClass = isCourseDone ? "list-card completed" : "list-card";
+            
+            // Стандартний сірий бейдж
+            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
+
+            // Якщо пройдено все - зелений бейдж
+            if (isCourseDone) {
+                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
+            }
+
             return `
-            <div class="list-card" onclick="openCourse('${name}')">
-                <div class="list-card-title">
+            <div class="${cardClass}" onclick="openCourse('${name}')">
+                <div class="list-card-title" style="flex: 1;">
                     <div class="list-card-icon">${parsed.icon}</div>
-                    <span>${parsed.title}</span>
+                    <span style="font-size: 15px;">${parsed.title}</span>
                 </div>
-                <div class="list-card-arrow">❯</div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                    ${statusBadge}
+                    <div class="list-card-arrow">❯</div>
+                </div>
             </div>
             `;
         }).join('');
@@ -802,19 +820,13 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let match = resStr.match(/(\d+)\s*\/\s*(\d+)%/);
-                let score = 0;
-                if (match) {
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = resStr.match(/(\d+)%/);
-                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
-                }
+                let score = parseInt(resStr.split('/')[1]) || 0;
                 if (score >= 80) completedCount++;
             }
         });
 
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
+        
         let textColor = percent > 45 ? '#ffffff' : 'var(--text-main)';
         let textShadow = percent > 45 ? '0 1px 3px rgba(0,0,0,0.3)' : 'none';
 
@@ -825,21 +837,21 @@
             </div>
         `;
 
+        // 💡 ОНОВЛЕННЯ 2: БЕЙДЖИ З РЕЗУЛЬТАТАМИ ДЛЯ КОЖНОГО ПРОДУКТУ
         list.innerHTML = products.map((p, index) => {
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             let isCompleted = false;
+            let badgeHtml = '';
             
             if (resStr) {
-                let match = resStr.match(/(\d+)\s*\/\s*(\d+)%/);
-                let score = 0;
-                if (match) {
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = resStr.match(/(\d+)%/);
-                    if (scoreMatch) score = parseInt(scoreMatch[1], 10) || 0;
+                let score = parseInt(resStr.split('/')[1]) || 0;
+                if (score >= 80) {
+                    isCompleted = true;
+                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 3px 6px; border-radius: 6px; margin-top: 4px; display: inline-block;">Пройдено: ${score}%</div>`;
+                } else if (score > 0) {
+                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--danger); background: var(--danger-bg); padding: 3px 6px; border-radius: 6px; margin-top: 4px; display: inline-block;">Спроба: ${score}%</div>`;
                 }
-                if (score >= 80) isCompleted = true;
             }
 
             let parsed = formatWithCustomEmoji(p.product, '📄');
@@ -848,9 +860,12 @@
             
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
-                <div class="list-card-title">
+                <div style="display: flex; align-items: center; gap: 12px; flex: 1;">
                     <div class="list-card-icon">${icon}</div>
-                    <span>${parsed.title}</span>
+                    <div style="display: flex; flex-direction: column; justify-content: center;">
+                        <span style="font-size: 15px; font-weight: 700; color: var(--text-main);">${parsed.title}</span>
+                        ${badgeHtml}
+                    </div>
                 </div>
                 <div class="list-card-arrow">❯</div>
             </div>
@@ -1041,20 +1056,8 @@
         if (!currentUserObj.results) currentUserObj.results = {};
         
         let oldRes = currentUserObj.results[cleanP] || "0/0%";
-        let attempts = 0;
-        let oldScore = 0;
-        
-        let match = oldRes.match(/(\d+)\s*\/\s*(\d+)%/);
-        if (match) {
-            attempts = parseInt(match[1], 10) || 0;
-            oldScore = parseInt(match[2], 10) || 0;
-        } else {
-            let scoreMatch = oldRes.match(/(\d+)%/);
-            if (scoreMatch) {
-                oldScore = parseInt(scoreMatch[1], 10) || 0;
-                attempts = 1;
-            }
-        }
+        let attempts = parseInt(oldRes.split('/')[0]) || 0;
+        let oldScore = parseInt(oldRes.split('/')[1]) || 0;
         
         attempts++;
         let bestScore = Math.max(oldScore, totalScore);
