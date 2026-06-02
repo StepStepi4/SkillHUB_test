@@ -855,7 +855,7 @@
                 let imgName = achInfo.name.toLowerCase().endsWith('.svg') ? achInfo.name : `${achInfo.name}.svg`;
                 html += `
                 <div class="ach-card">
-                    <img src="Achievement/${imgName}" class="ach-icon" alt="${achInfo.name}" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🏅</span>'">
+                    <img src="Achievement${imgName}" class="ach-icon" alt="${achInfo.name}" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🏅</span>'">
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${achInfo.name.replace('.svg', '')}</div>
                 </div>`;
             } else {
