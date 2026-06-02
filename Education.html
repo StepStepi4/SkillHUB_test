@@ -33,7 +33,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 80px; /* Місце для плаваючої кнопки знизу */
+            padding-bottom: 80px; 
         }
 
         .container { 
@@ -182,7 +182,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
         
-        /* АЧІВКИ - ШТОРКА */
+        /* АЧІВКИ - ШТОРКА (ДРОУЕР) */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -235,6 +235,7 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </div>
 
+<!-- ОВЕРЛЕЙ І ШТОРКА АЧІВОК -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title">🏆 Мої нагороди</div>
@@ -243,6 +244,7 @@
 
 <div class="container">
 
+    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -272,6 +274,7 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
+    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -283,6 +286,7 @@
             </div>
             
             <div style="display: flex; gap: 8px;">
+                <!-- Кнопка АЧІВОК -->
                 <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення" style="border: none; background: transparent; box-shadow: none; cursor: pointer; padding: 0;">
                     <img src="medal.svg" alt="Achievements" style="width: 36px; height: 36px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                 </button>
@@ -309,6 +313,7 @@
 
         <div id="globalStatsContainer"></div>
 
+        <!-- КНОПКА ТРЕНАЖЕРА (СИМУЛЯТОР) -->
         <div class="list-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #7dd3fc;" onclick="openSimulatorSetup(null)">
             <div class="list-card-title" style="flex: 1;">
                 <div class="list-card-icon" style="font-size: 28px;">💬</div>
@@ -323,6 +328,7 @@
         <div id="courseList"></div>
     </div>
 
+    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -337,6 +343,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -350,6 +357,7 @@
         <div class="big-emoji" id="theoryEmoji">💡</div>
         <div id="theoryContent" class="theory-box"></div>
 
+        <!-- КНОПКА ТРЕНАЖЕРА (ПІД ТЕОРІЄЮ) -->
         <button class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 12px;" onclick="openSimulatorFromTheory()">
             <img src="education/chat.svg" width="20" height="20" onerror="this.outerHTML='<span style=\\'font-size:18px; margin-right:4px;\\'>💬</span>'" style="margin-right: 8px;"> Практика: Тренажер
         </button>
@@ -357,6 +365,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -370,6 +379,7 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
+    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -378,6 +388,7 @@
         <div id="resultActionContainer"></div>
     </div>
 
+    <!-- ЕКРАН НАЛАШТУВАННЯ ТРЕНАЖЕРА (ВИБІР ПРОДУКТУ/ПРЕЗЕНТАЦІЇ/ЗАПЕРЕЧЕННЯ) -->
     <div id="simSetupView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -390,12 +401,14 @@
         <div id="simSetupContent"></div>
     </div>
 
+    <!-- ЕКРАН ЧАТУ ТРЕНАЖЕРА -->
     <div id="simChatView" class="view">
         <div class="nav-header" style="justify-content: space-between; margin-bottom: 12px;">
             <div class="nav-header-left">
                 <span style="font-size: 22px;">💬</span>
                 <h2 style="margin:0; font-size: 16px; font-weight: 700;">Діалог з клієнтом</h2>
             </div>
+            <!-- Кнопка рестарту діалогу -->
             <button class="back-btn-sleek" onclick="restartSimChat()" title="Почати знову" style="width:36px; height:36px; border:none; background:transparent;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -413,7 +426,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyYbeO1ExDKP_ZdqqEcdADiMPKSjVfpgKcCUnLoHw-ZKgF9MxLzTRVLZ6aH3RUZbziLJg/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyt-cI4F5V-XhOUw8UcBFtHiWHSHvJ_Q4Q35jCYzp7mpazk7EjyTVND5P5Ax7yIRDVaMg/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -436,7 +449,7 @@
     let simFilteredRows = [];
     let simStepIndex = 0;
 
-    // 💡 ІДЕАЛЬНА СИНХРОНІЗАЦІЯ ОЧИЩЕННЯ РЯДКІВ З СЕРВЕРОМ
+    // 💡 СИНХРОНІЗОВАНЕ ОЧИЩЕННЯ РЯДКІВ (Тепер прогрес і тести працюють ідеально)
     function getCleanName(str) {
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
@@ -616,6 +629,7 @@
                         }
 
                         buildCoursesMap(user);
+                        
                         if (document.getElementById('courseView').classList.contains('active')) {
                             renderCourses(user);
                             startDeadlineTimer();
@@ -728,7 +742,8 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users.find(u => u.login === l && u.pass === p);
+        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
+        
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
@@ -837,7 +852,6 @@
             return;
         }
 
-        // Беремо коди з комірки користувача, ігноруючи пробіли
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
         
         if (achCodes.length === 0) {
@@ -847,11 +861,10 @@
 
         let html = '';
         achCodes.forEach(code => {
-            // Шукаємо в словнику ачівок (achievementData)
+            // 💡 ШУКАЄМО ПО КОДУ У БАЗІ АЧІВОК
             let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
             
             if (achInfo) {
-                // Визначаємо шлях до картинки (Папка Achievement)
                 let imgName = achInfo.name.toLowerCase().endsWith('.svg') ? achInfo.name : `${achInfo.name}.svg`;
                 html += `
                 <div class="ach-card">
@@ -859,7 +872,6 @@
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${achInfo.name.replace('.svg', '')}</div>
                 </div>`;
             } else {
-                // Якщо код є, а картинки/назви в базі немає
                 html += `
                 <div class="ach-card">
                     <div class="ach-icon" style="display:flex; align-items:center; justify-content:center; background:var(--input-bg); border-radius:50%; font-size:20px;">🏅</div>
