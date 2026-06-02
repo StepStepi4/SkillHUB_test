@@ -6,10 +6,12 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     <style>
+        /* Підключення шрифту Inter для сучасного вигляду */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+        /* Оголошення кольорової палітри */
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
@@ -40,10 +42,12 @@
             position: relative;
         }
 
+        /* АНІМАЦІЇ ЕКРАНІВ */
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ЛОАДЕР ЗАВАНТАЖЕННЯ */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -52,10 +56,12 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
+        /* ТИПОГРАФІКА ТА ІКОНКИ */
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
+        /* ПОЛЯ ВВЕДЕННЯ */
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         input[type="text"], input[type="password"] { 
@@ -64,6 +70,7 @@
         }
         input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
+        /* КНОПКИ */
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700;
             cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
@@ -76,11 +83,13 @@
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
         .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
+        /* ДАШБОРД СТАТИСТИКИ */
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
         .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
         .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
+        /* ПРОГРЕС БАР КУРСУ */
         .modern-progress-wrapper {
             position: relative; background: var(--input-bg); border: 1px solid var(--border);
             border-radius: 16px; height: 40px; width: 100%; margin-bottom: 24px; overflow: hidden;
@@ -96,6 +105,7 @@
             letter-spacing: 0.5px; transition: color 0.3s;
         }
 
+        /* СПИСКИ (КУРСИ / ПРОДУКТИ) */
         .list-card {
             background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
             margin-bottom: 12px; padding: 16px; cursor: pointer; transition: 0.2s;
@@ -107,10 +117,12 @@
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
         .list-card.completed { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
 
+        /* ТЕОРІЯ (ОПИС) */
         .theory-box { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
         .theory-line { padding: 16px; border-bottom: 1px solid var(--border); }
         .theory-line:last-child { border-bottom: none; }
         
+        /* АКУРАТНІ ТЕСТИ */
         .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
         
@@ -136,6 +148,7 @@
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
+        /* КРАСИВА НАВІГАЦІЯ ТА ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
         
@@ -152,6 +165,7 @@
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
+        /* ПЛАВАЮЧА КНОПКА ЗНИЗУ */
         .floating-exit {
             position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
@@ -232,7 +246,6 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </div>
 
-<!-- ОВЕРЛЕЙ І ШТОРКА АЧІВОК -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title">🏆 Мої нагороди</div>
@@ -241,7 +254,6 @@
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -271,7 +283,6 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -283,7 +294,6 @@
             </div>
             
             <div style="display: flex; gap: 8px;">
-                <!-- Кнопка АЧІВОК -->
                 <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення" style="border: none; background: transparent; box-shadow: none; cursor: pointer; padding: 0;">
                     <img src="medal.svg" alt="Achievements" style="width: 44px; height: 44px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                 </button>
@@ -310,7 +320,6 @@
 
         <div id="globalStatsContainer"></div>
 
-        <!-- КНОПКА ТРЕНАЖЕРА (СИМУЛЯТОР) -->
         <div class="list-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #7dd3fc;" onclick="openSimulatorSetup(null)">
             <div class="list-card-title" style="flex: 1;">
                 <div class="list-card-icon" style="font-size: 28px;">💬</div>
@@ -325,7 +334,6 @@
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -340,7 +348,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -354,7 +361,6 @@
         <div class="big-emoji" id="theoryEmoji">💡</div>
         <div id="theoryContent" class="theory-box"></div>
 
-        <!-- КНОПКА ТРЕНАЖЕРА (ПІД ТЕОРІЄЮ) -->
         <button class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 12px;" onclick="openSimulatorFromTheory()">
             <img src="education/chat.svg" width="20" height="20" onerror="this.outerHTML='<span style=\\'font-size:18px; margin-right:4px;\\'>💬</span>'" style="margin-right: 8px;"> Практика: Тренажер
         </button>
@@ -362,7 +368,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -376,7 +381,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -385,7 +389,6 @@
         <div id="resultActionContainer"></div>
     </div>
 
-    <!-- ЕКРАН НАЛАШТУВАННЯ ТРЕНАЖЕРА (ВИБІР ПРОДУКТУ/ПРЕЗЕНТАЦІЇ/ЗАПЕРЕЧЕННЯ) -->
     <div id="simSetupView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -398,14 +401,12 @@
         <div id="simSetupContent"></div>
     </div>
 
-    <!-- ЕКРАН ЧАТУ ТРЕНАЖЕРА -->
     <div id="simChatView" class="view">
         <div class="nav-header" style="justify-content: space-between; margin-bottom: 12px;">
             <div class="nav-header-left">
                 <span style="font-size: 22px;">💬</span>
                 <h2 style="margin:0; font-size: 16px; font-weight: 700;">Діалог з клієнтом</h2>
             </div>
-            <!-- КНОПКА СКИДАННЯ І ПОВЕРНЕННЯ ДО ВИБОРУ СЕРВІСУ -->
             <button class="back-btn-sleek" onclick="openSimulatorSetup(null)" title="Вибрати інший сервіс" style="width:36px; height:36px; border:none; background:transparent;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -422,7 +423,6 @@
 </div>
 
 <script>
-    // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
     const API_URL = 'https://script.google.com/macros/s/AKfycbwthq2_1Y8f_nFN0DVO7PEqhd34a2ERv1HMxK-QhFHBgwiX_6rxKbC9ywfrk1V-DXJJ/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
@@ -446,17 +446,30 @@
     let simFilteredRows = [];
     let simStepIndex = 0;
 
-    // 💡 СИНХРОНІЗОВАНЕ ОЧИЩЕННЯ РЯДКІВ (Тепер прогрес працює 100%)
     function getCleanName(str) {
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
 
-    // 💡 БЕЗПЕЧНЕ ЕКРАНУВАННЯ ДЛЯ HTML КНОПОК
     function escapeHTMLAttr(str) {
         return String(str)
             .replace(/&/g, "&amp;")
             .replace(/"/g, "&quot;")
             .replace(/'/g, "&#39;");
+    }
+
+    // 💡 УНІВЕРСАЛЬНИЙ ПЕРЕБІР ФОРМАТІВ ДЛЯ АЧІВОК
+    const ACH_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif'];
+    function handleAchImageError(img) {
+        let extIdx = parseInt(img.getAttribute('data-ext-index')) || 0;
+        let code = img.getAttribute('data-code');
+        extIdx++;
+        if (extIdx < ACH_EXTS.length) {
+            img.setAttribute('data-ext-index', extIdx);
+            img.src = `Achievement/${code}${ACH_EXTS[extIdx]}`;
+        } else {
+            // Якщо не знайшли жодного формату
+            img.outerHTML = '<span style="font-size:32px;">🏅</span>';
+        }
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
@@ -832,7 +845,7 @@
     }
 
     // ==========================================
-    // ЛОГІКА АЧІВОК (НАГОРОД) - ПРЕМІУМ ДИЗАЙН
+    // ЛОГІКА АЧІВОК (З УНІВЕРСАЛЬНИМ ПЕРЕБОРОМ ФОРМАТІВ)
     // ==========================================
     function toggleAchievements() {
         const drawer = document.getElementById('achDrawer');
@@ -856,7 +869,6 @@
             return;
         }
 
-        // Беремо коди нагород стажера
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
         
         if (achCodes.length === 0) {
@@ -866,20 +878,18 @@
 
         let html = '';
         achCodes.forEach(code => {
-            // Шукаємо назву в базі (по Code)
             let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
             
-            // Завжди завантажуємо картинку "код.svg" з папки Achievement/
-            let imgName = code + '.svg';
             let displayName = achInfo ? achInfo.name : `Секретна нагорода`;
+            // Очищуємо від можливих залишків розширення в тексті
+            displayName = displayName.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
             
-            // Очищуємо від ".svg" якщо випадково залишилось
-            displayName = displayName.replace(/\.svg$/i, '');
+            let safeCode = escapeHTMLAttr(code);
 
             html += `
             <div class="ach-card">
                 <div class="ach-icon-wrapper">
-                    <img src="Achievement/${imgName}" class="ach-icon" alt="${displayName}" onerror="this.outerHTML='<span style=\\'font-size:32px;\\'>🏅</span>'">
+                    <img src="Achievement/${safeCode}.svg" class="ach-icon" alt="${displayName}" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                     <div style="font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px;">${displayName}</div>
@@ -1340,8 +1350,6 @@
             let html = `<p class="subtitle" style="text-align:left;">Оберіть сервіс для тренування:</p>`;
             
             let addedProducts = new Set();
-            
-            // 💡 БЕРЕМО СЕРВІСИ ПРЯМО З БАЗИ ТРЕНАЖЕРА
             db.simulatorData.forEach(s => {
                 let cleanP = getCleanName(s.service);
                 if (!addedProducts.has(cleanP)) {
@@ -1383,7 +1391,6 @@
             return;
         }
 
-        // Збираємо унікальні презентації для сервісу
         let presSet = new Set();
         simRowsForService.forEach(r => {
             if (r.presentations && r.presentations.length > 0) {
