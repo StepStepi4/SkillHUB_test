@@ -33,7 +33,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 80px; 
+            padding-bottom: 80px; /* Місце для плаваючої кнопки знизу */
         }
 
         .container { 
@@ -413,7 +413,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyETNRh92XRvPaoWLMrtnwmvcA6HmXaGSkRvNIil3MndyUh1ijZNXgKz-Pi6ihp9pyHpQ/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyYbeO1ExDKP_ZdqqEcdADiMPKSjVfpgKcCUnLoHw-ZKgF9MxLzTRVLZ6aH3RUZbziLJg/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -436,7 +436,7 @@
     let simFilteredRows = [];
     let simStepIndex = 0;
 
-    // СИНХРОНІЗОВАНЕ ОЧИЩЕННЯ РЯДКІВ: Ідеально збігається з сервером (без пробілів)
+    // 💡 ІДЕАЛЬНА СИНХРОНІЗАЦІЯ ОЧИЩЕННЯ РЯДКІВ З СЕРВЕРОМ
     function getCleanName(str) {
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
@@ -621,6 +621,8 @@
                             startDeadlineTimer();
                         } else if (document.getElementById('productView').classList.contains('active')) {
                             openCourse(currentCourseName);
+                        } else if (document.getElementById('achDrawer').classList.contains('open')) {
+                            renderAchievements(); 
                         }
                     }
                 }
@@ -726,8 +728,7 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
-        
+        const user = db.users.find(u => u.login === l && u.pass === p);
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
@@ -811,6 +812,68 @@
         switchView('loginView');
     }
 
+    // ==========================================
+    // ЛОГІКА АЧІВОК (НАГОРОД)
+    // ==========================================
+    function toggleAchievements() {
+        const drawer = document.getElementById('achDrawer');
+        const overlay = document.getElementById('achOverlay');
+        if (drawer.classList.contains('open')) {
+            drawer.classList.remove('open');
+            overlay.classList.remove('active');
+        } else {
+            renderAchievements();
+            drawer.classList.add('open');
+            overlay.classList.add('active');
+        }
+    }
+
+    function renderAchievements() {
+        let user = db.users.find(u => u.login === currentUser);
+        let achListEl = document.getElementById('achList');
+        
+        if (!user || !user.achievements) {
+            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород. Навчайтесь та отримуйте ачівки!</div>';
+            return;
+        }
+
+        // Беремо коди з комірки користувача, ігноруючи пробіли
+        let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
+        
+        if (achCodes.length === 0) {
+            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород.</div>';
+            return;
+        }
+
+        let html = '';
+        achCodes.forEach(code => {
+            // Шукаємо в словнику ачівок (achievementData)
+            let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
+            
+            if (achInfo) {
+                // Визначаємо шлях до картинки (Папка Achievement)
+                let imgName = achInfo.name.toLowerCase().endsWith('.svg') ? achInfo.name : `${achInfo.name}.svg`;
+                html += `
+                <div class="ach-card">
+                    <img src="Achievement/${imgName}" class="ach-icon" alt="${achInfo.name}" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🏅</span>'">
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${achInfo.name.replace('.svg', '')}</div>
+                </div>`;
+            } else {
+                // Якщо код є, а картинки/назви в базі немає
+                html += `
+                <div class="ach-card">
+                    <div class="ach-icon" style="display:flex; align-items:center; justify-content:center; background:var(--input-bg); border-radius:50%; font-size:20px;">🏅</div>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">Секретна нагорода (Код: ${code})</div>
+                </div>`;
+            }
+        });
+
+        achListEl.innerHTML = html;
+    }
+
+    // ==========================================
+    // ПРОГРЕС І ТЕСТИ
+    // ==========================================
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
@@ -873,45 +936,13 @@
 
         list.innerHTML = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
-            
-            let courseProducts = coursesMap[name] || [];
-            let cTotal = courseProducts.length;
-            let cPassed = 0;
-
-            courseProducts.forEach(p => {
-                let cleanP = getCleanName(p.product);
-                let resStr = userResults[cleanP];
-                if (resStr) {
-                    let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
-                    let score = 0;
-                    if (scoreMatch) {
-                        score = parseInt(scoreMatch[2], 10) || 0;
-                    } else {
-                        let singleMatch = String(resStr).match(/(\d+)%/);
-                        if (singleMatch) score = parseInt(singleMatch[1], 10) || 0;
-                    }
-                    if (score >= 80) cPassed++;
-                }
-            });
-
-            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
-            let cardClass = isCourseDone ? "list-card completed" : "list-card";
-            
-            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
-            if (isCourseDone) {
-                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
-            }
-
             return `
-            <div class="${cardClass}" onclick="openCourse('${name.replace(/'/g, "\\'")}')">
-                <div class="list-card-title" style="flex: 1;">
+            <div class="list-card" onclick="openCourse('${name.replace(/'/g, "\\'")}')">
+                <div class="list-card-title">
                     <div class="list-card-icon">${parsed.icon}</div>
-                    <span style="font-size: 15px;">${parsed.title}</span>
+                    <span>${parsed.title}</span>
                 </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    ${statusBadge}
-                    <div class="list-card-arrow">❯</div>
-                </div>
+                <div class="list-card-arrow">❯</div>
             </div>
             `;
         }).join('');
@@ -1037,280 +1068,6 @@
         switchView('theoryView');
     }
 
-    // ==========================================
-    // ЛОГІКА АЧІВОК (НАГОРОД)
-    // ==========================================
-    function toggleAchievements() {
-        const drawer = document.getElementById('achDrawer');
-        const overlay = document.getElementById('achOverlay');
-        if (drawer.classList.contains('open')) {
-            drawer.classList.remove('open');
-            overlay.classList.remove('active');
-        } else {
-            renderAchievements();
-            drawer.classList.add('open');
-            overlay.classList.add('active');
-        }
-    }
-
-    function renderAchievements() {
-        let user = db.users.find(u => u.login === currentUser);
-        let achListEl = document.getElementById('achList');
-        
-        if (!user || !user.achievements) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород. Навчайтесь та отримуйте ачівки!</div>';
-            return;
-        }
-
-        let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
-        
-        if (achCodes.length === 0) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород.</div>';
-            return;
-        }
-
-        let html = '';
-        achCodes.forEach(code => {
-            let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
-            if (achInfo) {
-                let imgName = achInfo.name.toLowerCase().endsWith('.svg') ? achInfo.name : `${achInfo.name}.svg`;
-                html += `
-                <div class="ach-card">
-                    <img src="Achievement/${imgName}" class="ach-icon" alt="${achInfo.name}" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🏅</span>'">
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${achInfo.name.replace('.svg', '')}</div>
-                </div>`;
-            } else {
-                html += `
-                <div class="ach-card">
-                    <div class="ach-icon" style="display:flex; align-items:center; justify-content:center; background:var(--input-bg); border-radius:50%; font-size:20px;">🏅</div>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">Секретна нагорода (Код: ${code})</div>
-                </div>`;
-            }
-        });
-
-        achListEl.innerHTML = html;
-    }
-
-    // ==========================================
-    // ЛОГІКА ТРЕНАЖЕРА (СИМУЛЯТОРА ЗАПЕРЕЧЕНЬ)
-    // ==========================================
-    function openSimulatorSetup(preselectedProduct) {
-        simPreviousView = document.querySelector('.view.active').id;
-        simCurrentProduct = preselectedProduct;
-        
-        if (preselectedProduct) {
-            showSimPresentations();
-        } else {
-            let user = db.users.find(u => u.login === currentUser);
-            let assignedClean = user.assigned.map(getCleanName);
-            
-            let html = `<p class="subtitle" style="text-align:left;">Оберіть продукт для тренування:</p>`;
-            
-            let addedProducts = new Set();
-            db.courses.forEach(c => {
-                let cleanP = getCleanName(c.product);
-                if (assignedClean.includes(cleanP) && !addedProducts.has(cleanP)) {
-                    addedProducts.add(cleanP);
-                    let parsed = formatWithCustomEmoji(c.product, '📘');
-                    html += `
-                    <div class="list-card" onclick="simCurrentProduct='${c.product.replace(/'/g, "\\'")}'; showSimPresentations();">
-                        <div class="list-card-title">
-                            <div class="list-card-icon">${parsed.icon}</div>
-                            <span>${parsed.title}</span>
-                        </div>
-                        <div class="list-card-arrow">❯</div>
-                    </div>`;
-                }
-            });
-            
-            if (addedProducts.size === 0) {
-                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас немає доступних продуктів.</div>`;
-            }
-            
-            document.getElementById('simSetupContent').innerHTML = html;
-            switchView('simSetupView');
-        }
-    }
-
-    function openSimulatorFromTheory() {
-        simPreviousView = 'theoryView';
-        simCurrentProduct = currentProductData.product;
-        showSimPresentations();
-    }
-
-    function showSimPresentations() {
-        let course = db.courses.find(c => getCleanName(c.product) === getCleanName(simCurrentProduct));
-        let presList = course && course.presentations ? course.presentations : [];
-        
-        if (presList.length === 0) {
-            showSimObjections(-1);
-            return;
-        }
-
-        let html = `<p class="subtitle" style="text-align:left;">Як ви презентуєте сервіс?</p>`;
-        // Ідеальне екранування тексту щоб кавички не ламали HTML
-        html += presList.map((p, i) => {
-            return `
-            <div class="list-card" onclick="showSimObjections(${i})">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${p.replace(/"/g, '&quot;')}</div>
-            </div>
-            `;
-        }).join('');
-        
-        document.getElementById('simSetupContent').innerHTML = html;
-        switchView('simSetupView');
-    }
-
-    function showSimObjections(presIndex) {
-        if (presIndex >= 0) {
-            let course = db.courses.find(c => getCleanName(c.product) === getCleanName(simCurrentProduct));
-            simCurrentPres = course.presentations[presIndex];
-        } else {
-            simCurrentPres = "Презентація відсутня.";
-        }
-        
-        let uniqueObjs = [...new Set(db.simulatorData.map(s => s.objection))];
-        
-        if (uniqueObjs.length === 0) {
-            alert("Немає доступних заперечень у базі.");
-            return;
-        }
-
-        let html = `<p class="subtitle" style="text-align:left;">Що відповів клієнт?</p>`;
-        html += uniqueObjs.map(obj => {
-            let safeObjEscaped = obj.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-            return `
-            <div class="list-card" onclick="startSimChat('${safeObjEscaped}')">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 600;">"${obj.replace(/"/g, '&quot;')}"</div>
-                <div class="list-card-arrow">❯</div>
-            </div>
-            `;
-        }).join('');
-        
-        document.getElementById('simSetupContent').innerHTML = html;
-        if(document.querySelector('.view.active').id !== 'simSetupView') {
-            switchView('simSetupView');
-        }
-    }
-
-    function startSimChat(objectionText) {
-        simCurrentObj = objectionText;
-        simFilteredRows = db.simulatorData.filter(s => s.objection === objectionText);
-        simStepIndex = 0;
-        
-        document.getElementById('simChatMessages').innerHTML = '';
-        document.getElementById('simChatChoices').innerHTML = '';
-        
-        switchView('simChatView');
-        
-        addSimMessage(simCurrentPres, 'consultant');
-        
-        setTimeout(() => {
-            showSimTyping();
-            setTimeout(() => {
-                removeSimTyping();
-                addSimMessage(simCurrentObj, 'client');
-                renderSimChoices();
-            }, 1000);
-        }, 500);
-    }
-
-    function restartSimChat() {
-        startSimChat(simCurrentObj);
-    }
-
-    function addSimMessage(text, sender) {
-        let avatarFile = sender === 'client' ? 'education/klient.svg' : 'education/rozetka.svg';
-        let fallback = sender === 'client' ? '👤' : '👨‍💻';
-        let chatBox = document.getElementById('simChatMessages');
-        
-        chatBox.innerHTML += `
-            <div class="chat-msg ${sender}">
-                <img src="${avatarFile}" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>${fallback}</div>'">
-                <div class="chat-bubble">${text}</div>
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function showSimTyping() {
-        let chatBox = document.getElementById('simChatMessages');
-        chatBox.innerHTML += `
-            <div class="chat-msg client" id="typingIndicator">
-                <img src="education/klient.svg" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>👤</div>'">
-                <div class="chat-bubble" style="font-style:italic; color:var(--text-muted);">Друкyє...</div>
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function removeSimTyping() {
-        let ind = document.getElementById('typingIndicator');
-        if (ind) ind.remove();
-    }
-
-    function renderSimChoices() {
-        let optionsSet = new Set();
-        simFilteredRows.forEach(row => {
-            if (row.steps[simStepIndex] && row.steps[simStepIndex].consultant) {
-                optionsSet.add(row.steps[simStepIndex].consultant);
-            }
-        });
-
-        let options = Array.from(optionsSet);
-        let choicesBox = document.getElementById('simChatChoices');
-
-        if (options.length === 0) {
-            choicesBox.innerHTML = `
-                <div style="text-align:center; padding: 12px; font-weight:bold; color:var(--success);">✅ Діалог завершено!</div>
-                <button class="chat-btn" style="text-align: center; color: var(--primary); border-color: var(--primary);" onclick="restartSimChat()">🔄 Спробувати іншу відповідь</button>
-                <button class="chat-btn" style="text-align: center;" onclick="openSimulatorSetup(simCurrentProduct)">🔙 Повернутися до налаштувань</button>
-            `;
-            return;
-        }
-
-        options = shuffleArray(options); 
-        
-        let html = `<div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-align: center;">Що відповісте?</div>`;
-        html += options.map(opt => {
-            let safeOptEscaped = opt.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-            return `<button class="chat-btn" onclick="handleSimChoice('${safeOptEscaped}')">${opt}</button>`;
-        }).join('');
-        
-        choicesBox.innerHTML = html;
-        document.getElementById('simChatMessages').scrollTop = document.getElementById('simChatMessages').scrollHeight;
-    }
-
-    function handleSimChoice(choiceText) {
-        document.getElementById('simChatChoices').innerHTML = ''; 
-        addSimMessage(choiceText, 'consultant');
-        
-        simFilteredRows = simFilteredRows.filter(row => row.steps[simStepIndex] && row.steps[simStepIndex].consultant === choiceText);
-        
-        let clientReply = "";
-        if (simFilteredRows.length > 0 && simFilteredRows[0].steps[simStepIndex].client) {
-            clientReply = simFilteredRows[0].steps[simStepIndex].client;
-        }
-
-        simStepIndex++;
-
-        if (clientReply) {
-            setTimeout(() => {
-                showSimTyping();
-                setTimeout(() => {
-                    removeSimTyping();
-                    addSimMessage(clientReply, 'client');
-                    renderSimChoices();
-                }, 1000);
-            }, 500);
-        } else {
-            setTimeout(renderSimChoices, 500);
-        }
-    }
-
-    // ==========================================
-    // ТЕСТИ ТА ОЦІНКИ
-    // ==========================================
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
         let questions = [];
@@ -1514,6 +1271,230 @@
             }
         } else {
             saveOfflineResult(currentUser, currentProductData.product, totalScore);
+        }
+    }
+
+    // ==========================================
+    // ЛОГІКА ТРЕНАЖЕРА (СИМУЛЯТОРА ЗАПЕРЕЧЕНЬ)
+    // ==========================================
+    function openSimulatorSetup(preselectedProduct) {
+        simPreviousView = document.querySelector('.view.active').id;
+        simCurrentProduct = preselectedProduct;
+        
+        if (preselectedProduct) {
+            showSimPresentations();
+        } else {
+            let user = db.users.find(u => u.login === currentUser);
+            let assignedClean = user.assigned.map(getCleanName);
+            
+            let html = `<p class="subtitle" style="text-align:left;">Оберіть продукт для тренування:</p>`;
+            
+            let addedProducts = new Set();
+            db.courses.forEach(c => {
+                let cleanP = getCleanName(c.product);
+                if (assignedClean.includes(cleanP) && !addedProducts.has(cleanP)) {
+                    addedProducts.add(cleanP);
+                    let parsed = formatWithCustomEmoji(c.product, '📘');
+                    html += `
+                    <div class="list-card" onclick="simCurrentProduct='${c.product.replace(/'/g, "\\'")}'; showSimPresentations();">
+                        <div class="list-card-title">
+                            <div class="list-card-icon">${parsed.icon}</div>
+                            <span>${parsed.title}</span>
+                        </div>
+                        <div class="list-card-arrow">❯</div>
+                    </div>`;
+                }
+            });
+            
+            if (addedProducts.size === 0) {
+                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас немає доступних продуктів.</div>`;
+            }
+            
+            document.getElementById('simSetupContent').innerHTML = html;
+            switchView('simSetupView');
+        }
+    }
+
+    function openSimulatorFromTheory() {
+        simPreviousView = 'theoryView';
+        simCurrentProduct = currentProductData.product;
+        showSimPresentations();
+    }
+
+    function showSimPresentations() {
+        let cleanCurr = getCleanName(simCurrentProduct);
+        let course = db.courses.find(c => getCleanName(c.product) === cleanCurr);
+        let presList = course && course.presentations ? course.presentations : [];
+        
+        if (presList.length === 0) {
+            showSimObjections(-1);
+            return;
+        }
+
+        let html = `<p class="subtitle" style="text-align:left;">Як ви презентуєте сервіс?</p>`;
+        
+        // 💡 ІДЕАЛЬНЕ ЕКРАНУВАННЯ, ЩОБ КАВИЧКИ В ТЕКСТІ НЕ ЛАМАЛИ КНОПКИ
+        html += presList.map((p, i) => {
+            let safeP = p.replace(/"/g, '&quot;');
+            return `
+            <div class="list-card" onclick="showSimObjections(${i})">
+                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${safeP}</div>
+            </div>
+            `;
+        }).join('');
+        
+        document.getElementById('simSetupContent').innerHTML = html;
+        switchView('simSetupView');
+    }
+
+    function showSimObjections(presIndex) {
+        let cleanCurr = getCleanName(simCurrentProduct);
+        if (presIndex >= 0) {
+            let course = db.courses.find(c => getCleanName(c.product) === cleanCurr);
+            simCurrentPres = course.presentations[presIndex];
+        } else {
+            simCurrentPres = "Презентація відсутня.";
+        }
+        
+        let uniqueObjs = [...new Set(db.simulatorData.map(s => s.objection))];
+        
+        if (uniqueObjs.length === 0) {
+            alert("Немає доступних заперечень у базі.");
+            return;
+        }
+
+        let html = `<p class="subtitle" style="text-align:left;">Що відповів клієнт?</p>`;
+        html += uniqueObjs.map(obj => {
+            // 💡 ІДЕАЛЬНЕ ЕКРАНУВАННЯ ДЛЯ ЗАПЕРЕЧЕНЬ
+            let safeObjEscaped = obj.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            let displayObj = obj.replace(/"/g, '&quot;');
+            return `
+            <div class="list-card" onclick="startSimChat('${safeObjEscaped}')">
+                <div class="list-card-title" style="font-size: 14px; font-weight: 600;">"${displayObj}"</div>
+                <div class="list-card-arrow">❯</div>
+            </div>
+            `;
+        }).join('');
+        
+        document.getElementById('simSetupContent').innerHTML = html;
+        if(document.querySelector('.view.active').id !== 'simSetupView') {
+            switchView('simSetupView');
+        }
+    }
+
+    function startSimChat(objectionText) {
+        simCurrentObj = objectionText;
+        simFilteredRows = db.simulatorData.filter(s => s.objection === objectionText);
+        simStepIndex = 0;
+        
+        document.getElementById('simChatMessages').innerHTML = '';
+        document.getElementById('simChatChoices').innerHTML = '';
+        
+        switchView('simChatView');
+        
+        addSimMessage(simCurrentPres, 'consultant');
+        
+        setTimeout(() => {
+            showSimTyping();
+            setTimeout(() => {
+                removeSimTyping();
+                addSimMessage(simCurrentObj, 'client');
+                renderSimChoices();
+            }, 1000);
+        }, 500);
+    }
+
+    function restartSimChat() {
+        startSimChat(simCurrentObj);
+    }
+
+    function addSimMessage(text, sender) {
+        let avatarFile = sender === 'client' ? 'education/klient.svg' : 'education/rozetka.svg';
+        let fallback = sender === 'client' ? '👤' : '👨‍💻';
+        let chatBox = document.getElementById('simChatMessages');
+        
+        chatBox.innerHTML += `
+            <div class="chat-msg ${sender}">
+                <img src="${avatarFile}" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>${fallback}</div>'">
+                <div class="chat-bubble">${text}</div>
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function showSimTyping() {
+        let chatBox = document.getElementById('simChatMessages');
+        chatBox.innerHTML += `
+            <div class="chat-msg client" id="typingIndicator">
+                <img src="education/klient.svg" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>👤</div>'">
+                <div class="chat-bubble" style="font-style:italic; color:var(--text-muted);">Друкyє...</div>
+            </div>
+        `;
+        chatBox.scrollTop = chatBox.scrollHeight;
+    }
+
+    function removeSimTyping() {
+        let ind = document.getElementById('typingIndicator');
+        if (ind) ind.remove();
+    }
+
+    function renderSimChoices() {
+        let optionsSet = new Set();
+        simFilteredRows.forEach(row => {
+            if (row.steps[simStepIndex] && row.steps[simStepIndex].consultant) {
+                optionsSet.add(row.steps[simStepIndex].consultant);
+            }
+        });
+
+        let options = Array.from(optionsSet);
+        let choicesBox = document.getElementById('simChatChoices');
+
+        if (options.length === 0) {
+            choicesBox.innerHTML = `
+                <div style="text-align:center; padding: 12px; font-weight:bold; color:var(--success);">✅ Діалог завершено!</div>
+                <button class="chat-btn" style="text-align: center; color: var(--primary); border-color: var(--primary);" onclick="restartSimChat()">🔄 Спробувати іншу відповідь</button>
+                <button class="chat-btn" style="text-align: center;" onclick="openSimulatorSetup(simCurrentProduct)">🔙 Повернутися до налаштувань</button>
+            `;
+            return;
+        }
+
+        options = shuffleArray(options); 
+        
+        let html = `<div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-align: center;">Що відповісте?</div>`;
+        html += options.map(opt => {
+            // ЕКРАНУВАННЯ КНОПОК
+            let safeOptEscaped = opt.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            return `<button class="chat-btn" onclick="handleSimChoice('${safeOptEscaped}')">${opt}</button>`;
+        }).join('');
+        
+        choicesBox.innerHTML = html;
+        document.getElementById('simChatMessages').scrollTop = document.getElementById('simChatMessages').scrollHeight;
+    }
+
+    function handleSimChoice(choiceText) {
+        document.getElementById('simChatChoices').innerHTML = ''; 
+        addSimMessage(choiceText, 'consultant');
+        
+        simFilteredRows = simFilteredRows.filter(row => row.steps[simStepIndex] && row.steps[simStepIndex].consultant === choiceText);
+        
+        let clientReply = "";
+        if (simFilteredRows.length > 0 && simFilteredRows[0].steps[simStepIndex].client) {
+            clientReply = simFilteredRows[0].steps[simStepIndex].client;
+        }
+
+        simStepIndex++;
+
+        if (clientReply) {
+            setTimeout(() => {
+                showSimTyping();
+                setTimeout(() => {
+                    removeSimTyping();
+                    addSimMessage(clientReply, 'client');
+                    renderSimChoices();
+                }, 1000);
+            }, 500);
+        } else {
+            setTimeout(renderSimChoices, 500);
         }
     }
 </script>
