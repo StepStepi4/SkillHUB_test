@@ -6,10 +6,12 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     <style>
+        /* Підключення шрифту Inter для сучасного вигляду */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
+        /* Оголошення кольорової палітри */
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
@@ -40,10 +42,12 @@
             position: relative;
         }
 
+        /* АНІМАЦІЇ ЕКРАНІВ */
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
+        /* ЛОАДЕР ЗАВАНТАЖЕННЯ */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -52,10 +56,12 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
+        /* ТИПОГРАФІКА ТА ІКОНКИ */
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
+        /* ПОЛЯ ВВЕДЕННЯ */
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         input[type="text"], input[type="password"] { 
@@ -64,6 +70,7 @@
         }
         input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
+        /* КНОПКИ */
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700;
             cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
@@ -76,11 +83,13 @@
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
         .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
+        /* ДАШБОРД СТАТИСТИКИ */
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
         .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
         .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
+        /* ПРОГРЕС БАР КУРСУ */
         .modern-progress-wrapper {
             position: relative; background: var(--input-bg); border: 1px solid var(--border);
             border-radius: 16px; height: 40px; width: 100%; margin-bottom: 24px; overflow: hidden;
@@ -96,6 +105,7 @@
             letter-spacing: 0.5px; transition: color 0.3s;
         }
 
+        /* СПИСКИ (КУРСИ / ПРОДУКТИ) */
         .list-card {
             background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
             margin-bottom: 12px; padding: 16px; cursor: pointer; transition: 0.2s;
@@ -107,10 +117,12 @@
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
         .list-card.completed { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
 
+        /* ТЕОРІЯ (ОПИС) */
         .theory-box { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
         .theory-line { padding: 16px; border-bottom: 1px solid var(--border); }
         .theory-line:last-child { border-bottom: none; }
         
+        /* АКУРАТНІ ТЕСТИ */
         .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
         
@@ -136,6 +148,7 @@
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
+        /* КРАСИВА НАВІГАЦІЯ ТА ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
         
@@ -152,6 +165,7 @@
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
+        /* ПЛАВАЮЧА КНОПКА "В БОТА" ЗНИЗУ */
         .floating-exit {
             position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
@@ -168,7 +182,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
         
-        /* АЧІВКИ - ШТОРКА */
+        /* АЧІВКИ - ШТОРКА (ДРОУЕР) */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -399,7 +413,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwcFMBpzlYovPXZrTMydZpBKMfDoEq8ZxN7hWLSrxtbngiFat5rqtMEWK206BG4iotsPw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzja8nqnUHS13DBOOkJ8apFnCY3xNKQFEcgBj9TGznIklWjdttw8fxFtWwEIdDM2V-O3A/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -422,12 +436,12 @@
     let simFilteredRows = [];
     let simStepIndex = 0;
 
-    // 💡 СИНХРОНІЗОВАНЕ ОЧИЩЕННЯ РЯДКІВ (Тепер прогрес і тести працюють ідеально)
+    // 💡 ІДЕАЛЬНА СИНХРОНІЗАЦІЯ ОЧИЩЕННЯ РЯДКІВ (Тепер прогрес працює 100%)
     function getCleanName(str) {
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
     }
 
-    // 💡 БЕЗПЕЧНЕ ЕКРАНУВАННЯ ДЛЯ КНОПОК
+    // 💡 БЕЗПЕЧНЕ ЕКРАНУВАННЯ ДЛЯ HTML КНОПОК
     function escapeHTMLAttr(str) {
         return String(str)
             .replace(/&/g, "&amp;")
@@ -722,8 +736,7 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
-        
+        const user = db.users.find(u => u.login === l && u.pass === p);
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
@@ -832,7 +845,7 @@
             return;
         }
 
-        // Парсинг кодів з колонки "achievement"
+        // Беремо коди нагород стажера (наприклад: "1, 4, 9")
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
         
         if (achCodes.length === 0) {
@@ -842,23 +855,18 @@
 
         let html = '';
         achCodes.forEach(code => {
-            // Шукаємо в словнику ачівок
+            // Шукаємо назву в базі (по Code)
             let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
             
-            if (achInfo) {
-                let imgName = achInfo.name.toLowerCase().endsWith('.svg') ? achInfo.name : `${achInfo.name}.svg`;
-                html += `
-                <div class="ach-card">
-                    <img src="Achievement/${imgName}" class="ach-icon" alt="${achInfo.name}" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🏅</span>'">
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${achInfo.name.replace('.svg', '')}</div>
-                </div>`;
-            } else {
-                html += `
-                <div class="ach-card">
-                    <div class="ach-icon" style="display:flex; align-items:center; justify-content:center; background:var(--input-bg); border-radius:50%; font-size:20px;">🏅</div>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">Секретна нагорода (Код: ${code})</div>
-                </div>`;
-            }
+            // Якщо цифра, підвантажуємо картинку з папки Achievement/ (наприклад: Achievement/1.svg)
+            let imgName = code + '.svg';
+            let displayName = achInfo ? achInfo.name : `Секретна нагорода (Код: ${code})`;
+
+            html += `
+            <div class="ach-card">
+                <img src="Achievement/${imgName}" class="ach-icon" alt="${displayName}" onerror="this.outerHTML='<span style=\\'font-size:30px;\\'>🏅</span>'">
+                <div style="font-size: 14px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${displayName}</div>
+            </div>`;
         });
 
         achListEl.innerHTML = html;
@@ -929,7 +937,7 @@
 
         list.innerHTML = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
-            let safeName = escapeHTMLAttr(name); // 💡 Безпечне екранування для HTML
+            let safeName = escapeHTMLAttr(name);
             
             let courseProducts = coursesMap[name] || [];
             let cTotal = courseProducts.length;
@@ -1321,7 +1329,7 @@
                 if (assignedClean.includes(cleanP) && !addedProducts.has(cleanP)) {
                     addedProducts.add(cleanP);
                     let parsed = formatWithCustomEmoji(c.product, '📘');
-                    let safeProd = escapeHTMLAttr(c.product); // 💡 БЕЗПЕЧНЕ ЕКРАНУВАННЯ
+                    let safeProd = escapeHTMLAttr(c.product); 
                     html += `
                     <div class="list-card" onclick="simCurrentProduct=this.getAttribute('data-prod'); showSimPresentations();" data-prod="${safeProd}">
                         <div class="list-card-title">
@@ -1360,11 +1368,12 @@
 
         let html = `<p class="subtitle" style="text-align:left;">Як ви презентуєте сервіс?</p>`;
         
-        // 💡 ІДЕАЛЬНЕ ЕКРАНУВАННЯ: Тепер кліки точно не зламаються!
+        // БЕЗПЕЧНЕ ЕКРАНУВАННЯ 
         html += presList.map((p, i) => {
+            let displayP = escapeHTMLAttr(p);
             return `
             <div class="list-card" onclick="showSimObjections(${i})">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${p}</div>
+                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${displayP}</div>
             </div>
             `;
         }).join('');
@@ -1391,10 +1400,10 @@
 
         let html = `<p class="subtitle" style="text-align:left;">Що відповів клієнт?</p>`;
         html += uniqueObjs.map(obj => {
-            let safeObjEscaped = escapeHTMLAttr(obj); // 💡 Безпечно передаємо назву
+            let safeObjEscaped = escapeHTMLAttr(obj); 
             return `
             <div class="list-card" data-obj="${safeObjEscaped}" onclick="startSimChat(this.getAttribute('data-obj'))">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 600;">"${obj}"</div>
+                <div class="list-card-title" style="font-size: 14px; font-weight: 600;">"${safeObjEscaped}"</div>
                 <div class="list-card-arrow">❯</div>
             </div>
             `;
@@ -1437,10 +1446,12 @@
         let fallback = sender === 'client' ? '👤' : '👨‍💻';
         let chatBox = document.getElementById('simChatMessages');
         
+        let safeText = escapeHTMLAttr(text);
+
         chatBox.innerHTML += `
             <div class="chat-msg ${sender}">
                 <img src="${avatarFile}" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>${fallback}</div>'">
-                <div class="chat-bubble">${text}</div>
+                <div class="chat-bubble">${safeText}</div>
             </div>
         `;
         chatBox.scrollTop = chatBox.scrollHeight;
@@ -1486,9 +1497,8 @@
         
         let html = `<div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-align: center;">Що відповісте?</div>`;
         html += options.map(opt => {
-            // 💡 ІДЕАЛЬНЕ ЕКРАНУВАННЯ ДЛЯ КНОПОК
             let safeOptEscaped = escapeHTMLAttr(opt);
-            return `<button class="chat-btn" data-choice="${safeOptEscaped}" onclick="handleSimChoice(this.getAttribute('data-choice'))">${opt}</button>`;
+            return `<button class="chat-btn" data-choice="${safeOptEscaped}" onclick="handleSimChoice(this.getAttribute('data-choice'))">${safeOptEscaped}</button>`;
         }).join('');
         
         choicesBox.innerHTML = html;
