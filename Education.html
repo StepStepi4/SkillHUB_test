@@ -235,7 +235,6 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </div>
 
-<!-- ОВЕРЛЕЙ І ШТОРКА АЧІВОК -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title">🏆 Мої нагороди</div>
@@ -244,7 +243,6 @@
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -274,7 +272,6 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -286,7 +283,6 @@
             </div>
             
             <div style="display: flex; gap: 8px;">
-                <!-- Кнопка АЧІВОК -->
                 <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення" style="border: none; background: transparent; box-shadow: none; cursor: pointer; padding: 0;">
                     <img src="medal.svg" alt="Achievements" style="width: 36px; height: 36px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                 </button>
@@ -313,7 +309,6 @@
 
         <div id="globalStatsContainer"></div>
 
-        <!-- КНОПКА ТРЕНАЖЕРА (СИМУЛЯТОР) -->
         <div class="list-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #7dd3fc;" onclick="openSimulatorSetup(null)">
             <div class="list-card-title" style="flex: 1;">
                 <div class="list-card-icon" style="font-size: 28px;">💬</div>
@@ -328,7 +323,6 @@
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -343,7 +337,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -357,7 +350,6 @@
         <div class="big-emoji" id="theoryEmoji">💡</div>
         <div id="theoryContent" class="theory-box"></div>
 
-        <!-- КНОПКА ТРЕНАЖЕРА (ПІД ТЕОРІЄЮ) -->
         <button class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 12px;" onclick="openSimulatorFromTheory()">
             <img src="education/chat.svg" width="20" height="20" onerror="this.outerHTML='<span style=\\'font-size:18px; margin-right:4px;\\'>💬</span>'" style="margin-right: 8px;"> Практика: Тренажер
         </button>
@@ -365,7 +357,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -379,7 +370,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -388,7 +378,6 @@
         <div id="resultActionContainer"></div>
     </div>
 
-    <!-- ЕКРАН НАЛАШТУВАННЯ ТРЕНАЖЕРА (ВИБІР ПРОДУКТУ/ПРЕЗЕНТАЦІЇ/ЗАПЕРЕЧЕННЯ) -->
     <div id="simSetupView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -401,14 +390,12 @@
         <div id="simSetupContent"></div>
     </div>
 
-    <!-- ЕКРАН ЧАТУ ТРЕНАЖЕРА -->
     <div id="simChatView" class="view">
         <div class="nav-header" style="justify-content: space-between; margin-bottom: 12px;">
             <div class="nav-header-left">
                 <span style="font-size: 22px;">💬</span>
                 <h2 style="margin:0; font-size: 16px; font-weight: 700;">Діалог з клієнтом</h2>
             </div>
-            <!-- Кнопка рестарту діалогу -->
             <button class="back-btn-sleek" onclick="restartSimChat()" title="Почати знову" style="width:36px; height:36px; border:none; background:transparent;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -426,7 +413,7 @@
 
 <script>
     // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyt-cI4F5V-XhOUw8UcBFtHiWHSHvJ_Q4Q35jCYzp7mpazk7EjyTVND5P5Ax7yIRDVaMg/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx-4s-jG33IO0pWv2-OCx1vDhIPcp-03s22JsxV2nbp7eM5nJMZMF-spxWR-gf6QndP5w/exec'; 
     const CACHE_KEY = 'skillhub_v1_flat'; 
     
     let db = null;
@@ -629,7 +616,6 @@
                         }
 
                         buildCoursesMap(user);
-                        
                         if (document.getElementById('courseView').classList.contains('active')) {
                             renderCourses(user);
                             startDeadlineTimer();
@@ -865,6 +851,7 @@
             let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
             
             if (achInfo) {
+                // Враховано велику літеру "A" в назві папки "Achievement", як на твоєму скріні
                 let imgName = achInfo.name.toLowerCase().endsWith('.svg') ? achInfo.name : `${achInfo.name}.svg`;
                 html += `
                 <div class="ach-card">
@@ -1345,12 +1332,13 @@
 
         let html = `<p class="subtitle" style="text-align:left;">Як ви презентуєте сервіс?</p>`;
         
-        // 💡 ІДЕАЛЬНЕ ЕКРАНУВАННЯ, ЩОБ КАВИЧКИ В ТЕКСТІ НЕ ЛАМАЛИ КНОПКИ
+        // 💡 ІДЕАЛЬНЕ ЕКРАНУВАННЯ (Натискання не ламається)
         html += presList.map((p, i) => {
-            let safeP = p.replace(/"/g, '&quot;');
+            let safeP = p.replace(/"/g, '&quot;').replace(/'/g, "\\'");
+            let displayP = p.replace(/"/g, '&quot;');
             return `
             <div class="list-card" onclick="showSimObjections(${i})">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${safeP}</div>
+                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${displayP}</div>
             </div>
             `;
         }).join('');
@@ -1464,7 +1452,7 @@
         if (options.length === 0) {
             choicesBox.innerHTML = `
                 <div style="text-align:center; padding: 12px; font-weight:bold; color:var(--success);">✅ Діалог завершено!</div>
-                <button class="chat-btn" style="text-align: center; color: var(--primary); border-color: var(--primary);" onclick="restartSimChat()">🔄 Спробувати іншу відповідь</button>
+                <button class="chat-btn" style="text-align: center; color: var(--primary); border-color: var(--primary);" onclick="restartSimChat()">🔄 Спробувати ще раз</button>
                 <button class="chat-btn" style="text-align: center;" onclick="openSimulatorSetup(simCurrentProduct)">🔙 Повернутися до налаштувань</button>
             `;
             return;
@@ -1474,9 +1462,10 @@
         
         let html = `<div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-align: center;">Що відповісте?</div>`;
         html += options.map(opt => {
-            // ЕКРАНУВАННЯ КНОПОК
+            // ЕКРАНУВАННЯ ВАРІАНТІВ
             let safeOptEscaped = opt.replace(/\\/g, "\\\\").replace(/'/g, "\\'").replace(/"/g, "&quot;");
-            return `<button class="chat-btn" onclick="handleSimChoice('${safeOptEscaped}')">${opt}</button>`;
+            let displayOpt = opt.replace(/"/g, '&quot;');
+            return `<button class="chat-btn" onclick="handleSimChoice('${safeOptEscaped}')">${displayOpt}</button>`;
         }).join('');
         
         choicesBox.innerHTML = html;
