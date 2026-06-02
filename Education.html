@@ -6,12 +6,10 @@
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
     <style>
-        /* Підключення шрифту Inter для сучасного вигляду */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
-        /* Оголошення кольорової палітри */
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
@@ -42,12 +40,10 @@
             position: relative;
         }
 
-        /* АНІМАЦІЇ ЕКРАНІВ */
         .view { display: none; animation: fadeIn 0.3s ease; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ЛОАДЕР ЗАВАНТАЖЕННЯ */
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
@@ -56,12 +52,10 @@
         .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
-        /* ТИПОГРАФІКА ТА ІКОНКИ */
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
-        /* ПОЛЯ ВВЕДЕННЯ */
         .input-group { margin-bottom: 16px; }
         .input-label { display: block; font-size: 13px; font-weight: 700; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;}
         input[type="text"], input[type="password"] { 
@@ -70,7 +64,6 @@
         }
         input[type="text"]:focus, input[type="password"]:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
 
-        /* КНОПКИ */
         .btn {
             width: 100%; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 700;
             cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
@@ -83,13 +76,11 @@
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.2); }
         .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
-        /* ДАШБОРД СТАТИСТИКИ */
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
         .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
         .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
-        /* ПРОГРЕС БАР КУРСУ */
         .modern-progress-wrapper {
             position: relative; background: var(--input-bg); border: 1px solid var(--border);
             border-radius: 16px; height: 40px; width: 100%; margin-bottom: 24px; overflow: hidden;
@@ -105,7 +96,6 @@
             letter-spacing: 0.5px; transition: color 0.3s;
         }
 
-        /* СПИСКИ (КУРСИ / ПРОДУКТИ) */
         .list-card {
             background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
             margin-bottom: 12px; padding: 16px; cursor: pointer; transition: 0.2s;
@@ -117,12 +107,10 @@
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
         .list-card.completed { border-color: rgba(16, 185, 129, 0.4); background: rgba(16, 185, 129, 0.05); }
 
-        /* ТЕОРІЯ (ОПИС) */
         .theory-box { background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); margin-bottom: 24px; overflow: hidden; }
         .theory-line { padding: 16px; border-bottom: 1px solid var(--border); }
         .theory-line:last-child { border-bottom: none; }
         
-        /* АКУРАТНІ ТЕСТИ */
         .question-card { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; }
         .question-title { font-size: 16px; font-weight: 700; margin-bottom: 16px; line-height: 1.4; color: var(--text-main); }
         
@@ -148,7 +136,6 @@
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
-        /* КРАСИВА НАВІГАЦІЯ ТА ШАПКА */
         .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
         
@@ -165,7 +152,6 @@
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
-        /* ПЛАВАЮЧА КНОПКА ЗНИЗУ */
         .floating-exit {
             position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
             background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
@@ -182,7 +168,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
         
-        /* АЧІВКИ - ПРЕМІУМ ДИЗАЙН (ДРОУЕР) */
+        /* АЧІВКИ - ШТОРКА ТА МОДАЛЬНЕ ВІКНО */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -200,7 +186,7 @@
         
         .ach-card {
             background: var(--card-bg); border: 1px solid rgba(0,0,0,0.05); border-radius: 16px;
-            padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px;
+            padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         .ach-card:active { transform: scale(0.98); background: var(--input-bg); }
@@ -211,6 +197,18 @@
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); padding: 10px; border: 1px solid var(--border);
         }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
+
+        /* Модальне вікно для детального опису ачівки */
+        .ach-modal {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
+            background: var(--card-bg); z-index: 10002; width: 90%; max-width: 320px;
+            border-radius: 24px; padding: 24px; text-align: center; opacity: 0; display: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .ach-modal.active { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .ach-modal-icon { width: 80px; height: 80px; margin: 0 auto 16px; object-fit: contain; }
+        .ach-modal-title { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .ach-modal-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; }
 
         /* ІНТЕРФЕЙС ТРЕНАЖЕРА (СИМУЛЯТОРА) */
         .chat-container {
@@ -252,6 +250,10 @@
     <div class="ach-title">🏆 Мої нагороди</div>
     <div id="achList"></div>
 </div>
+
+<!-- МОДАЛЬНЕ ВІКНО ДЛЯ ДЕТАЛЬНОГО ОПИСУ АЧІВКИ -->
+<div class="drawer-overlay" id="achModalOverlay" onclick="closeAchievementModal()"></div>
+<div class="ach-modal" id="achModal"></div>
 
 <div class="container">
 
@@ -297,7 +299,6 @@
             </div>
             
             <div style="display: flex; gap: 8px;">
-                <!-- Кнопка АЧІВОК -->
                 <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення" style="border: none; background: transparent; box-shadow: none; cursor: pointer; padding: 0;">
                     <img src="medal.svg" alt="Achievements" style="width: 44px; height: 44px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                 </button>
@@ -376,7 +377,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ -->
+    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -419,7 +420,6 @@
                 <span style="font-size: 22px;">💬</span>
                 <h2 style="margin:0; font-size: 16px; font-weight: 700;">Діалог з клієнтом</h2>
             </div>
-            <!-- КНОПКА СКИДАННЯ І ПОВЕРНЕННЯ ДО ВИБОРУ СЕРВІСУ -->
             <button class="back-btn-sleek" onclick="openSimulatorSetup(null)" title="Вибрати інший сервіс" style="width:36px; height:36px; border:none; background:transparent;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
@@ -436,8 +436,8 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwthq2_1Y8f_nFN0DVO7PEqhd34a2ERv1HMxK-QhFHBgwiX_6rxKbC9ywfrk1V-DXJJ/exec'; 
-    const CACHE_KEY = 'skillhub_v3_stable'; // 💡 ПРИМУСОВЕ ОНОВЛЕННЯ БАЗИ ТА КЕШУ
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwb1XAODWLOv_XpIizgVuKAezOjWWsc1RdxMvh2lIyragJ-PgbLqBI3b9n8XBBICsPlfg/exec'; 
+    const CACHE_KEY = 'skillhub_v4_desc'; // 💡 ПРИМУСОВЕ ОНОВЛЕННЯ БАЗИ ТА КЕШУ
     
     let db = null;
     let currentUser = null;
@@ -487,7 +487,7 @@
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
-        if (!name) return { icon: defaultIcon, title: "Без назви" }; // 💡 ЗАПОБІЖНИК
+        if (!name) return { icon: defaultIcon, title: "Без назви" };
         let match = name.trim().match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
         if (match) {
             return { icon: match[0], title: name.replace(match[0], '').trim() };
@@ -860,7 +860,7 @@
     }
 
     // ==========================================
-    // ЛОГІКА АЧІВОК (НАГОРОД)
+    // ЛОГІКА АЧІВОК ТА МОДАЛЬНЕ ВІКНО
     // ==========================================
     function toggleAchievements() {
         const drawer = document.getElementById('achDrawer');
@@ -897,11 +897,11 @@
             
             let displayName = achInfo ? achInfo.name : `Секретна нагорода`;
             displayName = displayName.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
-            
             let safeCode = escapeHTMLAttr(code);
 
+            // 💡 ДОДАНО ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА ПО КЛІКУ
             html += `
-            <div class="ach-card">
+            <div class="ach-card" onclick="openAchievementModal('${safeCode}')">
                 <div class="ach-icon-wrapper">
                     <img src="Achievement/${safeCode}.svg" class="ach-icon" alt="${displayName}" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
                 </div>
@@ -913,6 +913,35 @@
         });
 
         achListEl.innerHTML = html;
+    }
+
+    // 💡 ФУНКЦІЇ ДЛЯ МОДАЛЬНОГО ВІКНА АЧІВОК
+    function openAchievementModal(code) {
+        let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === String(code)) : null;
+        if (!achInfo) return; // Не відкриваємо, якщо немає інформації
+
+        let displayName = achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
+        let desc = achInfo.description || "Опис нагороди відсутній. Продовжуй в тому ж дусі!";
+        let safeCode = escapeHTMLAttr(code);
+        
+        let modal = document.getElementById('achModal');
+        let overlay = document.getElementById('achModalOverlay');
+        
+        modal.innerHTML = `
+            <img src="Achievement/${safeCode}.svg" class="ach-modal-icon" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
+            <div class="ach-modal-title">${displayName}</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 16px; letter-spacing: 0.5px;">КОД НАГОРОДИ: ${code}</div>
+            <div class="ach-modal-desc">${desc}</div>
+            <button class="btn btn-glow" onclick="closeAchievementModal()">КРУТО!</button>
+        `;
+        
+        overlay.classList.add('active');
+        modal.classList.add('active');
+    }
+
+    function closeAchievementModal() {
+        document.getElementById('achModalOverlay').classList.remove('active');
+        document.getElementById('achModal').classList.remove('active');
     }
 
     // ==========================================
@@ -1367,7 +1396,6 @@
             let simData = db.simulatorData || [];
             
             simData.forEach(s => {
-                // 💡 ЗАПОБІЖНИК: Пропускаємо порожні рядки
                 if (!s.service) return; 
                 
                 let cleanP = getCleanName(s.service);
