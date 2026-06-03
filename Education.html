@@ -180,7 +180,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
 
-        /* АЧІВКИ - ШТОРКА ТА МОДАЛЬНІ ВІКНА */
+        /* АЧІВКИ - ШТОРКА ТА ЗУМ */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -196,12 +196,26 @@
 
         .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
 
+        /* Картка ачівки (підготовлена для локального зуму) */
         .ach-card {
             background: var(--card-bg); border: 1px solid rgba(0,0,0,0.05); border-radius: 16px;
             padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; /* Важливо для z-index */
+            z-index: 1;
+            transform-origin: center;
         }
-        .ach-card:active { transform: scale(0.95); background: var(--input-bg); } 
+        .ach-card:active:not(.zoomed) { transform: scale(0.95); background: var(--input-bg); } 
+
+        /* Клас, що застосовується при кліку (збільшення на місці) */
+        .ach-card.zoomed {
+            transform: scale(1.1);
+            z-index: 10;
+            box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+            border-color: var(--primary-light);
+            background: #ffffff;
+        }
 
         .ach-icon-wrapper {
             width: 90px; height: 90px; flex-shrink: 0; background: var(--input-bg);
@@ -210,21 +224,19 @@
         }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Універсальне модальне вікно (Ачівки та Пройдені курси) */
+        /* Універсальне модальне вікно (тепер тільки для "Пройдені курси") */
         .ach-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: var(--card-bg); z-index: 10002; width: 90%; max-width: 360px;
             border-radius: 28px; padding: 24px; text-align: center; opacity: 0; display: none;
             transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 20px 40px rgba(0,0,0,0.25);
-            max-height: 85vh; /* Щоб вікно не вилазило за межі екрана */
+            max-height: 85vh;
             display: flex; flex-direction: column; 
         }
         .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         
-        .ach-modal-icon { width: 120px; height: 120px; margin: 0 auto 16px; object-fit: contain; flex-shrink: 0; }
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
-        .ach-modal-desc { font-size: 15px; font-weight: 600; color: var(--success); line-height: 1.5; margin-bottom: 24px; }
 
         .notification-dot {
             position: absolute; top: 6px; right: 6px; width: 10px; height: 10px;
@@ -459,7 +471,7 @@
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
-    let globalAchievements = []; // ПЕРЕХОПЛЮЄМО МАСИВ АЧІВОК
+    let globalAchievements = []; // ПЕРЕХОПЛЮЄМО МАСИВ АЧІВОК З БАЗИ
     let currentUser = null;
     let coursesMap = {}; 
     let currentCourseName = "";
@@ -687,10 +699,8 @@
             const data = await response.json();
             if (!data.error) {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-                
-                // ЗБЕРІГАЄМО АЧІВКИ В ГЛОБАЛЬНУ ЗМІННУ
                 db = data.educationData;
-                globalAchievements = data.achievementData || [];
+                globalAchievements = data.achievementData || []; // Зберігаємо масив ачівок
 
                 if (currentUser) {
                     let user = db.users.find(u => u.login === currentUser);
@@ -725,10 +735,8 @@
             if (cachedData) {
                 let parsedDb = JSON.parse(cachedData);
                 if (parsedDb && parsedDb.educationData) {
-                    
-                    // ЗБЕРІГАЄМО АЧІВКИ З КЕШУ В ГЛОБАЛЬНУ ЗМІННУ
                     db = parsedDb.educationData;
-                    globalAchievements = parsedDb.achievementData || [];
+                    globalAchievements = parsedDb.achievementData || []; // Зберігаємо з кешу
                 }
             }
 
@@ -912,8 +920,14 @@
         if (drawer.classList.contains('open')) {
             drawer.classList.remove('open');
             overlay.classList.remove('active');
+            document.body.style.overflow = ''; // Відновлюємо скрол фону
+
+            // Знімаємо зум з усіх карток при закритті шторки
+            document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
+            document.body.style.overflow = 'hidden'; // Блокуємо скрол фону
+
             let user = db.users.find(u => u.login === currentUser);
             if(user && user.achievements) {
                  let count = String(user.achievements).split(',').filter(s => s.trim() !== "").length;
@@ -923,6 +937,26 @@
             renderAchievements();
             drawer.classList.add('open');
             overlay.classList.add('active');
+        }
+    }
+
+    // ЛОКАЛЬНИЙ ЗУМ (ЗБІЛЬШЕННЯ) КАРТКИ
+    function toggleAchZoom(element) {
+        let isZoomed = element.classList.contains('zoomed');
+        
+        // Закриваємо зум у всіх інших карток
+        document.querySelectorAll('.ach-card.zoomed').forEach(card => {
+            card.classList.remove('zoomed');
+        });
+
+        // Якщо клікнута картка не була збільшена — збільшуємо її
+        if (!isZoomed) {
+            element.classList.add('zoomed');
+            
+            // Легкий таймаут, щоб анімація почалась, а потім підскролюємо, щоб не ховалась за краї
+            setTimeout(() => {
+                element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 50);
         }
     }
 
@@ -944,15 +978,15 @@
 
         let html = '';
         achCodes.forEach(code => {
-            // ШУКАЄМО АЧІВКУ В ГЛОБАЛЬНОМУ МАСИВІ
             let achInfo = globalAchievements.find(a => String(a.code).trim() === code);
             
             let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
             let desc = (achInfo && achInfo.description) ? achInfo.description : "";
             let safeCode = escapeHTMLAttr(code);
 
+            // Використовуємо локальний зум замість виклику модалки по центру
             html += `
-            <div class="ach-card" onclick="openAchievementModal('${safeCode}')">
+            <div class="ach-card" onclick="toggleAchZoom(this)">
                 <div class="ach-icon-wrapper">
                     <img src="Achievement/${safeCode}.svg" class="ach-icon" alt="${displayName}" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
                 </div>
@@ -964,29 +998,6 @@
         });
 
         achListEl.innerHTML = html;
-    }
-
-    function openAchievementModal(code) {
-        // ШУКАЄМО АЧІВКУ В ГЛОБАЛЬНОМУ МАСИВІ
-        let achInfo = globalAchievements.find(a => String(a.code).trim() === String(code));
-        if (!achInfo) return; 
-
-        let displayName = achInfo.name ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
-        let desc = achInfo.description || "";
-        let safeCode = escapeHTMLAttr(code);
-
-        let modal = document.getElementById('genericModal');
-        let overlay = document.getElementById('genericModalOverlay');
-
-        modal.innerHTML = `
-            <img src="Achievement/${safeCode}.svg" class="ach-modal-icon" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
-            <div class="ach-modal-title" style="font-size: 22px;">${displayName}</div>
-            <div class="ach-modal-desc" style="font-size: 15px; font-weight: 600; color: var(--success); margin-bottom: 24px;">${desc}</div>
-            <button class="btn btn-glow" style="width: 100%;" onclick="closeModals()">СУПЕР!</button>
-        `;
-
-        overlay.classList.add('active');
-        modal.classList.add('active');
     }
 
     function openCompletedModal() {
@@ -1001,6 +1012,7 @@
             <button class="btn btn-glow" style="width: 100%;" onclick="closeModals()">ЗАКРИТИ</button>
         `;
 
+        document.body.style.overflow = 'hidden'; // Блокуємо скрол фону
         overlay.classList.add('active');
         modal.classList.add('active');
     }
@@ -1008,6 +1020,7 @@
     function closeModals() {
         document.getElementById('genericModalOverlay').classList.remove('active');
         document.getElementById('genericModal').classList.remove('active');
+        document.body.style.overflow = ''; // Відновлюємо скрол фону
     }
 
     function renderCourses(user) {
@@ -1453,9 +1466,6 @@
         }
     }
 
-    // ==========================================
-    // ЛОГІКА ТРЕНАЖЕРА (СИМУЛЯТОРА ЗАПЕРЕЧЕНЬ)
-    // ==========================================
     function openSimulatorSetup(preselectedProduct) {
         simPreviousView = document.querySelector('.view.active').id;
         simCurrentProduct = preselectedProduct;
