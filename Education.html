@@ -170,7 +170,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
         
-        /* АЧІВКИ - ШТОРКА ТА МОДАЛЬНЕ ВІКНО */
+        /* АЧІВКИ ТА СПЛИВАЮЧІ ВІКНА */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -238,7 +238,7 @@
 
 <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
-    <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
+    <div style="font-weight: 600; color: var(--text-muted); text-align: center;" id="loaderText">Синхронізація з базою...</div>
 </div>
 
 <div class="fab-btn fab-back" id="floatingExitBtn" onclick="handleFloatingBack()" style="display: none;">
@@ -424,8 +424,9 @@
 </div>
 
 <script>
+    // ⚠️ ВАЖЛИВО: Встав сюди своє нове посилання API!
     const API_URL = 'https://script.google.com/macros/s/AKfycbyKEQulekw32MyPEO9HYtJNwdWorHMouUNPZsp1M_Sm4oUSAQDCD0eZ0-frt5hox2i8tw/exec'; 
-    const CACHE_KEY = 'skillhub_v8_desc_fixed'; 
+    const CACHE_KEY = 'skillhub_v10_stable'; // 💡 ПРИМУСОВИЙ СКИД КЕШУ ДЛЯ ЗАХИСТУ ВІД БІЛОГО ЕКРАНУ
     
     let db = null;
     let currentUser = null;
@@ -439,6 +440,7 @@
     let deadlineInterval;
     window.isDeadlinePassed = false;
 
+    // Змінні для Тренажера
     let simPreviousView = 'courseView'; 
     let simCurrentProduct = null;
     let simCurrentPres = null;
@@ -626,17 +628,16 @@
 
     async function fetchFreshDataSilent() {
         if (!navigator.onLine) return;
-        
         await processOfflineQueue();
-
         try {
             const response = await fetch(API_URL + '?nocache=' + Date.now());
+            if (!response.ok) throw new Error("HTTP Error " + response.status);
             const data = await response.json();
-            if (!data.error) {
+            if (!data.error && data.educationData) {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 db = data.educationData;
                 
-                if (currentUser) {
+                if (currentUser && db && db.users) {
                     let user = db.users.find(u => u.login === currentUser);
                     if (user) {
                         let myToken = localStorage.getItem('skillhub_session_token');
@@ -646,7 +647,6 @@
                                 return;
                             }
                         }
-
                         buildCoursesMap(user);
                         if (document.getElementById('courseView').classList.contains('active')) {
                             renderCourses(user);
@@ -659,11 +659,16 @@
                     }
                 }
             }
-        } catch(e) {}
+        } catch(e) {
+            console.error("Помилка фонового оновлення:", e);
+        }
     }
 
+    // 💡 БЕЗПЕЧНЕ ЗАВАНТАЖЕННЯ (ЗАХИСТ ВІД БІЛОГО ЕКРАНУ)
     window.onload = async () => {
         try {
+            document.getElementById('loader').style.display = 'flex';
+
             let cachedData = localStorage.getItem(CACHE_KEY);
             if (cachedData) {
                 let parsedDb = JSON.parse(cachedData);
@@ -671,8 +676,6 @@
                     db = parsedDb.educationData;
                 }
             }
-
-            document.getElementById('loader').style.display = 'none';
 
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
             let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
@@ -682,7 +685,7 @@
             if (!db || !db.users || db.users.length === 0 || !db.courses || db.courses.length === 0) {
                 needFreshDb = true;
             } else if (parsedCreds) {
-                let userExists = db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass);
+                let userExists = db.users ? db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass) : null;
                 if (!userExists) {
                     needFreshDb = true;
                 }
@@ -691,19 +694,23 @@
             if (needFreshDb) {
                 if (!navigator.onLine) {
                     if (!db) {
-                        document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
-                        return;
+                        document.querySelector('.spinner').style.display = 'none';
+                        document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і бази даних. Увімкніть інтернет.</span>`;
+                        return; // Залишаємо лоадер видимим з помилкою
                     }
                 } else {
-                    document.getElementById('loaderText').innerText = "Оновлення даних...";
-                    document.getElementById('loader').style.display = 'flex';
+                    document.getElementById('loaderText').innerText = "Завантаження бази даних...";
                     await fetchFreshDataSilent();
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('loaderText').innerText = "Синхронізація з базою...";
                 }
             } else {
                 fetchFreshDataSilent();
             }
+
+            if (!db || !db.users) {
+                throw new Error("База даних порожня. Перевірте посилання на Apps Script та налаштування доступу (Anyone).");
+            }
+
+            document.getElementById('loader').style.display = 'none';
 
             if (parsedCreds) {
                 document.getElementById('loginInput').value = parsedCreds.login;
@@ -715,8 +722,9 @@
             }
 
         } catch (e) {
+            document.getElementById('loader').style.display = 'flex';
             document.querySelector('.spinner').style.display = 'none';
-            document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Помилка завантаження: ${e.message}</span>`;
+            document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger); text-align: center; display: block; padding: 20px;">Критична помилка:<br>${e.message}</span>`;
         }
     };
 
@@ -744,6 +752,7 @@
     function buildCoursesMap(user) {
         coursesMap = {}; 
         let currentUserAssigned = user.assigned || [];
+        if (!db || !db.courses) return;
         
         db.courses.forEach(c => {
             let isAssigned = currentUserAssigned.some(assignedName => {
@@ -768,7 +777,14 @@
 
         if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
 
-        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
+        if (!db || !db.users) {
+            err.innerText = "База даних ще завантажується або недоступна. Спробуйте пізніше.";
+            err.style.display = 'block';
+            if (isAuto) switchView('loginView');
+            return;
+        }
+
+        const user = db.users.find(u => u.login === l && u.pass === p);
         
         if (user) {
             currentUser = user.login;
@@ -857,6 +873,7 @@
     // ЛОГІКА АЧІВОК ТА МОДАЛЬНЕ ВІКНО З ОПИСОМ
     // ==========================================
     function checkNewAchievements(achCodes) {
+        if (!currentUser) return;
         let storedAchCount = parseInt(localStorage.getItem('skillhub_ach_count_' + currentUser)) || 0;
         let currentAchCount = achCodes.length;
         if (currentAchCount > storedAchCount) {
@@ -926,11 +943,9 @@
         achListEl.innerHTML = html;
     }
 
-    // 💡 ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА З ОПИСОМ АЧІВКИ
     function openAchievementModal(code) {
         let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === String(code)) : null;
         
-        // Відображаємо вікно навіть якщо немає опису, щоб стажер хоч щось бачив
         let displayName = achInfo ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Нагорода #${code}`;
         let desc = (achInfo && achInfo.description) ? achInfo.description : "Опис нагороди відсутній. Продовжуй в тому ж дусі!";
         let safeCode = escapeHTMLAttr(code);
@@ -1001,7 +1016,10 @@
     // ПРОГРЕС І ТЕСТИ
     // ==========================================
     function renderCourses(user) {
+        if (!db || !db.users) return;
         if (!user) user = db.users.find(u => u.login === currentUser);
+        if (!user) return;
+
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
         
@@ -1449,16 +1467,17 @@
         } else {
             let html = `<p class="subtitle" style="text-align:left;">Оберіть сервіс для тренування:</p>`;
             
-            let user = db.users.find(u => u.login === currentUser);
-            let assignedClean = user.assigned.map(getCleanName);
+            // Замість пошуку тільки по призначених курсах - виводимо всі сервіси з Тренажера
+            let simData = db.simulatorData || [];
             let addedProducts = new Set();
             
-            db.courses.forEach(c => {
-                let cleanP = getCleanName(c.product);
-                if (assignedClean.includes(cleanP) && !addedProducts.has(cleanP)) {
+            simData.forEach(s => {
+                if (!s.service) return; // Пропускаємо порожні
+                let cleanP = getCleanName(s.service);
+                if (!addedProducts.has(cleanP)) {
                     addedProducts.add(cleanP);
-                    let parsed = formatWithCustomEmoji(c.product, '📘');
-                    let safeProd = escapeHTMLAttr(c.product); 
+                    let parsed = formatWithCustomEmoji(s.service, '💬');
+                    let safeProd = escapeHTMLAttr(s.service); 
                     html += `
                     <div class="list-card" onclick="simCurrentProduct=this.getAttribute('data-prod'); showSimPresentations();" data-prod="${safeProd}">
                         <div class="list-card-title">
@@ -1471,7 +1490,7 @@
             });
             
             if (addedProducts.size === 0) {
-                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас немає доступних сервісів для тренажера.</div>`;
+                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У базі немає доступних сервісів для тренажера.</div>`;
             }
             
             document.getElementById('simSetupContent').innerHTML = html;
