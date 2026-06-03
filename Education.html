@@ -87,7 +87,7 @@
         .modern-progress-wrapper {
             position: relative; background: var(--input-bg); border: 1px solid var(--border);
             border-radius: 16px; height: 36px; width: 100%; margin-bottom: 24px; overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); cursor: pointer;
         }
         .modern-progress-text {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
@@ -180,7 +180,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
 
-        /* АЧІВКИ - ШТОРКА ТА МОДАЛЬНЕ ВІКНО */
+        /* АЧІВКИ - ШТОРКА ТА МОДАЛЬНІ ВІКНА */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -201,9 +201,8 @@
             padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03); transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
-        .ach-card:active { transform: scale(0.95); background: var(--input-bg); } /* Пружинистий зум на клік */
+        .ach-card:active { transform: scale(0.95); background: var(--input-bg); } 
 
-        /* Крупніші іконки ачівок */
         .ach-icon-wrapper {
             width: 90px; height: 90px; flex-shrink: 0; background: var(--input-bg);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
@@ -211,21 +210,22 @@
         }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Модальне вікно ачівки (ефект зуму всієї картки) */
+        /* Універсальне модальне вікно (Ачівки та Пройдені курси) */
         .ach-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: var(--card-bg); z-index: 10002; width: 90%; max-width: 360px;
-            border-radius: 28px; padding: 32px 24px; text-align: center; opacity: 0; display: none;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Пружинна анімація зуму */
+            border-radius: 28px; padding: 24px; text-align: center; opacity: 0; display: none;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
             box-shadow: 0 20px 40px rgba(0,0,0,0.25);
+            max-height: 85vh; /* Щоб вікно не вилазило за межі екрана */
+            display: flex; flex-direction: column; 
         }
-        .ach-modal.active { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         
-        .ach-modal-icon { width: 120px; height: 120px; margin: 0 auto 16px; object-fit: contain; }
-        .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
+        .ach-modal-icon { width: 120px; height: 120px; margin: 0 auto 16px; object-fit: contain; flex-shrink: 0; }
+        .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
         .ach-modal-desc { font-size: 15px; font-weight: 600; color: var(--success); line-height: 1.5; margin-bottom: 24px; }
 
-        /* Червона точка (Нова ачівка) */
         .notification-dot {
             position: absolute; top: 6px; right: 6px; width: 10px; height: 10px;
             background-color: var(--danger); border-radius: 50%; border: 2px solid #fff;
@@ -478,7 +478,6 @@
     let simFilteredRows = [];
     let simStepIndex = 0;
 
-    // --- Допоміжні функції ---
     function getCleanName(str) {
         if (!str) return "";
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
@@ -521,7 +520,14 @@
         }
     }
 
-    // --- Навігація ---
+    // Допоміжна функція для правильного відмінювання "спроб"
+    function getAttemptWord(count) {
+        let n = parseInt(count) || 0;
+        if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
+        if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'спроби';
+        return 'спроб';
+    }
+
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
         if (activeView === 'loginView' || activeView === 'courseView') {
@@ -552,7 +558,6 @@
         }
     }
 
-    // --- Офлайн черга та синхронізація ---
     function saveOfflineResult(login, product, score) {
         let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
         queue.push({ action: 'save_score', login: login, product: product, score: score, timestamp: Date.now() });
@@ -579,7 +584,6 @@
         localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
     }
 
-    // --- Дедлайн Таймер ---
     function getDeadlineMs(deadlineValue) {
         if (!deadlineValue || String(deadlineValue).trim() === "") return null;
         let val = String(deadlineValue).trim();
@@ -661,7 +665,6 @@
         }
     }
 
-    // --- Життєвий цикл і дані ---
     async function forceRefresh() {
         if (!navigator.onLine) {
             alert("Немає підключення до інтернету!");
@@ -939,9 +942,9 @@
         let html = '';
         achCodes.forEach(code => {
             let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
-            let displayName = achInfo && achInfo.name ? achInfo.name : "Нагорода";
-            displayName = displayName.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
-            let desc = achInfo && achInfo.description ? achInfo.description : "";
+            
+            let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
+            let desc = (achInfo && achInfo.description) ? achInfo.description : "";
             let safeCode = escapeHTMLAttr(code);
 
             html += `
@@ -963,7 +966,7 @@
         let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === String(code)) : null;
         if (!achInfo) return; 
 
-        let displayName = achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
+        let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
         let desc = achInfo.description || "";
         let safeCode = escapeHTMLAttr(code);
 
@@ -974,7 +977,7 @@
             <img src="Achievement/${safeCode}.svg" class="ach-modal-icon" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
             <div class="ach-modal-title" style="font-size: 22px;">${displayName}</div>
             <div class="ach-modal-desc" style="font-size: 15px; font-weight: 600; color: var(--success); margin-bottom: 24px;">${desc}</div>
-            <button class="btn btn-glow" onclick="closeModals()">СУПЕР!</button>
+            <button class="btn btn-glow" style="width: 100%;" onclick="closeModals()">СУПЕР!</button>
         `;
 
         overlay.classList.add('active');
@@ -987,10 +990,10 @@
 
         modal.innerHTML = `
             <div class="ach-modal-title" style="margin-bottom: 16px;">Пройдені курси</div>
-            <div style="max-height: 250px; overflow-y: auto; text-align: left; margin-bottom: 16px;">
+            <div style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 16px; padding-right: 4px;">
                 ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курсів.</div>'}
             </div>
-            <button class="btn btn-glow" onclick="closeModals()">ЗАКРИТИ</button>
+            <button class="btn btn-glow" style="width: 100%;" onclick="closeModals()">ЗАКРИТИ</button>
         `;
 
         overlay.classList.add('active');
@@ -1047,10 +1050,11 @@
                 scoreCount++;
                 if (score >= 80) {
                     totalCompleted++;
+                    let attWord = getAttemptWord(attempts);
                     savedCompletedListHtml += `
-                        <div style="font-size:13px; font-weight:600; padding:8px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between;">
-                            <span>📄 ${p.product}</span>
-                            <span style="color:var(--success); font-weight:700;">${score}% (спр: ${attempts})</span>
+                        <div style="font-size:13px; font-weight:600; padding:10px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap: 8px;">
+                            <span style="flex:1; line-height:1.3; color:var(--text-main);">📄 ${p.product}</span>
+                            <span style="color:var(--success); font-weight:800; white-space:nowrap;">${attempts} ${attWord} / ${score}%</span>
                         </div>`;
                 }
             }
