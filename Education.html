@@ -31,7 +31,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 80px; 
+            padding-bottom: 90px; 
         }
 
         .container { 
@@ -77,7 +77,8 @@
         .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 16px; }
-        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; }
+        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px 12px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .stat-item:active { transform: scale(0.95); background: var(--input-bg); }
         .stat-val { font-size: 24px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         
@@ -136,13 +137,13 @@
         .answer-label input:checked { background-color: var(--primary); border-color: var(--primary); }
         .answer-label input:checked::before { transform: scale(1); }
         
-        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; }
+        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; min-height: 48px; }
         .nav-header-left { display: flex; align-items: center; gap: 12px; }
         
         .back-btn-sleek {
             background: rgba(255,255,255,0.8); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
             border: 1px solid rgba(0,0,0,0.08); box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            width: 44px; height: 44px; border-radius: 14px;
+            width: 48px; height: 48px; border-radius: 14px;
             display: flex; justify-content: center; align-items: center;
             color: var(--text-main); transition: all 0.2s; cursor: pointer; padding: 0;
         }
@@ -152,14 +153,15 @@
 
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 16px; display: none; background: rgba(239, 68, 68, 0.1); padding: 10px; border-radius: 8px;}
         
-        .floating-exit {
-            position: fixed; bottom: 24px; left: 16px; width: 50px; height: 50px;
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1); z-index: 9000;
-            cursor: pointer; transition: 0.2s; color: var(--text-main); font-size: 24px;
+        .fab-btn {
+            position: fixed; bottom: 24px; width: 56px; height: 56px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 16px rgba(0,0,0,0.15); z-index: 9000;
+            cursor: pointer; transition: transform 0.2s, background 0.2s;
         }
-        .floating-exit:active { transform: scale(0.9); background: var(--input-bg); }
+        .fab-btn:active { transform: scale(0.9); }
+        .fab-back { left: 16px; background: var(--card-bg); border: 1px solid var(--border); color: var(--text-main); }
+        .fab-simulator { right: 16px; background: linear-gradient(135deg, #0ea5e9, #0284c7); border: none; color: white; }
 
         #deadlineContainer {
             background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2);
@@ -198,14 +200,13 @@
         }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Модальне вікно для детального опису ачівки */
-        .ach-modal {
+        .custom-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: var(--card-bg); z-index: 10002; width: 90%; max-width: 320px;
+            background: var(--card-bg); z-index: 10002; width: 90%; max-width: 340px; max-height: 80vh; overflow-y: auto;
             border-radius: 24px; padding: 24px; text-align: center; opacity: 0; display: none;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 10px 30px rgba(0,0,0,0.2);
         }
-        .ach-modal.active { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .custom-modal.active { display: block; opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .ach-modal-icon { width: 80px; height: 80px; margin: 0 auto 16px; object-fit: contain; }
         .ach-modal-title { font-size: 20px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; }
         .ach-modal-desc { font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 20px; }
@@ -240,24 +241,32 @@
     <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
 
-<div class="floating-exit" id="floatingExitBtn" onclick="handleFloatingBack()" style="display: none;">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+<div class="fab-btn fab-back" id="floatingExitBtn" onclick="handleFloatingBack()" style="display: none;">
+    <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
 </div>
 
-<!-- ОВЕРЛЕЙ І ШТОРКА АЧІВОК -->
+<div class="fab-btn fab-simulator" id="floatingSimBtn" onclick="openSimulatorSetup(null)" style="display: none;" title="Тренажер заперечень">
+    <img src="education/chat.svg" style="width:28px; height:28px; filter: brightness(0) invert(1);" onerror="this.outerHTML='<span style=\\'font-size:24px;\\'>💬</span>'">
+</div>
+
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
     <div class="ach-title">🏆 Мої нагороди</div>
     <div id="achList"></div>
 </div>
 
-<!-- МОДАЛЬНЕ ВІКНО ДЛЯ ДЕТАЛЬНОГО ОПИСУ АЧІВКИ -->
 <div class="drawer-overlay" id="achModalOverlay" onclick="closeAchievementModal()"></div>
-<div class="ach-modal" id="achModal"></div>
+<div class="custom-modal" id="achModal"></div>
+
+<div class="drawer-overlay" id="statsModalOverlay" onclick="closeStatsModal()"></div>
+<div class="custom-modal" id="statsModal">
+    <div class="ach-title" style="justify-content:center; margin-bottom: 16px;">📊 Ваша статистика</div>
+    <div id="statsModalContent" style="text-align: left;"></div>
+    <button class="btn btn-glow" style="margin-top: 20px;" onclick="closeStatsModal()">ЗРОЗУМІЛО</button>
+</div>
 
 <div class="container">
 
-    <!-- ЕКРАН АВТОРИЗАЦІЇ -->
     <div id="loginView" class="view">
         <div class="big-emoji">
             <svg width="80" height="80" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto; margin-bottom: 10px;">
@@ -287,7 +296,6 @@
         <button class="btn btn-glow" onclick="handleLogin()">УВІЙТИ</button>
     </div>
 
-    <!-- ЕКРАН КУРСІВ (ОСОБИСТИЙ КАБІНЕТ) -->
     <div id="courseView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -298,10 +306,14 @@
                 </div>
             </div>
             
-            <div style="display: flex; gap: 8px;">
-                <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення" style="border: none; background: transparent; box-shadow: none; cursor: pointer; padding: 0;">
-                    <img src="medal.svg" alt="Achievements" style="width: 44px; height: 44px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
-                </button>
+            <div style="display: flex; gap: 8px; align-items: center;">
+                <div style="position: relative;">
+                    <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення" style="border: none; background: transparent; box-shadow: none; cursor: pointer; padding: 0;">
+                        <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
+                    </button>
+                    <div id="achRedDot" style="display:none; position:absolute; top:2px; right:2px; width:10px; height:10px; background:var(--danger); border-radius:50%; border:2px solid var(--bg);"></div>
+                </div>
+                
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="border: none; background: transparent; box-shadow: none; color: var(--primary); cursor: pointer;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 4 23 10 17 10"></polyline>
@@ -324,23 +336,9 @@
         </div>
 
         <div id="globalStatsContainer"></div>
-
-        <!-- КНОПКА ТРЕНАЖЕРА (СИМУЛЯТОР) -->
-        <div class="list-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #7dd3fc;" onclick="openSimulatorSetup(null)">
-            <div class="list-card-title" style="flex: 1;">
-                <div class="list-card-icon" style="font-size: 28px;">💬</div>
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 16px; font-weight: 800; color: #0369a1;">Тренажер заперечень</span>
-                    <span style="font-size: 12px; font-weight: 600; color: #0284c7;">Інтерактивний чат-симулятор</span>
-                </div>
-            </div>
-            <div style="color: #0369a1; font-weight: bold; font-size: 18px;">❯</div>
-        </div>
-
         <div id="courseList"></div>
     </div>
 
-    <!-- ЕКРАН ПРОДУКТІВ -->
     <div id="productView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -355,7 +353,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ЕКРАН ТЕОРІЇ -->
     <div id="theoryView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -368,16 +365,10 @@
         
         <div class="big-emoji" id="theoryEmoji">💡</div>
         <div id="theoryContent" class="theory-box"></div>
-
-        <!-- КНОПКА ТРЕНАЖЕРА (ПІД ТЕОРІЄЮ) -->
-        <button class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 12px;" onclick="openSimulatorFromTheory()">
-            <img src="education/chat.svg" width="20" height="20" onerror="this.outerHTML='<span style=\\'font-size:18px; margin-right:4px;\\'>💬</span>'" style="margin-right: 8px;"> Практика: Тренажер
-        </button>
         
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН ТЕСТУ (БЕЗ КНОПКИ НАЗАД) -->
     <div id="testView" class="view">
         <div class="nav-header" style="justify-content: space-between;">
             <div class="nav-header-left">
@@ -391,7 +382,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- ЕКРАН РЕЗУЛЬТАТУ -->
     <div id="resultView" class="view">
         <div class="big-emoji" id="resultEmoji">🏆</div>
         <h1 id="resultTitle">Результат</h1>
@@ -400,7 +390,6 @@
         <div id="resultActionContainer"></div>
     </div>
 
-    <!-- ЕКРАН НАЛАШТУВАННЯ ТРЕНАЖЕРА -->
     <div id="simSetupView" class="view">
         <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -413,15 +402,14 @@
         <div id="simSetupContent"></div>
     </div>
 
-    <!-- ЕКРАН ЧАТУ ТРЕНАЖЕРА -->
     <div id="simChatView" class="view">
         <div class="nav-header" style="justify-content: space-between; margin-bottom: 12px;">
             <div class="nav-header-left">
                 <span style="font-size: 22px;">💬</span>
                 <h2 style="margin:0; font-size: 16px; font-weight: 700;">Діалог з клієнтом</h2>
             </div>
-            <button class="back-btn-sleek" onclick="openSimulatorSetup(null)" title="Вибрати інший сервіс" style="width:36px; height:36px; border:none; background:transparent;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <button class="back-btn-sleek" onclick="openSimulatorSetup(null)" title="Вибрати інший сервіс" style="width:48px; height:48px; border:none; background:transparent;">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
                     <path d="M3 3v5h5"></path>
                 </svg>
@@ -436,8 +424,8 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw9IUm3VsPhK_ElgKrpEpoCZD8cnW1Y2L3BnD9ufeALwxZ65ls1l6FOjW-Te2YLjWR1Ag/exec'; 
-    const CACHE_KEY = 'skillhub_v4_desc'; // 💡 ПРИМУСОВЕ ОНОВЛЕННЯ БАЗИ ТА КЕШУ
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyKEQulekw32MyPEO9HYtJNwdWorHMouUNPZsp1M_Sm4oUSAQDCD0eZ0-frt5hox2i8tw/exec'; 
+    const CACHE_KEY = 'skillhub_v8_desc_fixed'; 
     
     let db = null;
     let currentUser = null;
@@ -451,7 +439,6 @@
     let deadlineInterval;
     window.isDeadlinePassed = false;
 
-    // Змінні для Тренажера
     let simPreviousView = 'courseView'; 
     let simCurrentProduct = null;
     let simCurrentPres = null;
@@ -472,7 +459,6 @@
             .replace(/'/g, "&#39;");
     }
 
-    // УНІВЕРСАЛЬНИЙ ПЕРЕБІР ФОРМАТІВ ДЛЯ АЧІВОК
     const ACH_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif'];
     function handleAchImageError(img) {
         let extIdx = parseInt(img.getAttribute('data-ext-index')) || 0;
@@ -487,7 +473,7 @@
     }
 
     function formatWithCustomEmoji(name, defaultIcon) {
-        if (!name) return { icon: defaultIcon, title: "Без назви" };
+        if (!name) return { icon: defaultIcon, title: "Без назви" }; 
         let match = name.trim().match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
         if (match) {
             return { icon: match[0], title: name.replace(match[0], '').trim() };
@@ -740,7 +726,15 @@
         window.scrollTo(0, 0);
 
         const exitBtn = document.getElementById('floatingExitBtn');
-        if (viewId === 'testView' || viewId === 'loginView') {
+        const simBtn = document.getElementById('floatingSimBtn');
+        
+        if (viewId === 'courseView' || viewId === 'productView') {
+            simBtn.style.display = 'flex';
+        } else {
+            simBtn.style.display = 'none';
+        }
+
+        if (viewId === 'testView' || viewId === 'loginView' || viewId === 'courseView') {
             exitBtn.style.display = 'none';
         } else {
             exitBtn.style.display = 'flex';
@@ -860,8 +854,18 @@
     }
 
     // ==========================================
-    // ЛОГІКА АЧІВОК ТА МОДАЛЬНЕ ВІКНО
+    // ЛОГІКА АЧІВОК ТА МОДАЛЬНЕ ВІКНО З ОПИСОМ
     // ==========================================
+    function checkNewAchievements(achCodes) {
+        let storedAchCount = parseInt(localStorage.getItem('skillhub_ach_count_' + currentUser)) || 0;
+        let currentAchCount = achCodes.length;
+        if (currentAchCount > storedAchCount) {
+            document.getElementById('achRedDot').style.display = 'block';
+        } else {
+            document.getElementById('achRedDot').style.display = 'none';
+        }
+    }
+
     function toggleAchievements() {
         const drawer = document.getElementById('achDrawer');
         const overlay = document.getElementById('achOverlay');
@@ -872,6 +876,13 @@
             renderAchievements();
             drawer.classList.add('open');
             overlay.classList.add('active');
+            
+            let user = db.users.find(u => u.login === currentUser);
+            if (user && user.achievements) {
+                let count = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "").length;
+                localStorage.setItem('skillhub_ach_count_' + currentUser, count);
+                document.getElementById('achRedDot').style.display = 'none';
+            }
         }
     }
 
@@ -885,6 +896,7 @@
         }
 
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
+        checkNewAchievements(achCodes);
         
         if (achCodes.length === 0) {
             achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород.</div>';
@@ -899,7 +911,6 @@
             displayName = displayName.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
             let safeCode = escapeHTMLAttr(code);
 
-            // 💡 ДОДАНО ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА ПО КЛІКУ
             html += `
             <div class="ach-card" onclick="openAchievementModal('${safeCode}')">
                 <div class="ach-icon-wrapper">
@@ -915,13 +926,13 @@
         achListEl.innerHTML = html;
     }
 
-    // 💡 ФУНКЦІЇ ДЛЯ МОДАЛЬНОГО ВІКНА АЧІВОК
+    // 💡 ВІДКРИТТЯ МОДАЛЬНОГО ВІКНА З ОПИСОМ АЧІВКИ
     function openAchievementModal(code) {
         let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === String(code)) : null;
-        if (!achInfo) return; // Не відкриваємо, якщо немає інформації
-
-        let displayName = achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '');
-        let desc = achInfo.description || "Опис нагороди відсутній. Продовжуй в тому ж дусі!";
+        
+        // Відображаємо вікно навіть якщо немає опису, щоб стажер хоч щось бачив
+        let displayName = achInfo ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Нагорода #${code}`;
+        let desc = (achInfo && achInfo.description) ? achInfo.description : "Опис нагороди відсутній. Продовжуй в тому ж дусі!";
         let safeCode = escapeHTMLAttr(code);
         
         let modal = document.getElementById('achModal');
@@ -930,7 +941,7 @@
         modal.innerHTML = `
             <img src="Achievement/${safeCode}.svg" class="ach-modal-icon" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
             <div class="ach-modal-title">${displayName}</div>
-            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 16px; letter-spacing: 0.5px;">КОД НАГОРОДИ: ${code}</div>
+            <div style="font-size: 12px; font-weight: 700; color: var(--primary); margin-bottom: 16px; letter-spacing: 0.5px;">КОД НАГОРОДИ: ${safeCode}</div>
             <div class="ach-modal-desc">${desc}</div>
             <button class="btn btn-glow" onclick="closeAchievementModal()">КРУТО!</button>
         `;
@@ -945,6 +956,48 @@
     }
 
     // ==========================================
+    // СТАТИСТИКА (МОДАЛЬНЕ ВІКНО ПРОЙДЕНО)
+    // ==========================================
+    function openStatsModal() {
+        let user = db.users.find(u => u.login === currentUser);
+        if (!user) return;
+        
+        let userResults = user.results || {};
+        let html = '';
+
+        Object.values(coursesMap).flat().forEach(p => {
+            let cleanP = getCleanName(p.product);
+            let resStr = userResults[cleanP];
+            if (resStr) {
+                let score = parseInt(resStr.split('/')[1]) || 0;
+                let attempts = parseInt(resStr.split('/')[0]) || 0;
+                
+                if (score >= 80) {
+                    let parsed = formatWithCustomEmoji(p.product, '📄');
+                    html += `
+                    <div style="display:flex; justify-content:space-between; align-items:center; padding: 12px 0; border-bottom: 1px solid var(--border);">
+                        <div style="font-size: 13px; font-weight: 600; color: var(--text-main); text-align: left; flex:1;">${parsed.title}</div>
+                        <div style="font-size: 12px; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 4px 8px; border-radius: 6px; flex-shrink:0;">Спроб: ${attempts} | ${score}%</div>
+                    </div>`;
+                }
+            }
+        });
+
+        if (html === '') {
+            html = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">У вас поки немає пройдених курсів.</div>';
+        }
+
+        document.getElementById('statsModalContent').innerHTML = html;
+        document.getElementById('statsModalOverlay').classList.add('active');
+        document.getElementById('statsModal').classList.add('active');
+    }
+
+    function closeStatsModal() {
+        document.getElementById('statsModalOverlay').classList.remove('active');
+        document.getElementById('statsModal').classList.remove('active');
+    }
+
+    // ==========================================
     // ПРОГРЕС І ТЕСТИ
     // ==========================================
     function renderCourses(user) {
@@ -952,6 +1005,10 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
         
+        if (user.achievements) {
+            checkNewAchievements(String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== ""));
+        }
+
         if (courseNames.length === 0) {
             document.getElementById('globalStatsContainer').innerHTML = '';
             list.innerHTML = '<div style="text-align:center; color: var(--text-muted); padding: 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
@@ -992,11 +1049,11 @@
 
         document.getElementById('globalStatsContainer').innerHTML = `
             <div class="stats-dashboard">
-                <div class="stat-item">
+                <div class="stat-item" onclick="openStatsModal()">
                     <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
                     <div class="stat-label">Пройдено</div>
                 </div>
-                <div class="stat-item">
+                <div class="stat-item" style="cursor: default;">
                     <div class="stat-val">${avgScore}%</div>
                     <div class="stat-label">Сер. бал</div>
                 </div>
@@ -1392,17 +1449,16 @@
         } else {
             let html = `<p class="subtitle" style="text-align:left;">Оберіть сервіс для тренування:</p>`;
             
+            let user = db.users.find(u => u.login === currentUser);
+            let assignedClean = user.assigned.map(getCleanName);
             let addedProducts = new Set();
-            let simData = db.simulatorData || [];
             
-            simData.forEach(s => {
-                if (!s.service) return; 
-                
-                let cleanP = getCleanName(s.service);
-                if (!addedProducts.has(cleanP)) {
+            db.courses.forEach(c => {
+                let cleanP = getCleanName(c.product);
+                if (assignedClean.includes(cleanP) && !addedProducts.has(cleanP)) {
                     addedProducts.add(cleanP);
-                    let parsed = formatWithCustomEmoji(s.service, '💬');
-                    let safeProd = escapeHTMLAttr(s.service); 
+                    let parsed = formatWithCustomEmoji(c.product, '📘');
+                    let safeProd = escapeHTMLAttr(c.product); 
                     html += `
                     <div class="list-card" onclick="simCurrentProduct=this.getAttribute('data-prod'); showSimPresentations();" data-prod="${safeProd}">
                         <div class="list-card-title">
@@ -1415,7 +1471,7 @@
             });
             
             if (addedProducts.size === 0) {
-                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У базі немає доступних сервісів для тренажера.</div>`;
+                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас немає доступних сервісів для тренажера.</div>`;
             }
             
             document.getElementById('simSetupContent').innerHTML = html;
@@ -1471,6 +1527,7 @@
         simCurrentPres = selectedPres || "Презентація відсутня.";
         let cleanCurr = getCleanName(simCurrentProduct);
         let simData = db.simulatorData || [];
+        
         let simRowsForService = simData.filter(s => s.service && getCleanName(s.service) === cleanCurr);
         
         let uniqueObjs = [...new Set(simRowsForService.map(s => s.objection))];
