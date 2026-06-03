@@ -459,6 +459,7 @@
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
+    let globalAchievements = []; // ПЕРЕХОПЛЮЄМО МАСИВ АЧІВОК
     let currentUser = null;
     let coursesMap = {}; 
     let currentCourseName = "";
@@ -520,7 +521,6 @@
         }
     }
 
-    // Допоміжна функція для правильного відмінювання "спроб"
     function getAttemptWord(count) {
         let n = parseInt(count) || 0;
         if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
@@ -687,7 +687,10 @@
             const data = await response.json();
             if (!data.error) {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                
+                // ЗБЕРІГАЄМО АЧІВКИ В ГЛОБАЛЬНУ ЗМІННУ
                 db = data.educationData;
+                globalAchievements = data.achievementData || [];
 
                 if (currentUser) {
                     let user = db.users.find(u => u.login === currentUser);
@@ -722,7 +725,10 @@
             if (cachedData) {
                 let parsedDb = JSON.parse(cachedData);
                 if (parsedDb && parsedDb.educationData) {
+                    
+                    // ЗБЕРІГАЄМО АЧІВКИ З КЕШУ В ГЛОБАЛЬНУ ЗМІННУ
                     db = parsedDb.educationData;
+                    globalAchievements = parsedDb.achievementData || [];
                 }
             }
 
@@ -887,9 +893,6 @@
         switchView('loginView');
     }
 
-    // ==========================================
-    // ЛОГІКА АЧІВОК ТА МОДАЛОК
-    // ==========================================
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
@@ -941,7 +944,8 @@
 
         let html = '';
         achCodes.forEach(code => {
-            let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === code) : null;
+            // ШУКАЄМО АЧІВКУ В ГЛОБАЛЬНОМУ МАСИВІ
+            let achInfo = globalAchievements.find(a => String(a.code).trim() === code);
             
             let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
             let desc = (achInfo && achInfo.description) ? achInfo.description : "";
@@ -963,10 +967,11 @@
     }
 
     function openAchievementModal(code) {
-        let achInfo = db.achievementData ? db.achievementData.find(a => String(a.code).trim() === String(code)) : null;
+        // ШУКАЄМО АЧІВКУ В ГЛОБАЛЬНОМУ МАСИВІ
+        let achInfo = globalAchievements.find(a => String(a.code).trim() === String(code));
         if (!achInfo) return; 
 
-        let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
+        let displayName = achInfo.name ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
         let desc = achInfo.description || "";
         let safeCode = escapeHTMLAttr(code);
 
@@ -1005,9 +1010,6 @@
         document.getElementById('genericModal').classList.remove('active');
     }
 
-    // ==========================================
-    // ПРОГРЕС І ТЕСТИ
-    // ==========================================
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
