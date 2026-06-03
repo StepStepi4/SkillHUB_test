@@ -180,7 +180,7 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
 
-        /* АЧІВКИ - ШТОРКА ТА ЗУМ */
+        /* АЧІВКИ - ШТОРКА ТА ВІЗУАЛЬНИЙ ЗУМ */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
@@ -196,35 +196,61 @@
 
         .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
 
-        /* Картка ачівки (підготовлена для локального зуму) */
+        /* Картка ачівки (нативний зум без transform: scale для уникнення зрізів) */
         .ach-card {
             background: var(--card-bg); border: 1px solid rgba(0,0,0,0.05); border-radius: 16px;
             padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer;
             box-shadow: 0 4px 12px rgba(0,0,0,0.03); 
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            position: relative; /* Важливо для z-index */
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative; 
             z-index: 1;
-            transform-origin: center;
         }
         .ach-card:active:not(.zoomed) { transform: scale(0.95); background: var(--input-bg); } 
 
-        /* Клас, що застосовується при кліку (збільшення на місці) */
         .ach-card.zoomed {
-            transform: scale(1.1);
-            z-index: 10;
-            box-shadow: 0 16px 32px rgba(0,0,0,0.15);
+            padding: 24px 20px;
+            margin: 8px -16px 20px -16px; /* Картка "розбухає" і займає більше місця в ширину та висоту */
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             border-color: var(--primary-light);
             background: #ffffff;
+            gap: 20px;
+            z-index: 10;
         }
 
         .ach-icon-wrapper {
-            width: 90px; height: 90px; flex-shrink: 0; background: var(--input-bg);
+            width: 72px; height: 72px; flex-shrink: 0; background: var(--input-bg);
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); padding: 12px; border: 1px solid var(--border);
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ach-card.zoomed .ach-icon-wrapper {
+            width: 110px; height: 110px; /* Збільшення іконки майже в 2 рази */
+            padding: 14px;
         }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
 
-        /* Універсальне модальне вікно (тепер тільки для "Пройдені курси") */
+        .ach-card-title {
+            font-size: 16px; font-weight: 800; color: var(--text-main); line-height: 1.3;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ach-card.zoomed .ach-card-title {
+            font-size: 20px; /* Збільшення тексту назви */
+        }
+
+        /* Прихований зелений опис */
+        .ach-card-desc {
+            font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4;
+            max-height: 0; opacity: 0; overflow: hidden; margin-top: 0;
+            transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        .ach-card.zoomed .ach-card-desc {
+            max-height: 200px; /* З'являється лише при зумі */
+            opacity: 1; 
+            margin-top: 8px;
+        }
+
+        /* Модальне вікно для "Пройдені курси" */
         .ach-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: var(--card-bg); z-index: 10002; width: 90%; max-width: 360px;
@@ -471,7 +497,7 @@
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
-    let globalAchievements = []; // ПЕРЕХОПЛЮЄМО МАСИВ АЧІВОК З БАЗИ
+    let globalAchievements = []; 
     let currentUser = null;
     let coursesMap = {}; 
     let currentCourseName = "";
@@ -700,7 +726,7 @@
             if (!data.error) {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 db = data.educationData;
-                globalAchievements = data.achievementData || []; // Зберігаємо масив ачівок
+                globalAchievements = data.achievementData || []; 
 
                 if (currentUser) {
                     let user = db.users.find(u => u.login === currentUser);
@@ -736,7 +762,7 @@
                 let parsedDb = JSON.parse(cachedData);
                 if (parsedDb && parsedDb.educationData) {
                     db = parsedDb.educationData;
-                    globalAchievements = parsedDb.achievementData || []; // Зберігаємо з кешу
+                    globalAchievements = parsedDb.achievementData || []; 
                 }
             }
 
@@ -920,13 +946,13 @@
         if (drawer.classList.contains('open')) {
             drawer.classList.remove('open');
             overlay.classList.remove('active');
-            document.body.style.overflow = ''; // Відновлюємо скрол фону
+            document.body.style.overflow = ''; 
 
             // Знімаємо зум з усіх карток при закритті шторки
             document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
-            document.body.style.overflow = 'hidden'; // Блокуємо скрол фону
+            document.body.style.overflow = 'hidden'; 
 
             let user = db.users.find(u => u.login === currentUser);
             if(user && user.achievements) {
@@ -984,15 +1010,15 @@
             let desc = (achInfo && achInfo.description) ? achInfo.description : "";
             let safeCode = escapeHTMLAttr(code);
 
-            // Використовуємо локальний зум замість виклику модалки по центру
+            // Опис в ach-card-desc за замовчуванням прихований і з'являється лише при зумі
             html += `
             <div class="ach-card" onclick="toggleAchZoom(this)">
                 <div class="ach-icon-wrapper">
                     <img src="Achievement/${safeCode}.svg" class="ach-icon" alt="${displayName}" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
-                    <div style="font-size: 16px; font-weight: 800; color: var(--text-main); line-height: 1.3; margin-bottom: 4px;">${displayName}</div>
-                    <div style="font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4;">${desc}</div>
+                    <div class="ach-card-title">${displayName}</div>
+                    <div class="ach-card-desc">${desc}</div>
                 </div>
             </div>`;
         });
@@ -1007,12 +1033,12 @@
         modal.innerHTML = `
             <div class="ach-modal-title" style="margin-bottom: 16px;">Пройдені курси</div>
             <div style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 16px; padding-right: 4px;">
-                ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курсів.</div>'}
+                ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курси.</div>'}
             </div>
             <button class="btn btn-glow" style="width: 100%;" onclick="closeModals()">ЗАКРИТИ</button>
         `;
 
-        document.body.style.overflow = 'hidden'; // Блокуємо скрол фону
+        document.body.style.overflow = 'hidden'; 
         overlay.classList.add('active');
         modal.classList.add('active');
     }
@@ -1020,7 +1046,7 @@
     function closeModals() {
         document.getElementById('genericModalOverlay').classList.remove('active');
         document.getElementById('genericModal').classList.remove('active');
-        document.body.style.overflow = ''; // Відновлюємо скрол фону
+        document.body.style.overflow = ''; 
     }
 
     function renderCourses(user) {
