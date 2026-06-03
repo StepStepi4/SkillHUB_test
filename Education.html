@@ -40,7 +40,8 @@
             position: relative;
         }
 
-        .view { display: none; animation: fadeIn 0.3s ease; }
+        /* Додано will-change для плавності */
+        .view { display: none; animation: fadeIn 0.3s ease; will-change: opacity, transform; }
         .view.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
@@ -49,7 +50,7 @@
             background: var(--bg); display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999;
         }
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
+        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; will-change: transform; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
 
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
@@ -79,7 +80,7 @@
         .btn-glow:disabled { background: var(--text-muted); box-shadow: none; cursor: not-allowed; opacity: 0.7;}
 
         .stats-dashboard { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 12px; }
-        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; }
+        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 10px; text-align: center; cursor: pointer; transition: 0.2s; will-change: transform;}
         .stat-item:active { transform: scale(0.95); }
         .stat-val { font-size: 20px; font-weight: 900; color: var(--primary); line-height: 1; margin-bottom: 4px; }
         .stat-label { font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -98,7 +99,7 @@
             position: absolute; top: 0; left: 0; bottom: 0;
             background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
             transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); z-index: 2; border-radius: 16px;
-            overflow: hidden;
+            overflow: hidden; will-change: width;
         }
         .modern-progress-text-inner {
             position: absolute; top: 0; left: 0; height: 100%;
@@ -110,6 +111,7 @@
             background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border);
             margin-bottom: 12px; padding: 16px; cursor: pointer; transition: 0.2s;
             display: flex; align-items: center; justify-content: space-between;
+            will-change: transform;
         }
         .list-card:active { transform: scale(0.98); background: var(--input-bg); }
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
@@ -170,6 +172,7 @@
             display: flex; align-items: center; justify-content: center;
             box-shadow: 0 6px 16px rgba(0,0,0,0.15); z-index: 9000;
             cursor: pointer; transition: 0.2s; color: var(--text-main); font-size: 28px;
+            will-change: transform;
         }
         .floating-exit:active { transform: scale(0.9); background: var(--input-bg); }
 
@@ -180,10 +183,10 @@
         }
         #deadlineText { font-size: 14px; font-weight: 700; color: var(--danger); }
 
-        /* АЧІВКИ - ШТОРКА ТА ВІЗУАЛЬНИЙ ЗУМ */
         .drawer-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
+            will-change: opacity;
         }
         .drawer-overlay.active { display: block; opacity: 1; }
 
@@ -191,12 +194,12 @@
             position: fixed; top: 0; right: -100%; width: 340px; height: 100%;
             background: var(--bg); z-index: 10001; transition: right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: -4px 0 24px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px;
+            will-change: right;
         }
         .ach-drawer.open { right: 0; }
 
         .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
 
-        /* Картка ачівки (нативний зум без transform: scale для уникнення зрізів) */
         .ach-card {
             background: var(--card-bg); border: 1px solid rgba(0,0,0,0.05); border-radius: 16px;
             padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer;
@@ -204,12 +207,13 @@
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
             position: relative; 
             z-index: 1;
+            will-change: transform, padding, margin, border-radius;
         }
         .ach-card:active:not(.zoomed) { transform: scale(0.95); background: var(--input-bg); } 
 
         .ach-card.zoomed {
             padding: 24px 20px;
-            margin: 8px -16px 20px -16px; /* Картка "розбухає" і займає більше місця в ширину та висоту */
+            margin: 8px -16px 20px -16px;
             border-radius: 20px;
             box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             border-color: var(--primary-light);
@@ -223,9 +227,10 @@
             border-radius: 50%; display: flex; align-items: center; justify-content: center;
             box-shadow: inset 0 2px 6px rgba(0,0,0,0.06); padding: 12px; border: 1px solid var(--border);
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+            will-change: width, height, padding;
         }
         .ach-card.zoomed .ach-icon-wrapper {
-            width: 110px; height: 110px; /* Збільшення іконки майже в 2 рази */
+            width: 110px; height: 110px;
             padding: 14px;
         }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
@@ -234,23 +239,17 @@
             font-size: 16px; font-weight: 800; color: var(--text-main); line-height: 1.3;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        .ach-card.zoomed .ach-card-title {
-            font-size: 20px; /* Збільшення тексту назви */
-        }
+        .ach-card.zoomed .ach-card-title { font-size: 20px; }
 
-        /* Прихований зелений опис */
         .ach-card-desc {
             font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4;
             max-height: 0; opacity: 0; overflow: hidden; margin-top: 0;
             transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
         .ach-card.zoomed .ach-card-desc {
-            max-height: 200px; /* З'являється лише при зумі */
-            opacity: 1; 
-            margin-top: 8px;
+            max-height: 200px; opacity: 1; margin-top: 8px;
         }
 
-        /* Модальне вікно для "Пройдені курси" */
         .ach-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.8);
             background: var(--card-bg); z-index: 10002; width: 90%; max-width: 360px;
@@ -259,6 +258,7 @@
             box-shadow: 0 20px 40px rgba(0,0,0,0.25);
             max-height: 85vh;
             display: flex; flex-direction: column; 
+            will-change: transform, opacity;
         }
         .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         
@@ -269,28 +269,6 @@
             background-color: var(--danger); border-radius: 50%; border: 2px solid #fff;
             display: none;
         }
-
-        /* ІНТЕРФЕЙС ТРЕНАЖЕРА */
-        .chat-container {
-            display: flex; flex-direction: column; height: calc(100vh - 120px);
-            background: #eef2f5; border-radius: 16px; border: 1px solid var(--border); overflow: hidden;
-            margin-top: -10px;
-        }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
-        .chat-msg { display: flex; align-items: flex-end; gap: 8px; max-width: 85%; animation: popIn 0.3s ease forwards; opacity: 0;}
-        .chat-msg.consultant { align-self: flex-end; flex-direction: row-reverse; }
-        .chat-msg.client { align-self: flex-start; }
-        .chat-avatar { width: 32px; height: 32px; border-radius: 50%; background: #fff; object-fit: cover; border: 1px solid var(--border); flex-shrink: 0;}
-        .chat-bubble { padding: 12px 16px; border-radius: 16px; font-size: 14px; line-height: 1.4; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .consultant .chat-bubble { background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%); color: white; border-bottom-right-radius: 4px; }
-        .client .chat-bubble { background: white; color: var(--text-main); border-bottom-left-radius: 4px; border: 1px solid var(--border); }
-        .chat-choices { padding: 12px; background: white; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; max-height: 45%; overflow-y: auto;}
-        .chat-btn { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-size: 13px; font-weight: 600; text-align: left; cursor: pointer; transition: 0.2s; color: var(--text-main); }
-        .chat-btn:active { transform: scale(0.98); background: var(--border); }
-        .typing { font-size: 12px; color: var(--text-muted); font-style: italic; margin-left: 40px; animation: blink 1.5s infinite; }
-
-        @keyframes blink { 0%, 100% { opacity: 0.4; } 50% { opacity: 1; } }
-        @keyframes popIn { 0% { opacity: 0; transform: translateY(10px) scale(0.95); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
     </style>
 </head>
 <body>
@@ -385,18 +363,6 @@
 
         <div class="section-title">План на період</div>
         <div id="courseList"></div>
-
-        <div class="section-title" style="margin-top: 32px;">Додаткова практика</div>
-        <div class="list-card" style="background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 100%); border-color: #7dd3fc;" onclick="openSimulatorSetup(null)">
-            <div class="list-card-title" style="flex: 1;">
-                <div class="list-card-icon" style="font-size: 28px;">💬</div>
-                <div style="display: flex; flex-direction: column;">
-                    <span style="font-size: 16px; font-weight: 800; color: #0369a1;">Тренажер заперечень</span>
-                    <span style="font-size: 12px; font-weight: 600; color: #0284c7;">Інтерактивний чат-симулятор</span>
-                </div>
-            </div>
-            <div style="color: #0369a1; font-weight: bold; font-size: 18px;">❯</div>
-        </div>
     </div>
 
     <div id="productView" class="view">
@@ -431,10 +397,6 @@
         </div>
         <div id="theoryContent" class="theory-box"></div>
 
-        <button class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); margin-bottom: 12px;" onclick="openSimulatorFromTheory()">
-            💬 Практика: Тренажер
-        </button>
-
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
@@ -459,37 +421,6 @@
         <div id="resultActionContainer"></div>
     </div>
 
-    <div id="simSetupView" class="view">
-        <div class="nav-header" style="justify-content: space-between; padding: 0; background: transparent; border: none; box-shadow: none; margin-bottom: 20px;">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0369a1 50%, #38bdf8 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
-                    <h2 id="simSetupTitle">Налаштування тренажера</h2>
-                </div>
-            </div>
-        </div>
-        <div id="simSetupContent"></div>
-    </div>
-
-    <div id="simChatView" class="view">
-        <div class="nav-header" style="justify-content: space-between; margin-bottom: 12px;">
-            <div class="nav-header-left">
-                <span style="font-size: 22px;">💬</span>
-                <h2 style="margin:0; font-size: 18px; font-weight: 700;">Діалог з клієнтом</h2>
-            </div>
-            <button class="back-btn-sleek" onclick="openSimulatorSetup(null)" title="Вибрати інший сервіс" style="width:36px; height:36px; border:none; background:transparent;">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
-                    <path d="M3 3v5h5"></path>
-                </svg>
-            </button>
-        </div>
-        <div class="chat-container">
-            <div class="chat-messages" id="simChatMessages"></div>
-            <div class="chat-choices" id="simChatChoices"></div>
-        </div>
-    </div>
-
 </div>
 
 <script>
@@ -508,14 +439,8 @@
     let testTimerInterval;
     let timeRemaining = 0;
     let deadlineInterval;
+    let sessionCheckInterval;
     window.isDeadlinePassed = false;
-
-    let simPreviousView = 'courseView'; 
-    let simCurrentProduct = null;
-    let simCurrentPres = null;
-    let simCurrentObj = null;
-    let simFilteredRows = [];
-    let simStepIndex = 0;
 
     function getCleanName(str) {
         if (!str) return "";
@@ -576,24 +501,23 @@
             switchView('productView');
         } else if (activeView === 'resultView') {
             openCourse(currentCourseName);
-        } else if (activeView === 'simSetupView') {
-            switchView(simPreviousView);
-        } else if (activeView === 'simChatView') {
-            openSimulatorSetup(simCurrentProduct); 
         }
     }
 
     function switchView(viewId) {
-        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-        document.getElementById(viewId).classList.add('active');
-        window.scrollTo(0, 0);
+        // Оптимізовано для плавності відмальовування
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            window.scrollTo(0, 0);
 
-        const exitBtn = document.getElementById('floatingExitBtn');
-        if (viewId === 'testView' || viewId === 'loginView') {
-            exitBtn.style.display = 'none';
-        } else {
-            exitBtn.style.display = 'flex';
-        }
+            const exitBtn = document.getElementById('floatingExitBtn');
+            if (viewId === 'testView' || viewId === 'loginView') {
+                exitBtn.style.display = 'none';
+            } else {
+                exitBtn.style.display = 'flex';
+            }
+        });
     }
 
     function saveOfflineResult(login, product, score) {
@@ -731,6 +655,7 @@
                 if (currentUser) {
                     let user = db.users.find(u => u.login === currentUser);
                     if (user) {
+                        // Перевірка сесії (Захист від подвійного входу)
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
                             if (myToken && db.activeSessions[currentUser] !== myToken) {
@@ -740,6 +665,8 @@
                         }
 
                         buildCoursesMap(user);
+                        
+                        // Оновлюємо UI залежно від відкритого вікна
                         if (document.getElementById('courseView').classList.contains('active')) {
                             renderCourses(user);
                             startDeadlineTimer();
@@ -749,10 +676,23 @@
                         } else if (document.getElementById('achDrawer').classList.contains('open')) {
                             renderAchievements(); 
                         }
+                    } else {
+                        // Користувача видалили з бази
+                        logout();
                     }
                 }
             }
         } catch(e) {}
+    }
+
+    // Запуск перевірки сесії кожні 30 секунд у фоні
+    function startSessionMonitor() {
+        clearInterval(sessionCheckInterval);
+        sessionCheckInterval = setInterval(() => {
+            if (currentUser && navigator.onLine) {
+                fetchFreshDataSilent();
+            }
+        }, 30000);
     }
 
     window.onload = async () => {
@@ -771,46 +711,37 @@
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
             let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
 
-            let needFreshDb = false;
-
-            if (!db || !db.users || db.users.length === 0 || !db.courses || db.courses.length === 0) {
-                needFreshDb = true;
-            } else if (parsedCreds) {
-                let userExists = db.users.find(u => u.login === parsedCreds.login && u.pass === parsedCreds.pass);
-                if (!userExists) {
-                    needFreshDb = true;
-                }
-            }
-
-            if (needFreshDb) {
-                if (!navigator.onLine) {
-                    if (!db) {
-                        document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Немає інтернету і кешу. Відкрийте з підключенням.</span>`;
-                        return;
-                    }
-                } else {
-                    document.getElementById('loaderText').innerText = "Оновлення даних...";
-                    document.getElementById('loader').style.display = 'flex';
-                    await fetchFreshDataSilent();
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('loaderText').innerText = "Синхронізація з базою...";
-                }
-            } else {
-                fetchFreshDataSilent();
-            }
-
-            if (parsedCreds) {
+            // Якщо є збережені дані, намагаємось відразу залогінитись
+            if (parsedCreds && parsedCreds.login && parsedCreds.pass) {
                 document.getElementById('loginInput').value = parsedCreds.login;
                 document.getElementById('passInput').value = parsedCreds.pass;
                 document.getElementById('rememberMe').checked = true;
-                handleLogin(true); 
+                
+                // Якщо є локальна база, входимо миттєво
+                if (db && db.users && db.users.length > 0) {
+                    handleLogin(true);
+                    fetchFreshDataSilent(); // Оновлюємо дані у фоні
+                } else {
+                    // Якщо бази немає, чекаємо завантаження
+                    document.getElementById('loader').style.display = 'flex';
+                    await fetchFreshDataSilent();
+                    document.getElementById('loader').style.display = 'none';
+                    handleLogin(true);
+                }
             } else {
+                // Якщо даних для входу немає, завантажуємо базу (якщо порожня) і показуємо логін
+                if (!db || !db.users || db.users.length === 0) {
+                    if (navigator.onLine) {
+                        document.getElementById('loader').style.display = 'flex';
+                        await fetchFreshDataSilent();
+                        document.getElementById('loader').style.display = 'none';
+                    }
+                }
                 switchView('loginView');
             }
-
         } catch (e) {
             document.querySelector('.spinner').style.display = 'none';
-            document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Помилка завантаження: ${e.message}</span>`;
+            document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Помилка: ${e.message}</span>`;
         }
     };
 
@@ -839,21 +770,29 @@
         const p = document.getElementById('passInput').value.trim();
         const err = document.getElementById('errorMsg');
 
-        if (!l || !p) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; return; }
+        if (!l || !p) { 
+            if(!isAuto) {
+                err.innerText = "Введіть логін та пароль"; 
+                err.style.display = 'block'; 
+            }
+            return; 
+        }
 
-        const user = db.users && db.users.find(u => u.login === l && u.pass === p);
+        const user = db && db.users && db.users.find(u => u.login === l && u.pass === p);
 
         if (user) {
             currentUser = user.login;
             err.style.display = 'none';
 
+            // Генерація токена сесії
             let myToken = localStorage.getItem('skillhub_session_token');
             if (!myToken) {
                 myToken = Date.now().toString() + Math.random().toString(36).substr(2);
                 localStorage.setItem('skillhub_session_token', myToken);
             }
 
-            if (!isAuto && navigator.onLine) {
+            // Відправка токена на сервер
+            if (navigator.onLine) {
                 try {
                     fetch(API_URL, {
                         method: 'POST',
@@ -861,7 +800,10 @@
                         body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken })
                     });
                 } catch(e) {}
-            } else if (isAuto && db.activeSessions && db.activeSessions[currentUser]) {
+            } 
+            
+            // Якщо це автовхід, перевіряємо, чи ми не вибили самі себе з іншого пристрою
+            if (isAuto && db.activeSessions && db.activeSessions[currentUser]) {
                 if (db.activeSessions[currentUser] !== myToken) {
                     logout(true);
                     return;
@@ -874,6 +816,7 @@
 
             document.getElementById('userWelcome').innerHTML = `Вітаю, ${firstName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
 
+            // Збереження даних для автовходу
             if (document.getElementById('rememberMe').checked) {
                 localStorage.setItem('skillhub_edu_creds', JSON.stringify({login: l, pass: p}));
             } else {
@@ -884,6 +827,7 @@
             renderCourses(user);
             startDeadlineTimer();
             checkNewAchievements(user);
+            startSessionMonitor(); // Запускаємо перевірку сесії
 
             if (!isAuto) {
                 document.getElementById('loader').style.display = 'flex';
@@ -906,9 +850,10 @@
 
     function logout(forced = false) {
         if (forced) {
-            alert("Ваш акаунт було відкрито на іншому пристрої. Виконано вихід.");
+            alert("Ваш акаунт було відкрито на іншому пристрої. Виконано вихід для захисту даних.");
         } else if (currentUser && navigator.onLine) {
             try {
+                // Видаляємо токен на сервері при свідомому виході
                 fetch(API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
@@ -918,12 +863,16 @@
         }
 
         clearInterval(deadlineInterval);
+        clearInterval(sessionCheckInterval);
         currentUser = null;
         coursesMap = {}; 
         document.getElementById('loginInput').value = '';
         document.getElementById('passInput').value = '';
+        
+        // Видаляємо збережені дані
         localStorage.removeItem('skillhub_edu_creds');
         localStorage.removeItem('skillhub_session_token');
+        
         switchView('loginView');
     }
 
@@ -948,7 +897,6 @@
             overlay.classList.remove('active');
             document.body.style.overflow = ''; 
 
-            // Знімаємо зум з усіх карток при закритті шторки
             document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
@@ -966,20 +914,16 @@
         }
     }
 
-    // ЛОКАЛЬНИЙ ЗУМ (ЗБІЛЬШЕННЯ) КАРТКИ
     function toggleAchZoom(element) {
         let isZoomed = element.classList.contains('zoomed');
         
-        // Закриваємо зум у всіх інших карток
         document.querySelectorAll('.ach-card.zoomed').forEach(card => {
             card.classList.remove('zoomed');
         });
 
-        // Якщо клікнута картка не була збільшена — збільшуємо її
         if (!isZoomed) {
             element.classList.add('zoomed');
             
-            // Легкий таймаут, щоб анімація почалась, а потім підскролюємо, щоб не ховалась за краї
             setTimeout(() => {
                 element.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
             }, 50);
@@ -1010,7 +954,6 @@
             let desc = (achInfo && achInfo.description) ? achInfo.description : "";
             let safeCode = escapeHTMLAttr(code);
 
-            // Опис в ach-card-desc за замовчуванням прихований і з'являється лише при зумі
             html += `
             <div class="ach-card" onclick="toggleAchZoom(this)">
                 <div class="ach-icon-wrapper">
@@ -1123,7 +1066,7 @@
             </div>
         `;
 
-        list.innerHTML = courseNames.map(name => {
+        let coursesHtml = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
             let safeName = escapeHTMLAttr(name);
 
@@ -1168,6 +1111,11 @@
             </div>
             `;
         }).join('');
+
+        // Використовуємо requestAnimationFrame для плавного рендеру масиву
+        requestAnimationFrame(() => {
+            list.innerHTML = coursesHtml;
+        });
     }
 
     function openCourse(name) {
@@ -1209,7 +1157,7 @@
             </div>
         `;
 
-        list.innerHTML = products.map((p, index) => {
+        let productsHtml = products.map((p, index) => {
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             let isCompleted = false;
@@ -1251,7 +1199,10 @@
             `;
         }).join('');
 
-        switchView('productView');
+        requestAnimationFrame(() => {
+            list.innerHTML = productsHtml;
+            switchView('productView');
+        });
     }
 
     function openProduct(index) {
@@ -1489,243 +1440,6 @@
             }
         } else {
             saveOfflineResult(currentUser, currentProductData.product, totalScore);
-        }
-    }
-
-    function openSimulatorSetup(preselectedProduct) {
-        simPreviousView = document.querySelector('.view.active').id;
-        simCurrentProduct = preselectedProduct;
-
-        if (preselectedProduct) {
-            showSimPresentations();
-        } else {
-            let html = `<p class="subtitle" style="text-align:left;">Оберіть сервіс для тренування:</p>`;
-
-            let addedProducts = new Set();
-            let simData = db.simulatorData || [];
-
-            simData.forEach(s => {
-                if (!s.service) return; 
-
-                let cleanP = getCleanName(s.service);
-                if (!addedProducts.has(cleanP)) {
-                    addedProducts.add(cleanP);
-                    let parsed = formatWithCustomEmoji(s.service, '💬');
-                    let safeProd = escapeHTMLAttr(s.service); 
-                    html += `
-                    <div class="list-card" onclick="simCurrentProduct=this.getAttribute('data-prod'); showSimPresentations();" data-prod="${safeProd}">
-                        <div class="list-card-title">
-                            <div class="list-card-icon">${parsed.icon}</div>
-                            <span>${parsed.title}</span>
-                        </div>
-                        <div class="list-card-arrow">❯</div>
-                    </div>`;
-                }
-            });
-
-            if (addedProducts.size === 0) {
-                html += `<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У базі немає доступних сервісів для тренажера.</div>`;
-            }
-
-            document.getElementById('simSetupContent').innerHTML = html;
-            switchView('simSetupView');
-        }
-    }
-
-    function openSimulatorFromTheory() {
-        simPreviousView = 'theoryView';
-        simCurrentProduct = currentProductData.product;
-        showSimPresentations();
-    }
-
-    function showSimPresentations() {
-        let cleanCurr = getCleanName(simCurrentProduct);
-        let simData = db.simulatorData || [];
-        let simRowsForService = simData.filter(s => s.service && getCleanName(s.service) === cleanCurr);
-
-        if (simRowsForService.length === 0) {
-            alert("Помилка: Для цього продукту немає налаштованих діалогів у базі тренажера.");
-            return;
-        }
-
-        let presSet = new Set();
-        simRowsForService.forEach(r => {
-            if (r.presentations && r.presentations.length > 0) {
-                r.presentations.forEach(p => presSet.add(p));
-            }
-        });
-        let presList = Array.from(presSet);
-
-        if (presList.length === 0) {
-            showSimObjections("");
-            return;
-        }
-
-        let html = `<p class="subtitle" style="text-align:left;">Як ви презентуєте сервіс?</p>`;
-
-        html += presList.map((p, i) => {
-            let safeP = escapeHTMLAttr(p);
-            return `
-            <div class="list-card" onclick="showSimObjections(this.getAttribute('data-pres'))" data-pres="${safeP}">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 500; color: var(--primary);">${safeP}</div>
-            </div>
-            `;
-        }).join('');
-
-        document.getElementById('simSetupContent').innerHTML = html;
-        switchView('simSetupView');
-    }
-
-    function showSimObjections(selectedPres) {
-        simCurrentPres = selectedPres || "Презентація відсутня.";
-        let cleanCurr = getCleanName(simCurrentProduct);
-        let simData = db.simulatorData || [];
-        let simRowsForService = simData.filter(s => s.service && getCleanName(s.service) === cleanCurr);
-
-        let uniqueObjs = [...new Set(simRowsForService.map(s => s.objection))];
-
-        if (uniqueObjs.length === 0) {
-            alert("Немає доступних заперечень у базі.");
-            return;
-        }
-
-        let html = `<p class="subtitle" style="text-align:left;">Що відповів клієнт?</p>`;
-        html += uniqueObjs.map(obj => {
-            let safeObjEscaped = escapeHTMLAttr(obj); 
-            return `
-            <div class="list-card" data-obj="${safeObjEscaped}" onclick="startSimChat(this.getAttribute('data-obj'))">
-                <div class="list-card-title" style="font-size: 14px; font-weight: 600;">"${safeObjEscaped}"</div>
-                <div class="list-card-arrow">❯</div>
-            </div>
-            `;
-        }).join('');
-
-        document.getElementById('simSetupContent').innerHTML = html;
-        if(document.querySelector('.view.active').id !== 'simSetupView') {
-            switchView('simSetupView');
-        }
-    }
-
-    function startSimChat(objectionText) {
-        simCurrentObj = objectionText;
-        let cleanCurr = getCleanName(simCurrentProduct);
-        let simData = db.simulatorData || [];
-
-        simFilteredRows = simData.filter(s => 
-            s.service && getCleanName(s.service) === cleanCurr && 
-            s.objection === objectionText
-        );
-        simStepIndex = 0;
-
-        document.getElementById('simChatMessages').innerHTML = '';
-        document.getElementById('simChatChoices').innerHTML = '';
-
-        switchView('simChatView');
-
-        addSimMessage(simCurrentPres, 'consultant');
-
-        setTimeout(() => {
-            showSimTyping();
-            setTimeout(() => {
-                removeSimTyping();
-                addSimMessage(simCurrentObj, 'client');
-                renderSimChoices();
-            }, 1000);
-        }, 500);
-    }
-
-    function restartSimChat() {
-        startSimChat(simCurrentObj);
-    }
-
-    function addSimMessage(text, sender) {
-        let avatarFile = sender === 'client' ? 'education/klient.svg' : 'education/rozetka.svg';
-        let fallback = sender === 'client' ? '👤' : '👨‍💻';
-        let chatBox = document.getElementById('simChatMessages');
-
-        let safeText = escapeHTMLAttr(text);
-
-        chatBox.innerHTML += `
-            <div class="chat-msg ${sender}">
-                <img src="${avatarFile}" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>${fallback}</div>'">
-                <div class="chat-bubble">${safeText}</div>
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function showSimTyping() {
-        let chatBox = document.getElementById('simChatMessages');
-        chatBox.innerHTML += `
-            <div class="chat-msg client" id="typingIndicator">
-                <img src="education/klient.svg" class="chat-avatar" onerror="this.outerHTML='<div class=\\'chat-avatar\\' style=\\'display:flex; justify-content:center; align-items:center; font-size:20px; background:var(--input-bg);\\'>👤</div>'">
-                <div class="chat-bubble" style="font-style:italic; color:var(--text-muted);">Друкyє...</div>
-            </div>
-        `;
-        chatBox.scrollTop = chatBox.scrollHeight;
-    }
-
-    function removeSimTyping() {
-        let ind = document.getElementById('typingIndicator');
-        if (ind) ind.remove();
-    }
-
-    function renderSimChoices() {
-        let optionsSet = new Set();
-        simFilteredRows.forEach(row => {
-            if (row.steps[simStepIndex] && row.steps[simStepIndex].consultant) {
-                optionsSet.add(row.steps[simStepIndex].consultant);
-            }
-        });
-
-        let options = Array.from(optionsSet);
-        let choicesBox = document.getElementById('simChatChoices');
-
-        if (options.length === 0) {
-            choicesBox.innerHTML = `
-                <div style="text-align:center; padding: 12px; font-weight:bold; color:var(--success);">✅ Діалог завершено!</div>
-                <button class="chat-btn" style="text-align: center; color: var(--primary); border-color: var(--primary);" onclick="restartSimChat()">🔄 Спробувати іншу відповідь</button>
-                <button class="chat-btn" style="text-align: center;" onclick="openSimulatorSetup(null)">🔙 Повернутися до налаштувань</button>
-            `;
-            return;
-        }
-
-        options = shuffleArray(options); 
-
-        let html = `<div style="font-size: 11px; text-transform: uppercase; font-weight: 700; color: var(--text-muted); margin-bottom: 4px; text-align: center;">Що відповісте?</div>`;
-        html += options.map(opt => {
-            let safeOptEscaped = escapeHTMLAttr(opt);
-            return `<button class="chat-btn" data-choice="${safeOptEscaped}" onclick="handleSimChoice(this.getAttribute('data-choice'))">${safeOptEscaped}</button>`;
-        }).join('');
-
-        choicesBox.innerHTML = html;
-        document.getElementById('simChatMessages').scrollTop = document.getElementById('simChatMessages').scrollHeight;
-    }
-
-    function handleSimChoice(choiceText) {
-        document.getElementById('simChatChoices').innerHTML = ''; 
-        addSimMessage(choiceText, 'consultant');
-
-        simFilteredRows = simFilteredRows.filter(row => row.steps[simStepIndex] && row.steps[simStepIndex].consultant === choiceText);
-
-        let clientReply = "";
-        if (simFilteredRows.length > 0 && simFilteredRows[0].steps[simStepIndex].client) {
-            clientReply = simFilteredRows[0].steps[simStepIndex].client;
-        }
-
-        simStepIndex++;
-
-        if (clientReply) {
-            setTimeout(() => {
-                showSimTyping();
-                setTimeout(() => {
-                    removeSimTyping();
-                    addSimMessage(clientReply, 'client');
-                    renderSimChoices();
-                }, 1000);
-            }, 500);
-        } else {
-            setTimeout(renderSimChoices, 500);
         }
     }
 </script>
