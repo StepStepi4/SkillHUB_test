@@ -196,7 +196,6 @@
         }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
         
-        /* Більше немає фонів чи зелених кружечків навколо емодзі! */
         .list-card-icon { font-size: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-right: 4px; }
         
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
@@ -473,7 +472,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxWAWFrs2I2bpifYyU998Bk8dnv2DqpEFT9_R2MfpPT4z8F8m4dIv7FWA-TVa-JkjeBPA/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyG-Qo7dK-KHI-iU_lN4s0B7P0f0TmP8l-L_IjOvWk4R_z5oMdf1FslWex5veS2c5_iqQ/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
@@ -573,10 +572,10 @@
         });
     }
 
-    function saveOfflineResult(login, product, score) {
+    function saveOfflineResult(login, product, score, time) {
         try {
             let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
-            queue.push({ action: 'save_score', login: login, product: product, score: score, timestamp: Date.now() });
+            queue.push({ action: 'save_score', login: login, product: product, score: score, time: time, timestamp: Date.now() });
             localStorage.setItem('skillhub_offline_queue', JSON.stringify(queue));
         } catch(e) {
             console.error(e);
@@ -1103,7 +1102,8 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                // ОНОВЛЕНИЙ РЕГЕКС: Підтримує парсинг часу в секундах
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                 let score = 0;
                 let attempts = 0;
                 if (match) {
@@ -1135,7 +1135,7 @@
             }
         });
 
-        // ПІДРАХУНОК ЦІЛЕЙ 
+        // ПІДРАХУНОК ЦІЛЕЙ (залишено в початковому вигляді)
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let execPctVal = parseFloat(String(user.execPct || "0").replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
@@ -1177,7 +1177,6 @@
             `;
         }
 
-        // ДОДАНО ОБЧИСЛЕННЯ СЕРЕДНЬОГО БАЛУ
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
 
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
@@ -1223,7 +1222,7 @@
                 let cleanP = getCleanName(p.product);
                 let resStr = userResults[cleanP];
                 if (resStr) {
-                    let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                    let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                     let score = 0;
                     if (scoreMatch) {
                         score = parseInt(scoreMatch[2], 10) || 0;
@@ -1272,7 +1271,7 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                 let score = 0;
                 if (match) {
                     score = parseInt(match[2], 10) || 0;
@@ -1304,7 +1303,7 @@
             let isCompleted = false;
 
             if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                 let score = 0;
                 if (match) {
                     score = parseInt(match[2], 10) || 0;
@@ -1489,6 +1488,11 @@
 
     async function submitTest() {
         clearInterval(testTimerInterval); 
+        
+        // Вираховуємо час, який пішов на тест
+        let maxTime = parsedQuestions.length * 30;
+        let timeSpent = maxTime - timeRemaining;
+
         let correctCount = 0;
 
         parsedQuestions.forEach((q, qIndex) => {
@@ -1515,14 +1519,16 @@
         let currentUserObj = db.users.find(u => u.login === currentUser);
         if (!currentUserObj.results) currentUserObj.results = {};
 
-        let oldRes = currentUserObj.results[cleanP] || "0/0%";
+        let oldRes = currentUserObj.results[cleanP] || "0/0%/0";
         let attempts = 0;
         let oldScore = 0;
+        let oldTime = 0;
 
-        let match = String(oldRes).match(/(\d+)\s*\/\s*(\d+)%/);
+        let match = String(oldRes).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
         if (match) {
             attempts = parseInt(match[1], 10) || 0;
             oldScore = parseInt(match[2], 10) || 0;
+            oldTime = parseInt(match[3], 10) || 0;
         } else {
             let scoreMatch = String(oldRes).match(/(\d+)%/);
             if (scoreMatch) {
@@ -1532,8 +1538,17 @@
         }
 
         attempts++;
+        
         let bestScore = Math.max(oldScore, totalScore);
-        currentUserObj.results[cleanP] = `${attempts}/${bestScore}%`;
+        let bestTime = oldTime;
+        
+        if (totalScore > oldScore) {
+            bestTime = timeSpent;
+        } else if (totalScore === oldScore && (timeSpent < oldTime || oldTime === 0)) {
+            bestTime = timeSpent;
+        }
+
+        currentUserObj.results[cleanP] = `${attempts}/${bestScore}%/${bestTime}`;
 
         let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
         fullCache.educationData = db;
@@ -1566,14 +1581,15 @@
                         action: 'save_score',
                         login: currentUser,
                         product: currentProductData.product, 
-                        score: totalScore
+                        score: totalScore,
+                        time: timeSpent // Передаємо час у GAS
                     })
-                }).catch(e => saveOfflineResult(currentUser, currentProductData.product, totalScore));
+                }).catch(e => saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent));
             } catch (e) {
-                saveOfflineResult(currentUser, currentProductData.product, totalScore);
+                saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
             }
         } else {
-            saveOfflineResult(currentUser, currentProductData.product, totalScore);
+            saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
         }
     }
 </script>
