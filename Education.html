@@ -473,7 +473,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxWAWFrs2I2bpifYyU998Bk8dnv2DqpEFT9_R2MfpPT4z8F8m4dIv7FWA-TVa-JkjeBPA/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
@@ -1176,6 +1176,9 @@
                 </div>
             `;
         }
+
+        // ДОДАНО ОБЧИСЛЕННЯ СЕРЕДНЬОГО БАЛУ
+        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
 
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
         let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
