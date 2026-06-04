@@ -134,6 +134,17 @@
         .back-btn-sleek:hover { background: var(--input-bg); }
         .back-btn-sleek:active { transform: scale(0.92); background: var(--border); }
 
+        /* Анімація пульсації для ачівок */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        .ach-btn.has-new {
+            animation: pulse-ring 2s infinite;
+            border-radius: 50%; /* Щоб пульсація була круглою */
+        }
+
         .floating-exit {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: auto; height: 48px;
             background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
@@ -148,6 +159,7 @@
         .progress-widget {
             background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 24px;
             border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(0,0,0,0.03);
+            transition: all 0.3s ease;
         }
         .progress-header {
             display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;
@@ -165,8 +177,13 @@
         }
 
         .stats-dashboard { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; text-align: center; cursor: pointer; transition: 0.2s; box-shadow: 0 4px 10px rgba(0,0,0,0.02);}
-        .stat-item:active { transform: scale(0.96); background: var(--input-bg);}
+        .stat-item { 
+            flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; 
+            padding: 14px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
+            display: flex; flex-direction: column; justify-content: center;
+        }
+        .stat-item.clickable { cursor: pointer; }
+        .stat-item.clickable:active { transform: scale(0.96); background: var(--input-bg);}
         .stat-val { font-size: 22px; font-weight: 900; color: var(--text-main); line-height: 1; margin-bottom: 6px; }
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
 
@@ -178,12 +195,10 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
-        .list-card-icon { font-size: 28px; flex-shrink: 0; width: 44px; height: 44px; background: var(--input-bg); border-radius: 12px; display: flex; align-items: center; justify-content: center;}
-        .list-card.completed .list-card-icon { background: var(--primary-light); }
+        .list-card-icon { font-size: 32px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; margin-right: 4px; }
         
-        .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 14px;}
+        .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
-        .list-card.completed { border-color: rgba(16, 185, 129, 0.4); }
 
         .theory-box { background: var(--card-bg); border-radius: 24px; border: 1px solid var(--border); margin-bottom: 24px; padding: 8px 0; box-shadow: 0 8px 24px rgba(0,0,0,0.04);}
         .theory-line { padding: 14px 20px; border-bottom: 1px solid var(--input-bg); }
@@ -257,11 +272,11 @@
         }
 
         .ach-icon-wrapper {
-            width: 64px; height: 64px; flex-shrink: 0; background: var(--input-bg);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            padding: 12px; border: 1px solid var(--border); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            width: 64px; height: 64px; flex-shrink: 0; background: transparent;
+            display: flex; align-items: center; justify-content: center;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .ach-card.zoomed .ach-icon-wrapper { width: 100px; height: 100px; padding: 16px; background: var(--primary-light); border-color: var(--primary);}
+        .ach-card.zoomed .ach-icon-wrapper { width: 100px; height: 100px; }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
 
         .ach-card-title { font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
@@ -285,7 +300,7 @@
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
 
         .notification-dot {
-            position: absolute; top: 6px; right: 6px; width: 12px; height: 12px;
+            position: absolute; top: 4px; right: 4px; width: 12px; height: 12px;
             background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg);
             display: none;
         }
@@ -319,6 +334,7 @@
 
 <div class="container">
 
+    <!-- ЛОГІН -->
     <div id="loginView" class="view">
         <div class="login-wrapper">
             <div class="login-card">
@@ -353,6 +369,7 @@
         </div>
     </div>
 
+    <!-- ГОЛОВНА: СПИСОК КУРСІВ ТА СТАТИСТИКА -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -364,8 +381,8 @@
             </div>
 
             <div class="nav-actions">
-                <button class="back-btn-sleek" onclick="toggleAchievements()" title="Мої досягнення">
-                    <img src="medal.svg" alt="Achievements" style="width: 24px; height: 24px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:20px;\\'>🏅</span>'">
+                <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Мої досягнення">
+                    <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary);">
@@ -389,12 +406,14 @@
             <span id="deadlineText"></span>
         </div>
 
+        <!-- ТУТ БУДЕ ДИНАМІЧНО ГЕНЕРУВАТИСЯ СТАТИСТИКА (ЦІЛІ ТА НАВЧАННЯ) -->
         <div id="globalStatsContainer"></div>
 
-        <div class="section-title">План на період</div>
+        <div class="section-title">Назначені курси</div>
         <div id="courseList"></div>
     </div>
 
+    <!-- ТОВАРИ В КУРСІ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -409,6 +428,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -430,6 +450,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ТЕСТ -->
     <div id="testView" class="view">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -443,6 +464,7 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
+    <!-- РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -456,7 +478,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzxi2azMw85zqCZGByy2u739g6W_4VdslHaPN9GU048G3EcFzLaqpls5yAIuysya0uIRw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
@@ -893,10 +915,14 @@
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
         let savedCount = parseInt(localStorage.getItem(`ach_count_${user.login}`)) || 0;
 
+        const achBtn = document.getElementById('achBtn');
+
         if (achCodes.length > savedCount) {
             document.getElementById('achNotificationDot').style.display = 'block';
+            if(achBtn) achBtn.classList.add('has-new');
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
+            if(achBtn) achBtn.classList.remove('has-new');
         }
     }
 
@@ -912,6 +938,9 @@
             document.querySelectorAll('.ach-card.zoomed').forEach(c => c.classList.remove('zoomed'));
         } else {
             document.getElementById('achNotificationDot').style.display = 'none';
+            const achBtn = document.getElementById('achBtn');
+            if(achBtn) achBtn.classList.remove('has-new');
+
             document.body.style.overflow = 'hidden'; 
 
             let user = db.users.find(u => u.login === currentUser);
@@ -1047,7 +1076,6 @@
                     totalCompleted++;
                     let attWord = getAttemptWord(attempts);
                     
-                    // БЕЗ ЕМОДЗІ ТА ЗЕЛЕНОГО ФОНУ, ЯК ПРОСИВ
                     savedCompletedListHtml += `
                         <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
                             <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
@@ -1060,7 +1088,7 @@
             }
         });
 
-        // ПІДРАХУНОК ЦІЛЕЙ (НОВЕ)
+        // ПІДРАХУНОК ЦІЛЕЙ 
         let tPcs = parseFloat(user.targetPcs) || 0;
         let tUah = parseFloat(user.targetUah) || 0;
         let dPcs = parseFloat(user.donePcs) || 0;
@@ -1075,33 +1103,51 @@
 
         let goalsHtml = "";
         if (tPcs > 0 || tUah > 0) {
+            let isGoalCompleted = execPct >= 100;
+            let execBg = isGoalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
+            let execBorder = isGoalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
+            let execColor = isGoalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
+
+            let statItems = "";
+            if (tPcs > 0) {
+                statItems += `
+                <div class="stat-item clickable">
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(dPcs)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tPcs)}</span></div>
+                    <div class="stat-label">Ціль (шт)</div>
+                </div>`;
+            }
+            if (tUah > 0) {
+                statItems += `
+                <div class="stat-item clickable">
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(dUah)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tUah)}</span></div>
+                    <div class="stat-label">Ціль (грн)</div>
+                </div>`;
+            }
+
+            statItems += `
+            <div class="stat-item" style="background: ${execBg}; border-color: ${execBorder};">
+                <div class="stat-val" style="font-size:20px; color: ${execColor};">${execPct}%</div>
+                <div class="stat-label" style="color: ${execColor};">Виконання</div>
+            </div>`;
+
             goalsHtml = `
                 <div class="section-title" style="margin-top: 0;">Виконання цілей</div>
                 <div class="stats-dashboard">
-                    <div class="stat-item">
-                        <div class="stat-val" style="font-size:18px;">${formatNumber(dPcs)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tPcs)}</span></div>
-                        <div class="stat-label">Ціль (шт)</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-val" style="font-size:18px;">${formatNumber(dUah)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tUah)}</span></div>
-                        <div class="stat-label">Ціль (грн)</div>
-                    </div>
-                    <div class="stat-item" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2);">
-                        <div class="stat-val" style="font-size:20px; color: var(--rozetka-green-dark);">${execPct}%</div>
-                        <div class="stat-label" style="color: var(--rozetka-green-dark);">Виконання</div>
-                    </div>
+                    ${statItems}
                 </div>
             `;
         }
 
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
+        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
+        let globalBg = isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
+        let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
 
         document.getElementById('globalStatsContainer').innerHTML = `
             ${goalsHtml}
             <div class="section-title" style="${goalsHtml ? '' : 'margin-top: 0;'}">Статистика навчання</div>
             <div class="stats-dashboard">
-                <div class="stat-item" onclick="openCompletedModal()">
+                <div class="stat-item clickable" onclick="openCompletedModal()">
                     <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
                     <div class="stat-label">Пройдено</div>
                 </div>
@@ -1111,7 +1157,7 @@
                 </div>
             </div>
             
-            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px;">
+            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
                 <div class="progress-header">
                     <div class="progress-title-text">Загальний прогрес</div>
                     <div class="progress-percent-val">${globalPercent}%</div>
