@@ -275,7 +275,7 @@
 
         .ach-modal {
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: var(--card-bg); z-index: 10002; width: 90%; max-width: 360px;
+            background: var(--card-bg); z-index: 10002; width: 90%; max-width: 400px;
             border-radius: 28px; padding: 28px 24px; text-align: center; opacity: 0; display: none;
             transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2);
             max-height: 85vh; flex-direction: column; will-change: transform, opacity;
@@ -289,6 +289,11 @@
             background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg);
             display: none;
         }
+        
+        /* Скролбар для модального вікна */
+        .modal-scrollable::-webkit-scrollbar { width: 6px; }
+        .modal-scrollable::-webkit-scrollbar-track { background: transparent; }
+        .modal-scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
@@ -314,6 +319,7 @@
 
 <div class="container">
 
+    <!-- ЛОГІН -->
     <div id="loginView" class="view">
         <div class="login-wrapper">
             <div class="login-card">
@@ -348,6 +354,7 @@
         </div>
     </div>
 
+    <!-- ГОЛОВНА: СПИСОК КУРСІВ -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -391,6 +398,7 @@
         <div id="courseList"></div>
     </div>
 
+    <!-- ТОВАРИ В КУРСІ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -405,6 +413,7 @@
         <div id="productList"></div>
     </div>
 
+    <!-- ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -426,6 +435,7 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <!-- ТЕСТ -->
     <div id="testView" class="view">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -439,6 +449,7 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
+    <!-- РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -976,7 +987,7 @@
 
         modal.innerHTML = `
             <div class="ach-modal-title" style="margin-bottom: 24px;">Пройдені курси</div>
-            <div style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 24px; padding-right: 4px;">
+            <div class="modal-scrollable" style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 24px; padding-right: 4px;">
                 ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курсів.</div>'}
             </div>
             <button class="btn btn-secondary" style="width: 100%; border-radius: 12px; padding: 14px;" onclick="closeModals()">ЗАКРИТИ</button>
@@ -1037,9 +1048,12 @@
                     totalCompleted++;
                     let attWord = getAttemptWord(attempts);
                     savedCompletedListHtml += `
-                        <div style="font-size:14px; font-weight:600; padding:12px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap: 8px;">
-                            <span style="flex:1; line-height:1.3; color:var(--text-main);">📄 ${p.product}</span>
-                            <span style="color:var(--success); font-weight:800; white-space:nowrap; background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">${attempts} ${attWord} / ${score}%</span>
+                        <div style="padding:16px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
+                            <span style="flex:1; font-size:14px; font-weight:600; line-height:1.4; color:var(--text-main);">${p.product}</span>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
+                                <span style="font-size:15px; font-weight:800; color:var(--text-main);">${score}%</span>
+                                <span style="font-size:12px; font-weight:500; color:var(--text-muted);">${attempts} ${attWord}</span>
+                            </div>
                         </div>`;
                 }
             }
