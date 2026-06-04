@@ -319,7 +319,6 @@
 
 <div class="container">
 
-    <!-- ЛОГІН -->
     <div id="loginView" class="view">
         <div class="login-wrapper">
             <div class="login-card">
@@ -354,13 +353,12 @@
         </div>
     </div>
 
-    <!-- ГОЛОВНА: СПИСОК КУРСІВ -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
                 <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
                 <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0;">
-                    <h2>Ваші курси</h2>
+                    <h2>Особистий кабінет</h2>
                     <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;" id="userWelcome"></div>
                 </div>
             </div>
@@ -391,14 +389,12 @@
             <span id="deadlineText"></span>
         </div>
 
-        <div class="section-title">Статистика виконання</div>
         <div id="globalStatsContainer"></div>
 
         <div class="section-title">План на період</div>
         <div id="courseList"></div>
     </div>
 
-    <!-- ТОВАРИ В КУРСІ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -413,7 +409,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -435,7 +430,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ТЕСТ -->
     <div id="testView" class="view">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -449,7 +443,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -463,7 +456,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzxi2azMw85zqCZGByy2u739g6W_4VdslHaPN9GU048G3EcFzLaqpls5yAIuysya0uIRw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
@@ -525,6 +518,12 @@
         if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
         if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'спроби';
         return 'спроб';
+    }
+
+    function formatNumber(num) {
+        let n = parseFloat(num);
+        if (isNaN(n)) return 0;
+        return n.toLocaleString('uk-UA');
     }
 
     function handleFloatingBack() {
@@ -990,7 +989,7 @@
             <div class="modal-scrollable" style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 24px; padding-right: 4px;">
                 ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курсів.</div>'}
             </div>
-            <button class="btn btn-secondary" style="width: 100%; border-radius: 12px; padding: 14px;" onclick="closeModals()">ЗАКРИТИ</button>
+            <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; padding: 16px; font-weight: 800; text-transform: uppercase;" onclick="closeModals()">ЗАКРИТИ</button>
         `;
 
         document.body.style.overflow = 'hidden'; 
@@ -1047,22 +1046,60 @@
                 if (score >= 80) {
                     totalCompleted++;
                     let attWord = getAttemptWord(attempts);
+                    
+                    // БЕЗ ЕМОДЗІ ТА ЗЕЛЕНОГО ФОНУ, ЯК ПРОСИВ
                     savedCompletedListHtml += `
-                        <div style="padding:16px 0; border-bottom:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                            <span style="flex:1; font-size:14px; font-weight:600; line-height:1.4; color:var(--text-main);">${p.product}</span>
+                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
+                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
                             <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                <span style="font-size:15px; font-weight:800; color:var(--text-main);">${score}%</span>
-                                <span style="font-size:12px; font-weight:500; color:var(--text-muted);">${attempts} ${attWord}</span>
+                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
+                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
                             </div>
                         </div>`;
                 }
             }
         });
 
+        // ПІДРАХУНОК ЦІЛЕЙ (НОВЕ)
+        let tPcs = parseFloat(user.targetPcs) || 0;
+        let tUah = parseFloat(user.targetUah) || 0;
+        let dPcs = parseFloat(user.donePcs) || 0;
+        let dUah = parseFloat(user.doneUah) || 0;
+
+        let pctPcs = tPcs > 0 ? Math.round((dPcs / tPcs) * 100) : 0;
+        let pctUah = tUah > 0 ? Math.round((dUah / tUah) * 100) : 0;
+
+        let execPct = 0;
+        if (tUah > 0) execPct = pctUah; 
+        else if (tPcs > 0) execPct = pctPcs;
+
+        let goalsHtml = "";
+        if (tPcs > 0 || tUah > 0) {
+            goalsHtml = `
+                <div class="section-title" style="margin-top: 0;">Виконання цілей</div>
+                <div class="stats-dashboard">
+                    <div class="stat-item">
+                        <div class="stat-val" style="font-size:18px;">${formatNumber(dPcs)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tPcs)}</span></div>
+                        <div class="stat-label">Ціль (шт)</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-val" style="font-size:18px;">${formatNumber(dUah)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tUah)}</span></div>
+                        <div class="stat-label">Ціль (грн)</div>
+                    </div>
+                    <div class="stat-item" style="background: rgba(16, 185, 129, 0.08); border-color: rgba(16, 185, 129, 0.2);">
+                        <div class="stat-val" style="font-size:20px; color: var(--rozetka-green-dark);">${execPct}%</div>
+                        <div class="stat-label" style="color: var(--rozetka-green-dark);">Виконання</div>
+                    </div>
+                </div>
+            `;
+        }
+
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
 
         document.getElementById('globalStatsContainer').innerHTML = `
+            ${goalsHtml}
+            <div class="section-title" style="${goalsHtml ? '' : 'margin-top: 0;'}">Статистика навчання</div>
             <div class="stats-dashboard">
                 <div class="stat-item" onclick="openCompletedModal()">
                     <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
@@ -1074,7 +1111,7 @@
                 </div>
             </div>
             
-            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer;">
+            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px;">
                 <div class="progress-header">
                     <div class="progress-title-text">Загальний прогрес</div>
                     <div class="progress-percent-val">${globalPercent}%</div>
