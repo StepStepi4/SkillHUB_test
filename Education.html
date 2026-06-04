@@ -335,7 +335,6 @@
 
 <div class="container">
 
-    <!-- ЛОГІН -->
     <div id="loginView" class="view active">
         <div class="login-wrapper">
             <div class="login-card">
@@ -370,7 +369,6 @@
         </div>
     </div>
 
-    <!-- ГОЛОВНА: СПИСОК КУРСІВ ТА СТАТИСТИКА -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -407,14 +405,12 @@
             <span id="deadlineText"></span>
         </div>
 
-        <!-- ТУТ БУДЕ ДИНАМІЧНО ГЕНЕРУВАТИСЯ СТАТИСТИКА (ЦІЛІ ТА НАВЧАННЯ) -->
         <div id="globalStatsContainer"></div>
 
         <div class="section-title">Назначені курси</div>
         <div id="courseList"></div>
     </div>
 
-    <!-- ТОВАРИ В КУРСІ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -429,7 +425,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -451,7 +446,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ТЕСТ -->
     <div id="testView" class="view">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -465,7 +459,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -580,27 +573,38 @@
     }
 
     function saveOfflineResult(login, product, score) {
-        let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
-        queue.push({ action: 'save_score', login: login, product: product, score: score, timestamp: Date.now() });
-        localStorage.setItem('skillhub_offline_queue', JSON.stringify(queue));
+        try {
+            let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
+            queue.push({ action: 'save_score', login: login, product: product, score: score, timestamp: Date.now() });
+            localStorage.setItem('skillhub_offline_queue', JSON.stringify(queue));
+        } catch(e) {
+            console.error(e);
+        }
     }
 
     async function processOfflineQueue() {
         if (!navigator.onLine) return;
-        let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
-        if (queue.length === 0) return;
+        try {
+            let queueStr = localStorage.getItem('skillhub_offline_queue');
+            if (!queueStr) return;
+            let queue = JSON.parse(queueStr);
+            if (!Array.isArray(queue) || queue.length === 0) return;
 
-        let remainingQueue = [];
-        for (let item of queue) {
-            try {
-                await fetch(API_URL, {
-                    method: 'POST', mode: 'no-cors', body: JSON.stringify(item)
-                });
-            } catch (e) {
-                remainingQueue.push(item);
+            let remainingQueue = [];
+            for (let item of queue) {
+                try {
+                    await fetch(API_URL, {
+                        method: 'POST', mode: 'no-cors', body: JSON.stringify(item)
+                    });
+                } catch (e) {
+                    remainingQueue.push(item);
+                }
             }
+            localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
+        } catch(e) {
+            console.error("Offline queue error:", e);
+            localStorage.removeItem('skillhub_offline_queue'); 
         }
-        localStorage.setItem('skillhub_offline_queue', JSON.stringify(remainingQueue));
     }
 
     function getDeadlineMs(deadlineValue) {
@@ -695,7 +699,7 @@
     async function fetchFreshDataSilent() {
         if (!navigator.onLine) return;
 
-        await processOfflineQueue();
+        processOfflineQueue(); // Non-blocking!
 
         try {
             const controller = new AbortController();
@@ -827,10 +831,11 @@
 
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
+        const err = document.getElementById('errorMsg');
+
         try {
             const l = document.getElementById('loginInput').value.trim();
             const p = document.getElementById('passInput').value.trim();
-            const err = document.getElementById('errorMsg');
 
             if (!l || !p) { 
                 if(!isAuto) {
@@ -844,6 +849,8 @@
                 loginBtn.disabled = true;
                 loginBtn.innerText = "ВХІД...";
             }
+
+            err.style.display = 'none';
 
             if (!db || !db.users || db.users.length === 0) {
                 if (navigator.onLine) {
@@ -872,10 +879,12 @@
                 }
 
                 if (navigator.onLine) {
-                    fetch(API_URL, {
-                        method: 'POST', mode: 'no-cors',
-                        body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken })
-                    }).catch(e => console.log(e));
+                    try {
+                        fetch(API_URL, {
+                            method: 'POST', mode: 'no-cors',
+                            body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken })
+                        });
+                    } catch(e) {}
                 } 
                 
                 if (isAuto && db.activeSessions && db.activeSessions[currentUser]) {
@@ -903,20 +912,12 @@
                 checkNewAchievements(user);
                 startSessionMonitor(); 
 
-                if (!isAuto && loginBtn) {
-                    loginBtn.disabled = false;
-                    loginBtn.innerText = "УВІЙТИ";
-                }
                 switchView('courseView');
                 
             } else {
                 err.innerText = "Невірний логін або пароль!";
                 err.style.display = 'block';
                 
-                if (!isAuto && loginBtn) {
-                    loginBtn.disabled = false;
-                    loginBtn.innerText = "УВІЙТИ";
-                }
                 if(isAuto) {
                     localStorage.removeItem('skillhub_edu_creds');
                     switchView('loginView');
@@ -924,10 +925,10 @@
             }
         } catch (error) {
             console.error("Login Error:", error);
-            const err = document.getElementById('errorMsg');
-            err.innerText = "Сталася помилка з'єднання. Спробуйте ще раз.";
+            err.innerText = "Сталася помилка. Перезавантажте сторінку.";
             err.style.display = 'block';
-            if (!isAuto && loginBtn) {
+        } finally {
+            if (!isAuto && loginBtn && !currentUser) {
                 loginBtn.disabled = false;
                 loginBtn.innerText = "УВІЙТИ";
             }
@@ -1236,19 +1237,13 @@
             let isCourseDone = (cTotal > 0 && cPassed === cTotal);
             let cardClass = isCourseDone ? "list-card completed" : "list-card";
 
-            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
-            if (isCourseDone) {
-                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
-            }
-
             return `
             <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
                 <div class="list-card-title" style="flex: 1;">
-                    <div class="list-card-icon">${parsed.icon}</div>
                     <span style="font-size: 16px;">${parsed.title}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    ${statusBadge}
+                    <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
                     <div class="list-card-arrow">❯</div>
                 </div>
             </div>
@@ -1306,7 +1301,6 @@
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
             let isCompleted = false;
-            let badgeHtml = '';
 
             if (resStr) {
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%/);
@@ -1320,23 +1314,17 @@
 
                 if (score >= 80) {
                     isCompleted = true;
-                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px; margin-top: 6px; display: inline-block;">Пройдено: ${score}%</div>`;
-                } else if (score > 0) {
-                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--danger); background: var(--danger-bg); padding: 4px 8px; border-radius: 8px; margin-top: 6px; display: inline-block;">Спроба: ${score}%</div>`;
                 }
             }
 
             let parsed = formatWithCustomEmoji(p.product, '📄');
             let cardClass = isCompleted ? "list-card completed" : "list-card";
-            let icon = isCompleted ? "✅" : parsed.icon;
 
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
                 <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
-                    <div class="list-card-icon">${icon}</div>
                     <div style="display: flex; flex-direction: column; justify-content: center;">
                         <span style="font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${parsed.title}</span>
-                        ${badgeHtml}
                     </div>
                 </div>
                 <div class="list-card-arrow">❯</div>
