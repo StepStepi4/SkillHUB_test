@@ -127,7 +127,7 @@
         }
 
         .back-btn-sleek {
-            background: transparent; border: none; width: 40px; height: 40px; border-radius: 14px;
+            background: transparent; border: none; width: 44px; height: 44px; border-radius: 14px;
             display: flex; justify-content: center; align-items: center; color: var(--text-main); 
             transition: all 0.2s; cursor: pointer; padding: 0; position: relative;
         }
@@ -137,12 +137,12 @@
         /* Анімація пульсації для ачівок */
         @keyframes pulse-ring {
             0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
         .ach-btn.has-new {
             animation: pulse-ring 2s infinite;
-            border-radius: 50%; /* Щоб пульсація була круглою */
+            border-radius: 50%; 
         }
 
         .floating-exit {
@@ -195,6 +195,7 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.02);
         }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
+        
         .list-card-icon { font-size: 32px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; margin-right: 4px; }
         
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 8px;}
@@ -300,8 +301,8 @@
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
 
         .notification-dot {
-            position: absolute; top: 4px; right: 4px; width: 12px; height: 12px;
-            background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg);
+            position: absolute; top: 2px; right: 2px; width: 14px; height: 14px;
+            background-color: var(--danger); border-radius: 50%; border: 2.5px solid var(--card-bg);
             display: none;
         }
         
@@ -334,7 +335,6 @@
 
 <div class="container">
 
-    <!-- ЛОГІН -->
     <div id="loginView" class="view">
         <div class="login-wrapper">
             <div class="login-card">
@@ -369,7 +369,6 @@
         </div>
     </div>
 
-    <!-- ГОЛОВНА: СПИСОК КУРСІВ ТА СТАТИСТИКА -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -382,7 +381,7 @@
 
             <div class="nav-actions">
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Мої досягнення">
-                    <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
+                    <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:24px;\\'>🏅</span>'">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary);">
@@ -406,14 +405,12 @@
             <span id="deadlineText"></span>
         </div>
 
-        <!-- ТУТ БУДЕ ДИНАМІЧНО ГЕНЕРУВАТИСЯ СТАТИСТИКА (ЦІЛІ ТА НАВЧАННЯ) -->
         <div id="globalStatsContainer"></div>
 
         <div class="section-title">Назначені курси</div>
         <div id="courseList"></div>
     </div>
 
-    <!-- ТОВАРИ В КУРСІ -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -428,7 +425,6 @@
         <div id="productList"></div>
     </div>
 
-    <!-- ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -450,7 +446,6 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
-    <!-- ТЕСТ -->
     <div id="testView" class="view">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -464,7 +459,6 @@
         <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
     </div>
 
-    <!-- РЕЗУЛЬТАТ -->
     <div id="resultView" class="view">
         <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
             <div class="big-emoji" id="resultEmoji" style="font-size: 80px;">🏆</div>
@@ -478,7 +472,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyVsqFCfj9s9MNaQDztrJjh5vxk_4LjLbSJcE4uYcviFo9IlYmZyTkuY8I1DKefTl-lVg/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
@@ -543,8 +537,10 @@
     }
 
     function formatNumber(num) {
-        let n = parseFloat(num);
-        if (isNaN(n)) return 0;
+        if (num === undefined || num === null || num === "") return "0";
+        let str = String(num).replace(/\s/g, '').replace(',', '.');
+        let n = parseFloat(str);
+        if (isNaN(n)) return "0";
         return n.toLocaleString('uk-UA');
     }
 
@@ -695,7 +691,11 @@
         await processOfflineQueue();
 
         try {
-            const response = await fetch(API_URL + '?nocache=' + Date.now());
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 15000); 
+            const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
+            clearTimeout(timeoutId);
+
             const data = await response.json();
             if (!data.error) {
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
@@ -729,7 +729,9 @@
                     }
                 }
             }
-        } catch(e) {}
+        } catch(e) {
+            console.error("Fetch Error:", e);
+        }
     }
 
     function startSessionMonitor() {
@@ -741,7 +743,7 @@
         }, 30000);
     }
 
-    window.onload = async () => {
+    document.addEventListener('DOMContentLoaded', async () => {
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
             if (cachedData) {
@@ -751,7 +753,11 @@
                     globalAchievements = parsedDb.achievementData || []; 
                 }
             }
+        } catch(e) {
+            console.error("Cache parsing error");
+        }
 
+        try {
             document.getElementById('loader').style.display = 'none';
 
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
@@ -784,8 +790,9 @@
         } catch (e) {
             document.querySelector('.spinner').style.display = 'none';
             document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Помилка: ${e.message}</span>`;
+            switchView('loginView');
         }
-    };
+    });
 
     function buildCoursesMap(user) {
         coursesMap = {}; 
@@ -1051,7 +1058,7 @@
         
         savedCompletedListHtml = ""; 
 
-        Object.values(coursesMap).flat().forEach(p => {
+        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
             totalAssigned++;
             let cleanP = getCleanName(p.product);
             let resStr = userResults[cleanP];
@@ -1088,22 +1095,13 @@
             }
         });
 
-        // ПІДРАХУНОК ЦІЛЕЙ 
-        let tPcs = parseFloat(user.targetPcs) || 0;
-        let tUah = parseFloat(user.targetUah) || 0;
-        let dPcs = parseFloat(user.donePcs) || 0;
-        let dUah = parseFloat(user.doneUah) || 0;
-
-        let pctPcs = tPcs > 0 ? Math.round((dPcs / tPcs) * 100) : 0;
-        let pctUah = tUah > 0 ? Math.round((dUah / tUah) * 100) : 0;
-
-        let execPct = 0;
-        if (tUah > 0) execPct = pctUah; 
-        else if (tPcs > 0) execPct = pctPcs;
+        let tPcs = parseFloat(String(user.targetPcs || "").replace(/\s/g, '').replace(',', '.')) || 0;
+        let tUah = parseFloat(String(user.targetUah || "").replace(/\s/g, '').replace(',', '.')) || 0;
+        let execPctVal = parseFloat(String(user.execPct || "").replace(/\s/g, '').replace(',', '.')) || 0;
 
         let goalsHtml = "";
         if (tPcs > 0 || tUah > 0) {
-            let isGoalCompleted = execPct >= 100;
+            let isGoalCompleted = execPctVal >= 100;
             let execBg = isGoalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
             let execBorder = isGoalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
             let execColor = isGoalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
@@ -1111,22 +1109,22 @@
             let statItems = "";
             if (tPcs > 0) {
                 statItems += `
-                <div class="stat-item clickable">
-                    <div class="stat-val" style="font-size:18px;">${formatNumber(dPcs)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tPcs)}</span></div>
+                <div class="stat-item">
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(tPcs)}</div>
                     <div class="stat-label">Ціль (шт)</div>
                 </div>`;
             }
             if (tUah > 0) {
                 statItems += `
-                <div class="stat-item clickable">
-                    <div class="stat-val" style="font-size:18px;">${formatNumber(dUah)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tUah)}</span></div>
+                <div class="stat-item">
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(tUah)}</div>
                     <div class="stat-label">Ціль (грн)</div>
                 </div>`;
             }
 
             statItems += `
             <div class="stat-item" style="background: ${execBg}; border-color: ${execBorder};">
-                <div class="stat-val" style="font-size:20px; color: ${execColor};">${execPct}%</div>
+                <div class="stat-val" style="font-size:20px; color: ${execColor};">${execPctVal}%</div>
                 <div class="stat-label" style="color: ${execColor};">Виконання</div>
             </div>`;
 
@@ -1195,19 +1193,13 @@
             let isCourseDone = (cTotal > 0 && cPassed === cTotal);
             let cardClass = isCourseDone ? "list-card completed" : "list-card";
 
-            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
-            if (isCourseDone) {
-                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
-            }
-
             return `
             <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
                 <div class="list-card-title" style="flex: 1;">
-                    <div class="list-card-icon">${parsed.icon}</div>
                     <span style="font-size: 16px;">${parsed.title}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    ${statusBadge}
+                    <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
                     <div class="list-card-arrow">❯</div>
                 </div>
             </div>
@@ -1279,23 +1271,17 @@
 
                 if (score >= 80) {
                     isCompleted = true;
-                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px; margin-top: 6px; display: inline-block;">Пройдено: ${score}%</div>`;
-                } else if (score > 0) {
-                    badgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--danger); background: var(--danger-bg); padding: 4px 8px; border-radius: 8px; margin-top: 6px; display: inline-block;">Спроба: ${score}%</div>`;
                 }
             }
 
             let parsed = formatWithCustomEmoji(p.product, '📄');
             let cardClass = isCompleted ? "list-card completed" : "list-card";
-            let icon = isCompleted ? "✅" : parsed.icon;
 
             return `
             <div class="${cardClass}" onclick="openProduct(${index})">
                 <div style="display: flex; align-items: center; gap: 14px; flex: 1;">
-                    <div class="list-card-icon">${icon}</div>
                     <div style="display: flex; flex-direction: column; justify-content: center;">
                         <span style="font-size: 16px; font-weight: 700; color: var(--text-main); line-height: 1.2;">${parsed.title}</span>
-                        ${badgeHtml}
                     </div>
                 </div>
                 <div class="list-card-arrow">❯</div>
