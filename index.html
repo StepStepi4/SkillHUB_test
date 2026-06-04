@@ -882,7 +882,7 @@
     });
 
     // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ИЗ ЗАПРОСА
-    const API_URL = 'https://script.google.com/macros/s/AKfycby-fm_tHbLG7yMoZ84VyV5G_Q4VR8XFO5wiiZbbGvGEJ7R8XS22MimQ4y43yW-wAcBP/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1580,8 +1580,13 @@
 
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
+            
+            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+
             return `
-            <div class="list-item" onclick="window.openRezervItemModal('${window.escapeForJS(r.cat)}', ${r.price}, '${window.escapeForJS(shortName)}')">
+            <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}')">
                 <div class="list-item-content">
                     <span class="list-item-title rezervy-name">${window.escapeHTML(shortName)}</span>
                     <span class="list-item-subtitle rezervy-cat">${window.escapeHTML(r.cat)}</span>
@@ -1589,6 +1594,7 @@
                 <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
             </div>`;
         }).join('');
+        
         safeUpdateHTML(cont, html);
     }
 
