@@ -301,8 +301,8 @@
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
 
         .notification-dot {
-            position: absolute; top: 2px; right: 2px; width: 14px; height: 14px;
-            background-color: var(--danger); border-radius: 50%; border: 2.5px solid var(--card-bg);
+            position: absolute; top: 4px; right: 4px; width: 12px; height: 12px;
+            background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg);
             display: none;
         }
         
@@ -351,11 +351,11 @@
 
                 <div class="input-group">
                     <span class="input-label">Логін</span>
-                    <input type="text" id="loginInput" placeholder="Введіть ваш логін" autocapitalize="off">
+                    <input type="text" id="loginInput" placeholder="Введіть ваш логін" autocapitalize="off" onkeypress="if(event.key === 'Enter') handleLogin()">
                 </div>
                 <div class="input-group">
                     <span class="input-label">Пароль</span>
-                    <input type="password" id="passInput" placeholder="Введіть пароль">
+                    <input type="password" id="passInput" placeholder="Введіть пароль" onkeypress="if(event.key === 'Enter') handleLogin()">
                 </div>
 
                 <label class="custom-checkbox-wrapper">
@@ -743,7 +743,7 @@
         }, 30000);
     }
 
-    document.addEventListener('DOMContentLoaded', async () => {
+    window.onload = async () => {
         try {
             let cachedData = localStorage.getItem(CACHE_KEY);
             if (cachedData) {
@@ -753,11 +753,7 @@
                     globalAchievements = parsedDb.achievementData || []; 
                 }
             }
-        } catch(e) {
-            console.error("Cache parsing error");
-        }
 
-        try {
             document.getElementById('loader').style.display = 'none';
 
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
@@ -769,13 +765,13 @@
                 document.getElementById('rememberMe').checked = true;
                 
                 if (db && db.users && db.users.length > 0) {
-                    handleLogin(true);
+                    await handleLogin(true);
                     fetchFreshDataSilent();
                 } else {
                     document.getElementById('loader').style.display = 'flex';
                     await fetchFreshDataSilent();
                     document.getElementById('loader').style.display = 'none';
-                    handleLogin(true);
+                    await handleLogin(true);
                 }
             } else {
                 if (!db || !db.users || db.users.length === 0) {
@@ -792,7 +788,7 @@
             document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Помилка: ${e.message}</span>`;
             switchView('loginView');
         }
-    });
+    };
 
     function buildCoursesMap(user) {
         coursesMap = {}; 
@@ -814,10 +810,11 @@
         });
     }
 
-    function handleLogin(isAuto = false) {
+    async function handleLogin(isAuto = false) {
         const l = document.getElementById('loginInput').value.trim();
         const p = document.getElementById('passInput').value.trim();
         const err = document.getElementById('errorMsg');
+        const loginBtn = document.querySelector('#loginView .btn-glow');
 
         if (!l || !p) { 
             if(!isAuto) {
@@ -827,7 +824,26 @@
             return; 
         }
 
-        const user = db && db.users && db.users.find(u => u.login === l && u.pass === p);
+        if (!isAuto && loginBtn) {
+            loginBtn.disabled = true;
+            loginBtn.innerText = "ВХІД...";
+        }
+
+        if (!db || !db.users || db.users.length === 0) {
+            if (navigator.onLine) {
+                await fetchFreshDataSilent();
+            } else {
+                err.innerText = "База даних порожня. Перевірте інтернет!";
+                err.style.display = 'block';
+                if (!isAuto && loginBtn) {
+                    loginBtn.disabled = false;
+                    loginBtn.innerText = "УВІЙТИ";
+                }
+                return;
+            }
+        }
+
+        const user = db && db.users && db.users.find(u => String(u.login).trim() === l && String(u.pass).trim() === p);
 
         if (user) {
             currentUser = user.login;
@@ -873,18 +889,20 @@
             checkNewAchievements(user);
             startSessionMonitor(); 
 
-            if (!isAuto) {
-                document.getElementById('loader').style.display = 'flex';
-                setTimeout(() => {
-                    document.getElementById('loader').style.display = 'none';
-                    switchView('courseView');
-                }, 300);
-            } else {
-                switchView('courseView');
+            if (!isAuto && loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.innerText = "УВІЙТИ";
             }
+            switchView('courseView');
+            
         } else {
             err.innerText = "Невірний логін або пароль!";
             err.style.display = 'block';
+            
+            if (!isAuto && loginBtn) {
+                loginBtn.disabled = false;
+                loginBtn.innerText = "УВІЙТИ";
+            }
             if(isAuto) {
                 localStorage.removeItem('skillhub_edu_creds');
                 switchView('loginView');
@@ -1095,6 +1113,7 @@
             }
         });
 
+        // ПІДРАХУНОК ЦІЛЕЙ 
         let tPcs = parseFloat(String(user.targetPcs || "").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "").replace(/\s/g, '').replace(',', '.')) || 0;
         let execPctVal = parseFloat(String(user.execPct || "").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1110,14 +1129,14 @@
             if (tPcs > 0) {
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${formatNumber(tPcs)}</div>
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(user.donePcs)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tPcs)}</span></div>
                     <div class="stat-label">Ціль (шт)</div>
                 </div>`;
             }
             if (tUah > 0) {
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${formatNumber(tUah)}</div>
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(user.doneUah)}<span style="font-size:12px; font-weight:700; color:var(--text-muted);"> / ${formatNumber(tUah)}</span></div>
                     <div class="stat-label">Ціль (грн)</div>
                 </div>`;
             }
@@ -1193,13 +1212,18 @@
             let isCourseDone = (cTotal > 0 && cPassed === cTotal);
             let cardClass = isCourseDone ? "list-card completed" : "list-card";
 
+            let statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px;">${cPassed} / ${cTotal}</div>`;
+            if (isCourseDone) {
+                statusBadge = `<div style="font-size: 12px; font-weight: 700; color: var(--success); background: var(--primary-light); padding: 4px 8px; border-radius: 8px;">✅ ${cPassed} / ${cTotal}</div>`;
+            }
+
             return `
             <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
                 <div class="list-card-title" style="flex: 1;">
                     <span style="font-size: 16px;">${parsed.title}</span>
                 </div>
                 <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
+                    ${statusBadge}
                     <div class="list-card-arrow">❯</div>
                 </div>
             </div>
