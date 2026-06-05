@@ -121,9 +121,9 @@
         }
         .nav-header h2 { font-size: 24px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
         
+        /* Исправлен ореол у верхних кнопок */
         .nav-actions {
-            display: flex; gap: 6px; background: var(--card-bg); padding: 6px; border-radius: 20px;
-            border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none;
         }
 
         .back-btn-sleek {
@@ -131,7 +131,7 @@
             display: flex; justify-content: center; align-items: center; color: var(--text-main); 
             transition: all 0.2s; cursor: pointer; padding: 0; position: relative;
         }
-        .back-btn-sleek:hover { background: var(--input-bg); }
+        .back-btn-sleek:hover { background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .back-btn-sleek:active { transform: scale(0.92); background: var(--border); }
 
         @keyframes pulse-ring {
@@ -1155,6 +1155,10 @@
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fUah = parseFloat(String(user.execUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
 
+        // Форматуємо для відображення: якщо менше 0, міняємо на + і робимо зеленим
+        let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
+        let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
+
         let pctPcs = tPcs > 0 ? (fPcs / tPcs) * 100 : 0;
         let pctUah = tUah > 0 ? (fUah / tUah) * 100 : 0;
         
@@ -1172,14 +1176,14 @@
             if (tPcs > 0) {
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${formatNumber(fPcs)} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(tPcs)}</span></div>
+                    <div class="stat-val" style="font-size:18px;">${displayFPcs} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(tPcs)}</span></div>
                     <div class="stat-label">Ціль (шт)</div>
                 </div>`;
             }
             if (tUah > 0) {
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${formatNumber(fUah)} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(tUah)}</span></div>
+                    <div class="stat-val" style="font-size:18px;">${displayFUah} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(tUah)}</span></div>
                     <div class="stat-label">Ціль (грн)</div>
                 </div>`;
             }
