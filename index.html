@@ -882,7 +882,7 @@
     });
 
     // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ИЗ ЗАПРОСА
-    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycby-fm_tHbLG7yMoZ84VyV5G_Q4VR8XFO5wiiZbbGvGEJ7R8XS22MimQ4y43yW-wAcBP/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1226,10 +1226,6 @@
 
     window.openRatingModal = function() {
         window.renderRatingModalContent();
-        window.openRatingModalBase();
-    }
-    
-    window.openRatingModalBase = function() {
         window.openModalBase('ratingModal');
     }
 
@@ -1275,8 +1271,7 @@
 
     function normalizeServiceName(s) {
         if (!s) return "";
-        // Видаляємо дужки з брендом, а також спецсимволи та сам вогник (щоб не ламати пошук по focusServices)
-        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[🔥«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
+        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
     }
 
     window.findInDb = function(dict, key) {
@@ -1604,7 +1599,7 @@
             let catStyle = "";
             if (searchVal) {
                 catStyle = catExists 
-                    ? "color: var(--primary); background: var(--primary-light); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;" 
+                    ? "" 
                     : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
             }
 
@@ -2007,9 +2002,7 @@
 
     function calculateServicesArray(item, p) {
         if(!item) return [];
-        // Враховуємо обидва варіанти назви колонки (focus або focusServices)
-        const rawFocus = item.focusServices || item.focus || "";
-        const focusList = rawFocus ? String(rawFocus).split('|').map(s => normalizeServiceName(s)) : [];
+        const focusList = item.focusServices ? String(item.focusServices).split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = item.service ? String(item.service).split('|').map(s => s.trim()).filter(s => s) : [];
         
         const dataForSort = servicesNames.map(name => {
