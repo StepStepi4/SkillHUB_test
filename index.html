@@ -615,6 +615,7 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
+        <div id="reservesUpdateDate" style="text-align: center; font-size: 11px; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); font-weight: 700; margin-bottom: 12px; display: none;"></div>
         <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
                 <option value="">-- Оберіть магазин --</option>
@@ -944,6 +945,16 @@
             if(cls === 'brand-support') displayBrand = 'SUPPORT';
             if(cls === 'brand-epz') displayBrand = 'ЕПЗ';
             
+            let isFocusGlobally = false;
+            let cleanServName = normalizeServiceName(origName);
+            if (db.categories && db.categories.length > 0) {
+                isFocusGlobally = db.categories.some(c => {
+                    if (!c.focusServices) return false;
+                    let fList = String(c.focusServices).split('|').map(s => normalizeServiceName(s));
+                    return fList.includes(cleanServName);
+                });
+            }
+
             return {
                 origName: origName,
                 name: nameClean, 
@@ -951,7 +962,8 @@
                 icon: icon, 
                 searchType: 'service',
                 brandText: displayBrand,
-                cls: cls
+                cls: cls,
+                isFocus: isFocusGlobally || origName.includes('🔥')
             };
         });
     };
@@ -1226,6 +1238,10 @@
 
     window.openRatingModal = function() {
         window.renderRatingModalContent();
+        window.openRatingModalBase();
+    }
+    
+    window.openRatingModalBase = function() {
         window.openModalBase('ratingModal');
     }
 
@@ -1271,8 +1287,7 @@
 
     function normalizeServiceName(s) {
         if (!s) return "";
-        // Видаляємо дужки з брендом, а також спецсимволи та сам вогник (щоб не ламати пошук по focusServices)
-        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[🔥«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
+        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
     }
 
     window.findInDb = function(dict, key) {
@@ -1561,6 +1576,29 @@
         const searchInput = document.getElementById('topReservesSearchInput');
         const searchQuery = searchInput ? searchInput.value.toLowerCase().trim() : '';
 
+        // Встановлюємо дату оновлення
+        let dateEl = document.getElementById('reservesUpdateDate');
+        if (dateEl) {
+            let updateDateStr = "";
+            if (db.rezervyData && db.rezervyData.length > 0) {
+                let r0 = db.rezervyData[0];
+                updateDateStr = r0['Дата оновлення резервів'] || r0.date || r0.updateDate || r0.lastUpdate || r0.updatedAt || r0.time || "";
+                if (!updateDateStr) {
+                     for(let k in r0) {
+                         if(k.toLowerCase().includes('дата') || k.toLowerCase().includes('date') || k.toLowerCase().includes('оновлення')) {
+                             updateDateStr = r0[k]; break;
+                         }
+                     }
+                }
+            }
+            if (updateDateStr) {
+                dateEl.innerText = "⏳ Оновлено: " + updateDateStr;
+                dateEl.style.display = 'block';
+            } else {
+                dateEl.style.display = 'none';
+            }
+        }
+
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
         
         let matches = db.rezervyData.filter(r => r.store === store);
@@ -1581,6 +1619,7 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
+            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (")
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
 
@@ -1597,10 +1636,7 @@
                 catExists = true; // Якщо порожнє, не підсвічуємо як помилку
             }
 
-            let catStyle = "";
-            if (searchVal && !catExists) {
-                catStyle = "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
-            }
+            let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
 
             return `
             <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}')">
@@ -1650,17 +1686,20 @@
         window.renderRezervyList();
     };
     
-    // Закриття панелі при кліку в порожнє місце
+    // --- НОВЕ: Закриття панелі при кліку в порожнє місце ---
     document.addEventListener('click', function(event) {
+        // Якщо панель відкрита
         if (topPanel.classList.contains('show')) {
+            // Перевіряємо, чи клік був НЕ по самій панелі і НЕ по кнопці відкриття
             if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
                 topPanel.classList.remove('show');
                 topInput.value = '';
                 clearTopBtn.style.display = 'none';
-                window.renderRezervyList(); 
+                window.renderRezervyList(); // Скидаємо фільтр резервів
             }
         }
     });
+    // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
@@ -1785,10 +1824,11 @@
                         if (m.searchType === 'service' && m.brandText) {
                             brandBadge = `<div class="sc-brand ${m.cls}" style="margin: 0; font-size: 9px; padding: 2px 6px; flex-shrink: 0;">${m.brandText}</div>`;
                         }
+                        let focusIcon = m.isFocus ? '<span style="color:#f59e0b; margin-right:4px;">🔥</span>' : '';
                         return `<div class="sugg-item" data-idx="${idx}">
                             <span style="flex-shrink:0; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;">${window.renderIcon(m.icon)}</span> 
                             ${brandBadge} 
-                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
+                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${focusIcon}${text}</span>
                         </div>`;
                     }).join('');
                     safeUpdateHTML(elSuggList, html);
@@ -1816,12 +1856,13 @@
         if(item.searchType === 'service') {
             currentCategoryData = null;
             
-            currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
+            currentServiceData = { name: item.name, origName: item.origName, icon: item.icon, isFocus: item.isFocus };
             
             elCatInput.value = item.name;
+            let focusIcon = item.isFocus ? '<span style="color:#f59e0b; margin-right:4px;">🔥</span>' : '';
             safeUpdateHTML('uaTitle', `<div style="display:flex; align-items:center; gap:8px;">
                 <div style="width:24px; height:24px; display:flex; justify-content:center; align-items:center;">${window.renderIcon(item.icon)}</div>
-                <span>${item.name}</span>
+                <span>${focusIcon}${item.name}</span>
             </div>`);
             safeUpdateHTML('itemCategory', item.brandText ? "Послуга від " + item.brandText : "Окрема послуга");
         } else {
@@ -2001,22 +2042,15 @@
 
     function calculateServicesArray(item, p) {
         if(!item) return [];
-        // Враховуємо обидва варіанти назви колонки (focus або focusServices)
-        const rawFocus = item.focusServices || item.focus || "";
-        const focusList = rawFocus ? String(rawFocus).split('|').map(s => normalizeServiceName(s)).filter(Boolean) : [];
+        const focusList = item.focusServices ? String(item.focusServices).split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = item.service ? String(item.service).split('|').map(s => s.trim()).filter(s => s) : [];
         
         const dataForSort = servicesNames.map(name => {
             let exactBrand = db.serviceBrands ? window.findInDb(db.serviceBrands, name) : "";
             const brandMatch = name.match(brandRegex); const brand = exactBrand || (brandMatch ? brandMatch[1] : "");
+            let title = name.replace(/^\[(.*?)\]\s*/, "").trim(); let nameClean = normalizeServiceName(name); let isFocus = false;
             
-            let title = name.replace(/^\[(.*?)\]\s*/, "").replace(/🔥/g, '').trim(); 
-            let nameClean = normalizeServiceName(name); 
-            
-            let isFocus = false;
-            if (name.includes('🔥') || focusList.includes(nameClean)) {
-                isFocus = true;
-            }
+            if(title.includes('🔥')) { isFocus = true; title = title.replace('🔥', '').trim(); } else if (focusList.includes(nameClean)) isFocus = true;
             
             const matchingTariffs = db.tariffs.filter(x => { return normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean); });
             let t = null; let isPackage = false;
@@ -2092,7 +2126,7 @@
             } else if (currentServiceData) {
                 elTechInfo.style.display = 'none'; safeUpdateHTML(elTechInfo, '');
                 
-                let fakeCat = { service: currentServiceData.origName, focus: currentServiceData.origName };
+                let fakeCat = { service: currentServiceData.origName, focusServices: currentServiceData.isFocus ? currentServiceData.origName : "" };
                 let dataForSort = calculateServicesArray(fakeCat, p);
                 
                 dataForSort.forEach(s => {
@@ -2624,45 +2658,4 @@
         document.getElementById('sellerFormSubmit').reset();
     }
 
-    window.handleSellerResponse = function(data) {
-        const s = document.getElementById('sellerStore');
-        const r = document.getElementById('sellerReason');
-        s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
-        r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
-        data.stores.forEach(item => s.add(new Option(item, item)));
-        data.reasons.forEach(item => r.add(new Option(item, item)));
-    }
-
-    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
-        e.preventDefault();
-        const btn = document.getElementById('submitSellerBtn');
-        const overlay = document.getElementById('sellerStatusOverlay');
-        const form = document.getElementById('sellerFormSubmit');
-        
-        btn.disabled = true;
-        btn.innerText = 'НАДСИЛАЄМО...';
-
-        fetch(SELLER_SCRIPT_URL, {
-            method: 'POST',
-            mode: 'no-cors',
-            body: new FormData(this)
-        })
-        .then(() => {
-            form.style.display = 'none';
-            overlay.style.display = 'block';
-        })
-        .catch(() => {
-            alert("Помилка відправки.");
-            btn.disabled = false;
-            btn.innerText = 'ВІДПРАВИТИ';
-        });
-    };
-
-    init();
-
-    if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
-    }
-</script>
-</body>
-</html>
+    window.handleSellerResponse
