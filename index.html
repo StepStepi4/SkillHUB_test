@@ -883,7 +883,7 @@
     });
 
     // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ИЗ ЗАПРОСА
-    const API_URL = 'https://script.google.com/macros/s/AKfycbySj3hN3dN3JJJv-KBGL86-Zc2Qsa-njJ5ngWG_y_zcQetM8qTcnPZRMJST8vJn_KYjgA/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbx6CDquyEwpG8lpj-igGq-nP4heBgjEcSQTEi3lcozpX9wmXE68mK_2b7MD81YmW2T6Cw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -2126,7 +2126,7 @@
             } else if (currentServiceData) {
                 elTechInfo.style.display = 'none'; safeUpdateHTML(elTechInfo, '');
                 
-                let fakeCat = { service: currentServiceData.origName, focusServices: currentServiceData.isFocus ? currentServiceData.origName : "" };
+                let fakeCat = { service: currentServiceData.origName, focusServices: currentServiceData.isFocus ? currentServiceData.name : "" };
                 let dataForSort = calculateServicesArray(fakeCat, p);
                 
                 dataForSort.forEach(s => {
@@ -2658,4 +2658,45 @@
         document.getElementById('sellerFormSubmit').reset();
     }
 
-    window.handleSellerResponse
+    window.handleSellerResponse = function(data) {
+        const s = document.getElementById('sellerStore');
+        const r = document.getElementById('sellerReason');
+        s.innerHTML = '<option value="" disabled selected>Оберіть магазин</option>';
+        r.innerHTML = '<option value="" disabled selected>Оберіть причину</option>';
+        data.stores.forEach(item => s.add(new Option(item, item)));
+        data.reasons.forEach(item => r.add(new Option(item, item)));
+    }
+
+    document.getElementById('sellerFormSubmit').onsubmit = function(e) {
+        e.preventDefault();
+        const btn = document.getElementById('submitSellerBtn');
+        const overlay = document.getElementById('sellerStatusOverlay');
+        const form = document.getElementById('sellerFormSubmit');
+        
+        btn.disabled = true;
+        btn.innerText = 'НАДСИЛАЄМО...';
+
+        fetch(SELLER_SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors',
+            body: new FormData(this)
+        })
+        .then(() => {
+            form.style.display = 'none';
+            overlay.style.display = 'block';
+        })
+        .catch(() => {
+            alert("Помилка відправки.");
+            btn.disabled = false;
+            btn.innerText = 'ВІДПРАВИТИ';
+        });
+    };
+
+    init();
+
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
+    }
+</script>
+</body>
+</html>
