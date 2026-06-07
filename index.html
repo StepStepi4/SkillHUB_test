@@ -1275,7 +1275,8 @@
 
     function normalizeServiceName(s) {
         if (!s) return "";
-        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
+        // Видаляємо дужки з брендом, а також спецсимволи та сам вогник (щоб не ламати пошук по focusServices)
+        return String(s).replace(/^\[.*?\]\s*/, '').replace(/[🔥«»"'”`\u00A0\s]/g, '').trim().toLowerCase();
     }
 
     window.findInDb = function(dict, key) {
@@ -1337,7 +1338,6 @@
             } else if (linkStr === "@@") {
                 actionStr = `onclick="window.openModalBase('certManualModal')"`;
             } else if (linkStr.toLowerCase().includes("education.html") || nm.includes("навчан") || nm.includes("обучен")) {
-                // ПЕРЕХОД НА СТРАНИЦУ ОБУЧЕНИЯ В ЭТОМ ЖЕ ОКНЕ БЕЗ ОТКРЫТИЯ НОВОЙ ВКЛАДКИ
                 let cleanLink = linkStr !== "#" && linkStr !== "" ? linkStr : "Education.html";
                 actionStr = `onclick="window.location.href='${cleanLink}'"`;
             } else if (linkStr !== "" && linkStr !== "#") {
@@ -1585,9 +1585,8 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick (&quot;)
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
 
             // Перевірка наявності категорії в базі
             let searchVal = normalize(r.cat); 
@@ -1602,7 +1601,12 @@
                 catExists = true; // Якщо порожнє, не підсвічуємо як помилку
             }
 
-            let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
+            let catStyle = "";
+            if (searchVal) {
+                catStyle = catExists 
+                    ? "color: var(--primary); background: var(--primary-light); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;" 
+                    : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
+            }
 
             return `
             <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}')">
@@ -1652,20 +1656,17 @@
         window.renderRezervyList();
     };
     
-    // --- НОВЕ: Закриття панелі при кліку в порожнє місце ---
+    // Закриття панелі при кліку в порожнє місце
     document.addEventListener('click', function(event) {
-        // Якщо панель відкрита
         if (topPanel.classList.contains('show')) {
-            // Перевіряємо, чи клік був НЕ по самій панелі і НЕ по кнопці відкриття
             if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
                 topPanel.classList.remove('show');
                 topInput.value = '';
                 clearTopBtn.style.display = 'none';
-                window.renderRezervyList(); // Скидаємо фільтр резервів
+                window.renderRezervyList(); 
             }
         }
     });
-    // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
@@ -2006,7 +2007,9 @@
 
     function calculateServicesArray(item, p) {
         if(!item) return [];
-        const focusList = item.focusServices ? String(item.focusServices).split('|').map(s => normalizeServiceName(s)) : [];
+        // Враховуємо обидва варіанти назви колонки (focus або focusServices)
+        const rawFocus = item.focusServices || item.focus || "";
+        const focusList = rawFocus ? String(rawFocus).split('|').map(s => normalizeServiceName(s)) : [];
         const servicesNames = item.service ? String(item.service).split('|').map(s => s.trim()).filter(s => s) : [];
         
         const dataForSort = servicesNames.map(name => {
