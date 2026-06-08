@@ -121,7 +121,6 @@
         }
         .nav-header h2 { font-size: 24px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
         
-        /* Исправлен ореол у верхних кнопок */
         .nav-actions {
             display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none;
         }
@@ -469,7 +468,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbySj3hN3dN3JJJv-KBGL86-Zc2Qsa-njJ5ngWG_y_zcQetM8qTcnPZRMJST8vJn_KYjgA/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxcNhmBYm1_UM5phAaCqjKBUpK5JNE23MyhvDYbSQnblKGbFrXHO54uXAs1T9jmLm0crg/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let db = null;
@@ -561,7 +560,8 @@
             window.scrollTo(0, 0);
 
             const exitBtn = document.getElementById('floatingExitBtn');
-            if (viewId === 'testView' || viewId === 'loginView') {
+            // ОНОВЛЕНО: Тепер кнопка не ховається на екрані loginView
+            if (viewId === 'testView') {
                 exitBtn.style.display = 'none';
             } else {
                 exitBtn.style.display = 'flex';
@@ -1155,7 +1155,6 @@
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fUah = parseFloat(String(user.execUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
 
-        // Форматуємо для відображення: якщо менше 0, міняємо на + і робимо зеленим
         let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
         let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
 
