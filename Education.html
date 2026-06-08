@@ -5,12 +5,22 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Навчання - SkillHUB</title>
     <meta name="theme-color" content="#f2f2f7">
+    
+    <script>
+        // Анти-мерцание: мгновенно применяем тему до загрузки элементов интерфейса
+        (function() {
+            var theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
+            /* СВЕТЛАЯ ТЕМА */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #111827; 
@@ -27,11 +37,27 @@
             --rozetka-green-dark: #00a046;
         }
 
+        [data-theme="dark"] {
+            /* ТЕМНАЯ ТЕМА */
+            --bg: #000000; 
+            --card-bg: #1c1c1e;
+            --text-main: #ffffff; 
+            --text-muted: #98989d; 
+            --primary: #10b981;
+            --primary-light: rgba(16, 185, 129, 0.2);
+            --border: #38383a;
+            --input-bg: #2c2c2e;
+            --danger: #ff453a;
+            --danger-bg: rgba(255, 69, 58, 0.15);
+            --success: #34d399;
+        }
+
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
             padding-bottom: 80px; 
+            transition: background 0.3s ease, color 0.3s ease; /* Плавное переключение цветов */
         }
 
         .container { 
@@ -471,6 +497,14 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
+    // Слушатель для синхронизации: моментально меняет тему при её смене в index.html
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'theme') {
+            let currentTheme = event.newValue || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        }
+    });
+
     let db = null;
     let globalAchievements = []; 
     let currentUser = null;
@@ -560,7 +594,6 @@
             window.scrollTo(0, 0);
 
             const exitBtn = document.getElementById('floatingExitBtn');
-            // ОНОВЛЕНО: Тепер кнопка не ховається на екрані loginView
             if (viewId === 'testView') {
                 exitBtn.style.display = 'none';
             } else {
