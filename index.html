@@ -12,6 +12,13 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <script>
+        (function() {
+            var theme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', theme);
+        })();
+    </script>
+
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
@@ -929,7 +936,7 @@
         }
     });
 
-    // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ИЗ ЗАПРОСА
+    // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ІЗ ЗАПИТУ
     const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
@@ -1056,6 +1063,15 @@
         if(currentTheme === 'dark') toggle.classList.add('active');
         else toggle.classList.remove('active');
     }
+
+    // ДОДАНИЙ БЛОК: Синхронізація кнопок між відкритими вкладками
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'theme') {
+            currentTheme = event.newValue || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+            updateToggleUI();
+        }
+    });
 
     const brandRegex = /^\[(.*?)\]/;
 
