@@ -615,10 +615,10 @@
     </div>
 
     <div id="tab-reserves" class="app-tab">
-        <div style="display: flex; justify-content: flex-end; margin-bottom: 12px;">
-            <div id="rezervyDateBox" style="display: none; font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--card-bg); padding: 6px 12px; border-radius: 8px; border: 1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.02);">
-                Актуально на <span id="rezervyDateValue" style="color: var(--primary);"></span>
-            </div>
+        <div style="text-align: right; margin-bottom: 6px; padding-right: 2px;">
+            <span id="rezervyDateBox" style="display: none; font-size: 10px; font-weight: 500; color: var(--text-muted);">
+                Актуально на <span id="rezervyDateValue" style="font-weight: 700;"></span>
+            </span>
         </div>
         <div class="input-group" style="display: flex; gap: 10px; align-items: center;">
             <select id="storeFilter" onchange="window.renderRezervyList()" style="flex: 1; margin-bottom: 0;">
@@ -887,11 +887,11 @@
     });
 
     // ОБНОВЛЕННЫЙ АДРЕС ВАШЕГО API ИЗ ЗАПРОСА
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxcNhmBYm1_UM5phAaCqjKBUpK5JNE23MyhvDYbSQnblKGbFrXHO54uXAs1T9jmLm0crg/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -962,7 +962,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -971,7 +971,6 @@
         if (!data.montazhData.services) data.montazhData.services = [];
         data.serviceCodes = data.serviceCodes || {};
         data.rezervyData = data.rezervyData || [];
-        data.rezervyDate = data.rezervyDate || ""; 
         data.serviceBrands = data.serviceBrands || {};
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
@@ -1343,6 +1342,7 @@
             } else if (linkStr === "@@") {
                 actionStr = `onclick="window.openModalBase('certManualModal')"`;
             } else if (linkStr.toLowerCase().includes("education.html") || nm.includes("навчан") || nm.includes("обучен")) {
+                // ПЕРЕХОД НА СТРАНИЦУ ОБУЧЕНИЯ В ЭТОМ ЖЕ ОКНЕ БЕЗ ОТКРЫТИЯ НОВОЙ ВКЛАДКИ
                 let cleanLink = linkStr !== "#" && linkStr !== "" ? linkStr : "Education.html";
                 actionStr = `onclick="window.location.href='${cleanLink}'"`;
             } else if (linkStr !== "" && linkStr !== "#") {
@@ -1548,15 +1548,6 @@
         const storeSel = document.getElementById('storeFilter');
         const defaultSel = document.getElementById('defaultStoreSelect');
         
-        const dateBox = document.getElementById('rezervyDateBox');
-        const dateVal = document.getElementById('rezervyDateValue');
-        if (db.rezervyDate) {
-            dateVal.innerText = db.rezervyDate;
-            dateBox.style.display = 'inline-block';
-        } else {
-            dateBox.style.display = 'none';
-        }
-
         if (db.rezervyData) {
             const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
             let h = '<option value="">-- Оберіть магазин --</option>';
@@ -1668,15 +1659,18 @@
     
     // --- НОВЕ: Закриття панелі при кліку в порожнє місце ---
     document.addEventListener('click', function(event) {
+        // Якщо панель відкрита
         if (topPanel.classList.contains('show')) {
+            // Перевіряємо, чи клік був НЕ по самій панелі і НЕ по кнопці відкриття
             if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
                 topPanel.classList.remove('show');
                 topInput.value = '';
                 clearTopBtn.style.display = 'none';
-                window.renderRezervyList(); 
+                window.renderRezervyList(); // Скидаємо фільтр резервів
             }
         }
     });
+    // -----------------------------------------
 
     window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
