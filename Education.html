@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#f2f2f7">
     
     <script>
-        // Анти-мерцание: мгновенно применяем тему до загрузки элементов интерфейса
+        // Анти-блимання: миттєво застосовуємо тему до завантаження елементів інтерфейсу
         (function() {
             var theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
@@ -20,7 +20,7 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            /* СВЕТЛАЯ ТЕМА */
+            /* СВІТЛА ТЕМА (Стандартна, чиста) */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #111827; 
@@ -38,7 +38,7 @@
         }
 
         [data-theme="dark"] {
-            /* ТЕМНАЯ ТЕМА */
+            /* ТЕМНА ТЕМА */
             --bg: #000000; 
             --card-bg: #1c1c1e;
             --text-main: #ffffff; 
@@ -57,7 +57,7 @@
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
             padding-bottom: 80px; 
-            transition: background 0.3s ease, color 0.3s ease; /* Плавное переключение цветов */
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container { 
@@ -85,9 +85,7 @@
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
         /* --- ЛОГІН --- */
-        .login-wrapper {
-            display: flex; flex-direction: column; justify-content: center; min-height: 80vh;
-        }
+        .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
         .login-card {
             background: var(--card-bg); border-radius: 24px; padding: 32px 24px;
             box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border);
@@ -114,9 +112,7 @@
             width: 22px; height: 22px; border-radius: 6px; background: var(--input-bg); border: 2px solid var(--border);
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
         }
-        .custom-checkbox-wrapper input:checked + .custom-checkmark {
-            background: var(--primary); border-color: var(--primary);
-        }
+        .custom-checkbox-wrapper input:checked + .custom-checkmark { background: var(--primary); border-color: var(--primary); }
         .custom-checkmark::after {
             content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2.5px 2.5px 0;
             transform: rotate(45deg); display: none; margin-bottom: 2px;
@@ -135,9 +131,7 @@
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.15); }
         .btn-glow:disabled { background: var(--border); box-shadow: none; cursor: not-allowed; opacity: 0.7; color: var(--text-muted); }
 
-        .btn-secondary {
-            background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border);
-        }
+        .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:active { transform: scale(0.96); background: var(--border); }
 
         /* --- НАВІГАЦІЯ --- */
@@ -147,9 +141,7 @@
         }
         .nav-header h2 { font-size: 24px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
         
-        .nav-actions {
-            display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none;
-        }
+        .nav-actions { display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none; }
 
         .back-btn-sleek {
             background: transparent; border: none; width: 44px; height: 44px; border-radius: 14px;
@@ -164,10 +156,7 @@
             70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
             100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
         }
-        .ach-btn.has-new {
-            animation: pulse-ring 2s infinite;
-            border-radius: 50%; 
-        }
+        .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
 
         .floating-exit {
             position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: auto; height: 48px;
@@ -185,9 +174,7 @@
             border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(0,0,0,0.03);
             transition: all 0.3s ease;
         }
-        .progress-header {
-            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;
-        }
+        .progress-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
         .progress-title-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .progress-percent-val { font-size: 28px; font-weight: 900; color: var(--text-main); line-height: 1; transition: color 0.3s ease; }
         
@@ -429,7 +416,7 @@
 
         <div id="globalStatsContainer"></div>
 
-        <div class="section-title">Назначені курси</div>
+        <div class="section-title">Призначені курси</div>
         <div id="courseList"></div>
     </div>
 
@@ -497,7 +484,7 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
-    // Слушатель для синхронизации: моментально меняет тему при её смене в index.html
+    // Слухач для синхронізації: моментально змінює тему при її зміні в index.html
     window.addEventListener('storage', (event) => {
         if (event.key === 'theme') {
             let currentTheme = event.newValue || 'light';
