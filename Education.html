@@ -519,7 +519,11 @@
     let deadlineInterval;
     let sessionCheckInterval;
     window.isDeadlinePassed = false;
-    let isTestActive = false; // Змінна для відстеження активності тесту
+    let isTestActive = false; 
+
+    // ДОДАНО: Змінні для Пульсометра (Heartbeat)
+    let heartbeatInterval;
+    let lastHeartbeatTime;
 
     function getCleanName(str) {
         if (!str) return "";
@@ -1584,13 +1588,28 @@
             }
         }, 1000);
 
-        isTestActive = true; // Сигналізуємо, що тест почався
+        isTestActive = true; 
         switchView('testView');
+
+        // ДОДАНО: Запуск "пульсометра" (Heartbeat)
+        lastHeartbeatTime = Date.now();
+        clearInterval(heartbeatInterval);
+        heartbeatInterval = setInterval(() => {
+            if (!isTestActive) return;
+            let now = Date.now();
+            
+            // Якщо браузер був "заморожений" системою, між перевірками пройде багато часу
+            if (now - lastHeartbeatTime > 2500) { 
+                triggerAntiCheat();
+            }
+            lastHeartbeatTime = now;
+        }, 500);
     }
 
     async function submitTest() {
-        isTestActive = false; // Вимикаємо захист, бо користувач сам здав тест
+        isTestActive = false; 
         clearInterval(testTimerInterval); 
+        clearInterval(heartbeatInterval); // Знімаємо пульсометр
         
         let maxTime = parsedQuestions.length * 30;
         let timeSpent = maxTime - timeRemaining;
@@ -1696,10 +1715,11 @@
 
     // --- АНТИ-ЧІТ СИСТЕМА (ПОКРАЩЕНА) ---
     function triggerAntiCheat() {
-        if (!isTestActive) return; // Запобігаємо подвійному спрацьовуванню
+        if (!isTestActive) return; 
         
         isTestActive = false; 
-        clearInterval(testTimerInterval); // Зупиняємо таймер
+        clearInterval(testTimerInterval); 
+        clearInterval(heartbeatInterval); 
 
         // Очищаємо всі обрані відповіді користувача (0 балів)
         parsedQuestions.forEach((q, qIndex) => {
@@ -1711,28 +1731,26 @@
             });
         });
 
-        // Показуємо попередження
         alert("⛔ Порушення правил! Ви згорнули вікно або перейшли в іншу програму. Спробу зараховано з результатом 0%.");
 
-        // Примусово відправляємо тест
         submitTest();
     }
 
-    // Тригер 1: Зміна видимості (стандартний метод)
+    // Тригер 1: Зміна видимості
     document.addEventListener('visibilitychange', function() {
         if (document.hidden && isTestActive) {
             triggerAntiCheat();
         }
     });
 
-    // Тригер 2: Втрата фокусу вікном (відкриття шторки сповіщень, меню багатозадачності, дзвінок)
+    // Тригер 2: Втрата фокусу
     window.addEventListener('blur', function() {
         if (isTestActive) {
             triggerAntiCheat();
         }
     });
 
-    // Тригер 3: Приховування сторінки (надійніше працює на старих пристроях та iOS)
+    // Тригер 3: Приховування сторінки
     window.addEventListener('pagehide', function() {
         if (isTestActive) {
             triggerAntiCheat();
