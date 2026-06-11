@@ -333,7 +333,7 @@
         .modal-scrollable::-webkit-scrollbar-track { background: transparent; }
         .modal-scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        /* --- ДОДАНО: АНТИ-СУПЕР-ЧІТ ШИРМА --- */
+        /* --- АНТИ-СУПЕР-ЧІТ ШИРМА --- */
         #antiCheatScreen {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             background: #000; color: #fff; z-index: 999999;
@@ -485,6 +485,26 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <div id="warningView" class="view">
+        <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="big-emoji" style="font-size: 80px;">⚠️</div>
+            <h1 style="font-size: 28px; margin-bottom: 12px; color: var(--danger);">Важливі правила!</h1>
+            
+            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 30px; text-align: left; box-shadow: 0 8px 24px rgba(0,0,0,0.04); max-width: 100%;">
+                <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.5;">
+                    <span style="font-size: 18px; display: inline-block; vertical-align: middle;">⏱</span> 
+                    У вас буде рівно <strong>25 секунд</strong> на кожне питання.
+                </p>
+                <p style="font-size: 15px; font-weight: 600; margin-bottom: 0; line-height: 1.5; color: var(--danger);">
+                    <span style="font-size: 18px; display: inline-block; vertical-align: middle;">🚫</span> 
+                    <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або робити свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
+                </p>
+            </div>
+
+            <button class="btn btn-glow" onclick="acceptWarningAndStart()">ЗРОЗУМІЛО</button>
+        </div>
+    </div>
+
     <div id="testView" class="view">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
@@ -538,7 +558,7 @@
     window.isDeadlinePassed = false;
     let isTestActive = false; 
 
-    // ДОДАНО: Змінні для посторінкового виводу (Варіант 3)
+    // Змінні для посторінкового виводу (Варіант 3)
     let currentQuestionIndex = 0;
     let totalTimeSpent = 0;
     const TIME_PER_QUESTION = 25; // 25 секунд на одне питання
@@ -605,6 +625,8 @@
             switchView('courseView');
         } else if (activeView === 'theoryView') {
             switchView('productView');
+        } else if (activeView === 'warningView') {
+            switchView('theoryView'); // З попередження назад в теорію
         } else if (activeView === 'resultView') {
             openCourse(currentCourseName);
         }
@@ -1526,7 +1548,7 @@
         return questions;
     }
 
-    // ДОДАНО: Логіка обробки натискань для посторінкового режиму
+    // Логіка обробки натискань для посторінкового режиму
     function updateSelection(qIndex, aIndex) {
         let q = parsedQuestions[qIndex];
         
@@ -1563,7 +1585,7 @@
         }
     }
 
-    // ДОДАНО: Логіка показу одного питання (Варіант 3)
+    // Логіка показу одного питання (Варіант 3)
     function showQuestion(index) {
         if (index >= parsedQuestions.length) {
             submitTest();
@@ -1623,6 +1645,7 @@
         showQuestion(currentQuestionIndex);
     }
 
+    // ДОДАНО: Перевірка попередження перед стартом тесту
     function startTest() {
         if (window.isDeadlinePassed) return;
 
@@ -1631,6 +1654,27 @@
             return;
         }
 
+        // Перевіряємо, чи вже показували попередження в цій сесії
+        let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
+        
+        if (!warningShown) {
+            // Якщо не показували - виводимо екран з правилами
+            switchView('warningView');
+        } else {
+            // Якщо показували - відразу запускаємо тест
+            proceedToTest();
+        }
+    }
+
+    // ДОДАНО: Дія кнопки "ЗРОЗУМІЛО"
+    function acceptWarningAndStart() {
+        // Запам'ятовуємо, що попередження показано (діє до закриття вкладки)
+        sessionStorage.setItem('skillhub_test_warning_shown', 'true');
+        proceedToTest();
+    }
+
+    // Логіка самого старту тесту винесена в окрему функцію
+    function proceedToTest() {
         parsedQuestions = parseTestString(currentProductData.test);
 
         if (parsedQuestions.length === 0) {
@@ -1651,7 +1695,7 @@
         showQuestion(currentQuestionIndex);
     }
 
-    // ДОДАНО: Оновлена логіка підрахунку балів
+    // Оновлена логіка підрахунку балів
     async function submitTest() {
         isTestActive = false; 
         clearInterval(testTimerInterval); 
@@ -1755,7 +1799,7 @@
         }
     }
 
-    // --- ДОДАНО: АНТИ-СУПЕР-ЧІТ ---
+    // --- АНТИ-СУПЕР-ЧІТ ---
     function triggerAntiCheat() {
         if (!isTestActive) return; 
         isTestActive = false; 
