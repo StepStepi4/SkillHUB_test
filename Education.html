@@ -332,9 +332,26 @@
         .modal-scrollable::-webkit-scrollbar { width: 6px; }
         .modal-scrollable::-webkit-scrollbar-track { background: transparent; }
         .modal-scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+
+        /* --- ДОДАНО: АНТИ-СУПЕР-ЧІТ ШИРМА --- */
+        #antiCheatScreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 999999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 16px; font-weight: 800; text-align: center; padding: 24px; line-height: 1.5;
+        }
+        body.cheating .container { display: none !important; }
+        body.cheating #antiCheatScreen { display: flex !important; }
+
     </style>
 </head>
 <body>
+
+<div id="antiCheatScreen">
+    <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
+    <div>ТЕСТ ЗАБЛОКОВАНО</div>
+    <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
+</div>
 
 <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
@@ -472,13 +489,13 @@
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 26px;">⏱</span>
-                <h2>Тестування</h2>
+                <h2 id="testHeaderTitle">Тестування</h2>
             </div>
             <div id="testTimer" class="timer-box">00:00</div>
         </div>
 
         <div id="testContainer"></div>
-        <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
+        <button class="btn btn-glow" id="submitTestBtn">НАСТУПНЕ ПИТАННЯ</button>
     </div>
 
     <div id="resultView" class="view">
@@ -521,11 +538,10 @@
     window.isDeadlinePassed = false;
     let isTestActive = false; 
 
-    // Змінні для анти-чіт пульсометра
-    let heartbeatInterval;
-    let lastHeartbeatTime;
-    let lastRafTime;
-    let rafId;
+    // ДОДАНО: Змінні для посторінкового виводу (Варіант 3)
+    let currentQuestionIndex = 0;
+    let totalTimeSpent = 0;
+    const TIME_PER_QUESTION = 25; // 25 секунд на одне питання
 
     function getCleanName(str) {
         if (!str) return "";
@@ -1510,17 +1526,26 @@
         return questions;
     }
 
-    function updateSelection(qIndex) {
+    // ДОДАНО: Логіка обробки натискань для посторінкового режиму
+    function updateSelection(qIndex, aIndex) {
         let q = parsedQuestions[qIndex];
-        q.answers.forEach((ans, aIndex) => {
-            let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
+        
+        if (q.type === 'radio') {
+            q.answers.forEach((ans, idx) => {
+                ans.selected = (idx === aIndex);
+                let label = document.getElementById(`lbl_q${qIndex}_a${idx}`);
+                if (label) {
+                    if (ans.selected) label.classList.add('selected');
+                    else label.classList.remove('selected');
+                }
+            });
+        } else {
             let input = document.getElementById(`q${qIndex}_a${aIndex}`);
-            if (input.checked) {
-                label.classList.add('selected');
-            } else {
-                label.classList.remove('selected');
-            }
-        });
+            q.answers[aIndex].selected = input.checked;
+            let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
+            if (input.checked) label.classList.add('selected');
+            else label.classList.remove('selected');
+        }
     }
 
     function updateTimerUI() {
@@ -1538,11 +1563,64 @@
         }
     }
 
-    // ДОДАНО: Функція для петлі малювання (відстежує паузи рендерингу)
-    function rafLoop() {
-        if (!isTestActive) return;
-        lastRafTime = Date.now();
-        rafId = requestAnimationFrame(rafLoop);
+    // ДОДАНО: Логіка показу одного питання (Варіант 3)
+    function showQuestion(index) {
+        if (index >= parsedQuestions.length) {
+            submitTest();
+            return;
+        }
+
+        let q = parsedQuestions[index];
+        document.getElementById('testHeaderTitle').innerText = `Питання ${index + 1} з ${parsedQuestions.length}`;
+
+        let answersHtml = q.answers.map((ans, aIndex) => {
+            let checkedAttr = ans.selected ? 'checked' : '';
+            let selectedClass = ans.selected ? 'selected' : '';
+            return `
+            <label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}">
+                <input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})">
+                <span style="flex:1;">${ans.text}</span>
+            </label>
+            `;
+        }).join('');
+
+        let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
+
+        document.getElementById('testContainer').innerHTML = `
+            <div class="question-card">
+                <div class="question-title">${q.text} ${hint}</div>
+                ${answersHtml}
+            </div>
+        `;
+
+        let btn = document.getElementById('submitTestBtn');
+        if (index === parsedQuestions.length - 1) {
+            btn.innerText = "ЗАВЕРШИТИ ТЕСТ";
+            btn.onclick = () => submitTest();
+        } else {
+            btn.innerText = "НАСТУПНЕ ПИТАННЯ";
+            btn.onclick = () => nextQuestion();
+        }
+
+        timeRemaining = TIME_PER_QUESTION; 
+        updateTimerUI();
+
+        clearInterval(testTimerInterval);
+        testTimerInterval = setInterval(() => {
+            timeRemaining--;
+            totalTimeSpent++;
+            updateTimerUI();
+            if (timeRemaining <= 0) {
+                clearInterval(testTimerInterval);
+                nextQuestion(); // Час вийшов - примусово на наступне
+            }
+        }, 1000);
+    }
+
+    function nextQuestion() {
+        clearInterval(testTimerInterval);
+        currentQuestionIndex++;
+        showQuestion(currentQuestionIndex);
     }
 
     function startTest() {
@@ -1561,91 +1639,32 @@
         }
 
         shuffleArray(parsedQuestions);
-        parsedQuestions.forEach(q => shuffleArray(q.answers));
+        parsedQuestions.forEach(q => {
+            shuffleArray(q.answers);
+            q.answers.forEach(a => a.selected = false); // Ініціалізуємо статус
+        });
 
-        const container = document.getElementById('testContainer');
-        container.innerHTML = parsedQuestions.map((q, qIndex) => {
-
-            let answersHtml = q.answers.map((ans, aIndex) => `
-                <label class="answer-label" id="lbl_q${qIndex}_a${aIndex}">
-                    <input type="${q.type}" name="q_${qIndex}" id="q${qIndex}_a${aIndex}" onchange="updateSelection(${qIndex})">
-                    <span style="flex:1;">${ans.text}</span>
-                </label>
-            `).join('');
-
-            let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
-
-            return `
-                <div class="question-card">
-                    <div class="question-title">${q.text} ${hint}</div>
-                    ${answersHtml}
-                </div>
-            `;
-        }).join('');
-
-        clearInterval(testTimerInterval);
-        timeRemaining = parsedQuestions.length * 30; 
-        updateTimerUI();
-
-        testTimerInterval = setInterval(() => {
-            timeRemaining--;
-            updateTimerUI();
-            if (timeRemaining <= 0) {
-                clearInterval(testTimerInterval);
-                alert("Час вийшов! Тест завершується автоматично.");
-                submitTest();
-            }
-        }, 1000);
-
+        currentQuestionIndex = 0;
+        totalTimeSpent = 0;
         isTestActive = true; 
         switchView('testView');
-
-        // ДОДАНО: Запуск покращеного пульсометра (Heartbeat + Рендеринг)
-        lastHeartbeatTime = Date.now();
-        lastRafTime = Date.now();
-        rafLoop(); // Запускаємо відстеження малювання екрану
-
-        clearInterval(heartbeatInterval);
-        heartbeatInterval = setInterval(() => {
-            if (!isTestActive) return;
-            let now = Date.now();
-            
-            // 1. Перевірка на повне заморожування браузера (таймери зупинились)
-            if (now - lastHeartbeatTime > 2000) { 
-                triggerAntiCheat();
-                return;
-            }
-            
-            // 2. Перевірка на режим багатозадачності (App Switcher Hack)
-            // Таймер йде, але екран перестав малюватися (висить скріншот)
-            if (now - lastRafTime > 1000) {
-                triggerAntiCheat();
-                return;
-            }
-
-            lastHeartbeatTime = now;
-        }, 500);
+        showQuestion(currentQuestionIndex);
     }
 
+    // ДОДАНО: Оновлена логіка підрахунку балів
     async function submitTest() {
         isTestActive = false; 
         clearInterval(testTimerInterval); 
-        clearInterval(heartbeatInterval); 
-        cancelAnimationFrame(rafId); // ДОДАНО: Зупиняємо відстеження рендерингу
         
-        let maxTime = parsedQuestions.length * 30;
-        let timeSpent = maxTime - timeRemaining;
-
         let correctCount = 0;
 
-        parsedQuestions.forEach((q, qIndex) => {
+        parsedQuestions.forEach((q) => {
             let isQuestionCorrect = true;
             let answeredAnything = false;
 
-            q.answers.forEach((ans, aIndex) => {
-                let isChecked = document.getElementById(`q${qIndex}_a${aIndex}`).checked;
-                if (isChecked) answeredAnything = true;
-                if (isChecked !== ans.correct) {
+            q.answers.forEach((ans) => {
+                if (ans.selected) answeredAnything = true;
+                if (!!ans.selected !== ans.correct) {
                     isQuestionCorrect = false;
                 }
             });
@@ -1657,6 +1676,7 @@
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
+        let timeSpent = totalTimeSpent;
 
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
@@ -1735,49 +1755,37 @@
         }
     }
 
+    // --- ДОДАНО: АНТИ-СУПЕР-ЧІТ ---
     function triggerAntiCheat() {
         if (!isTestActive) return; 
-        
         isTestActive = false; 
         clearInterval(testTimerInterval); 
-        clearInterval(heartbeatInterval); 
-        cancelAnimationFrame(rafId); // ДОДАНО: Зупиняємо відстеження рендерингу
 
-        // Очищаємо всі обрані відповіді користувача (0 балів)
-        parsedQuestions.forEach((q, qIndex) => {
-            q.answers.forEach((ans, aIndex) => {
-                let input = document.getElementById(`q${qIndex}_a${aIndex}`);
-                if (input) {
-                    input.checked = false;
-                }
-            });
+        // Миттєво ховаємо весь екран за чорною ширмою
+        // iOS сфотографує саме її, а не тест!
+        document.body.classList.add('cheating');
+
+        // Анулюємо всі вибрані відповіді
+        parsedQuestions.forEach(q => {
+            q.answers.forEach(a => a.selected = false);
         });
 
-        alert("⛔ Порушення правил! Ви згорнули вікно або перейшли в іншу програму. Спробу зараховано з результатом 0%.");
-
-        submitTest();
+        // Даємо мікро-паузу (щоб екран встиг стати чорним для системи), потім караємо
+        setTimeout(() => {
+            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
+            document.body.classList.remove('cheating');
+            submitTest();
+        }, 150);
     }
 
-    // Тригер 1: Зміна видимості
-    document.addEventListener('visibilitychange', function() {
-        if (document.hidden && isTestActive) {
-            triggerAntiCheat();
-        }
+    // Тригери спрацьовування анти-чіта
+    window.addEventListener('blur', triggerAntiCheat); // Клік за межі вікна або шторка
+    window.addEventListener('pagehide', triggerAntiCheat); // Згортання додатка
+    document.addEventListener('visibilitychange', () => { 
+        if (document.hidden) triggerAntiCheat(); 
     });
-
-    // Тригер 2: Втрата фокусу
-    window.addEventListener('blur', function() {
-        if (isTestActive) {
-            triggerAntiCheat();
-        }
-    });
-
-    // Тригер 3: Приховування сторінки
-    window.addEventListener('pagehide', function() {
-        if (isTestActive) {
-            triggerAntiCheat();
-        }
-    });
+    // Бонус: якщо свайп на iPhone переривається жестом системи
+    document.addEventListener('touchcancel', triggerAntiCheat); 
 </script>
 </body>
 </html>
