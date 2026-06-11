@@ -519,7 +519,7 @@
     let deadlineInterval;
     let sessionCheckInterval;
     window.isDeadlinePassed = false;
-    let isTestActive = false; // ДОДАНО: Змінна для відстеження активності тесту
+    let isTestActive = false; // Змінна для відстеження активності тесту
 
     function getCleanName(str) {
         if (!str) return "";
@@ -1584,12 +1584,12 @@
             }
         }, 1000);
 
-        isTestActive = true; // ДОДАНО: Сигналізуємо, що тест почався
+        isTestActive = true; // Сигналізуємо, що тест почався
         switchView('testView');
     }
 
     async function submitTest() {
-        isTestActive = false; // ДОДАНО: Вимикаємо захист, бо користувач сам здав тест
+        isTestActive = false; // Вимикаємо захист, бо користувач сам здав тест
         clearInterval(testTimerInterval); 
         
         let maxTime = parsedQuestions.length * 30;
@@ -1694,29 +1694,48 @@
         }
     }
 
-    // ДОДАНО: --- АНТИ-ЧІТ СИСТЕМА ---
-    document.addEventListener('visibilitychange', function() {
-        // Перевіряємо: якщо сторінка стала невидимою І тест зараз активний
-        if (document.hidden && isTestActive) {
-            
-            isTestActive = false; // Одразу вимикаємо, щоб не спрацювало двічі
-            clearInterval(testTimerInterval); // Зупиняємо таймер
+    // --- АНТИ-ЧІТ СИСТЕМА (ПОКРАЩЕНА) ---
+    function triggerAntiCheat() {
+        if (!isTestActive) return; // Запобігаємо подвійному спрацьовуванню
+        
+        isTestActive = false; 
+        clearInterval(testTimerInterval); // Зупиняємо таймер
 
-            // Очищаємо всі обрані відповіді користувача, щоб він отримав рівно 0 балів
-            parsedQuestions.forEach((q, qIndex) => {
-                q.answers.forEach((ans, aIndex) => {
-                    let input = document.getElementById(`q${qIndex}_a${aIndex}`);
-                    if (input) {
-                        input.checked = false;
-                    }
-                });
+        // Очищаємо всі обрані відповіді користувача (0 балів)
+        parsedQuestions.forEach((q, qIndex) => {
+            q.answers.forEach((ans, aIndex) => {
+                let input = document.getElementById(`q${qIndex}_a${aIndex}`);
+                if (input) {
+                    input.checked = false;
+                }
             });
+        });
 
-            // Показуємо попередження
-            alert("⛔ Порушення правил! Ви згорнули вікно або перейшли в іншу програму. Спробу зараховано з результатом 0%.");
+        // Показуємо попередження
+        alert("⛔ Порушення правил! Ви згорнули вікно або перейшли в іншу програму. Спробу зараховано з результатом 0%.");
 
-            // Примусово відправляємо тест із нульовим результатом
-            submitTest();
+        // Примусово відправляємо тест
+        submitTest();
+    }
+
+    // Тригер 1: Зміна видимості (стандартний метод)
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && isTestActive) {
+            triggerAntiCheat();
+        }
+    });
+
+    // Тригер 2: Втрата фокусу вікном (відкриття шторки сповіщень, меню багатозадачності, дзвінок)
+    window.addEventListener('blur', function() {
+        if (isTestActive) {
+            triggerAntiCheat();
+        }
+    });
+
+    // Тригер 3: Приховування сторінки (надійніше працює на старих пристроях та iOS)
+    window.addEventListener('pagehide', function() {
+        if (isTestActive) {
+            triggerAntiCheat();
         }
     });
 </script>
