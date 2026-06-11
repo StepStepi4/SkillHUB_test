@@ -521,9 +521,11 @@
     window.isDeadlinePassed = false;
     let isTestActive = false; 
 
-    // ДОДАНО: Змінні для Пульсометра (Heartbeat)
+    // Змінні для анти-чіт пульсометра
     let heartbeatInterval;
     let lastHeartbeatTime;
+    let lastRafTime;
+    let rafId;
 
     function getCleanName(str) {
         if (!str) return "";
@@ -1536,6 +1538,13 @@
         }
     }
 
+    // ДОДАНО: Функція для петлі малювання (відстежує паузи рендерингу)
+    function rafLoop() {
+        if (!isTestActive) return;
+        lastRafTime = Date.now();
+        rafId = requestAnimationFrame(rafLoop);
+    }
+
     function startTest() {
         if (window.isDeadlinePassed) return;
 
@@ -1591,17 +1600,29 @@
         isTestActive = true; 
         switchView('testView');
 
-        // ДОДАНО: Запуск "пульсометра" (Heartbeat)
+        // ДОДАНО: Запуск покращеного пульсометра (Heartbeat + Рендеринг)
         lastHeartbeatTime = Date.now();
+        lastRafTime = Date.now();
+        rafLoop(); // Запускаємо відстеження малювання екрану
+
         clearInterval(heartbeatInterval);
         heartbeatInterval = setInterval(() => {
             if (!isTestActive) return;
             let now = Date.now();
             
-            // Якщо браузер був "заморожений" системою, між перевірками пройде багато часу
-            if (now - lastHeartbeatTime > 2500) { 
+            // 1. Перевірка на повне заморожування браузера (таймери зупинились)
+            if (now - lastHeartbeatTime > 2000) { 
                 triggerAntiCheat();
+                return;
             }
+            
+            // 2. Перевірка на режим багатозадачності (App Switcher Hack)
+            // Таймер йде, але екран перестав малюватися (висить скріншот)
+            if (now - lastRafTime > 1000) {
+                triggerAntiCheat();
+                return;
+            }
+
             lastHeartbeatTime = now;
         }, 500);
     }
@@ -1609,7 +1630,8 @@
     async function submitTest() {
         isTestActive = false; 
         clearInterval(testTimerInterval); 
-        clearInterval(heartbeatInterval); // Знімаємо пульсометр
+        clearInterval(heartbeatInterval); 
+        cancelAnimationFrame(rafId); // ДОДАНО: Зупиняємо відстеження рендерингу
         
         let maxTime = parsedQuestions.length * 30;
         let timeSpent = maxTime - timeRemaining;
@@ -1713,13 +1735,13 @@
         }
     }
 
-    // --- АНТИ-ЧІТ СИСТЕМА (ПОКРАЩЕНА) ---
     function triggerAntiCheat() {
         if (!isTestActive) return; 
         
         isTestActive = false; 
         clearInterval(testTimerInterval); 
         clearInterval(heartbeatInterval); 
+        cancelAnimationFrame(rafId); // ДОДАНО: Зупиняємо відстеження рендерингу
 
         // Очищаємо всі обрані відповіді користувача (0 балів)
         parsedQuestions.forEach((q, qIndex) => {
