@@ -86,7 +86,7 @@
 
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
-        .section-title { font-size: 14px; font-weight: 800; margin: 28px 0 12px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; }
+        .section-title { font-size: 14px; font-weight: 800; margin: 28px 0 12px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: space-between; }
         
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
@@ -472,7 +472,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxob9NIVzUntCvqTXFqwvy8sdXIK0ZJbn96JLt39Cv4S-hycBmRcIpNnfTEeZ-3MCtGpQ/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw2sD11ZSl2MNwuIKEYfQ9YR6NBi818ANEn9fWz9qmY9FzvfmUOXfsvDEjYJHe2VJeEAQ/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -494,7 +494,6 @@
     let currentCourseName = "";
     let currentProductData = null;
     let parsedQuestions = [];
-    let savedCompletedListHtml = ""; 
 
     let testTimerInterval;
     let timeRemaining = 0;
@@ -503,8 +502,12 @@
     window.isDeadlinePassed = false;
     let isTestActive = false;
 
+    // Змінні для підрахунку загального часу (теорія + тест)
+    window.sessionTotalTime = 0;
+    window.theoryEntryTime = 0;
     let currentQuestionIndex = 0;
     let totalTimeSpent = 0;
+    
     const TIME_PER_QUESTION = 25; 
 
     function getCleanName(str) {
@@ -552,6 +555,14 @@
         let n = parseFloat(str);
         if (isNaN(n)) return "0";
         return n.toLocaleString('uk-UA');
+    }
+    
+    // Нова функція форматування дедлайну для карток та дашборду
+    function formatDeadlineText(deadlineStr) {
+        if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
+        let ds = String(deadlineStr).trim();
+        if (!isNaN(ds)) return `${ds} днів`;
+        return ds;
     }
 
     function handleFloatingBack() {
@@ -685,7 +696,7 @@
                 let d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 let m = Math.floor((diff / 1000 / 60) % 60);
-                document.getElementById('deadlineText').innerText = `Дедлайн: ${d}д ${h}г ${m}хв`;
+                document.getElementById('deadlineText').innerText = `⏳ Залишилось: ${d}д ${h}г ${m}хв`;
                 document.getElementById('deadlineText').style.color = "var(--text-main)";
                 document.getElementById('deadlineContainer').style.background = "var(--input-bg)";
                 document.getElementById('deadlineContainer').style.borderColor = "var(--border)";
@@ -1045,18 +1056,15 @@
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
         
-        let allUsers = db.users.filter(u => String(u.role).toLowerCase().includes('співробітник') || String(u.role).toLowerCase().includes('сотрудник'));
+        let allUsers = db.users.filter(u => String(u.role).toLowerCase().includes('співробітник') || String(u.role).toLowerCase().includes('сотрудник') || String(u.role).toLowerCase().includes('керівник'));
         
-        // ФІКС ПАРСИНГУ ІМЕНІ ДЛЯ КЕРІВНИКІВ
         let mName = String(currentUserObj.name).toLowerCase().trim();
         let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
-        // Беремо Прізвище + Ім'я (те, що в колонці Director у таблиці)
         let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
 
         let managedUsers = isAdmin ? allUsers : allUsers.filter(u => {
             let uDir = String(u.director).toLowerCase().trim();
             if (!uDir) return false;
-            // Перевіряємо збіг за скороченим іменем або підрядком
             return uDir === mShort || mName.includes(uDir) || uDir.includes(mShort);
         });
 
@@ -1130,9 +1138,24 @@
             groupAssigned += parseInt(st.assigned) || 0;
             groupPassed += (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             
-            let avg = parseFloat(String(st.avgScore).replace('%','').replace(',','.')) || 0;
-            if (avg > 0) {
-                groupAvgSum += avg;
+            // Динамічний підрахунок середнього % для групи
+            let sum = 0;
+            let count = 0;
+            for (let key in (u.results || {})) {
+                let resStr = u.results[key];
+                let score = 0;
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                if (match) {
+                    score = parseInt(match[2], 10) || 0;
+                } else {
+                    let sm = String(resStr).match(/(\d+)%/);
+                    if (sm) score = parseInt(sm[1], 10) || 0;
+                }
+                sum += score;
+                count++;
+            }
+            if (count > 0) {
+                groupAvgSum += (sum / count);
                 validAvgs++;
             }
         });
@@ -1158,12 +1181,13 @@
             if (deadlineStr) {
                 let dlMs = getDeadlineMs(deadlineStr, u);
                 let isExpired = dlMs && Date.now() > dlMs;
-                let dText = isExpired ? `🔒 Закрито (${deadlineStr})` : `⏳ ${deadlineStr}`;
+                let dTextRaw = formatDeadlineText(deadlineStr);
+                let dText = isExpired ? `🔒 Дедлайн ${dTextRaw} (Завершено)` : `⏳ Дедлайн ${dTextRaw}`;
                 let dColor = isExpired ? 'var(--danger)' : '#f59e0b';
                 let dBg = isExpired ? 'var(--danger-bg)' : 'rgba(245, 158, 11, 0.15)';
-                dlBadge = `<div style="font-size:12px; font-weight:600; color:${dColor}; background:${dBg}; padding:2px 6px; border-radius:6px;">${escapeHTMLAttr(dText)}</div>`;
+                dlBadge = `<div style="font-size:12px; font-weight:600; color:${dColor}; background:${dBg}; padding:2px 6px; border-radius:6px; display:inline-block;">${escapeHTMLAttr(dText)}</div>`;
             } else {
-                dlBadge = `<div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px;">Без дедлайну</div>`;
+                dlBadge = `<div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px; display:inline-block;">Без дедлайну</div>`;
             }
             
             let achCodes = u.achievements ? String(u.achievements).split(',').map(s=>s.trim()).filter(s=>s) : [];
@@ -1178,15 +1202,27 @@
 
             let rawName = u.name && u.name !== "undefined" && String(u.name).trim() !== "" ? String(u.name) : u.login;
             let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
+            
+            let roleStr = String(u.role).trim();
+            let isHead = roleStr.toLowerCase() === 'керівник';
+            let dirDisplay = isHead ? 'Керівник' : (u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний');
+            let storeDisplay = u.store ? `📍 ${u.store}` : '';
 
             return `
             <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')">
                 <div style="flex:1;">
                     <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:6px;">${escapeHTMLAttr(displayName)}</div>
+                    
+                    <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
+                        ${storeDisplay ? `<div>${escapeHTMLAttr(storeDisplay)}</div>` : ''}
+                        <div style="color:var(--text-main);">👤 ${escapeHTMLAttr(dirDisplay)}</div>
+                    </div>
+                    
                     <div style="display:flex; align-items:center; gap: 8px; margin-bottom:6px;">
                         ${dlBadge}
                         <div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px;">Курсів: ${uTotal}</div>
                     </div>
+                    
                     <div style="display:flex; align-items:center;">
                         ${achHtml}
                     </div>
@@ -1323,11 +1359,7 @@
     function generateUserDashboardHTML(user) {
         let stats = user.tableStats || {};
         
-        let avgScore = stats.avgScore || "0%";
-        if (!avgScore.includes('%') && avgScore !== "0") avgScore += "%";
-        
         let time = stats.timeSpent || "0:00";
-        
         let achCount = user.achievements ? String(user.achievements).split(',').filter(s => s.trim() !== "").length : 0;
         
         let on100 = parseInt(stats.on100) || 0;
@@ -1337,14 +1369,34 @@
 
         let totalTests = on100 + on90 + on80 + less80;
         let hasTestStats = totalTests > 0;
+        
+        // Динамічний підрахунок середнього %
+        let sum = 0;
+        let count = 0;
+        for (let key in (user.results || {})) {
+            let resStr = user.results[key];
+            let score = 0;
+            let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+            if (match) {
+                score = parseInt(match[2], 10) || 0;
+            } else {
+                let sm = String(resStr).match(/(\d+)%/);
+                if (sm) score = parseInt(sm[1], 10) || 0;
+            }
+            sum += score;
+            count++;
+        }
+        let calculatedAvg = count > 0 ? Math.round(sum / count) : 0;
+        let avgScore = calculatedAvg + "%";
 
         let deadlineBadgeHtml = '';
         let dlStr = user.deadline && user.deadline !== "undefined" && String(user.deadline).trim() !== "" ? String(user.deadline).trim() : "";
         if (dlStr) {
             let dlMs = getDeadlineMs(dlStr, user);
             let isExpired = dlMs && Date.now() > dlMs;
+            let dTextRaw = formatDeadlineText(dlStr);
             
-            let dText = isExpired ? `Дедлайн: ${dlStr} (Завершено)` : `Дедлайн: ${dlStr}`;
+            let dText = isExpired ? `Дедлайн ${dTextRaw} (Завершено)` : `Дедлайн ${dTextRaw}`;
             let dColor = isExpired ? 'var(--danger)' : '#f59e0b';
             let dBg = isExpired ? 'var(--danger-bg)' : 'rgba(245, 158, 11, 0.15)';
             let dIcon = isExpired ? '🔒' : '⏳';
@@ -1724,6 +1776,10 @@
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
         document.getElementById('theoryTitle').innerText = parsed.title;
 
+        // Починаємо рахувати час із відкриття теорії
+        window.sessionTotalTime = 0;
+        window.theoryEntryTime = Date.now();
+
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
 
@@ -1892,7 +1948,7 @@
         clearInterval(testTimerInterval);
         testTimerInterval = setInterval(() => {
             timeRemaining--;
-            totalTimeSpent++;
+            totalTimeSpent++; // це рахує загальний час тестування (включаючи теорію)
             updateTimerUI();
             if (timeRemaining <= 0) {
                 clearInterval(testTimerInterval);
@@ -1937,6 +1993,13 @@
             return;
         }
 
+        // Фіксуємо час, проведений за теорією і додаємо його
+        if (window.theoryEntryTime > 0) {
+            window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
+            window.theoryEntryTime = 0; // скидаємо, щоб не порахувати двічі
+        }
+        totalTimeSpent = window.sessionTotalTime;
+
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => {
             shuffleArray(q.answers);
@@ -1944,7 +2007,6 @@
         });
 
         currentQuestionIndex = 0;
-        totalTimeSpent = 0;
         isTestActive = true; 
         
         cheatWarnings = 0; 
@@ -1953,6 +2015,19 @@
         
         switchView('testView');
         showQuestion(currentQuestionIndex);
+    }
+
+    // Функції для повторної здачі або читання теорії, щоб час зберігався і не обнулявся
+    function retryTest() {
+        window.sessionTotalTime = totalTimeSpent;
+        window.theoryEntryTime = 0; 
+        startTest();
+    }
+
+    function repeatTheory() {
+        window.sessionTotalTime = totalTimeSpent;
+        window.theoryEntryTime = Date.now();
+        switchView('theoryView');
     }
 
     async function submitTest() {
@@ -1981,7 +2056,7 @@
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
-        let timeSpent = totalTimeSpent;
+        let timeSpent = totalTimeSpent; // загальний час читання + проходження
 
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
@@ -2031,9 +2106,10 @@
         if (passed) {
             actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
         } else {
+            // Використовуємо нові функції для збереження часу
             actionHtml = `
-                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="startTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
-                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="switchView('theoryView')">ПОВТОРИТИ ТЕОРІЮ</button>
+                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
+                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>
             `;
         }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
