@@ -372,7 +372,7 @@
         </div>
 
         <div id="deadlineContainer" style="display:none;">
-            <span style="font-size:20px;">⏳</span>
+            <span id="deadlineIcon" style="font-size:20px;">⏳</span>
             <span id="deadlineText"></span>
         </div>
 
@@ -472,7 +472,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw2sD11ZSl2MNwuIKEYfQ9YR6NBi818ANEn9fWz9qmY9FzvfmUOXfsvDEjYJHe2VJeEAQ/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzPYgYWW5AUeZFM4o54wEVUtHIEPcvJi_VgK-yoVv-XX0PJMc5rK6pVLmr757vSBLZkPQ/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -685,7 +685,8 @@
             let diff = dlMs - now;
 
             if (diff <= 0) {
-                document.getElementById('deadlineText').innerText = "Доступ до тестів закрито 🔒";
+                document.getElementById('deadlineText').innerText = "Доступ до тестів закрито";
+                document.getElementById('deadlineIcon').innerText = "🔒";
                 document.getElementById('deadlineText').style.color = "var(--danger)";
                 document.getElementById('deadlineContainer').style.background = "rgba(239, 68, 68, 0.1)";
                 document.getElementById('deadlineContainer').style.borderColor = "rgba(239, 68, 68, 0.2)";
@@ -696,7 +697,8 @@
                 let d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 let m = Math.floor((diff / 1000 / 60) % 60);
-                document.getElementById('deadlineText').innerText = `⏳ Залишилось: ${d}д ${h}г ${m}хв`;
+                document.getElementById('deadlineText').innerText = `Залишилось: ${d}д ${h}г ${m}хв`;
+                document.getElementById('deadlineIcon').innerText = "⏳";
                 document.getElementById('deadlineText').style.color = "var(--text-main)";
                 document.getElementById('deadlineContainer').style.background = "var(--input-bg)";
                 document.getElementById('deadlineContainer').style.borderColor = "var(--border)";
@@ -1056,7 +1058,10 @@
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
         
-        let allUsers = db.users.filter(u => String(u.role).toLowerCase().includes('співробітник') || String(u.role).toLowerCase().includes('сотрудник') || String(u.role).toLowerCase().includes('керівник'));
+        let allUsers = db.users.filter(u => {
+            let rStr = String(u.role).toLowerCase();
+            return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
+        });
         
         let mName = String(currentUserObj.name).toLowerCase().trim();
         let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
@@ -1194,7 +1199,8 @@
             let achHtml = '';
             if(achCodes.length > 0) {
                 let topAchs = achCodes.slice(0, 3);
-                achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:16px; margin-right:4px;\\'>🏅</span>'">`).join('');
+                // Зменшено розмір іконок нагород до 14x14
+                achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:14px; height:14px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:12px; margin-right:4px;\\'>🏅</span>'">`).join('');
                 if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
             } else {
                 achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагород</span>';
@@ -1204,9 +1210,18 @@
             let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
             
             let roleStr = String(u.role).trim();
-            let isHead = roleStr.toLowerCase() === 'керівник';
-            let dirDisplay = isHead ? 'Керівник' : (u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний');
-            let storeDisplay = u.store ? `📍 ${u.store}` : '';
+            let rLow = roleStr.toLowerCase();
+            let isHead = rLow.includes('керівник') || rLow.includes('власник') || rLow.includes('директор');
+            
+            let dirDisplayHtml = '';
+            if (!isHead) {
+                let dirDisplay = u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний';
+                dirDisplayHtml = `<div style="color:var(--text-main);">👤 ${escapeHTMLAttr(dirDisplay)}</div>`;
+            } else if (rLow.includes('керівник')) {
+                dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">Керівник</div>`;
+            }
+            
+            let storeDisplay = u.store && u.store !== "undefined" ? `📍 ${u.store}` : '';
 
             return `
             <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')">
@@ -1215,7 +1230,7 @@
                     
                     <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
                         ${storeDisplay ? `<div>${escapeHTMLAttr(storeDisplay)}</div>` : ''}
-                        <div style="color:var(--text-main);">👤 ${escapeHTMLAttr(dirDisplay)}</div>
+                        ${dirDisplayHtml}
                     </div>
                     
                     <div style="display:flex; align-items:center; gap: 8px; margin-bottom:6px;">
