@@ -471,7 +471,7 @@
 </div>
 
 <script>
-    const API_URL = 'hhttps://script.google.com/macros/s/AKfycbys5MLWJUYxFHVhGpR1Gzcj4sQlaZO6quG5RQmZrBpHYNuJz6d0cXYjtbymy4gXE9wbAA/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz0ajrRqilbnz8R4okN8ogFsVNeBIbfMvzuiJ5Z9c4LLRYDMdoQ3juOy6InoffaqDLetQ/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -1055,6 +1055,8 @@
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
         
+        // Власник бачить усіх (Власників, Керівників, Співробітників)
+        // Керівник бачить тільки своїх співробітників
         let allUsers = db.users.filter(u => {
             let rStr = String(u.role).toLowerCase();
             return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
@@ -1069,6 +1071,9 @@
             if (!uDir) return false;
             return uDir === mShort || mName.includes(uDir) || uDir.includes(mShort);
         });
+        
+        // Убираем самого себя из списка (и из своей статистики)
+        managedUsers = managedUsers.filter(u => u.login !== currentUser);
 
         let directors = [...new Set(allUsers.map(u => u.director).filter(d => d))].sort();
 
@@ -1140,7 +1145,6 @@
             groupAssigned += parseInt(st.assigned) || 0;
             groupPassed += (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             
-            // Динамічний підрахунок середнього % для групи
             let sum = 0;
             let count = 0;
             for (let key in (u.results || {})) {
@@ -1196,6 +1200,7 @@
             let achHtml = '';
             if(achCodes.length > 0) {
                 let topAchs = achCodes.slice(0, 3);
+                // Повернуто розмір іконок на 20x20
                 achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('');
                 if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
             } else {
@@ -1212,6 +1217,7 @@
             let dirDisplayHtml = '';
             let storeDisplayHtml = '';
 
+            // Якщо керівник або власник — пишемо лише роль і не пишемо магазин (за бажанням можна і магазин вивести, але надпис дублюватися не буде)
             if (isHead) {
                 let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
                 dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
@@ -1223,8 +1229,25 @@
                 }
             }
 
+            let cardBg = 'var(--card-bg)';
+            let cardBorder = 'var(--border)';
+            
+            // Замальовка карток відповідно до прогресу
+            if (uTotal > 0) {
+                if (uPass === uTotal) {
+                    cardBg = 'rgba(16, 185, 129, 0.08)'; // Блідо-зелений
+                    cardBorder = 'rgba(16, 185, 129, 0.3)';
+                } else if (uPass === 0) {
+                    cardBg = 'rgba(239, 68, 68, 0.08)'; // Блідо-червоний
+                    cardBorder = 'rgba(239, 68, 68, 0.3)';
+                } else {
+                    cardBg = 'rgba(245, 158, 11, 0.08)'; // Блідо-жовтий
+                    cardBorder = 'rgba(245, 158, 11, 0.3)';
+                }
+            }
+
             return `
-            <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')">
+            <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')" style="background: ${cardBg}; border-color: ${cardBorder};">
                 <div style="flex:1;">
                     <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:6px;">${escapeHTMLAttr(displayName)}</div>
                     
