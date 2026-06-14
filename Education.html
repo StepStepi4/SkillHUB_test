@@ -305,6 +305,12 @@
                 </div>
             </div>
             <div class="nav-actions">
+                <button class="back-btn-sleek" onclick="switchToMyCabinet()" title="Мій кабінет" style="color: #0057b7;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                </button>
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 4 23 10 17 10"></polyline>
@@ -338,6 +344,13 @@
             </div>
 
             <div class="nav-actions" id="courseViewNavActions">
+                <button id="adminPanelBtn" class="back-btn-sleek" onclick="switchToAdminPanel()" title="Панель керівника" style="color: #0057b7; display: none;">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                        <line x1="3" y1="9" x2="21" y2="9"></line>
+                        <line x1="9" y1="21" x2="9" y2="9"></line>
+                    </svg>
+                </button>
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Мої досягнення">
                     <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                     <div class="notification-dot" id="achNotificationDot"></div>
@@ -459,7 +472,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbymdbpa0tgIxbGuWhCCI3aefhzO5ZhYu1gwBeNujHEaWymKHAVxl5e6YdohRmCphQK60Q/exec'; 
+    const API_URL = 'hhttps://script.google.com/macros/s/AKfycbzMB7nIKLR12l08HuP4p23FfTcZa8Qd38Kjx9bAGrVsVUP396kJhqEFF0BDmZA8aCCuCw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     // Для графіків
@@ -547,7 +560,7 @@
         if (activeView === 'loginView' || activeView === 'adminView') {
             window.location.href = 'index.html'; 
         } else if (activeView === 'courseView') {
-            if (windowViewingEmployee) {
+            if (windowViewingEmployee || windowUserRole === 'admin' || windowUserRole === 'director') {
                 windowViewingEmployee = null;
                 switchView('adminView');
             } else {
@@ -859,6 +872,38 @@
         });
     }
 
+    function switchToMyCabinet() {
+        windowViewingEmployee = null;
+        let user = db.users.find(u => u.login === currentUser);
+        
+        let fullName = user.name && user.name !== "undefined" ? user.name : currentUser;
+        let nameParts = fullName.trim().split(/\s+/);
+        let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
+
+        document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
+        document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
+        document.getElementById('courseViewNavActions').style.display = 'flex'; 
+
+        if (windowUserRole === 'admin' || windowUserRole === 'director') {
+            document.getElementById('adminPanelBtn').style.display = 'flex';
+        } else {
+            document.getElementById('adminPanelBtn').style.display = 'none';
+        }
+
+        buildCoursesMap(user);
+        renderCourses(user);
+        startDeadlineTimer();
+        checkNewAchievements(user);
+        
+        switchView('courseView');
+    }
+
+    function switchToAdminPanel() {
+        windowViewingEmployee = null;
+        renderAdminView();
+        switchView('adminView');
+    }
+
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
@@ -934,25 +979,13 @@
                 windowViewingEmployee = null;
 
                 if (isAdmin || isDirector) {
+                    document.getElementById('adminPanelBtn').style.display = 'flex';
                     renderAdminView();
                     switchView('adminView');
                     startSessionMonitor(); 
                 } else {
-                    let fullName = user.name && user.name !== "undefined" ? user.name : currentUser;
-                    let nameParts = fullName.trim().split(/\s+/);
-                    let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
-
-                    document.getElementById('userWelcome').innerHTML = `Вітаю, ${firstName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
-                    document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
-                    document.getElementById('courseViewNavActions').style.display = 'flex'; 
-
-                    buildCoursesMap(user);
-                    renderCourses(user);
-                    startDeadlineTimer();
-                    checkNewAchievements(user);
+                    switchToMyCabinet();
                     startSessionMonitor(); 
-
-                    switchView('courseView');
                 }
                 
             } else {
@@ -1243,14 +1276,14 @@
     function generateUserDashboardHTML(user) {
         let stats = user.tableStats || {};
         
-        let assigned = stats.assigned || "0";
-        let started = stats.started || "0";
-        let left = stats.left || "0";
+        let assigned = parseInt(stats.assigned) || 0;
+        let started = parseInt(stats.started) || 0;
+        let left = parseInt(stats.left) || 0;
         
         let avgScore = stats.avgScore || "0%";
         if (!avgScore.includes('%') && avgScore !== "0") avgScore += "%";
         
-        let points = stats.points || "0";
+        let points = parseInt(stats.points) || 0;
         let time = stats.timeSpent || "0:00";
         
         let on100 = parseInt(stats.on100) || 0;
@@ -1268,14 +1301,14 @@
             </div>
             
             <div class="stats-dashboard" style="margin-bottom: 12px;">
-                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(assigned)}</div><div class="stat-label">Назначено</div></div>
-                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(started)}</div><div class="stat-label">Розпочато</div></div>
-                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(left)}</div><div class="stat-label">Залишилось</div></div>
+                <div class="stat-item"><div class="stat-val">${assigned}</div><div class="stat-label">Назначено</div></div>
+                <div class="stat-item"><div class="stat-val">${started}</div><div class="stat-label">Розпочато</div></div>
+                <div class="stat-item"><div class="stat-val">${left}</div><div class="stat-label">Залишилось</div></div>
             </div>
 
             <div class="stats-dashboard" style="margin-bottom: 24px;">
                 <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${escapeHTMLAttr(avgScore)}</div><div class="stat-label">Середній %</div></div>
-                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(points)}</div><div class="stat-label">Бали</div></div>
+                <div class="stat-item"><div class="stat-val">${points}</div><div class="stat-label">Бали</div></div>
                 <div class="stat-item"><div class="stat-val" style="font-size:18px; padding-top:4px;">${escapeHTMLAttr(time)}</div><div class="stat-label">Час</div></div>
             </div>
             
@@ -1395,15 +1428,10 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
-        if (courseNames.length === 0) {
-            document.getElementById('globalStatsContainer').innerHTML = '';
-            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Не призначено жодного курсу.</div>';
-            return;
-        }
-
+        // 1. ВСТАВЛЯЄМО ДАШБОРД (ТІЛЬКИ З ДАНИМИ ТАБЛИЦІ)
         let dashboardHtml = generateUserDashboardHTML(user);
 
-        // ЦІЛІ З ГРАФІКОМ
+        // 2. ЦІЛІ ПРОДАЖІВ З ГРАФІКОМ
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1461,10 +1489,16 @@
             `;
         }
 
+        // РИСУЕМ ДАШБОРД ВНЕ ЗАВИСИМОСТИ ОТ НАЛИЧИЯ КУРСОВ!
         document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
 
-        // Викликаємо функцію відмальовки графіків
+        // Вызываем функцию отрисовки графиков с задержкой
         setTimeout(() => renderCharts(user), 50);
+
+        if (courseNames.length === 0) {
+            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Не призначено жодного курсу.</div>';
+            return;
+        }
 
         let userResults = user.results || {};
         savedCompletedListHtml = ""; 
