@@ -1046,7 +1046,20 @@
         let isAdmin = windowUserRole === 'admin';
         
         let allUsers = db.users.filter(u => String(u.role).toLowerCase().includes('співробітник') || String(u.role).toLowerCase().includes('сотрудник'));
-        let managedUsers = isAdmin ? allUsers : allUsers.filter(u => String(u.director).toLowerCase() === String(currentUserObj.name).toLowerCase());
+        
+        // ФІКС ПАРСИНГУ ІМЕНІ ДЛЯ КЕРІВНИКІВ
+        let mName = String(currentUserObj.name).toLowerCase().trim();
+        let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
+        // Беремо Прізвище + Ім'я (те, що в колонці Director у таблиці)
+        let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
+
+        let managedUsers = isAdmin ? allUsers : allUsers.filter(u => {
+            let uDir = String(u.director).toLowerCase().trim();
+            if (!uDir) return false;
+            // Перевіряємо збіг за скороченим іменем або підрядком
+            return uDir === mShort || mName.includes(uDir) || uDir.includes(mShort);
+        });
+
         let directors = [...new Set(allUsers.map(u => u.director).filter(d => d))].sort();
 
         let filterHtml = ``;
@@ -1126,7 +1139,6 @@
 
         let groupAvg = validAvgs > 0 ? Math.round(groupAvgSum / validAvgs) : 0;
 
-        // ПАНЕЛЬ БЕЗ % - тільки чиста статистика
         let statsHtml = `
             <div class="stats-dashboard">
                 <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено курсів</div></div>
@@ -1316,7 +1328,6 @@
         
         let time = stats.timeSpent || "0:00";
         
-        // Підрахунок кількості ачівок для заміни "Бали"
         let achCount = user.achievements ? String(user.achievements).split(',').filter(s => s.trim() !== "").length : 0;
         
         let on100 = parseInt(stats.on100) || 0;
@@ -1327,7 +1338,6 @@
         let totalTests = on100 + on90 + on80 + less80;
         let hasTestStats = totalTests > 0;
 
-        // Дедлайн плашка для дашборда
         let deadlineBadgeHtml = '';
         let dlStr = user.deadline && user.deadline !== "undefined" && String(user.deadline).trim() !== "" ? String(user.deadline).trim() : "";
         if (dlStr) {
@@ -1455,9 +1465,8 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
-        // ЯКЩО ДИРЕКТОР ПЕРЕГЛЯДАЄ КАРТКУ СПІВРОБІТНИКА (без дашборда і цілей)
         if (windowViewingEmployee) {
-            document.getElementById('globalStatsContainer').innerHTML = ''; // Ховаємо дашборд і цілі
+            document.getElementById('globalStatsContainer').innerHTML = ''; 
             document.getElementById('courseListTitle').style.display = 'none';
 
             if (courseNames.length === 0) {
@@ -1508,7 +1517,6 @@
             return;
         }
 
-        // --- НОРМАЛЬНИЙ ВИД ДЛЯ САМОГО СПІВРОБІТНИКА ---
         document.getElementById('courseListTitle').style.display = 'flex';
         let dashboardHtml = generateUserDashboardHTML(user);
 
