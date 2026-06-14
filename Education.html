@@ -372,7 +372,6 @@
         </div>
 
         <div id="deadlineContainer" style="display:none;">
-            <span id="deadlineIcon" style="font-size:20px;">⏳</span>
             <span id="deadlineText"></span>
         </div>
 
@@ -472,7 +471,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzPYgYWW5AUeZFM4o54wEVUtHIEPcvJi_VgK-yoVv-XX0PJMc5rK6pVLmr757vSBLZkPQ/exec'; 
+    const API_URL = 'hhttps://script.google.com/macros/s/AKfycbys5MLWJUYxFHVhGpR1Gzcj4sQlaZO6quG5RQmZrBpHYNuJz6d0cXYjtbymy4gXE9wbAA/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -529,7 +528,7 @@
             img.setAttribute('data-ext-index', extIdx);
             img.src = `Achievement/${code}${ACH_EXTS[extIdx]}`;
         } else {
-            img.outerHTML = '<span style="font-size:40px;">🏅</span>';
+            img.outerHTML = '<span style="font-size:20px;">🏅</span>';
         }
     }
 
@@ -685,8 +684,7 @@
             let diff = dlMs - now;
 
             if (diff <= 0) {
-                document.getElementById('deadlineText').innerText = "Доступ до тестів закрито";
-                document.getElementById('deadlineIcon').innerText = "🔒";
+                document.getElementById('deadlineText').innerText = "🔒 Доступ до тестів закрито";
                 document.getElementById('deadlineText').style.color = "var(--danger)";
                 document.getElementById('deadlineContainer').style.background = "rgba(239, 68, 68, 0.1)";
                 document.getElementById('deadlineContainer').style.borderColor = "rgba(239, 68, 68, 0.2)";
@@ -697,8 +695,7 @@
                 let d = Math.floor(diff / (1000 * 60 * 60 * 24));
                 let h = Math.floor((diff / (1000 * 60 * 60)) % 24);
                 let m = Math.floor((diff / 1000 / 60) % 60);
-                document.getElementById('deadlineText').innerText = `Залишилось: ${d}д ${h}г ${m}хв`;
-                document.getElementById('deadlineIcon').innerText = "⏳";
+                document.getElementById('deadlineText').innerText = `⏳ Залишилось: ${d}д ${h}г ${m}хв`;
                 document.getElementById('deadlineText').style.color = "var(--text-main)";
                 document.getElementById('deadlineContainer').style.background = "var(--input-bg)";
                 document.getElementById('deadlineContainer').style.borderColor = "var(--border)";
@@ -1199,8 +1196,7 @@
             let achHtml = '';
             if(achCodes.length > 0) {
                 let topAchs = achCodes.slice(0, 3);
-                // Зменшено розмір іконок нагород до 14x14
-                achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:14px; height:14px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:12px; margin-right:4px;\\'>🏅</span>'">`).join('');
+                achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('');
                 if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
             } else {
                 achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагород</span>';
@@ -1214,14 +1210,18 @@
             let isHead = rLow.includes('керівник') || rLow.includes('власник') || rLow.includes('директор');
             
             let dirDisplayHtml = '';
-            if (!isHead) {
+            let storeDisplayHtml = '';
+
+            if (isHead) {
+                let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
+                dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
+            } else {
                 let dirDisplay = u.director ? `Керівник: ${u.director}` : 'Керівник не вказаний';
                 dirDisplayHtml = `<div style="color:var(--text-main);">👤 ${escapeHTMLAttr(dirDisplay)}</div>`;
-            } else if (rLow.includes('керівник')) {
-                dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">Керівник</div>`;
+                if (u.store && u.store !== "undefined") {
+                    storeDisplayHtml = `<div>📍 ${escapeHTMLAttr(u.store)}</div>`;
+                }
             }
-            
-            let storeDisplay = u.store && u.store !== "undefined" ? `📍 ${u.store}` : '';
 
             return `
             <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')">
@@ -1229,7 +1229,7 @@
                     <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:6px;">${escapeHTMLAttr(displayName)}</div>
                     
                     <div style="font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:8px; display:flex; flex-direction:column; gap:4px;">
-                        ${storeDisplay ? `<div>${escapeHTMLAttr(storeDisplay)}</div>` : ''}
+                        ${storeDisplayHtml}
                         ${dirDisplayHtml}
                     </div>
                     
@@ -1411,14 +1411,13 @@
             let isExpired = dlMs && Date.now() > dlMs;
             let dTextRaw = formatDeadlineText(dlStr);
             
-            let dText = isExpired ? `Дедлайн ${dTextRaw} (Завершено)` : `Дедлайн ${dTextRaw}`;
+            let dText = isExpired ? `🔒 Дедлайн ${dTextRaw} (Завершено)` : `⏳ Дедлайн ${dTextRaw}`;
             let dColor = isExpired ? 'var(--danger)' : '#f59e0b';
             let dBg = isExpired ? 'var(--danger-bg)' : 'rgba(245, 158, 11, 0.15)';
-            let dIcon = isExpired ? '🔒' : '⏳';
             
-            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: ${dColor}; background: ${dBg}; padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; text-transform: none; letter-spacing: 0;"><span>${dIcon}</span> ${escapeHTMLAttr(dText)}</div>`;
+            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: ${dColor}; background: ${dBg}; padding: 4px 8px; border-radius: 8px; display: inline-block; text-transform: none; letter-spacing: 0;">${escapeHTMLAttr(dText)}</div>`;
         } else {
-            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; display: flex; align-items: center; gap: 4px; text-transform: none; letter-spacing: 0;"><span>♾️</span> Без дедлайну</div>`;
+            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; display: inline-block; text-transform: none; letter-spacing: 0;">Без дедлайну</div>`;
         }
 
         let html = `
