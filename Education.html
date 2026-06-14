@@ -438,7 +438,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwSLbmKEB2hDi_WVDIlqbWhROBpqDHj7hD6S4sLmv1PR4MC9UFz5NdWW-TnkfaTJDkbsw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxM10HM1tmGmVUJt4G-M3NSp5pXlrnbmyeWNu3Pb1A_1mKxUn256YgVPtvkdoM-ZuA2gg/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     // Синхронізація тем
@@ -663,6 +663,7 @@
         const btn = document.getElementById('startTestButton');
         if (!btn) return;
         
+        // Якщо це перегляд керівником — ховаємо кнопку тесту
         if (windowViewingEmployee) {
             btn.style.display = 'none'; 
             document.getElementById('testWarningBox').style.display = 'none';
@@ -1211,18 +1212,20 @@
     function generateUserDashboardHTML(user) {
         let stats = user.tableStats || {};
         
-        let assigned = parseInt(stats.assigned) || 0;
-        let started = parseInt(stats.started) || 0;
-        let left = parseInt(stats.left) || 0;
+        let assigned = stats.assigned || "0";
+        let started = stats.started || "0";
+        let left = stats.left || "0";
         
         let avgScore = stats.avgScore || "0%";
-        let points = parseInt(stats.points) || 0;
+        if (!avgScore.includes('%') && avgScore !== "0") avgScore += "%";
+        
+        let points = stats.points || "0";
         let time = stats.timeSpent || "0:00";
         
-        let on100 = parseInt(stats.on100) || 0;
-        let on90 = parseInt(stats.on90) || 0;
-        let on80 = parseInt(stats.on80) || 0;
-        let less80 = parseInt(stats.less80) || 0;
+        let on100 = stats.on100 || "0";
+        let on90 = stats.on90 || "0";
+        let on80 = stats.on80 || "0";
+        let less80 = stats.less80 || "0";
 
         let html = `
             <div class="section-title" style="margin-top: 0;">
@@ -1231,33 +1234,33 @@
             </div>
             
             <div class="stats-dashboard" style="margin-bottom: 12px;">
-                <div class="stat-item"><div class="stat-val">${assigned}</div><div class="stat-label">Назначено</div></div>
-                <div class="stat-item"><div class="stat-val">${started}</div><div class="stat-label">Розпочато</div></div>
-                <div class="stat-item"><div class="stat-val">${left}</div><div class="stat-label">Залишилось</div></div>
+                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(assigned)}</div><div class="stat-label">Назначено</div></div>
+                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(started)}</div><div class="stat-label">Розпочато</div></div>
+                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(left)}</div><div class="stat-label">Залишилось</div></div>
             </div>
 
             <div class="stats-dashboard" style="margin-bottom: 16px;">
-                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${avgScore}</div><div class="stat-label">Середній %</div></div>
-                <div class="stat-item"><div class="stat-val">${points}</div><div class="stat-label">Бали</div></div>
+                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${escapeHTMLAttr(avgScore)}</div><div class="stat-label">Середній %</div></div>
+                <div class="stat-item"><div class="stat-val">${escapeHTMLAttr(points)}</div><div class="stat-label">Бали</div></div>
                 <div class="stat-item"><div class="stat-val" style="font-size:18px; padding-top:4px;">${escapeHTMLAttr(time)}</div><div class="stat-label">Час</div></div>
             </div>
 
             <div class="section-title">Якість складання</div>
             <div style="display:flex; gap:8px; margin-bottom: 24px;">
                <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center;">
-                   <div style="color:var(--success); font-weight:900; font-size:18px;">${on100}</div>
+                   <div style="color:var(--success); font-weight:900; font-size:18px;">${escapeHTMLAttr(on100)}</div>
                    <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:2px;">На 100%</div>
                </div>
                <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center;">
-                   <div style="color:#10b981; font-weight:900; font-size:18px;">${on90}</div>
+                   <div style="color:#10b981; font-weight:900; font-size:18px;">${escapeHTMLAttr(on90)}</div>
                    <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:2px;">На 90%</div>
                </div>
                <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center;">
-                   <div style="color:#f59e0b; font-weight:900; font-size:18px;">${on80}</div>
+                   <div style="color:#f59e0b; font-weight:900; font-size:18px;">${escapeHTMLAttr(on80)}</div>
                    <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:2px;">На 80%</div>
                </div>
                <div style="flex:1; background:var(--danger-bg); border:1px solid rgba(239,68,68,0.2); border-radius:12px; padding:10px; text-align:center;">
-                   <div style="color:var(--danger); font-weight:900; font-size:18px;">${less80}</div>
+                   <div style="color:var(--danger); font-weight:900; font-size:18px;">${escapeHTMLAttr(less80)}</div>
                    <div style="font-size:10px; color:var(--danger); font-weight:700; text-transform:uppercase; margin-top:2px;">Менше 80%</div>
                </div>
             </div>
@@ -1359,7 +1362,7 @@
 
         document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
 
-        // 3. ЗБИРАЄМО СПИСОК ПРОЙДЕНИХ ДЛЯ МОДАЛКИ (щоб вона теж працювала, якщо будеш виводити десь кнопку)
+        // 3. ЗБИРАЄМО СПИСОК ПРОЙДЕНИХ ДЛЯ МОДАЛКИ
         let userResults = user.results || {};
         savedCompletedListHtml = ""; 
         Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
