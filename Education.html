@@ -7,7 +7,6 @@
     <meta name="theme-color" content="#f2f2f7">
     
     <script>
-        // Анти-мерцание: мгновенно применяем тему до загрузки элементов интерфейса
         (function() {
             var theme = localStorage.getItem('theme') || 'light';
             document.documentElement.setAttribute('data-theme', theme);
@@ -57,21 +56,13 @@
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
             padding-bottom: 80px; 
-            transition: background 0.3s ease, color 0.3s ease; /* Плавное переключение цветов */
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
-        body.cheating {
-            background: #000 !important; color: #000 !important;
-        }
-        body.cheating * {
-            visibility: hidden !important;
-        }
+        body.cheating { background: #000 !important; color: #000 !important; }
+        body.cheating * { visibility: hidden !important; }
 
-        .container { 
-            width: 100%; max-width: 480px; 
-            padding: 24px 16px; margin: 0 auto;
-            position: relative;
-        }
+        .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
 
         .view { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
         .view.active { display: block; }
@@ -92,142 +83,66 @@
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
         /* --- ЛОГІН --- */
-        .login-wrapper {
-            display: flex; flex-direction: column; justify-content: center; min-height: 80vh;
-        }
-        .login-card {
-            background: var(--card-bg); border-radius: 24px; padding: 32px 24px;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border);
-        }
+        .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
+        .login-card { background: var(--card-bg); border-radius: 24px; padding: 32px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border); }
 
         .input-group { margin-bottom: 20px; }
         .input-label { display: block; font-size: 12px; font-weight: 700; color: var(--text-muted); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;}
         input[type="text"], input[type="password"] { 
             width: 100%; padding: 16px; border-radius: 14px; font-size: 16px; font-weight: 500;
             background: var(--input-bg); border: 1.5px solid transparent; outline: none; transition: 0.2s;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-            color: var(--text-main);
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); color: var(--text-main);
         }
-        input[type="text"]:focus, input[type="password"]:focus { 
-            background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); 
-        }
+        input[type="text"]:focus, input[type="password"]:focus { background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
 
-        .custom-checkbox-wrapper {
-            display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 28px;
-            font-size: 14px; font-weight: 600; color: var(--text-muted); transition: color 0.2s;
-        }
+        .custom-checkbox-wrapper { display: flex; align-items: center; gap: 10px; cursor: pointer; margin-bottom: 28px; font-size: 14px; font-weight: 600; color: var(--text-muted); transition: color 0.2s; }
         .custom-checkbox-wrapper:hover { color: var(--text-main); }
         .custom-checkbox-wrapper input { display: none; }
-        .custom-checkmark {
-            width: 22px; height: 22px; border-radius: 6px; background: var(--input-bg); border: 2px solid var(--border);
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .custom-checkbox-wrapper input:checked + .custom-checkmark {
-            background: var(--primary); border-color: var(--primary);
-        }
-        .custom-checkmark::after {
-            content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2.5px 2.5px 0;
-            transform: rotate(45deg); display: none; margin-bottom: 2px;
-        }
+        .custom-checkmark { width: 22px; height: 22px; border-radius: 6px; background: var(--input-bg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .custom-checkbox-wrapper input:checked + .custom-checkmark { background: var(--primary); border-color: var(--primary); }
+        .custom-checkmark::after { content: ''; width: 5px; height: 10px; border: solid white; border-width: 0 2.5px 2.5px 0; transform: rotate(45deg); display: none; margin-bottom: 2px; }
         .custom-checkbox-wrapper input:checked + .custom-checkmark::after { display: block; }
 
-        .btn {
-            width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800;
-            cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px;
-            text-transform: uppercase; letter-spacing: 0.5px;
-        }
-        .btn-glow {
-            background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%);
-            color: white; box-shadow: 0 8px 20px rgba(0, 198, 93, 0.25);
-        }
+        .btn { width: 100%; padding: 16px; border-radius: 14px; font-size: 15px; font-weight: 800; cursor: pointer; border: none; transition: 0.2s; text-align: center; display: flex; justify-content: center; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-glow { background: linear-gradient(135deg, var(--rozetka-green-light) 0%, var(--rozetka-green-dark) 100%); color: white; box-shadow: 0 8px 20px rgba(0, 198, 93, 0.25); }
         .btn-glow:active { transform: scale(0.96); box-shadow: 0 4px 10px rgba(0, 198, 93, 0.15); }
         .btn-glow:disabled { background: var(--border); box-shadow: none; cursor: not-allowed; opacity: 0.7; color: var(--text-muted); }
-
-        .btn-secondary {
-            background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border);
-        }
+        .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:active { transform: scale(0.96); background: var(--border); }
 
         /* --- НАВІГАЦІЯ --- */
-        .nav-header { 
-            display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; 
-            padding: 0; background: transparent; border: none; box-shadow: none;
-        }
+        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; padding: 0; background: transparent; border: none; box-shadow: none; }
         .nav-header h2 { font-size: 24px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
-        
-        .nav-actions {
-            display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none;
-        }
+        .nav-actions { display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none; }
 
-        .back-btn-sleek {
-            background: transparent; border: none; width: 44px; height: 44px; border-radius: 14px;
-            display: flex; justify-content: center; align-items: center; color: var(--text-main); 
-            transition: all 0.2s; cursor: pointer; padding: 0; position: relative;
-        }
+        .back-btn-sleek { background: transparent; border: none; width: 44px; height: 44px; border-radius: 14px; display: flex; justify-content: center; align-items: center; color: var(--text-main); transition: all 0.2s; cursor: pointer; padding: 0; position: relative; }
         .back-btn-sleek:hover { background: var(--card-bg); box-shadow: 0 4px 12px rgba(0,0,0,0.03); }
         .back-btn-sleek:active { transform: scale(0.92); background: var(--border); }
 
-        @keyframes pulse-ring {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
-        }
-        .ach-btn.has-new {
-            animation: pulse-ring 2s infinite;
-            border-radius: 50%; 
-        }
+        @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+        .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
 
-        .floating-exit {
-            position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: auto; height: 48px;
-            background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid var(--border); border-radius: 24px; padding: 0 20px;
-            display: flex; align-items: center; justify-content: center; gap: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 9000;
-            cursor: pointer; transition: 0.2s; color: var(--text-main); font-weight: 700; font-size: 14px; text-transform: uppercase;
-        }
+        .floating-exit { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: auto; height: 48px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 0 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 9000; cursor: pointer; transition: 0.2s; color: var(--text-main); font-weight: 700; font-size: 14px; text-transform: uppercase; }
         .floating-exit:active { transform: translateX(-50%) scale(0.95); background: var(--input-bg); }
 
         /* --- ПРОГРЕС-БАР --- */
-        .progress-widget {
-            background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 24px;
-            border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(0,0,0,0.03);
-            transition: all 0.3s ease;
-        }
-        .progress-header {
-            display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px;
-        }
+        .progress-widget { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(0,0,0,0.03); transition: all 0.3s ease; }
+        .progress-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
         .progress-title-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
         .progress-percent-val { font-size: 28px; font-weight: 900; color: var(--text-main); line-height: 1; transition: color 0.3s ease; }
-        
-        .progress-track {
-            width: 100%; height: 12px; background: var(--input-bg); border-radius: 6px; overflow: hidden;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.04);
-        }
-        .progress-fill {
-            height: 100%; border-radius: 6px; background: var(--primary);
-            transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); will-change: width;
-        }
+        .progress-track { width: 100%; height: 12px; background: var(--input-bg); border-radius: 6px; overflow: hidden; box-shadow: inset 0 2px 4px rgba(0,0,0,0.04); }
+        .progress-fill { height: 100%; border-radius: 6px; background: var(--primary); transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); will-change: width; }
 
         .stats-dashboard { display: flex; justify-content: space-between; gap: 12px; margin-bottom: 16px; }
-        .stat-item { 
-            flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; 
-            padding: 14px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02);
-            display: flex; flex-direction: column; justify-content: center;
-        }
+        .stat-item { flex: 1; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center; }
         .stat-item.clickable { cursor: pointer; }
         .stat-item.clickable:active { transform: scale(0.96); background: var(--input-bg);}
         .stat-val { font-size: 22px; font-weight: 900; color: var(--text-main); line-height: 1; margin-bottom: 6px; transition: color 0.3s ease;}
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease;}
 
         /* --- КАРТКИ --- */
-        .list-card {
-            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
-            margin-bottom: 14px; padding: 18px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
-        }
+        .list-card { background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border); margin-bottom: 14px; padding: 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
-        
         .list-card-icon { font-size: 30px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; margin-right: 4px; }
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
         .list-card-arrow { color: var(--text-muted); font-weight: bold; }
@@ -239,19 +154,11 @@
         .question-card { background: var(--card-bg); border-radius: 24px; padding: 24px; border: 1px solid var(--border); margin-bottom: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.04);}
         .question-title { font-size: 17px; font-weight: 800; margin-bottom: 20px; line-height: 1.4; color: var(--text-main); }
 
-        .answer-label {
-            display: flex; align-items: center; gap: 14px; padding: 16px;
-            background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px;
-            margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 14px; color: var(--text-main);
-        }
+        .answer-label { display: flex; align-items: center; gap: 14px; padding: 16px; background: var(--card-bg); border: 2px solid var(--input-bg); border-radius: 16px; margin-bottom: 10px; cursor: pointer; transition: all 0.2s ease; font-weight: 600; font-size: 14px; color: var(--text-main); }
         .answer-label:hover { border-color: var(--border); background: var(--input-bg); }
         .answer-label.selected { border-color: var(--primary); background: rgba(16, 185, 129, 0.05); }
 
-        .answer-label input[type="radio"], .answer-label input[type="checkbox"] {
-            appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0;
-            border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center;
-            transition: all 0.2s ease; background: #fff;
-        }
+        .answer-label input[type="radio"], .answer-label input[type="checkbox"] { appearance: none; -webkit-appearance: none; width: 22px; height: 22px; flex-shrink: 0; border: 2px solid #d1d5db; margin: 0; display: grid; place-content: center; transition: all 0.2s ease; background: #fff; }
         .answer-label input[type="radio"] { border-radius: 50%; }
         .answer-label input[type="checkbox"] { border-radius: 6px; }
 
@@ -262,107 +169,55 @@
         .answer-label input:checked::before { transform: scale(1); }
 
         .timer-box { font-size: 16px; font-weight: 800; color: var(--danger); background: var(--danger-bg); padding: 8px 16px; border-radius: 12px; transition: 0.3s; display: flex; align-items: center; gap: 6px;}
-
         #errorMsg { color: var(--danger); font-size: 13px; font-weight: 700; text-align: center; margin-bottom: 20px; display: none; background: rgba(239, 68, 68, 0.1); padding: 12px; border-radius: 12px;}
 
-        #deadlineContainer {
-            background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15);
-            border-radius: 16px; padding: 8px 16px; display: flex; align-items: center; justify-content: center;
-            gap: 10px; margin: 0 auto 24px auto; max-width: fit-content;
-        }
+        #deadlineContainer { background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 16px; padding: 8px 16px; display: flex; align-items: center; justify-content: center; gap: 10px; margin: 0 auto 24px auto; max-width: fit-content; }
         #deadlineText { font-size: 14px; font-weight: 800; color: var(--danger); }
 
-        .drawer-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease;
-            will-change: opacity; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
-        }
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); z-index: 10000; display: none; opacity: 0; transition: 0.3s ease; will-change: opacity; backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px); }
         .drawer-overlay.active { display: block; opacity: 1; }
 
-        .ach-drawer {
-            position: fixed; top: 0; right: -100%; width: 100%; max-width: 360px; height: 100%;
-            background: var(--bg); z-index: 10001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            box-shadow: -8px 0 32px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px;
-            will-change: right;
-        }
+        .ach-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 360px; height: 100%; background: var(--bg); z-index: 10001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -8px 0 32px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px; will-change: right; }
         .ach-drawer.open { right: 0; }
-
         .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
 
-        .ach-card {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
-            padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02); 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1;
-        }
+        .ach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
         .ach-card:active:not(.zoomed) { transform: scale(0.96); background: var(--input-bg); } 
 
-        .ach-card.zoomed {
-            padding: 24px 20px; margin: 8px -16px 20px -16px; border-radius: 24px;
-            box-shadow: 0 24px 48px rgba(0,0,0,0.12); border-color: var(--primary-light);
-            background: #ffffff; gap: 20px; z-index: 10;
-        }
-
-        .ach-icon-wrapper {
-            width: 64px; height: 64px; flex-shrink: 0; background: transparent;
-            display: flex; align-items: center; justify-content: center;
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
+        .ach-card.zoomed { padding: 24px 20px; margin: 8px -16px 20px -16px; border-radius: 24px; box-shadow: 0 24px 48px rgba(0,0,0,0.12); border-color: var(--primary-light); background: #ffffff; gap: 20px; z-index: 10; }
+        .ach-icon-wrapper { width: 64px; height: 64px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .ach-card.zoomed .ach-icon-wrapper { width: 100px; height: 100px; }
         .ach-icon { width: 100%; height: 100%; object-fit: contain; }
 
         .ach-card-title { font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
         .ach-card.zoomed .ach-card-title { font-size: 20px; }
-
-        .ach-card-desc {
-            font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4;
-            max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s;
-        }
+        .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s; }
         .ach-card.zoomed .ach-card-desc { max-height: 200px; opacity: 1; margin-top: 8px; }
 
-        .ach-modal {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9);
-            background: var(--card-bg); z-index: 10002; width: 90%; max-width: 400px;
-            border-radius: 28px; padding: 28px 24px; text-align: center; opacity: 0; display: none;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2);
-            max-height: 85vh; flex-direction: column; will-change: transform, opacity;
-        }
+        .ach-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-bg); z-index: 10002; width: 90%; max-width: 400px; border-radius: 28px; padding: 28px 24px; text-align: center; opacity: 0; display: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2); max-height: 85vh; flex-direction: column; will-change: transform, opacity; }
         .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
-        
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
-
-        .notification-dot {
-            position: absolute; top: 4px; right: 4px; width: 14px; height: 14px;
-            background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg);
-            display: none;
-        }
+        .notification-dot { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
         
         .modal-scrollable::-webkit-scrollbar { width: 6px; }
         .modal-scrollable::-webkit-scrollbar-track { background: transparent; }
         .modal-scrollable::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
 
-        /* Стилі для селектів адмін-панелі (схожі на input) */
-        .admin-select {
-            width: 100%; padding: 14px 20px; border-radius: 14px; 
-            font-size: 15px; font-family: inherit; font-weight: 600; 
-            background: var(--input-bg); color: var(--text-main); 
-            border: 1.5px solid transparent; outline: none; transition: 0.2s;
-            appearance: none; -webkit-appearance: none;
-            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-            background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
-            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
-        }
-        .admin-select:focus {
-            background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); 
-        }
+        .admin-select { width: 100%; padding: 14px 20px; border-radius: 14px; font-size: 15px; font-family: inherit; font-weight: 600; background: var(--input-bg); color: var(--text-main); border: 1.5px solid transparent; outline: none; transition: 0.2s; appearance: none; -webkit-appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 16px center; cursor: pointer; box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .admin-select:focus { background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
 
-        /* Заборона виділення та копіювання */
         .no-select { user-select: none; -webkit-user-select: none; }
         .watermark-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; overflow: hidden; opacity: 0.04; }
         .watermark-text { font-size: 20px; font-weight: 900; color: var(--text-main); position: absolute; transform: rotate(-30deg); white-space: nowrap; }
     </style>
 </head>
 <body>
+
+<div id="antiCheatScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:100000; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+    <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
+    <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
+    <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
+</div>
 
 <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
@@ -537,17 +392,37 @@
         <button class="btn btn-glow" id="startTestButton" onclick="startTest()">ПРОЙТИ ТЕСТ</button>
     </div>
 
+    <div id="warningView" class="view">
+        <div style="min-height: 70vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
+            <div class="big-emoji" style="font-size: 80px;">⚠️</div>
+            <h1 style="font-size: 28px; margin-bottom: 12px; color: var(--danger);">Важливі правила!</h1>
+            
+            <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 24px; margin-bottom: 30px; text-align: left; box-shadow: 0 8px 24px rgba(0,0,0,0.04); max-width: 100%;">
+                <p style="font-size: 15px; font-weight: 600; margin-bottom: 16px; line-height: 1.5;">
+                    <span style="font-size: 18px; display: inline-block; vertical-align: middle;">⏱</span> 
+                    У вас буде рівно <strong>25 секунд</strong> на кожне питання.
+                </p>
+                <p style="font-size: 15px; font-weight: 600; margin-bottom: 0; line-height: 1.5; color: var(--danger);">
+                    <span style="font-size: 18px; display: inline-block; vertical-align: middle;">🚫</span> 
+                    <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або робити свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
+                </p>
+            </div>
+
+            <button class="btn btn-glow" onclick="acceptWarningAndStart()">ЗРОЗУМІЛО</button>
+        </div>
+    </div>
+
     <div id="testView" class="view no-select">
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 26px;">⏱</span>
-                <h2>Тестування</h2>
+                <h2 id="testHeaderTitle">Тестування</h2>
             </div>
             <div id="testTimer" class="timer-box">00:00</div>
         </div>
 
         <div id="testContainer"></div>
-        <button class="btn btn-glow" id="submitTestBtn" onclick="submitTest()">ЗАВЕРШИТИ ТЕСТ</button>
+        <button class="btn btn-glow" id="submitTestBtn">НАСТУПНЕ ПИТАННЯ</button>
     </div>
 
     <div id="resultView" class="view">
@@ -563,10 +438,10 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxeMMmbnsRAe__X3Kpn26esgbiO8F4xJXifuMPohmJTomETz2OWm1KD7rHBmUo8x6PqEg/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxEVJrlp7XW3QxOuRRI2nZag8-lT7UZWYSuARfiNuWFrN8h5ZO8e_xvmxn4KXLUeEUC7Q/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
-    // Слушатель для синхронизации тем
+    // Синхронізація тем
     window.addEventListener('storage', (event) => {
         if (event.key === 'theme') {
             let currentTheme = event.newValue || 'light';
@@ -592,6 +467,11 @@
     let sessionCheckInterval;
     window.isDeadlinePassed = false;
     let isTestActive = false;
+
+    // Змінні для посторінкового виводу 
+    let currentQuestionIndex = 0;
+    let totalTimeSpent = 0;
+    const TIME_PER_QUESTION = 25; 
 
     function getCleanName(str) {
         if (!str) return "";
@@ -632,13 +512,6 @@
         }
     }
 
-    function getAttemptWord(count) {
-        let n = parseInt(count) || 0;
-        if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
-        if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'спроби';
-        return 'спроб';
-    }
-
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
         let str = String(num).replace(/\s/g, '').replace(',', '.');
@@ -662,6 +535,8 @@
             switchView('courseView');
         } else if (activeView === 'theoryView') {
             switchView('productView');
+        } else if (activeView === 'warningView') {
+            switchView('theoryView'); 
         } else if (activeView === 'resultView') {
             openCourse(currentCourseName);
         }
@@ -846,7 +721,6 @@
                             }
                         }
 
-                        // Обновляем текущий активный вид
                         if (document.getElementById('adminView').classList.contains('active')) {
                             renderAdminView();
                         } else if (document.getElementById('courseView').classList.contains('active')) {
@@ -1030,7 +904,6 @@
                     localStorage.removeItem('skillhub_edu_creds');
                 }
 
-                // РОЗПОДІЛ ЗА РОЛЯМИ
                 let roleStr = String(user.role || '').toLowerCase().trim();
                 let isAdmin = roleStr.includes('власник') || roleStr.includes('владелец') || roleStr.includes('admin') || roleStr.includes('адмін');
                 let isDirector = roleStr.includes('керівник') || roleStr.includes('директор') || roleStr.includes('manager');
@@ -1049,7 +922,7 @@
 
                     document.getElementById('userWelcome').innerHTML = `Вітаю, ${firstName} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
                     document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
-                    document.getElementById('courseViewNavActions').style.display = 'flex'; // Показуємо дії
+                    document.getElementById('courseViewNavActions').style.display = 'flex'; 
 
                     buildCoursesMap(user);
                     renderCourses(user);
@@ -1113,12 +986,9 @@
     // --- ПАНЕЛЬ КЕРІВНИКА (ADMIN VIEW) ---
     function renderAdminView() {
         let currentUserObj = db.users.find(u => u.login === currentUser);
-        let myRole = String(currentUserObj.role).toLowerCase();
         let isAdmin = windowUserRole === 'admin';
         
-        // Керівники бачать тільки "Співробітників"
         let allUsers = db.users.filter(u => String(u.role).toLowerCase().includes('співробітник') || String(u.role).toLowerCase().includes('сотрудник'));
-        
         let managedUsers = isAdmin ? allUsers : allUsers.filter(u => String(u.director).toLowerCase() === String(currentUserObj.name).toLowerCase());
         let directors = [...new Set(allUsers.map(u => u.director).filter(d => d))].sort();
 
@@ -1152,7 +1022,6 @@
         if (selectedDir) filtered = filtered.filter(u => u.director === selectedDir);
         if (selectedEmp) filtered = filtered.filter(u => u.login === selectedEmp);
 
-        // Динамічне оновлення списку співробітників, якщо змінився директор
         if (dirSelect && empSelect && !selectedEmp) {
             let empsForDir = selectedDir ? window.adminManagedUsers.filter(u => u.director === selectedDir) : window.adminManagedUsers;
             let empOpts = `<option value="">-- Всі співробітники --</option>`;
@@ -1164,65 +1033,47 @@
     }
 
     function renderAdminStatsAndList(users) {
-        let totalAssigned = 0;
-        let totalCompleted = 0;
-        let totalScoreSum = 0;
-        let scoreCount = 0;
+        let groupAssigned = 0;
+        let groupPassed = 0;
+        let groupAvgSum = 0;
+        let validAvgs = 0;
 
         users.forEach(u => {
-            let uAssigned = u.assigned || [];
-            let uResults = u.results || {};
+            let st = u.tableStats || {};
+            groupAssigned += parseInt(st.assigned) || 0;
+            // Пройдено: сума на 100, 90, 80
+            groupPassed += (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             
-            uAssigned.forEach(aName => {
-                totalAssigned++;
-                let cleanP = getCleanName(aName);
-                let resStr = uResults[cleanP];
-                if (resStr) {
-                    let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                    let score = 0;
-                    if (match) score = parseInt(match[2], 10) || 0;
-                    else {
-                        let sm = String(resStr).match(/(\d+)%/);
-                        if (sm) score = parseInt(sm[1], 10) || 0;
-                    }
-                    totalScoreSum += score;
-                    scoreCount++;
-                    if (score >= 80) totalCompleted++;
-                }
-            });
+            let avg = parseFloat(String(st.avgScore).replace('%','').replace(',','.')) || 0;
+            if (avg > 0) {
+                groupAvgSum += avg;
+                validAvgs++;
+            }
         });
 
-        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
+        let groupAvg = validAvgs > 0 ? Math.round(groupAvgSum / validAvgs) : 0;
+        let groupProgress = groupAssigned > 0 ? Math.round((groupPassed / groupAssigned) * 100) : 0;
 
         let statsHtml = `
             <div class="stats-dashboard">
-                <div class="stat-item"><div class="stat-val">${totalCompleted}/${totalAssigned}</div><div class="stat-label">Пройдено</div></div>
-                <div class="stat-item"><div class="stat-val">${avgScore}%</div><div class="stat-label">Сер. бал</div></div>
+                <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено</div></div>
+                <div class="stat-item"><div class="stat-val">${groupAvg}%</div><div class="stat-label">Сер. бал</div></div>
             </div>
-            <div class="progress-widget" style="margin-bottom: 24px;">
+            <div class="progress-widget" style="margin-bottom: 24px; background: ${groupProgress >= 100 ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)'};">
                 <div class="progress-header">
                     <div class="progress-title-text">Загальний прогрес групи</div>
-                    <div class="progress-percent-val" style="color: var(--primary);">${globalPercent}%</div>
+                    <div class="progress-percent-val" style="color: ${groupProgress >= 100 ? 'var(--primary)' : 'var(--text-main)'};">${groupProgress}%</div>
                 </div>
-                <div class="progress-track"><div class="progress-fill" style="width: ${globalPercent}%;"></div></div>
+                <div class="progress-track"><div class="progress-fill" style="width: ${groupProgress}%;"></div></div>
             </div>
         `;
 
         document.getElementById('adminStatsContainer').innerHTML = statsHtml;
 
         let listHtml = users.map(u => {
-            let uAssigned = u.assigned || [];
-            let uTotal = uAssigned.length;
-            let uPass = 0;
-            uAssigned.forEach(aName => {
-                let resStr = u.results[getCleanName(aName)];
-                if (resStr) {
-                    let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                    let score = match ? (parseInt(match[2], 10)||0) : ((parseInt((String(resStr).match(/(\d+)%/)||[])[1],10))||0);
-                    if (score >= 80) uPass++;
-                }
-            });
+            let st = u.tableStats || {};
+            let uPass = (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
+            let uTotal = parseInt(st.assigned) || 0;
             let pct = uTotal > 0 ? Math.round((uPass/uTotal)*100) : 0;
             
             return `
@@ -1238,7 +1089,7 @@
             </div>`;
         }).join('');
 
-        if(users.length === 0) listHtml = '<div style="text-align:center; color:var(--text-muted);">Співробітників не знайдено.</div>';
+        if(users.length === 0) listHtml = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Співробітників не знайдено.</div>';
         document.getElementById('adminUsersList').innerHTML = listHtml;
     }
 
@@ -1249,8 +1100,8 @@
         buildCoursesMap(windowViewingEmployee);
         
         document.getElementById('courseViewTitle').innerText = 'Кабінет співробітника';
-        document.getElementById('userWelcome').innerHTML = `Перегляд: ${escapeHTMLAttr(windowViewingEmployee.name)}`;
-        document.getElementById('courseViewNavActions').style.display = 'none'; // Ховаємо налаштування для режиму перегляду
+        document.getElementById('userWelcome').innerHTML = `Перегляд: <strong style="color:var(--text-main);">${escapeHTMLAttr(windowViewingEmployee.name)}</strong>`;
+        document.getElementById('courseViewNavActions').style.display = 'none'; 
         
         renderCourses(windowViewingEmployee);
         switchView('courseView');
@@ -1356,6 +1207,64 @@
         achListEl.innerHTML = html;
     }
 
+    // НОВА ФУНКЦІЯ: ГЕНЕРАЦІЯ ДАШБОРДУ З ДАНИМИ З ТАБЛИЦІ
+    function generateUserDashboardHTML(user) {
+        let stats = user.tableStats || {};
+        
+        let assigned = parseInt(stats.assigned) || 0;
+        let started = parseInt(stats.started) || 0;
+        let left = parseInt(stats.left) || 0;
+        
+        let avgScore = stats.avgScore || "0%";
+        let points = parseInt(stats.points) || 0;
+        let time = stats.timeSpent || "0:00";
+        
+        let on100 = parseInt(stats.on100) || 0;
+        let on90 = parseInt(stats.on90) || 0;
+        let on80 = parseInt(stats.on80) || 0;
+        let less80 = parseInt(stats.less80) || 0;
+
+        let html = `
+            <div class="section-title" style="margin-top: 0;">
+                <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Stats" onerror="this.style.display='none'">
+                Статистика навчання
+            </div>
+            
+            <div class="stats-dashboard" style="margin-bottom: 12px;">
+                <div class="stat-item"><div class="stat-val">${assigned}</div><div class="stat-label">Назначено</div></div>
+                <div class="stat-item"><div class="stat-val">${started}</div><div class="stat-label">Розпочато</div></div>
+                <div class="stat-item"><div class="stat-val">${left}</div><div class="stat-label">Залишилось</div></div>
+            </div>
+
+            <div class="stats-dashboard" style="margin-bottom: 16px;">
+                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${avgScore}</div><div class="stat-label">Середній %</div></div>
+                <div class="stat-item"><div class="stat-val">${points}</div><div class="stat-label">Бали</div></div>
+                <div class="stat-item"><div class="stat-val" style="font-size:18px; padding-top:4px;">${escapeHTMLAttr(time)}</div><div class="stat-label">Час</div></div>
+            </div>
+
+            <div class="section-title">Якість складання</div>
+            <div style="display:flex; gap:8px; margin-bottom: 24px;">
+               <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center;">
+                   <div style="color:var(--success); font-weight:900; font-size:18px;">${on100}</div>
+                   <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:2px;">На 100%</div>
+               </div>
+               <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center;">
+                   <div style="color:#10b981; font-weight:900; font-size:18px;">${on90}</div>
+                   <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:2px;">На 90%</div>
+               </div>
+               <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:12px; padding:10px; text-align:center;">
+                   <div style="color:#f59e0b; font-weight:900; font-size:18px;">${on80}</div>
+                   <div style="font-size:10px; color:var(--text-muted); font-weight:700; text-transform:uppercase; margin-top:2px;">На 80%</div>
+               </div>
+               <div style="flex:1; background:var(--danger-bg); border:1px solid rgba(239,68,68,0.2); border-radius:12px; padding:10px; text-align:center;">
+                   <div style="color:var(--danger); font-weight:900; font-size:18px;">${less80}</div>
+                   <div style="font-size:10px; color:var(--danger); font-weight:700; text-transform:uppercase; margin-top:2px;">Менше 80%</div>
+               </div>
+            </div>
+        `;
+        return html;
+    }
+
     function openCompletedModal() {
         let modal = document.getElementById('genericModal');
         let overlay = document.getElementById('genericModalOverlay');
@@ -1390,51 +1299,10 @@
             return;
         }
 
-        let userResults = user.results || {};
-        let totalAssigned = 0;
-        let totalCompleted = 0;
-        let totalScoreSum = 0;
-        let scoreCount = 0;
-        
-        savedCompletedListHtml = ""; 
+        // 1. ВСТАВЛЯЄМО ДАШБОРД (ТІЛЬКИ З ДАНИМИ ТАБЛИЦІ)
+        let dashboardHtml = generateUserDashboardHTML(user);
 
-        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
-            totalAssigned++;
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
-            if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0;
-                let attempts = 0;
-                if (match) {
-                    attempts = match[1];
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = String(resStr).match(/(\d+)%/);
-                    if (scoreMatch) {
-                        score = parseInt(scoreMatch[1], 10) || 0;
-                        attempts = 1;
-                    }
-                }
-
-                totalScoreSum += score;
-                scoreCount++;
-                if (score >= 80) {
-                    totalCompleted++;
-                    let attWord = getAttemptWord(attempts);
-                    
-                    savedCompletedListHtml += `
-                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
-                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
-                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
-                            </div>
-                        </div>`;
-                }
-            }
-        });
-
+        // 2. ЦІЛІ ПРОДАЖІВ
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1480,50 +1348,48 @@
 
             goalsHtml = `
                 <div class="section-title" style="margin-top: 0;">
-                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim"> 
+                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim" onerror="this.style.display='none'"> 
                     Цілі та виконання
                 </div>
-                <div class="stats-dashboard">
+                <div class="stats-dashboard" style="margin-bottom: 24px;">
                     ${statItems}
                 </div>
             `;
         }
 
-        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
-        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
-        let globalBg = isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
-        let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
-        let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
+        document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
 
-        document.getElementById('globalStatsContainer').innerHTML = `
-            ${goalsHtml}
-            <div class="section-title" style="${goalsHtml ? '' : 'margin-top: 0;'}">
-                <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Stats">
-                Статистика навчання
-            </div>
-            <div class="stats-dashboard">
-                <div class="stat-item clickable" onclick="openCompletedModal()">
-                    <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
-                    <div class="stat-label">Пройдено</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val">${avgScore}%</div>
-                    <div class="stat-label">Сер. бал</div>
-                </div>
-            </div>
-            
-            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
-                <div class="progress-header">
-                    <div class="progress-title-text">Загальний прогрес</div>
-                    <div class="progress-percent-val" style="color: ${globalColor};">${globalPercent}%</div>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: ${globalPercent}%;"></div>
-                </div>
-            </div>
-        `;
+        // 3. ЗБИРАЄМО СПИСОК ПРОЙДЕНИХ ДЛЯ МОДАЛКИ (щоб вона теж працювала, якщо будеш виводити десь кнопку)
+        let userResults = user.results || {};
+        savedCompletedListHtml = ""; 
+        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
+            let cleanP = getCleanName(p.product);
+            let resStr = userResults[cleanP];
+            if (resStr) {
+                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                let score = 0, attempts = 0;
+                if (match) {
+                    attempts = match[1];
+                    score = parseInt(match[2], 10) || 0;
+                } else {
+                    let scoreMatch = String(resStr).match(/(\d+)%/);
+                    if (scoreMatch) { score = parseInt(scoreMatch[1], 10) || 0; attempts = 1; }
+                }
+                if (score >= 80) {
+                    let attWord = getAttemptWord(attempts);
+                    savedCompletedListHtml += `
+                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
+                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
+                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
+                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
+                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
+                            </div>
+                        </div>`;
+                }
+            }
+        });
 
+        // 4. РЕНДЕРИМО КАРТКИ КУРСІВ
         let coursesHtml = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
             let safeName = escapeHTMLAttr(name);
@@ -1538,9 +1404,8 @@
                 if (resStr) {
                     let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                     let score = 0;
-                    if (scoreMatch) {
-                        score = parseInt(scoreMatch[2], 10) || 0;
-                    } else {
+                    if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
+                    else {
                         let singleMatch = String(resStr).match(/(\d+)%/);
                         if (singleMatch) score = parseInt(singleMatch[1], 10) || 0;
                     }
@@ -1750,17 +1615,25 @@
         return questions;
     }
 
-    function updateSelection(qIndex) {
+    function updateSelection(qIndex, aIndex) {
         let q = parsedQuestions[qIndex];
-        q.answers.forEach((ans, aIndex) => {
-            let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
+        
+        if (q.type === 'radio') {
+            q.answers.forEach((ans, idx) => {
+                ans.selected = (idx === aIndex);
+                let label = document.getElementById(`lbl_q${qIndex}_a${idx}`);
+                if (label) {
+                    if (ans.selected) label.classList.add('selected');
+                    else label.classList.remove('selected');
+                }
+            });
+        } else {
             let input = document.getElementById(`q${qIndex}_a${aIndex}`);
-            if (input.checked) {
-                label.classList.add('selected');
-            } else {
-                label.classList.remove('selected');
-            }
-        });
+            q.answers[aIndex].selected = input.checked;
+            let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
+            if (input.checked) label.classList.add('selected');
+            else label.classList.remove('selected');
+        }
     }
 
     function updateTimerUI() {
@@ -1778,118 +1651,64 @@
         }
     }
 
-    // --- СИСТЕМА ЗАХИСТУ ВІД ЖУЛЬНИЦТВА ---
-    let cheatWarnings = 0;
-    
-    document.addEventListener('contextmenu', event => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            event.preventDefault();
+    function showQuestion(index) {
+        if (index >= parsedQuestions.length) {
+            submitTest();
+            return;
         }
-    });
 
-    document.addEventListener('copy', event => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            event.preventDefault();
-            alert("Копіювання матеріалів тесту заборонено!");
+        let q = parsedQuestions[index];
+        document.getElementById('testHeaderTitle').innerText = `Питання ${index + 1} з ${parsedQuestions.length}`;
+
+        let answersHtml = q.answers.map((ans, aIndex) => {
+            let checkedAttr = ans.selected ? 'checked' : '';
+            let selectedClass = ans.selected ? 'selected' : '';
+            return `
+            <label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}">
+                <input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})">
+                <span style="flex:1;">${ans.text}</span>
+            </label>
+            `;
+        }).join('');
+
+        let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
+
+        document.getElementById('testContainer').innerHTML = `
+            <div class="question-card">
+                <div class="question-title">${q.text} ${hint}</div>
+                ${answersHtml}
+            </div>
+        `;
+
+        let btn = document.getElementById('submitTestBtn');
+        if (index === parsedQuestions.length - 1) {
+            btn.innerText = "ЗАВЕРШИТИ ТЕСТ";
+            btn.onclick = () => submitTest();
+        } else {
+            btn.innerText = "НАСТУПНЕ ПИТАННЯ";
+            btn.onclick = () => nextQuestion();
         }
-    });
 
-    document.addEventListener('keydown', (e) => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            if (e.key === 'F12' || 
-               (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
-               (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
-                e.preventDefault();
-                alert("Ця дія тимчасово заблокована задля чесності тестування!");
+        timeRemaining = TIME_PER_QUESTION; 
+        updateTimerUI();
+
+        clearInterval(testTimerInterval);
+        testTimerInterval = setInterval(() => {
+            timeRemaining--;
+            totalTimeSpent++;
+            updateTimerUI();
+            if (timeRemaining <= 0) {
+                clearInterval(testTimerInterval);
+                nextQuestion(); 
             }
-        }
-    });
-
-    let isAppHidden = false;
-
-    function handleVisibilityLoss() {
-        if (document.getElementById('testView').classList.contains('active') && !isAppHidden) {
-            isAppHidden = true;
-            cheatWarnings++;
-            
-            if (cheatWarnings >= 3) {
-                alert("Тест автоматично завершено через вихід з додатку (згортання браузера або втрату фокусу)!");
-                timeRemaining = 1; 
-            } else {
-                alert(`Попередження (${cheatWarnings}/3): Згортання браузера, перемикання вкладок або відкриття сповіщень заборонено!`);
-            }
-            
-            setTimeout(() => { isAppHidden = false; }, 1000);
-        }
+        }, 1000);
     }
 
-    document.addEventListener("visibilitychange", () => {
-        if (document.hidden) {
-            handleVisibilityLoss();
-        }
-    });
-    window.addEventListener("pagehide", handleVisibilityLoss);
-    window.addEventListener("blur", handleVisibilityLoss);
-
-    function initWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'watermarkContainer';
-            container.className = 'watermark-container';
-            document.body.appendChild(container);
-        }
-        
-        container.innerHTML = ''; 
-        container.style.display = 'block';
-
-        const wmText = currentUser ? currentUser : "SkillHUB";
-        for (let i = 0; i < 25; i++) {
-            let wm = document.createElement('div');
-            wm.className = 'watermark-text';
-            wm.style.top = `${Math.random() * 100}%`;
-            wm.style.left = `${Math.random() * 100}%`;
-            wm.innerText = wmText;
-            container.appendChild(wm);
-        }
+    function nextQuestion() {
+        clearInterval(testTimerInterval);
+        currentQuestionIndex++;
+        showQuestion(currentQuestionIndex);
     }
-
-    function removeWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (container) container.style.display = 'none';
-    }
-
-    function requestFullScreen() {
-        let elem = document.documentElement;
-        if (elem.requestFullscreen) {
-            elem.requestFullscreen().catch(err => console.log(err));
-        } else if (elem.webkitRequestFullscreen) { 
-            elem.webkitRequestFullscreen();
-        }
-    }
-
-    function exitFullScreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            if (document.exitFullscreen) {
-                document.exitFullscreen();
-            } else if (document.webkitExitFullscreen) {
-                document.webkitExitFullscreen();
-            }
-        }
-    }
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
-            cheatWarnings++;
-            if (cheatWarnings >= 3) {
-                alert("Тест провалено через багаторазовий вихід з повноекранного режиму.");
-                timeRemaining = 1;
-            } else {
-                alert(`Попередження (${cheatWarnings}/3): Не виходьте з повноекранного режиму під час тесту!`);
-                requestFullScreen(); 
-            }
-        }
-    });
 
     function startTest() {
         if (window.isDeadlinePassed) return;
@@ -1900,6 +1719,20 @@
             return;
         }
 
+        let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
+        if (!warningShown) {
+            switchView('warningView');
+        } else {
+            proceedToTest();
+        }
+    }
+
+    function acceptWarningAndStart() {
+        sessionStorage.setItem('skillhub_test_warning_shown', 'true');
+        proceedToTest();
+    }
+
+    function proceedToTest() {
         parsedQuestions = parseTestString(currentProductData.test);
 
         if (parsedQuestions.length === 0) {
@@ -1908,65 +1741,38 @@
         }
 
         shuffleArray(parsedQuestions);
-        parsedQuestions.forEach(q => shuffleArray(q.answers));
+        parsedQuestions.forEach(q => {
+            shuffleArray(q.answers);
+            q.answers.forEach(a => a.selected = false); 
+        });
 
-        const container = document.getElementById('testContainer');
-        container.innerHTML = parsedQuestions.map((q, qIndex) => {
-            let answersHtml = q.answers.map((ans, aIndex) => `
-                <label class="answer-label" id="lbl_q${qIndex}_a${aIndex}">
-                    <input type="${q.type}" name="q_${qIndex}" id="q${qIndex}_a${aIndex}" onchange="updateSelection(${qIndex})">
-                    <span style="flex:1;">${ans.text}</span>
-                </label>
-            `).join('');
-            let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
-            return `
-                <div class="question-card">
-                    <div class="question-title">${q.text} ${hint}</div>
-                    ${answersHtml}
-                </div>
-            `;
-        }).join('');
-
-        clearInterval(testTimerInterval);
-        timeRemaining = parsedQuestions.length * 30; 
-        updateTimerUI();
-
-        testTimerInterval = setInterval(() => {
-            timeRemaining--;
-            updateTimerUI();
-            if (timeRemaining <= 0) {
-                clearInterval(testTimerInterval);
-                alert("Час вийшов! Тест завершується автоматично.");
-                submitTest();
-            }
-        }, 1000);
-
+        currentQuestionIndex = 0;
+        totalTimeSpent = 0;
+        isTestActive = true; 
+        
         cheatWarnings = 0; 
-        isTestActive = true;
         initWatermarks();  
-        requestFullScreen(); 
+        requestFullScreen();
+        
         switchView('testView');
+        showQuestion(currentQuestionIndex);
     }
 
     async function submitTest() {
-        isTestActive = false;
+        isTestActive = false; 
         clearInterval(testTimerInterval); 
         removeWatermarks();
         exitFullScreen();
-
-        let maxTime = parsedQuestions.length * 30;
-        let timeSpent = maxTime - timeRemaining;
+        
         let correctCount = 0;
 
-        parsedQuestions.forEach((q, qIndex) => {
+        parsedQuestions.forEach((q) => {
             let isQuestionCorrect = true;
             let answeredAnything = false;
 
-            q.answers.forEach((ans, aIndex) => {
-                let el = document.getElementById(`q${qIndex}_a${aIndex}`);
-                let isChecked = el ? el.checked : false;
-                if (isChecked) answeredAnything = true;
-                if (isChecked !== ans.correct) {
+            q.answers.forEach((ans) => {
+                if (ans.selected) answeredAnything = true;
+                if (!!ans.selected !== ans.correct) {
                     isQuestionCorrect = false;
                 }
             });
@@ -1978,6 +1784,7 @@
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         let passed = totalScore >= 80; 
+        let timeSpent = totalTimeSpent;
 
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
@@ -2054,6 +1861,104 @@
         } else {
             saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
         }
+    }
+
+    // --- АНТИ-СУПЕР-ЧІТ ---
+    let cheatWarnings = 0;
+    
+    document.addEventListener('contextmenu', event => {
+        if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
+    });
+
+    document.addEventListener('copy', event => {
+        if (document.getElementById('testView').classList.contains('active')) {
+            event.preventDefault();
+            alert("Копіювання матеріалів тесту заборонено!");
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (document.getElementById('testView').classList.contains('active')) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
+               (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
+                e.preventDefault();
+                alert("Ця дія тимчасово заблокована задля чесності тестування!");
+            }
+        }
+    });
+
+    let isAppHidden = false;
+    function handleVisibilityLoss() {
+        if (document.getElementById('testView').classList.contains('active') && !isAppHidden) {
+            isAppHidden = true;
+            cheatWarnings++;
+            if (cheatWarnings >= 3) {
+                triggerAntiCheat();
+            } else {
+                alert(`Попередження (${cheatWarnings}/3): Згортання браузера або втрата фокусу заборонено!`);
+            }
+            setTimeout(() => { isAppHidden = false; }, 1000);
+        }
+    }
+
+    document.addEventListener("visibilitychange", () => { if (document.hidden) handleVisibilityLoss(); });
+    window.addEventListener("pagehide", handleVisibilityLoss);
+    window.addEventListener("blur", handleVisibilityLoss);
+
+    function initWatermarks() {
+        let container = document.getElementById('watermarkContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'watermarkContainer';
+            container.className = 'watermark-container';
+            document.body.appendChild(container);
+        }
+        container.innerHTML = ''; container.style.display = 'block';
+        const wmText = currentUser ? currentUser : "SkillHUB";
+        for (let i = 0; i < 25; i++) {
+            let wm = document.createElement('div'); wm.className = 'watermark-text';
+            wm.style.top = `${Math.random() * 100}%`; wm.style.left = `${Math.random() * 100}%`;
+            wm.innerText = wmText; container.appendChild(wm);
+        }
+    }
+
+    function removeWatermarks() {
+        let container = document.getElementById('watermarkContainer');
+        if (container) container.style.display = 'none';
+    }
+
+    function requestFullScreen() {
+        let elem = document.documentElement;
+        if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    }
+
+    function exitFullScreen() {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
+            cheatWarnings++;
+            if (cheatWarnings >= 3) triggerAntiCheat();
+            else { alert(`Попередження (${cheatWarnings}/3): Не виходьте з повноекранного режиму під час тесту!`); requestFullScreen(); }
+        }
+    });
+
+    function triggerAntiCheat() {
+        if (!isTestActive) return; 
+        isTestActive = false; 
+        clearInterval(testTimerInterval); 
+        document.getElementById('antiCheatScreen').style.display = 'flex';
+        parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
+        setTimeout(() => {
+            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
+            document.getElementById('antiCheatScreen').style.display = 'none';
+            submitTest();
+        }, 150);
     }
 </script>
 </body>
