@@ -1200,6 +1200,7 @@
             let achHtml = '';
             if(achCodes.length > 0) {
                 let topAchs = achCodes.slice(0, 3);
+                // Повернуто розмір іконок на 20x20
                 achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('');
                 if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
             } else {
@@ -1216,6 +1217,7 @@
             let dirDisplayHtml = '';
             let storeDisplayHtml = '';
 
+            // Якщо керівник або власник — пишемо лише роль і не пишемо магазин (за бажанням можна і магазин вивести, але надпис дублюватися не буде)
             if (isHead) {
                 let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
                 dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
@@ -1452,26 +1454,12 @@
                 <div class="stat-item"><div class="stat-val">${achCount}</div><div class="stat-label">Нагороди</div></div>
                 <div class="stat-item"><div class="stat-val" style="font-size:18px; padding-top:4px;">${escapeHTMLAttr(time)}</div><div class="stat-label">Час</div></div>
             </div>
-            
-            ${hasTestStats ? `
-            <div class="section-title">Якість складання тестів</div>
-            <div class="chart-container">
-                <canvas id="qualityChart"></canvas>
-            </div>
-            ` : ''}
         `;
-
-        window.tempQualityChartData = {
-            on100, on90, on80, less80
-        };
 
         return html;
     }
 
     function renderCharts(user) {
-        if (chartsInstances['quality']) {
-            chartsInstances['quality'].destroy();
-        }
         if (chartsInstances['goals']) {
             chartsInstances['goals'].destroy();
         }
@@ -1480,31 +1468,6 @@
         const isDark = theme === 'dark';
         const textColor = isDark ? '#ffffff' : '#111827';
         const gridColor = isDark ? '#38383a' : '#e5e7eb';
-
-        let qualityCanvas = document.getElementById('qualityChart');
-        if (qualityCanvas && window.tempQualityChartData) {
-            let data = window.tempQualityChartData;
-            chartsInstances['quality'] = new Chart(qualityCanvas, {
-                type: 'doughnut',
-                data: {
-                    labels: ['На 100%', 'На 90%', 'На 80%', 'Менше 80%'],
-                    datasets: [{
-                        data: [data.on100, data.on90, data.on80, data.less80],
-                        backgroundColor: ['#10b981', '#34d399', '#f59e0b', '#ef4444'],
-                        borderWidth: 0,
-                        hoverOffset: 4
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    cutout: '70%',
-                    plugins: {
-                        legend: { position: 'right', labels: { color: textColor, font: { family: 'Inter', size: 12, weight: '600' }, usePointStyle: true, boxWidth: 8 } }
-                    }
-                }
-            });
-        }
 
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1647,8 +1610,9 @@
                 <div class="stat-label" style="color: ${execColor};">Виконання</div>
             </div>`;
 
+            // У цьому заголовку ми застосували justify-content: flex-start, щоб текст був одразу біля іконки
             goalsHtml = `
-                <div class="section-title" style="margin-top: 0; display: flex; align-items: center;">
+                <div class="section-title" style="margin-top: 0; justify-content: flex-start;">
                     <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim" onerror="this.style.display='none'"> 
                     <span>Цілі та виконання</span>
                 </div>
