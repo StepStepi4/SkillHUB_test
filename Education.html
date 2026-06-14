@@ -378,7 +378,7 @@
 
         <div id="globalStatsContainer"></div>
 
-        <div class="section-title">Назначені курси</div>
+        <div class="section-title" id="courseListTitle">Назначені курси</div>
         <div id="courseList"></div>
     </div>
 
@@ -472,10 +472,9 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwxfRgAEcel-oN04SMLYX1KBvKxigmtMYXAr-J8CUav5t6fuyRhzJOQRH4V2pt5xqT4-w/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxRgAI6owqWw8BdFfo9VaTD4EoIUyhBCdnGBzt1g79P_3ss9mQaF3MpczFbARAoep_s1g/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
-    // Для графіків
     let chartsInstances = {};
 
     window.addEventListener('storage', (event) => {
@@ -876,8 +875,8 @@
         windowViewingEmployee = null;
         let user = db.users.find(u => u.login === currentUser);
         
-        let fullName = user.name && user.name !== "undefined" && String(user.name).trim() !== "" ? String(user.name).replace(/[\/\\,]/g, '').trim() : currentUser;
-        let nameParts = fullName.split(/\s+/);
+        let rawName = user.name && String(user.name).trim() !== "" && user.name !== "undefined" ? String(user.name) : currentUser;
+        let nameParts = rawName.replace(/[\/\\,]/g, '').trim().split(/\s+/);
         let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
         if(!firstName || firstName === "") firstName = "Колега";
 
@@ -1119,7 +1118,7 @@
 
         let groupAvg = validAvgs > 0 ? Math.round(groupAvgSum / validAvgs) : 0;
 
-        // ПАНЕЛЬ БЕЗ % - як і просили
+        // ПАНЕЛЬ БЕЗ % - тільки чиста статистика
         let statsHtml = `
             <div class="stats-dashboard">
                 <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено курсів</div></div>
@@ -1134,7 +1133,7 @@
             let uPass = (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             let uTotal = parseInt(st.assigned) || 0;
             
-            let deadlineStr = u.deadline && u.deadline !== "undefined" && u.deadline !== "" ? u.deadline : "Без дедлайну";
+            let deadlineStr = u.deadline && u.deadline !== "undefined" && String(u.deadline).trim() !== "" ? u.deadline : "Без дедлайну";
             
             let achCodes = u.achievements ? String(u.achievements).split(',').map(s=>s.trim()).filter(s=>s) : [];
             let achHtml = '';
@@ -1182,8 +1181,8 @@
         let rawName = windowViewingEmployee.name && windowViewingEmployee.name !== "undefined" && String(windowViewingEmployee.name).trim() !== "" ? String(windowViewingEmployee.name) : windowViewingEmployee.login;
         let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
 
-        document.getElementById('courseViewTitle').innerText = 'Кабінет співробітника';
-        document.getElementById('userWelcome').innerHTML = `Перегляд: <strong style="color:var(--text-main); margin-left:4px;">${escapeHTMLAttr(displayName)}</strong>`;
+        document.getElementById('courseViewTitle').innerText = 'Картка співробітника';
+        document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 18px;">${escapeHTMLAttr(displayName)}</strong>`;
         document.getElementById('courseViewNavActions').style.display = 'none'; 
         
         renderCourses(windowViewingEmployee);
@@ -1293,15 +1292,13 @@
     function generateUserDashboardHTML(user) {
         let stats = user.tableStats || {};
         
-        let assigned = parseInt(stats.assigned) || 0;
-        let started = parseInt(stats.started) || 0;
-        let left = parseInt(stats.left) || 0;
-        
         let avgScore = stats.avgScore || "0%";
         if (!avgScore.includes('%') && avgScore !== "0") avgScore += "%";
         
-        let points = parseInt(stats.points) || 0;
         let time = stats.timeSpent || "0:00";
+        
+        // Підрахунок кількості ачівок для заміни "Бали"
+        let achCount = user.achievements ? String(user.achievements).split(',').filter(s => s.trim() !== "").length : 0;
         
         let on100 = parseInt(stats.on100) || 0;
         let on90 = parseInt(stats.on90) || 0;
@@ -1316,16 +1313,10 @@
                 <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Stats" onerror="this.style.display='none'">
                 Статистика навчання
             </div>
-            
-            <div class="stats-dashboard" style="margin-bottom: 12px;">
-                <div class="stat-item"><div class="stat-val">${assigned}</div><div class="stat-label">Назначено</div></div>
-                <div class="stat-item"><div class="stat-val">${started}</div><div class="stat-label">Розпочато</div></div>
-                <div class="stat-item"><div class="stat-val">${left}</div><div class="stat-label">Залишилось</div></div>
-            </div>
 
             <div class="stats-dashboard" style="margin-bottom: 24px;">
                 <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${escapeHTMLAttr(avgScore)}</div><div class="stat-label">Середній %</div></div>
-                <div class="stat-item"><div class="stat-val">${points}</div><div class="stat-label">Бали</div></div>
+                <div class="stat-item"><div class="stat-val">${achCount}</div><div class="stat-label">Нагороди</div></div>
                 <div class="stat-item"><div class="stat-val" style="font-size:18px; padding-top:4px;">${escapeHTMLAttr(time)}</div><div class="stat-label">Час</div></div>
             </div>
             
@@ -1414,23 +1405,6 @@
         }
     }
 
-    function openCompletedModal() {
-        let modal = document.getElementById('genericModal');
-        let overlay = document.getElementById('genericModalOverlay');
-
-        modal.innerHTML = `
-            <div class="ach-modal-title" style="margin-bottom: 24px;">Пройдені курси</div>
-            <div class="modal-scrollable" style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 24px; padding-right: 4px;">
-                ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курсів.</div>'}
-            </div>
-            <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; padding: 16px; font-weight: 800; text-transform: uppercase;" onclick="closeModals()">ЗАКРИТИ</button>
-        `;
-
-        document.body.style.overflow = 'hidden'; 
-        overlay.classList.add('active');
-        modal.classList.add('active');
-    }
-
     function closeModals() {
         document.getElementById('genericModalOverlay').classList.remove('active');
         document.getElementById('genericModal').classList.remove('active');
@@ -1442,6 +1416,60 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
+        // ЯКЩО ДИРЕКТОР ПЕРЕГЛЯДАЄ КАРТКУ СПІВРОБІТНИКА (без дашборда)
+        if (windowViewingEmployee) {
+            document.getElementById('globalStatsContainer').innerHTML = ''; // Ховаємо дашборд і цілі
+            document.getElementById('courseListTitle').style.display = 'none';
+
+            if (courseNames.length === 0) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px;">Немає призначених курсів.</div>';
+                return;
+            }
+            
+            let coursesHtml = courseNames.map(name => {
+                let courseProducts = coursesMap[name] || [];
+                
+                let productsHtml = courseProducts.map(p => {
+                    let cleanP = getCleanName(p.product);
+                    let resStr = user.results[cleanP];
+                    let score = 0, attempts = 0, time = 0;
+                    if (resStr) {
+                        let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                        if (match) {
+                            attempts = match[1];
+                            score = parseInt(match[2], 10) || 0;
+                            time = parseInt(match[3], 10) || 0;
+                        } else {
+                            let sm = String(resStr).match(/(\d+)%/);
+                            if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; }
+                        }
+                    }
+                    let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '0хв 0с';
+                    
+                    return `
+                    <div style="padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">${escapeHTMLAttr(p.product)}</div>
+                        <div style="display: flex; gap: 16px; font-size: 13px; color: var(--text-muted);">
+                            <div>Результат: <strong style="color:${score>=80?'var(--success)':'var(--danger)'}">${score}%</strong></div>
+                            <div>Спроб: <strong style="color:var(--text-main)">${attempts}</strong></div>
+                            <div>Час: <strong style="color:var(--text-main)">${timeStr}</strong></div>
+                        </div>
+                    </div>`;
+                }).join('');
+
+                return `
+                <div class="list-card" style="flex-direction: column; align-items: stretch; cursor: default; padding: 20px;">
+                    <div style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(name)}</div>
+                    ${productsHtml}
+                </div>`;
+            }).join('');
+            
+            list.innerHTML = coursesHtml;
+            return;
+        }
+
+        // --- НОРМАЛЬНИЙ ВИД ДЛЯ САМОГО СПІВРОБІТНИКА ---
+        document.getElementById('courseListTitle').style.display = 'flex';
         let dashboardHtml = generateUserDashboardHTML(user);
 
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1502,7 +1530,6 @@
         }
 
         document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
-
         setTimeout(() => renderCharts(user), 50);
 
         if (courseNames.length === 0) {
@@ -1511,32 +1538,6 @@
         }
 
         let userResults = user.results || {};
-        savedCompletedListHtml = ""; 
-        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
-            if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0, attempts = 0;
-                if (match) {
-                    attempts = match[1];
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = String(resStr).match(/(\d+)%/);
-                    if (scoreMatch) { score = parseInt(scoreMatch[1], 10) || 0; attempts = 1; }
-                }
-                if (score >= 80) {
-                    savedCompletedListHtml += `
-                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
-                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
-                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">Спроб: ${attempts}</span>
-                            </div>
-                        </div>`;
-                }
-            }
-        });
 
         let coursesHtml = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
