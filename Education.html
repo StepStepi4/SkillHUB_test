@@ -472,7 +472,7 @@
 </div>
 
 <script>
-    const API_URL = 'hhttps://script.google.com/macros/s/AKfycbzMB7nIKLR12l08HuP4p23FfTcZa8Qd38Kjx9bAGrVsVUP396kJhqEFF0BDmZA8aCCuCw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwxfRgAEcel-oN04SMLYX1KBvKxigmtMYXAr-J8CUav5t6fuyRhzJOQRH4V2pt5xqT4-w/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     // Для графіків
@@ -876,9 +876,10 @@
         windowViewingEmployee = null;
         let user = db.users.find(u => u.login === currentUser);
         
-        let fullName = user.name && user.name !== "undefined" ? user.name : currentUser;
-        let nameParts = fullName.trim().split(/\s+/);
+        let fullName = user.name && user.name !== "undefined" && String(user.name).trim() !== "" ? String(user.name).replace(/[\/\\,]/g, '').trim() : currentUser;
+        let nameParts = fullName.split(/\s+/);
         let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
+        if(!firstName || firstName === "") firstName = "Колега";
 
         document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
         document.getElementById('userWelcome').innerHTML = `Вітаю, ${escapeHTMLAttr(firstName)} <span style="font-size: 14px; margin-left: 4px;">👋</span>`;
@@ -1117,19 +1118,12 @@
         });
 
         let groupAvg = validAvgs > 0 ? Math.round(groupAvgSum / validAvgs) : 0;
-        let groupProgress = groupAssigned > 0 ? Math.round((groupPassed / groupAssigned) * 100) : 0;
 
+        // ПАНЕЛЬ БЕЗ % - як і просили
         let statsHtml = `
             <div class="stats-dashboard">
-                <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено</div></div>
-                <div class="stat-item"><div class="stat-val">${groupAvg}%</div><div class="stat-label">Сер. бал</div></div>
-            </div>
-            <div class="progress-widget" style="margin-bottom: 24px; background: ${groupProgress >= 100 ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)'};">
-                <div class="progress-header">
-                    <div class="progress-title-text">Загальний прогрес групи</div>
-                    <div class="progress-percent-val" style="color: ${groupProgress >= 100 ? 'var(--primary)' : 'var(--text-main)'};">${groupProgress}%</div>
-                </div>
-                <div class="progress-track"><div class="progress-fill" style="width: ${groupProgress}%;"></div></div>
+                <div class="stat-item"><div class="stat-val">${groupPassed}/${groupAssigned}</div><div class="stat-label">Пройдено курсів</div></div>
+                <div class="stat-item"><div class="stat-val">${groupAvg}%</div><div class="stat-label">Сер. бал групи</div></div>
             </div>
         `;
 
@@ -1139,17 +1133,38 @@
             let st = u.tableStats || {};
             let uPass = (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             let uTotal = parseInt(st.assigned) || 0;
-            let pct = uTotal > 0 ? Math.round((uPass/uTotal)*100) : 0;
             
+            let deadlineStr = u.deadline && u.deadline !== "undefined" && u.deadline !== "" ? u.deadline : "Без дедлайну";
+            
+            let achCodes = u.achievements ? String(u.achievements).split(',').map(s=>s.trim()).filter(s=>s) : [];
+            let achHtml = '';
+            if(achCodes.length > 0) {
+                let topAchs = achCodes.slice(0, 3);
+                achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:16px; margin-right:4px;\\'>🏅</span>'">`).join('');
+                if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
+            } else {
+                achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагород</span>';
+            }
+
+            let rawName = u.name && u.name !== "undefined" && String(u.name).trim() !== "" ? String(u.name) : u.login;
+            let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
+
             return `
             <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')">
                 <div style="flex:1;">
-                    <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:4px;">${escapeHTMLAttr(u.name)}</div>
-                    <div style="font-size:12px; color:var(--text-muted);">${escapeHTMLAttr(u.director || 'Без керівника')}</div>
+                    <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:6px;">${escapeHTMLAttr(displayName)}</div>
+                    <div style="display:flex; align-items:center; gap: 8px; margin-bottom:6px;">
+                        <div style="font-size:12px; font-weight:600; color:var(--danger); background:var(--danger-bg); padding:2px 6px; border-radius:6px;">⏳ ${escapeHTMLAttr(deadlineStr)}</div>
+                        <div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px;">Курсів: ${uTotal}</div>
+                    </div>
+                    <div style="display:flex; align-items:center;">
+                        ${achHtml}
+                    </div>
                 </div>
-                <div style="display:flex; align-items:center; gap:12px;">
-                    <div style="font-size: 14px; font-weight: 800; color: ${pct===100?'var(--success)':'var(--text-main)'};">${uPass}/${uTotal}</div>
-                    <div class="list-card-arrow">❯</div>
+                <div style="display:flex; flex-direction:column; justify-content:center; align-items:flex-end; gap:4px; padding-left:12px;">
+                    <div style="font-size: 16px; font-weight: 900; color: ${(uTotal > 0 && uPass===uTotal)?'var(--success)':'var(--text-main)'};">${uPass}<span style="font-size:12px; color:var(--text-muted);">/${uTotal}</span></div>
+                    <div style="font-size: 10px; color: var(--text-muted); text-transform:uppercase; font-weight:700;">Пройдено</div>
+                    <div class="list-card-arrow" style="margin-top:4px;">❯</div>
                 </div>
             </div>`;
         }).join('');
@@ -1164,8 +1179,11 @@
         
         buildCoursesMap(windowViewingEmployee);
         
+        let rawName = windowViewingEmployee.name && windowViewingEmployee.name !== "undefined" && String(windowViewingEmployee.name).trim() !== "" ? String(windowViewingEmployee.name) : windowViewingEmployee.login;
+        let displayName = rawName.replace(/[\/\\,]/g, '').trim(); 
+
         document.getElementById('courseViewTitle').innerText = 'Кабінет співробітника';
-        document.getElementById('userWelcome').innerHTML = `Перегляд: <strong style="color:var(--text-main); margin-left:4px;">${escapeHTMLAttr(windowViewingEmployee.name)}</strong>`;
+        document.getElementById('userWelcome').innerHTML = `Перегляд: <strong style="color:var(--text-main); margin-left:4px;">${escapeHTMLAttr(displayName)}</strong>`;
         document.getElementById('courseViewNavActions').style.display = 'none'; 
         
         renderCourses(windowViewingEmployee);
@@ -1272,7 +1290,6 @@
         achListEl.innerHTML = html;
     }
 
-    // НОВА ФУНКЦІЯ З CHART.JS
     function generateUserDashboardHTML(user) {
         let stats = user.tableStats || {};
         
@@ -1320,7 +1337,6 @@
             ` : ''}
         `;
 
-        // Зберігаємо дані для графіка в глобальну змінну, щоб відмалювати після вставки HTML
         window.tempQualityChartData = {
             on100, on90, on80, less80
         };
@@ -1341,7 +1357,6 @@
         const textColor = isDark ? '#ffffff' : '#111827';
         const gridColor = isDark ? '#38383a' : '#e5e7eb';
 
-        // 1. Графік якості тестів
         let qualityCanvas = document.getElementById('qualityChart');
         if (qualityCanvas && window.tempQualityChartData) {
             let data = window.tempQualityChartData;
@@ -1367,7 +1382,6 @@
             });
         }
 
-        // 2. Графік виконання цілей (якщо є цілі)
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1428,10 +1442,8 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
-        // 1. ВСТАВЛЯЄМО ДАШБОРД (ТІЛЬКИ З ДАНИМИ ТАБЛИЦІ)
         let dashboardHtml = generateUserDashboardHTML(user);
 
-        // 2. ЦІЛІ ПРОДАЖІВ З ГРАФІКОМ
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1489,10 +1501,8 @@
             `;
         }
 
-        // РИСУЕМ ДАШБОРД ВНЕ ЗАВИСИМОСТИ ОТ НАЛИЧИЯ КУРСОВ!
         document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
 
-        // Вызываем функцию отрисовки графиков с задержкой
         setTimeout(() => renderCharts(user), 50);
 
         if (courseNames.length === 0) {
