@@ -377,7 +377,7 @@
 
         <div id="globalStatsContainer"></div>
 
-        <div class="section-title" id="courseListTitle">Назначені курси</div>
+        <div class="section-title" id="courseListTitle">Призначені курси</div>
         <div id="courseList"></div>
     </div>
 
@@ -1204,7 +1204,7 @@
                 achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('');
                 if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
             } else {
-                achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагород</span>';
+                achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагороди</span>';
             }
 
             let rawName = u.name && u.name !== "undefined" && String(u.name).trim() !== "" ? String(u.name) : u.login;
@@ -1217,7 +1217,7 @@
             let dirDisplayHtml = '';
             let storeDisplayHtml = '';
 
-            // Якщо керівник або власник — пишемо лише роль і не пишемо магазин (за бажанням можна і магазин вивести, але надпис дублюватися не буде)
+            // Якщо керівник або власник — пишемо лише роль і не пишемо магазин
             if (isHead) {
                 let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
                 dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
@@ -1512,58 +1512,7 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
-        if (windowViewingEmployee) {
-            document.getElementById('globalStatsContainer').innerHTML = ''; 
-            document.getElementById('courseListTitle').style.display = 'none';
-
-            if (courseNames.length === 0) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px;">Немає призначених курсів.</div>';
-                return;
-            }
-            
-            let coursesHtml = courseNames.map(name => {
-                let courseProducts = coursesMap[name] || [];
-                let parsedCourse = formatWithCustomEmoji(name, '');
-                
-                let productsHtml = courseProducts.map(p => {
-                    let cleanP = getCleanName(p.product);
-                    let resStr = user.results[cleanP];
-                    let score = 0, attempts = 0, time = 0;
-                    if (resStr) {
-                        let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                        if (match) {
-                            attempts = match[1];
-                            score = parseInt(match[2], 10) || 0;
-                            time = parseInt(match[3], 10) || 0;
-                        } else {
-                            let sm = String(resStr).match(/(\d+)%/);
-                            if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; }
-                        }
-                    }
-                    let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '0хв 0с';
-                    
-                    return `
-                    <div style="padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">${escapeHTMLAttr(p.product)}</div>
-                        <div style="display: flex; gap: 16px; font-size: 13px; color: var(--text-muted);">
-                            <div>Результат: <strong style="color:${score>=80?'var(--success)':'var(--danger)'}">${score}%</strong></div>
-                            <div>Спроб: <strong style="color:var(--text-main)">${attempts}</strong></div>
-                            <div>Час: <strong style="color:var(--text-main)">${timeStr}</strong></div>
-                        </div>
-                    </div>`;
-                }).join('');
-
-                return `
-                <div class="list-card" style="flex-direction: column; align-items: stretch; cursor: default; padding: 20px;">
-                    <div style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(parsedCourse.title)}</div>
-                    ${productsHtml}
-                </div>`;
-            }).join('');
-            
-            list.innerHTML = coursesHtml;
-            return;
-        }
-
+        // --- 1. ГЕНЕРАЦІЯ СТАТИСТИКИ ТА ЦІЛЕЙ (ДЛЯ ВСІХ) ---
         document.getElementById('courseListTitle').style.display = 'flex';
         let dashboardHtml = generateUserDashboardHTML(user);
 
@@ -1610,10 +1559,9 @@
                 <div class="stat-label" style="color: ${execColor};">Виконання</div>
             </div>`;
 
-            // У цьому заголовку ми застосували justify-content: flex-start, щоб текст був одразу біля іконки
             goalsHtml = `
                 <div class="section-title" style="margin-top: 0; justify-content: flex-start;">
-                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim" onerror="this.style.display='none'"> 
+                    <img src="icons_skillHUB/light-bulb.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Goals" onerror="this.style.display='none'"> 
                     <span>Цілі та виконання</span>
                 </div>
                 <div class="stats-dashboard" style="margin-bottom: 12px;">
@@ -1628,13 +1576,64 @@
         document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
         setTimeout(() => renderCharts(user), 50);
 
+
+        // --- 2. ВІДОБРАЖЕННЯ СПИСКУ КУРСІВ ---
         if (courseNames.length === 0) {
-            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Не призначено жодного курсу.</div>';
+            if (windowViewingEmployee) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px;">Немає призначених курсів.</div>';
+            } else {
+                list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Не призначено жодного курсу.</div>';
+            }
             return;
         }
 
-        let userResults = user.results || {};
+        if (windowViewingEmployee) {
+            // Відображення карток для керівника (розгорнутий список з результатами)
+            let coursesHtml = courseNames.map(name => {
+                let courseProducts = coursesMap[name] || [];
+                let parsedCourse = formatWithCustomEmoji(name, '');
+                
+                let productsHtml = courseProducts.map(p => {
+                    let cleanP = getCleanName(p.product);
+                    let resStr = user.results[cleanP];
+                    let score = 0, attempts = 0, time = 0;
+                    if (resStr) {
+                        let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                        if (match) {
+                            attempts = match[1];
+                            score = parseInt(match[2], 10) || 0;
+                            time = parseInt(match[3], 10) || 0;
+                        } else {
+                            let sm = String(resStr).match(/(\d+)%/);
+                            if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; }
+                        }
+                    }
+                    let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '0хв 0с';
+                    
+                    return `
+                    <div style="padding: 12px 0; border-bottom: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px;">
+                        <div style="font-size: 15px; font-weight: 700; color: var(--text-main);">${escapeHTMLAttr(p.product)}</div>
+                        <div style="display: flex; gap: 16px; font-size: 13px; color: var(--text-muted);">
+                            <div>Результат: <strong style="color:${score>=80?'var(--success)':'var(--danger)'}">${score}%</strong></div>
+                            <div>Спроб: <strong style="color:var(--text-main)">${attempts}</strong></div>
+                            <div>Час: <strong style="color:var(--text-main)">${timeStr}</strong></div>
+                        </div>
+                    </div>`;
+                }).join('');
 
+                return `
+                <div class="list-card" style="flex-direction: column; align-items: stretch; cursor: default; padding: 20px;">
+                    <div style="font-size: 16px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(parsedCourse.title)}</div>
+                    ${productsHtml}
+                </div>`;
+            }).join('');
+            
+            list.innerHTML = coursesHtml;
+            return;
+        }
+
+        // --- Відображення карток для самого співробітника (згортані курси) ---
+        let userResults = user.results || {};
         let coursesHtml = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
             let safeName = escapeHTMLAttr(name);
