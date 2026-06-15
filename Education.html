@@ -243,7 +243,7 @@
 
 <div id="antiCheatScreen">
     <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
-    <div>ТЕСТ ЗАБЛОКОВАНО</div>
+    <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
     <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
 </div>
 
@@ -1986,6 +1986,7 @@
 
     function startTest() {
         if (window.isDeadlinePassed) return;
+        if (windowViewingEmployee) return;
 
         if (!currentProductData.test || currentProductData.test.trim() === "") {
             alert("Тест для цього продукту відсутній.");
@@ -2138,8 +2139,8 @@
             actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
         } else {
             actionHtml = `
-                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="startTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
-                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="switchView('theoryView')">ПОВТОРИТИ ТЕОРІЮ</button>
+                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
+                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>
             `;
         }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
