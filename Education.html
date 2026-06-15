@@ -229,14 +229,14 @@
 
         /* Chart container */
         .chart-container {
-            background: var(--chart-bg);
+            background: var(--card-bg); /* Змінено на фон картки */
             border-radius: 20px;
             border: 1px solid var(--border);
-            padding: 16px;
+            padding: 20px;
             margin-bottom: 24px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.03);
             position: relative;
-            height: 180px;
+            height: 180px; /* Сучасна менша висота для бару */
             width: 100%;
         }
     </style>
@@ -251,7 +251,7 @@
 
 <div id="loader" class="loader-overlay">
     <div class="spinner"></div>
-    <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базу...</div>
+    <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
 
 <div class="floating-exit" id="floatingExitBtn" onclick="handleFloatingBack()" style="display: none;">
@@ -583,22 +583,33 @@
         return 'спроб';
     }
 
+    // ДОДАНО: Виправлена логіка кнопки НАЗАД
+    function goBackToBot() {
+        if (window.Telegram && window.Telegram.WebApp) {
+            window.Telegram.WebApp.close(); // Закриває вікно в Телеграмі
+        } else {
+            // Якщо не в ТГ, повертаємось на рівень вище
+            window.location.href = '../index.html'; 
+        }
+    }
+
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
         if (activeView === 'loginView') {
-            window.location.href = 'index.html'; 
+            goBackToBot();
         } else if (activeView === 'courseView') {
             if (windowViewingEmployee) {
+                // Якщо ми в картці співробітника — вертаємось назад в список
                 switchToAdminPanel();
             } else {
-                window.location.href = 'index.html'; 
+                goBackToBot();
             }
         } else if (activeView === 'productView') {
             switchView('courseView');
         } else if (activeView === 'theoryView') {
             switchView('productView');
         } else if (activeView === 'warningView') {
-            switchView('theoryView'); 
+            switchView('theoryView');
         } else if (activeView === 'resultView') {
             openCourse(currentCourseName);
         }
@@ -790,6 +801,7 @@
                     if (user) {
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
+                            // ДОДАНО: Перевірка на мультисесію викидає миттєво
                             if (!myToken || db.activeSessions[currentUser] !== myToken) {
                                 logout(true); 
                                 return;
@@ -829,13 +841,15 @@
         }
     }
 
+    // ДОДАНО: Ускорен таймер сессии и добавлена проверка при возвращении в окно
     function startSessionMonitor() {
         clearInterval(sessionCheckInterval);
+        // Запрос к серверу каждые 10 секунд
         sessionCheckInterval = setInterval(() => {
             if (currentUser && navigator.onLine && !isTestActive) {
                 fetchFreshDataSilent();
             }
-        }, 30000);
+        }, 10000); 
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -1214,6 +1228,7 @@
             let uPass = (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             let uTotal = parseInt(st.assigned) || 0;
             
+            // ДОДАНО: Вирівнювання тексту в бейджі
             let deadlineStr = u.deadline && u.deadline !== "undefined" && String(u.deadline).trim() !== "" ? u.deadline : "";
             let dlBadge = '';
             if (deadlineStr) {
@@ -1443,24 +1458,29 @@
         document.body.style.overflow = ''; 
     }
 
-    // Ініціалізація графіка статистики
-    function initUserStatsChart(coursePct, goalPct) {
+    // ДОДАНО: Ініціалізація сучасного графіка Chart.js
+    function initUserStatsChart(coursePct, pcsPct, uahPct) {
         let ctx = document.getElementById('userStatsChart');
         if (!ctx) return;
         if (chartsInstances.userStats) chartsInstances.userStats.destroy();
         
-        let textColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#98989d' : '#6b7280';
-        let gridColor = document.documentElement.getAttribute('data-theme') === 'dark' ? '#38383a' : '#e5e7eb';
+        let isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        let textColor = isDark ? '#98989d' : '#6b7280';
 
         chartsInstances.userStats = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: ['Курси', 'KPI'],
+                labels: ['Курси', 'Штуки', 'Гривні'],
                 datasets: [{
-                    data: [coursePct, goalPct],
-                    backgroundColor: ['#0057b7', '#ffd700'], 
-                    borderRadius: 6,
-                    barPercentage: 0.6
+                    data: [coursePct, pcsPct, uahPct],
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.85)', // Смарагдовий
+                        'rgba(59, 130, 246, 0.85)', // Синій
+                        'rgba(245, 158, 11, 0.85)'  // Оранжевий
+                    ], 
+                    borderRadius: 12,
+                    borderSkipped: false,
+                    barPercentage: 0.5
                 }]
             },
             options: {
@@ -1468,12 +1488,39 @@
                 responsive: true,
                 maintainAspectRatio: false,
                 scales: {
-                    x: { beginAtZero: true, max: 100, ticks: { color: textColor }, grid: { color: gridColor } },
-                    y: { ticks: { color: textColor }, grid: { display: false } }
+                    x: { 
+                        beginAtZero: true, 
+                        max: Math.max(100, coursePct, pcsPct, uahPct) + 10,
+                        ticks: { color: textColor, font: {family: 'Inter', weight: 600} }, 
+                        grid: { display: false },
+                        border: { display: false }
+                    },
+                    y: { 
+                        ticks: { color: textColor, font: {family: 'Inter', weight: 600} }, 
+                        grid: { display: false },
+                        border: { display: false }
+                    }
                 },
                 plugins: {
                     legend: { display: false },
-                    tooltip: { enabled: false }
+                    tooltip: { 
+                        enabled: true,
+                        backgroundColor: isDark ? '#2c2c2e' : '#111827',
+                        titleFont: { family: 'Inter', size: 13 },
+                        bodyFont: { family: 'Inter', size: 14, weight: 'bold' },
+                        padding: 12,
+                        cornerRadius: 8,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return context.parsed.x + '% виконання';
+                            }
+                        }
+                    }
+                },
+                animation: {
+                    duration: 1200,
+                    easing: 'easeOutQuart'
                 }
             }
         });
@@ -1546,8 +1593,10 @@
         let pctPcs = tPcs > 0 ? (fPcs / tPcs) * 100 : 0;
         let pctUah = tUah > 0 ? (fUah / tUah) * 100 : 0;
         
+        pctPcs = parseFloat(pctPcs.toFixed(1));
+        pctUah = parseFloat(pctUah.toFixed(1));
+
         let execPctVal = Math.max(pctPcs, pctUah);
-        execPctVal = parseFloat(execPctVal.toFixed(1));
 
         let goalsHtml = "";
         if (tPcs > 0 || tUah > 0 || execPctVal > 0) {
@@ -1575,7 +1624,7 @@
             statItems += `
             <div class="stat-item" style="background: ${execBg}; border-color: ${execBorder};">
                 <div class="stat-val" style="font-size:20px; color: ${execColor};">${execPctVal}%</div>
-                <div class="stat-label" style="color: ${execColor};">Виконання</div>
+                <div class="stat-label" style="color: ${execColor};">Макс. виконання</div>
             </div>`;
 
             goalsHtml = `
@@ -1597,6 +1646,7 @@
         let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
         let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
+        // ДОДАНО: Вирівнювання тексту в бейджі
         let deadlineBadgeHtml = '';
         let dlStr = user.deadline && user.deadline !== "undefined" && String(user.deadline).trim() !== "" ? String(user.deadline).trim() : "";
         if (dlStr) {
@@ -1613,7 +1663,7 @@
             deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; display: inline-flex; align-items: center; justify-content: center; line-height: 1; text-transform: none; letter-spacing: 0;">Без дедлайну</div>`;
         }
 
-        // Вставка графика
+        // ДОДАНО: Розділ із графіком (відображається, якщо є показники по цілях)
         let chartSectionHtml = '';
         if (tPcs > 0 || tUah > 0) {
             chartSectionHtml = `
@@ -1654,10 +1704,10 @@
             ${chartSectionHtml}
         `;
 
-        // Инициализируем график, если есть данные для целей
+        // Викликаємо функцію відмальовування графіка після того, як відрендерився HTML
         if (tPcs > 0 || tUah > 0) {
             setTimeout(() => {
-                initUserStatsChart(globalPercent, execPctVal);
+                initUserStatsChart(globalPercent, pctPcs, pctUah);
             }, 100);
         }
 
@@ -2194,6 +2244,7 @@
         }
     }
 
+    // ДОДАНО: Додаткова перевірка сесії при розгортанні вікна
     function triggerAntiCheat() {
         if (!isTestActive) return; 
         isTestActive = false; 
@@ -2215,7 +2266,12 @@
     window.addEventListener('blur', triggerAntiCheat); 
     window.addEventListener('pagehide', triggerAntiCheat); 
     document.addEventListener('visibilitychange', () => { 
-        if (document.hidden) triggerAntiCheat(); 
+        if (document.hidden && isTestActive) {
+            triggerAntiCheat(); 
+        } else if (!document.hidden && currentUser && !isTestActive) {
+            // Мгновенная проверка при возврате в приложение
+            fetchFreshDataSilent();
+        }
     });
     document.addEventListener('touchcancel', triggerAntiCheat); 
 
