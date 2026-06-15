@@ -378,7 +378,7 @@
         <div id="globalStatsContainer"></div>
 
         <div class="section-title" id="courseListTitle" style="justify-content: flex-start;">
-            <img src="icons_skillHUB/light-bulb.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Idea" onerror="this.style.display='none'">
+            <img src="icons_skillHUB/Calendar-Check.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Calendar" onerror="this.style.display='none'">
             <span>Призначені курси</span>
         </div>
         <div id="courseList"></div>
@@ -2007,7 +2007,6 @@
         currentQuestionIndex = 0;
         isTestActive = true; 
         
-        cheatWarnings = 0; 
         initWatermarks();  
         requestFullScreen();
         
@@ -2135,7 +2134,6 @@
     }
 
     // --- АНТИ-СУПЕР-ЧІТ ---
-    let cheatWarnings = 0;
     
     document.addEventListener('contextmenu', event => {
         if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
@@ -2162,12 +2160,7 @@
     function handleVisibilityLoss() {
         if (document.getElementById('testView').classList.contains('active') && !isAppHidden) {
             isAppHidden = true;
-            cheatWarnings++;
-            if (cheatWarnings >= 3) {
-                triggerAntiCheat();
-            } else {
-                alert(`Попередження (${cheatWarnings}/3): Згортання браузера або втрата фокусу заборонено!`);
-            }
+            triggerAntiCheat(); // Миттєве блокування без попереджень
             setTimeout(() => { isAppHidden = false; }, 1000);
         }
     }
@@ -2213,9 +2206,7 @@
 
     document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
-            cheatWarnings++;
-            if (cheatWarnings >= 3) triggerAntiCheat();
-            else { alert(`Попередження (${cheatWarnings}/3): Не виходьте з повноекранного режиму під час тесту!`); requestFullScreen(); }
+            triggerAntiCheat(); // Також миттєве блокування при виході з повного екрану
         }
     });
 
