@@ -67,8 +67,15 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
         
-        body.cheating { background: #000 !important; color: #000 !important; }
-        body.cheating * { visibility: hidden !important; }
+        /* --- АНТИ-СУПЕР-ЧІТ ШИРМА --- */
+        #antiCheatScreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 999999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 16px; font-weight: 800; text-align: center; padding: 24px; line-height: 1.5;
+        }
+        body.cheating .container { display: none !important; }
+        body.cheating #antiCheatScreen { display: flex !important; }
 
         .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
 
@@ -234,7 +241,7 @@
 </head>
 <body>
 
-<div id="antiCheatScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:100000; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+<div id="antiCheatScreen">
     <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
     <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
     <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
@@ -378,8 +385,7 @@
         <div id="globalStatsContainer"></div>
 
         <div class="section-title" id="courseListTitle" style="justify-content: flex-start;">
-            <!-- Якщо іконка не знайдена, виведеться 📅 -->
-            <img src="Calendar-Check.svg" style="width: 22px; height: 22px; margin-right: 6px; object-fit: contain;" alt="Calendar" onerror="this.outerHTML='<span style=\\'font-size: 20px; margin-right: 6px;\\'>📅</span>'">
+            <img src="icons_skillHUB/Calendar-Check.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Calendar">
             <span>Призначені курси</span>
         </div>
         <div id="courseList"></div>
@@ -505,7 +511,6 @@
     window.isDeadlinePassed = false;
     let isTestActive = false;
 
-    // Змінні для підрахунку загального часу (теорія + тест)
     window.sessionTotalTime = 0;
     window.theoryEntryTime = 0;
     let currentQuestionIndex = 0;
@@ -560,7 +565,6 @@
         return n.toLocaleString('uk-UA');
     }
     
-    // Нова функція форматування дедлайну для карток та дашборду
     function formatDeadlineText(deadlineStr) {
         if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
         let ds = String(deadlineStr).trim();
@@ -1060,7 +1064,7 @@
         let isAdmin = windowUserRole === 'admin';
         
         // Власник бачить усіх (Власників, Керівників, Співробітників)
-        // Керівник бачить тільки своих співробітників
+        // Керівник бачить тільки своїх співробітників
         let allUsers = db.users.filter(u => {
             let rStr = String(u.role).toLowerCase();
             return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
@@ -1967,7 +1971,7 @@
         if (windowViewingEmployee) return;
 
         if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для этого продукта отсутствует.");
+            alert("Тест для цього продукту відсутній.");
             return;
         }
 
@@ -2015,7 +2019,6 @@
         showQuestion(currentQuestionIndex);
     }
 
-    // Функції для повторної здачі або читання теорії, щоб час зберігався і не обнулявся
     function retryTest() {
         window.sessionTotalTime = totalTimeSpent;
         window.theoryEntryTime = 0; 
@@ -2028,7 +2031,6 @@
         switchView('theoryView');
     }
 
-    // Добавлен флаг isCheat
     async function submitTest(isCheat = false) {
         isTestActive = false; 
         clearInterval(testTimerInterval); 
@@ -2055,14 +2057,14 @@
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
         
-        // Если вызван чит - сбрасываем балл в 0
+        // Якщо чіт — анулюємо бал
         if (isCheat) {
             totalScore = 0;
             correctCount = 0;
         }
         
         let passed = totalScore >= 80; 
-        let timeSpent = totalTimeSpent; // загальний час читання + проходження
+        let timeSpent = totalTimeSpent; 
 
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
@@ -2103,7 +2105,6 @@
         fullCache.educationData = db;
         localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
 
-        // Если попытка списывания — выводим кастомное сообщение
         if (isCheat) {
             document.getElementById('resultEmoji').innerText = '🚨';
             document.getElementById('resultTitle').innerText = 'Спроба списування!';
@@ -2150,7 +2151,6 @@
     }
 
     // --- АНТИ-СУПЕР-ЧІТ ---
-    
     document.addEventListener('contextmenu', event => {
         if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
     });
@@ -2172,24 +2172,30 @@
         }
     });
 
-    let isAppHidden = false;
-    
-    function handleVisibilityLoss() {
-        if (isTestActive && document.getElementById('testView').classList.contains('active') && !isAppHidden) {
-            isAppHidden = true;
-            triggerAntiCheat(); // Миттєве блокування без попереджень
-            setTimeout(() => { isAppHidden = false; }, 1000);
-        }
+    function triggerAntiCheat() {
+        if (!isTestActive) return; 
+        isTestActive = false; 
+        clearInterval(testTimerInterval); 
+
+        document.body.classList.add('cheating');
+
+        parsedQuestions.forEach(q => {
+            q.answers.forEach(a => a.selected = false);
+        });
+
+        setTimeout(() => {
+            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
+            document.body.classList.remove('cheating');
+            submitTest(true); 
+        }, 150);
     }
 
-    // Обработка потери фокуса или скрытия страницы
-    document.addEventListener("visibilitychange", () => { 
-        if (document.hidden || document.visibilityState === 'hidden') {
-            handleVisibilityLoss(); 
-        }
+    window.addEventListener('blur', () => { if (isTestActive) triggerAntiCheat(); });
+    window.addEventListener('pagehide', () => { if (isTestActive) triggerAntiCheat(); });
+    document.addEventListener('visibilitychange', () => { 
+        if (isTestActive && (document.hidden || document.visibilityState === 'hidden')) triggerAntiCheat(); 
     });
-    window.addEventListener("pagehide", handleVisibilityLoss);
-    window.addEventListener("blur", handleVisibilityLoss);
+    document.addEventListener('touchcancel', () => { if (isTestActive) triggerAntiCheat(); });
 
     function initWatermarks() {
         let container = document.getElementById('watermarkContainer');
@@ -2227,28 +2233,11 @@
     }
 
     document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
-            triggerAntiCheat(); // Також миттєве блокування при виході з повного екрану
+        if (!document.fullscreenElement && isTestActive && document.getElementById('testView').classList.contains('active')) {
+            triggerAntiCheat(); 
         }
     });
 
-    function triggerAntiCheat() {
-        if (!isTestActive) return; 
-        isTestActive = false; // Блокируем повторное срабатывание
-        clearInterval(testTimerInterval); 
-        
-        // Стираем все ответы
-        parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
-        
-        // Показываем экран блокировки
-        document.getElementById('antiCheatScreen').style.display = 'flex';
-        
-        // Через 2.5 секунды отправляем с результатом 0% (флаг true)
-        setTimeout(() => {
-            document.getElementById('antiCheatScreen').style.display = 'none';
-            submitTest(true); 
-        }, 2500);
-    }
 </script>
 </body>
 </html>
