@@ -378,7 +378,8 @@
         <div id="globalStatsContainer"></div>
 
         <div class="section-title" id="courseListTitle" style="justify-content: flex-start;">
-            <img src="icons_skillHUB/Calendar-Check.svg" style="width: 22px; height: 22px; margin-right: 6px; object-fit: contain;" alt="Calendar" onerror="this.outerHTML='<span style=\\'font-size: 20px; margin-right: 6px;\\'>📅</span>'">
+            <!-- Якщо іконка не знайдена, виведеться 📅 -->
+            <img src="Calendar-Check.svg" style="width: 22px; height: 22px; margin-right: 6px; object-fit: contain;" alt="Calendar" onerror="this.outerHTML='<span style=\\'font-size: 20px; margin-right: 6px;\\'>📅</span>'">
             <span>Призначені курси</span>
         </div>
         <div id="courseList"></div>
@@ -1059,7 +1060,7 @@
         let isAdmin = windowUserRole === 'admin';
         
         // Власник бачить усіх (Власників, Керівників, Співробітників)
-        // Керівник бачить тільки своїх співробітників
+        // Керівник бачить тільки своих співробітників
         let allUsers = db.users.filter(u => {
             let rStr = String(u.role).toLowerCase();
             return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
@@ -1966,7 +1967,7 @@
         if (windowViewingEmployee) return;
 
         if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для цього продукту відсутній.");
+            alert("Тест для этого продукта отсутствует.");
             return;
         }
 
@@ -2027,7 +2028,8 @@
         switchView('theoryView');
     }
 
-    async function submitTest() {
+    // Добавлен флаг isCheat
+    async function submitTest(isCheat = false) {
         isTestActive = false; 
         clearInterval(testTimerInterval); 
         removeWatermarks();
@@ -2052,6 +2054,13 @@
         });
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
+        
+        // Если вызван чит - сбрасываем балл в 0
+        if (isCheat) {
+            totalScore = 0;
+            correctCount = 0;
+        }
+        
         let passed = totalScore >= 80; 
         let timeSpent = totalTimeSpent; // загальний час читання + проходження
 
@@ -2094,16 +2103,23 @@
         fullCache.educationData = db;
         localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
 
-        document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
-        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
-        document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
-        document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
+        // Если попытка списывания — выводим кастомное сообщение
+        if (isCheat) {
+            document.getElementById('resultEmoji').innerText = '🚨';
+            document.getElementById('resultTitle').innerText = 'Спроба списування!';
+            document.getElementById('resultTitle').style.color = 'var(--danger)';
+            document.getElementById('resultSubtitle').innerHTML = `Тест анульовано. Твій результат: <strong style="font-size:22px; color: var(--danger); margin: 0 4px;">0%</strong>`;
+        } else {
+            document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
+            document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
+            document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
+        }
 
         let actionHtml = '';
-        if (passed) {
+        if (passed && !isCheat) {
             actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
         } else {
-            // Використовуємо нові функції для збереження часу
             actionHtml = `
                 <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
                 <button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>
@@ -2157,15 +2173,21 @@
     });
 
     let isAppHidden = false;
+    
     function handleVisibilityLoss() {
-        if (document.getElementById('testView').classList.contains('active') && !isAppHidden) {
+        if (isTestActive && document.getElementById('testView').classList.contains('active') && !isAppHidden) {
             isAppHidden = true;
             triggerAntiCheat(); // Миттєве блокування без попереджень
             setTimeout(() => { isAppHidden = false; }, 1000);
         }
     }
 
-    document.addEventListener("visibilitychange", () => { if (document.hidden) handleVisibilityLoss(); });
+    // Обработка потери фокуса или скрытия страницы
+    document.addEventListener("visibilitychange", () => { 
+        if (document.hidden || document.visibilityState === 'hidden') {
+            handleVisibilityLoss(); 
+        }
+    });
     window.addEventListener("pagehide", handleVisibilityLoss);
     window.addEventListener("blur", handleVisibilityLoss);
 
@@ -2212,15 +2234,20 @@
 
     function triggerAntiCheat() {
         if (!isTestActive) return; 
-        isTestActive = false; 
+        isTestActive = false; // Блокируем повторное срабатывание
         clearInterval(testTimerInterval); 
-        document.getElementById('antiCheatScreen').style.display = 'flex';
+        
+        // Стираем все ответы
         parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
+        
+        // Показываем экран блокировки
+        document.getElementById('antiCheatScreen').style.display = 'flex';
+        
+        // Через 2.5 секунды отправляем с результатом 0% (флаг true)
         setTimeout(() => {
-            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
             document.getElementById('antiCheatScreen').style.display = 'none';
-            submitTest();
-        }, 150);
+            submitTest(true); 
+        }, 2500);
     }
 </script>
 </body>
