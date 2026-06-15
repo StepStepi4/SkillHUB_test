@@ -385,7 +385,7 @@
         <div id="globalStatsContainer"></div>
 
         <div class="section-title" id="courseListTitle" style="justify-content: flex-start;">
-            <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; margin-right: 6px; object-fit: contain;" alt="Calendar" onerror="this.outerHTML='<span style=\\'font-size: 20px; margin-right: 6px;\\'>📅</span>'">
+            <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; margin-right: 6px; object-fit: contain;" alt="Check" onerror="this.outerHTML='<span style=\\'font-size: 20px; margin-right: 6px;\\'>✅</span>'">
             <span>Призначені курси</span>
         </div>
         <div id="courseList"></div>
@@ -481,7 +481,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyiidLHjfGTcU1V1nrtL_8HDP1JE0GfrLyFQk4dMoE5hURm0ueMxOMgoecwSsA8QPFqSw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz0ajrRqilbnz8R4okN8ogFsVNeBIbfMvzuiJ5Z9c4LLRYDMdoQ3juOy6InoffaqDLetQ/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -569,13 +569,6 @@
         let n = parseFloat(str);
         if (isNaN(n)) return "0";
         return n.toLocaleString('uk-UA');
-    }
-
-    function formatDeadlineText(deadlineStr) {
-        if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
-        let ds = String(deadlineStr).trim();
-        if (!isNaN(ds)) return `${ds} днів`;
-        return ds;
     }
 
     function handleFloatingBack() {
@@ -715,23 +708,13 @@
             }
         }
 
-        updateTick(); 
+        updateTick(); // Перший запуск без затримки
         deadlineInterval = setInterval(updateTick, 1000);
     }
 
     function updateTestButtonState() {
         const btn = document.getElementById('startTestButton');
         if (!btn) return;
-        
-        if (windowViewingEmployee) {
-            btn.style.display = 'none'; 
-            document.getElementById('testWarningBox').style.display = 'none';
-            return;
-        }
-        
-        btn.style.display = 'flex';
-        document.getElementById('testWarningBox').style.display = 'block';
-
         if (window.isDeadlinePassed) {
             btn.disabled = true;
             btn.innerText = "ЧАС ВИЧЕРПАНО 🔒";
@@ -1030,7 +1013,6 @@
                 }
             }
         } catch (error) {
-            console.error("Login Error: ", error);
             err.innerText = "Сталася помилка з'єднання. Спробуйте ще раз.";
             err.style.display = 'block';
         } finally {
@@ -1438,6 +1420,12 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
+        if (courseNames.length === 0) {
+            document.getElementById('globalStatsContainer').innerHTML = '';
+            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
+            return;
+        }
+
         let userResults = user.results || {};
         let totalAssigned = 0;
         let totalCompleted = 0;
@@ -1528,25 +1516,24 @@
 
             goalsHtml = `
                 <div class="section-title" style="margin-top: 0; justify-content: flex-start;">
-                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim" onerror="this.style.display='none'"> 
+                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim"> 
                     <span>Цілі та виконання</span>
                 </div>
                 <div class="stats-dashboard">
                     ${statItems}
                 </div>
-                <div class="chart-container" style="height: 140px; padding: 10px 20px;">
-                    <canvas id="goalsChart"></canvas>
-                </div>
             `;
         }
 
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
+
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
         let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
         let globalBg = isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
         let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
         let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
+        // Додаємо бейдж дедлайну для керівника у картці співробітника (або в своєму кабінеті)
         let deadlineBadgeHtml = '';
         let dlStr = user.deadline && user.deadline !== "undefined" && String(user.deadline).trim() !== "" ? String(user.deadline).trim() : "";
         if (dlStr) {
@@ -1593,17 +1580,6 @@
             </div>
             ${goalsHtml}
         `;
-
-        setTimeout(() => renderCharts(user), 50);
-
-        if (courseNames.length === 0) {
-            if (windowViewingEmployee) {
-                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px;">Немає призначених курсів.</div>';
-            } else {
-                list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
-            }
-            return;
-        }
 
         if (windowViewingEmployee) {
             // Відображення карток для керівника (розгорнутий список з результатами)
@@ -2003,12 +1979,6 @@
             return;
         }
 
-        if (window.theoryEntryTime > 0) {
-            window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
-            window.theoryEntryTime = 0;
-        }
-        totalTimeSpent = window.sessionTotalTime;
-
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => {
             shuffleArray(q.answers);
@@ -2016,6 +1986,7 @@
         });
 
         currentQuestionIndex = 0;
+        totalTimeSpent = 0;
         isTestActive = true; 
         
         initWatermarks();
@@ -2023,18 +1994,6 @@
         
         switchView('testView');
         showQuestion(currentQuestionIndex);
-    }
-
-    function retryTest() {
-        window.sessionTotalTime = totalTimeSpent;
-        window.theoryEntryTime = 0; 
-        startTest();
-    }
-
-    function repeatTheory() {
-        window.sessionTotalTime = totalTimeSpent;
-        window.theoryEntryTime = Date.now();
-        switchView('theoryView');
     }
 
     async function submitTest(isCheat = false) {
@@ -2161,87 +2120,31 @@
         isTestActive = false; 
         clearInterval(testTimerInterval); 
 
+        // Миттєво ховаємо весь екран за чорною ширмою
+        // iOS сфотографує саме її, а не тест!
         document.body.classList.add('cheating');
 
+        // Анулюємо всі вибрані відповіді
         parsedQuestions.forEach(q => {
             q.answers.forEach(a => a.selected = false);
         });
 
+        // Даємо мікро-паузу (щоб екран встиг стати чорним для системи), потім караємо
         setTimeout(() => {
             alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
             document.body.classList.remove('cheating');
-            submitTest(true); 
+            submitTest(true);
         }, 150);
     }
 
-    window.addEventListener('blur', () => { if (isTestActive) triggerAntiCheat(); });
-    window.addEventListener('pagehide', () => { if (isTestActive) triggerAntiCheat(); });
+    // Тригери спрацьовування анти-чіта
+    window.addEventListener('blur', () => { if (isTestActive) triggerAntiCheat(); }); // Клік за межі вікна або шторка
+    window.addEventListener('pagehide', () => { if (isTestActive) triggerAntiCheat(); }); // Згортання додатка
     document.addEventListener('visibilitychange', () => { 
-        if (isTestActive && (document.hidden || document.visibilityState === 'hidden')) triggerAntiCheat(); 
+        if (isTestActive && document.hidden) triggerAntiCheat(); 
     });
+    // Бонус: якщо свайп на iPhone переривається жестом системи
     document.addEventListener('touchcancel', () => { if (isTestActive) triggerAntiCheat(); }); 
-
-    document.addEventListener('contextmenu', event => {
-        if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
-    });
-
-    document.addEventListener('copy', event => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            event.preventDefault();
-            alert("Копіювання матеріалів тесту заборонено!");
-        }
-    });
-
-    document.addEventListener('keydown', (e) => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
-               (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
-                e.preventDefault();
-                alert("Ця дія тимчасово заблокована задля чесності тестування!");
-            }
-        }
-    });
-
-    function initWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'watermarkContainer';
-            container.className = 'watermark-container';
-            document.body.appendChild(container);
-        }
-        container.innerHTML = ''; container.style.display = 'block';
-        const wmText = currentUser ? currentUser : "SkillHUB";
-        for (let i = 0; i < 25; i++) {
-            let wm = document.createElement('div'); wm.className = 'watermark-text';
-            wm.style.top = `${Math.random() * 100}%`; wm.style.left = `${Math.random() * 100}%`;
-            wm.innerText = wmText; container.appendChild(wm);
-        }
-    }
-
-    function removeWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (container) container.style.display = 'none';
-    }
-
-    function requestFullScreen() {
-        let elem = document.documentElement;
-        if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    }
-
-    function exitFullScreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        }
-    }
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && isTestActive && document.getElementById('testView').classList.contains('active')) {
-            triggerAntiCheat(); 
-        }
-    });
 </script>
 </body>
 </html>
