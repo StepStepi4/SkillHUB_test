@@ -67,15 +67,8 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
         
-        /* --- АНТИ-СУПЕР-ЧІТ ШИРМА --- */
-        #antiCheatScreen {
-            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-            background: #000; color: #fff; z-index: 999999;
-            display: none; flex-direction: column; justify-content: center; align-items: center;
-            font-size: 16px; font-weight: 800; text-align: center; padding: 24px; line-height: 1.5;
-        }
-        body.cheating .container { display: none !important; }
-        body.cheating #antiCheatScreen { display: flex !important; }
+        body.cheating { background: #000 !important; color: #000 !important; }
+        body.cheating * { visibility: hidden !important; }
 
         .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
 
@@ -241,7 +234,7 @@
 </head>
 <body>
 
-<div id="antiCheatScreen">
+<div id="antiCheatScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:100000; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
     <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
     <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
     <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
@@ -385,7 +378,7 @@
         <div id="globalStatsContainer"></div>
 
         <div class="section-title" id="courseListTitle" style="justify-content: flex-start;">
-            <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; margin-right: 6px; object-fit: contain;" alt="Check" onerror="this.outerHTML='<span style=\\'font-size: 20px; margin-right: 6px;\\'>✅</span>'">
+            <img src="icons_skillHUB/light-bulb.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Idea" onerror="this.style.display='none'">
             <span>Призначені курси</span>
         </div>
         <div id="courseList"></div>
@@ -503,18 +496,21 @@
     let currentCourseName = "";
     let currentProductData = null;
     let parsedQuestions = [];
-    let savedCompletedListHtml = ""; 
 
     let testTimerInterval;
     let timeRemaining = 0;
     let deadlineInterval;
     let sessionCheckInterval;
     window.isDeadlinePassed = false;
-    let isTestActive = false; 
+    let isTestActive = false;
 
+    // Змінні для підрахунку загального часу (теорія + тест)
+    window.sessionTotalTime = 0;
+    window.theoryEntryTime = 0;
     let currentQuestionIndex = 0;
     let totalTimeSpent = 0;
-    const TIME_PER_QUESTION = 25; // 25 секунд на одне питання
+    
+    const TIME_PER_QUESTION = 25; 
 
     function getCleanName(str) {
         if (!str) return "";
@@ -535,7 +531,7 @@
             img.setAttribute('data-ext-index', extIdx);
             img.src = `Achievement/${code}${ACH_EXTS[extIdx]}`;
         } else {
-            img.outerHTML = '<span style="font-size:40px;">🏅</span>';
+            img.outerHTML = '<span style="font-size:20px;">🏅</span>';
         }
     }
 
@@ -555,13 +551,6 @@
         }
     }
 
-    function getAttemptWord(count) {
-        let n = parseInt(count) || 0;
-        if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
-        if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'спроби';
-        return 'спроб';
-    }
-
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
         let str = String(num).replace(/\s/g, '').replace(',', '.');
@@ -569,32 +558,32 @@
         if (isNaN(n)) return "0";
         return n.toLocaleString('uk-UA');
     }
-
-    // НОВА ФУНКЦІЯ: Коректний вихід з додатку
-    function goBackToBot() {
-        if (window.Telegram && window.Telegram.WebApp) {
-            window.Telegram.WebApp.close(); 
-        } else {
-            window.location.href = '../index.html'; 
-        }
+    
+    // Нова функція форматування дедлайну для карток та дашборду
+    function formatDeadlineText(deadlineStr) {
+        if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
+        let ds = String(deadlineStr).trim();
+        if (!isNaN(ds)) return `${ds} днів`;
+        return ds;
     }
 
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
-        if (activeView === 'loginView') {
-            goBackToBot(); 
+        if (activeView === 'loginView' || activeView === 'adminView') {
+            window.location.href = 'index.html'; 
         } else if (activeView === 'courseView') {
-            if (windowViewingEmployee) {
-                switchToAdminPanel();
+            if (windowViewingEmployee || windowUserRole === 'admin' || windowUserRole === 'director') {
+                windowViewingEmployee = null;
+                switchView('adminView');
             } else {
-                goBackToBot();
+                window.location.href = 'index.html'; 
             }
         } else if (activeView === 'productView') {
             switchView('courseView');
         } else if (activeView === 'theoryView') {
             switchView('productView');
         } else if (activeView === 'warningView') {
-            switchView('theoryView');
+            switchView('theoryView'); 
         } else if (activeView === 'resultView') {
             openCourse(currentCourseName);
         }
@@ -620,9 +609,7 @@
             let queue = JSON.parse(localStorage.getItem('skillhub_offline_queue') || '[]');
             queue.push({ action: 'save_score', login: login, product: product, score: score, time: time, timestamp: Date.now() });
             localStorage.setItem('skillhub_offline_queue', JSON.stringify(queue));
-        } catch(e) {
-            console.error(e);
-        }
+        } catch(e) { console.error(e); }
     }
 
     async function processOfflineQueue() {
@@ -636,9 +623,7 @@
             let remainingQueue = [];
             for (let item of queue) {
                 try {
-                    await fetch(API_URL, {
-                        method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(item)
-                    });
+                    await fetch(API_URL, { method: 'POST', cache: 'no-store', mode: 'no-cors', body: JSON.stringify(item) });
                 } catch (e) {
                     remainingQueue.push(item);
                 }
@@ -681,26 +666,14 @@
         return null;
     }
 
-    function formatDeadlineText(dlStr) {
-        if (!dlStr) return "";
-        let val = String(dlStr).trim();
-        if (val.match(/^(\d{2})\.(\d{2})\.(\d{4})/)) {
-            return val;
-        }
-        let days = parseFloat(val);
-        if (!isNaN(days)) return days + " днів";
-        return val;
-    }
-
     function startDeadlineTimer() {
         clearInterval(deadlineInterval);
-        let user = windowViewingEmployee ? windowViewingEmployee : db.users.find(u => u.login === currentUser);
+        let user = db.users.find(u => u.login === currentUser);
         if (!user) return;
 
-        let dlStr = user.deadline;
-        let dlMs = getDeadlineMs(dlStr, user);
+        let dlMs = getDeadlineMs(user.deadline, user);
 
-        if (!dlStr || String(dlStr).trim() === "" || String(dlStr) === "undefined") {
+        if (!dlMs) {
             document.getElementById('deadlineContainer').style.display = 'none';
             window.isDeadlinePassed = false;
             updateTestButtonState();
@@ -709,22 +682,12 @@
 
         document.getElementById('deadlineContainer').style.display = 'flex';
 
-        if (!dlMs) {
-            document.getElementById('deadlineText').innerText = `⏳ Дедлайн: ${formatDeadlineText(dlStr)} (не розпочато)`;
-            document.getElementById('deadlineText').style.color = "var(--text-main)";
-            document.getElementById('deadlineContainer').style.background = "var(--input-bg)";
-            document.getElementById('deadlineContainer').style.borderColor = "var(--border)";
-            window.isDeadlinePassed = false;
-            updateTestButtonState();
-            return;
-        }
-
-        function updateTick() {
+        deadlineInterval = setInterval(() => {
             let now = Date.now();
             let diff = dlMs - now;
 
             if (diff <= 0) {
-                document.getElementById('deadlineText').innerText = "Доступ до тестів закрито 🔒";
+                document.getElementById('deadlineText').innerText = "🔒 Доступ до тестів закрито";
                 document.getElementById('deadlineText').style.color = "var(--danger)";
                 document.getElementById('deadlineContainer').style.background = "rgba(239, 68, 68, 0.1)";
                 document.getElementById('deadlineContainer').style.borderColor = "rgba(239, 68, 68, 0.2)";
@@ -742,15 +705,22 @@
                 window.isDeadlinePassed = false;
                 updateTestButtonState();
             }
-        }
-
-        updateTick(); 
-        deadlineInterval = setInterval(updateTick, 1000);
+        }, 1000);
     }
 
     function updateTestButtonState() {
         const btn = document.getElementById('startTestButton');
         if (!btn) return;
+        
+        if (windowViewingEmployee) {
+            btn.style.display = 'none'; 
+            document.getElementById('testWarningBox').style.display = 'none';
+            return;
+        }
+        
+        btn.style.display = 'flex';
+        document.getElementById('testWarningBox').style.display = 'block';
+
         if (window.isDeadlinePassed) {
             btn.disabled = true;
             btn.innerText = "ЧАС ВИЧЕРПАНО 🔒";
@@ -794,15 +764,12 @@
                     if (user) {
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
-                            // Якщо токен не збігається — миттєвий викид
-                            if (!myToken || db.activeSessions[currentUser] !== myToken) {
+                            if (myToken && db.activeSessions[currentUser] !== myToken) {
                                 logout(true); 
                                 return;
                             }
                         }
 
-                        buildCoursesMap(user);
-                        
                         if (document.getElementById('adminView').classList.contains('active')) {
                             renderAdminView();
                         } else if (document.getElementById('courseView').classList.contains('active')) {
@@ -812,9 +779,9 @@
                                     windowViewingEmployee = updatedEmp;
                                     buildCoursesMap(updatedEmp);
                                     renderCourses(updatedEmp);
-                                    startDeadlineTimer();
                                 }
                             } else {
+                                buildCoursesMap(user);
                                 renderCourses(user);
                                 startDeadlineTimer();
                                 checkNewAchievements(user);
@@ -829,19 +796,16 @@
                     }
                 }
             }
-        } catch(e) {
-            console.error("Fetch Error:", e);
-        }
+        } catch(e) { console.error("Fetch Error:", e); }
     }
 
-    // НОВА ФУНКЦІЯ: Пришвидшена перевірка (10 сек)
     function startSessionMonitor() {
         clearInterval(sessionCheckInterval);
         sessionCheckInterval = setInterval(() => {
             if (currentUser && navigator.onLine && !isTestActive) {
                 fetchFreshDataSilent();
             }
-        }, 10000);
+        }, 30000);
     }
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -859,9 +823,7 @@
                     globalAchievements = parsedDb.achievementData || []; 
                 }
             }
-        } catch(e) {
-            console.error("Cache parsing error");
-        }
+        } catch(e) { console.error("Cache parsing error"); }
 
         try {
             document.getElementById('loader').style.display = 'none';
@@ -1096,6 +1058,8 @@
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
         
+        // Власник бачить усіх (Власників, Керівників, Співробітників)
+        // Керівник бачить тільки своїх співробітників
         let allUsers = db.users.filter(u => {
             let rStr = String(u.role).toLowerCase();
             return rStr.includes('співробітник') || rStr.includes('сотрудник') || rStr.includes('керівник') || rStr.includes('власник');
@@ -1111,6 +1075,7 @@
             return uDir === mShort || mName.includes(uDir) || uDir.includes(mShort);
         });
         
+        // Убираем самого себя из списка (и из своей статистики)
         managedUsers = managedUsers.filter(u => u.login !== currentUser);
 
         let directors = [...new Set(allUsers.map(u => u.director).filter(d => d))].sort();
@@ -1238,6 +1203,7 @@
             let achHtml = '';
             if(achCodes.length > 0) {
                 let topAchs = achCodes.slice(0, 3);
+                // Повернуто розмір іконок на 20x20
                 achHtml = topAchs.map(code => `<img src="Achievement/${escapeHTMLAttr(code)}.svg" style="width:20px; height:20px; object-fit:contain; margin-right:4px;" onerror="this.outerHTML='<span style=\\'font-size:20px; margin-right:4px;\\'>🏅</span>'">`).join('');
                 if(achCodes.length > 3) achHtml += `<span style="font-size:12px; color:var(--text-muted); font-weight:bold;">+${achCodes.length - 3}</span>`;
             } else {
@@ -1254,6 +1220,7 @@
             let dirDisplayHtml = '';
             let storeDisplayHtml = '';
 
+            // Якщо керівник або власник — пишемо лише роль і не пишемо магазин
             if (isHead) {
                 let displayRole = rLow.includes('власник') ? 'Власник' : 'Керівник';
                 dirDisplayHtml = `<div style="color:var(--text-main); font-weight:700;">${displayRole}</div>`;
@@ -1268,13 +1235,14 @@
             let cardBg = 'var(--card-bg)';
             let cardBorder = 'var(--border)';
             
+            // Замальовка карток відповідно до прогресу (Тільки рамка, без заливки)
             if (uTotal > 0) {
                 if (uPass === uTotal) {
-                    cardBorder = 'rgba(16, 185, 129, 0.8)';
+                    cardBorder = 'rgba(16, 185, 129, 0.8)'; // Зелений бордер
                 } else if (uPass === 0) {
-                    cardBorder = 'rgba(239, 68, 68, 0.5)';
+                    cardBorder = 'rgba(239, 68, 68, 0.5)'; // Червоний бордер
                 } else {
-                    cardBorder = 'rgba(245, 158, 11, 0.6)';
+                    cardBorder = 'rgba(245, 158, 11, 0.6)'; // Жовтий бордер
                 }
             }
 
@@ -1290,7 +1258,7 @@
                     
                     <div style="display:flex; align-items:center; gap: 8px; margin-bottom:6px;">
                         ${dlBadge}
-                        <div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px; display:inline-block;">Курсів: ${uTotal}</div>
+                        <div style="font-size:12px; font-weight:600; color:var(--text-muted); background:var(--input-bg); padding:2px 6px; border-radius:6px;">Курсів: ${uTotal}</div>
                     </div>
                     
                     <div style="display:flex; align-items:center;">
@@ -1323,10 +1291,10 @@
         document.getElementById('courseViewNavActions').style.display = 'none'; 
         
         renderCourses(windowViewingEmployee);
-        startDeadlineTimer(); 
         switchView('courseView');
     }
 
+    // --- ЗВИЧАЙНИЙ РОЗДІЛ НАВЧАННЯ ---
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
@@ -1426,21 +1394,114 @@
         achListEl.innerHTML = html;
     }
 
-    function openCompletedModal() {
-        let modal = document.getElementById('genericModal');
-        let overlay = document.getElementById('genericModalOverlay');
+    function generateUserDashboardHTML(user) {
+        let stats = user.tableStats || {};
+        
+        let time = stats.timeSpent || "0:00";
+        let achCount = user.achievements ? String(user.achievements).split(',').filter(s => s.trim() !== "").length : 0;
+        
+        let on100 = parseInt(stats.on100) || 0;
+        let on90 = parseInt(stats.on90) || 0;
+        let on80 = parseInt(stats.on80) || 0;
+        let less80 = parseInt(stats.less80) || 0;
 
-        modal.innerHTML = `
-            <div class="ach-modal-title" style="margin-bottom: 24px;">Пройдені курси</div>
-            <div class="modal-scrollable" style="max-height: 60vh; overflow-y: auto; text-align: left; margin-bottom: 24px; padding-right: 4px;">
-                ${savedCompletedListHtml || '<div style="text-align:center; color:var(--text-muted);">Ще немає пройдених курсів.</div>'}
+        let totalTests = on100 + on90 + on80 + less80;
+        let hasTestStats = totalTests > 0;
+        
+        // Динамічний підрахунок середнього %
+        let sum = 0;
+        let count = 0;
+        for (let key in (user.results || {})) {
+            let resStr = user.results[key];
+            let score = 0;
+            let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+            if (match) {
+                score = parseInt(match[2], 10) || 0;
+            } else {
+                let sm = String(resStr).match(/(\d+)%/);
+                if (sm) score = parseInt(sm[1], 10) || 0;
+            }
+            sum += score;
+            count++;
+        }
+        let calculatedAvg = count > 0 ? Math.round(sum / count) : 0;
+        let avgScore = calculatedAvg + "%";
+
+        let deadlineBadgeHtml = '';
+        let dlStr = user.deadline && user.deadline !== "undefined" && String(user.deadline).trim() !== "" ? String(user.deadline).trim() : "";
+        if (dlStr) {
+            let dlMs = getDeadlineMs(dlStr, user);
+            let isExpired = dlMs && Date.now() > dlMs;
+            let dTextRaw = formatDeadlineText(dlStr);
+            
+            let dText = isExpired ? `🔒 Дедлайн ${dTextRaw} (Завершено)` : `⏳ Дедлайн ${dTextRaw}`;
+            let dColor = isExpired ? 'var(--danger)' : '#f59e0b';
+            let dBg = isExpired ? 'var(--danger-bg)' : 'rgba(245, 158, 11, 0.15)';
+            
+            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: ${dColor}; background: ${dBg}; padding: 4px 8px; border-radius: 8px; display: inline-block; text-transform: none; letter-spacing: 0;">${escapeHTMLAttr(dText)}</div>`;
+        } else {
+            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; display: inline-block; text-transform: none; letter-spacing: 0;">Без дедлайну</div>`;
+        }
+
+        let html = `
+            <div class="section-title" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display: flex; align-items: center;">
+                    <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Stats" onerror="this.style.display='none'">
+                    <span>Статистика</span>
+                </div>
+                ${deadlineBadgeHtml}
             </div>
-            <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; padding: 16px; font-weight: 800; text-transform: uppercase;" onclick="closeModals()">ЗАКРИТИ</button>
+
+            <div class="stats-dashboard" style="margin-bottom: 24px;">
+                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${escapeHTMLAttr(avgScore)}</div><div class="stat-label">Середній %</div></div>
+                <div class="stat-item"><div class="stat-val">${achCount}</div><div class="stat-label">Нагороди</div></div>
+                <div class="stat-item"><div class="stat-val" style="font-size:18px; padding-top:4px;">${escapeHTMLAttr(time)}</div><div class="stat-label">Час</div></div>
+            </div>
         `;
 
-        document.body.style.overflow = 'hidden'; 
-        overlay.classList.add('active');
-        modal.classList.add('active');
+        return html;
+    }
+
+    function renderCharts(user) {
+        if (chartsInstances['goals']) {
+            chartsInstances['goals'].destroy();
+        }
+
+        const theme = localStorage.getItem('theme') || 'light';
+        const isDark = theme === 'dark';
+        const textColor = isDark ? '#ffffff' : '#111827';
+        const gridColor = isDark ? '#38383a' : '#e5e7eb';
+
+        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+        let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+        let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+        let fUah = parseFloat(String(user.execUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+        
+        let goalsCanvas = document.getElementById('goalsChart');
+        if (goalsCanvas && (tPcs > 0 || tUah > 0)) {
+            let pctPcs = tPcs > 0 ? Math.min((fPcs / tPcs) * 100, 100) : 0;
+            let pctUah = tUah > 0 ? Math.min((fUah / tUah) * 100, 100) : 0;
+
+            chartsInstances['goals'] = new Chart(goalsCanvas, {
+                type: 'bar',
+                data: {
+                    labels: ['Штуки', 'Гривні'],
+                    datasets: [
+                        { label: 'Виконано %', data: [pctPcs, pctUah], backgroundColor: '#10b981', borderRadius: 6, barThickness: 24 }
+                    ]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        x: { max: 100, grid: { color: gridColor }, ticks: { color: textColor, callback: v => v + '%' } },
+                        y: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter', weight: 'bold' } } }
+                    }
+                }
+            });
+        }
     }
 
     function closeModals() {
@@ -1454,56 +1515,9 @@
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
-        if (courseNames.length === 0) {
-            document.getElementById('globalStatsContainer').innerHTML = '';
-            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
-            return;
-        }
-
-        let userResults = user.results || {};
-        let totalAssigned = 0;
-        let totalCompleted = 0;
-        let totalScoreSum = 0;
-        let scoreCount = 0;
-        
-        savedCompletedListHtml = ""; 
-
-        Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
-            totalAssigned++;
-            let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
-            if (resStr) {
-                let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0;
-                let attempts = 0;
-                if (match) {
-                    attempts = match[1];
-                    score = parseInt(match[2], 10) || 0;
-                } else {
-                    let scoreMatch = String(resStr).match(/(\d+)%/);
-                    if (scoreMatch) {
-                        score = parseInt(scoreMatch[1], 10) || 0;
-                        attempts = 1;
-                    }
-                }
-
-                totalScoreSum += score;
-                scoreCount++;
-                if (score >= 80) {
-                    totalCompleted++;
-                    let attWord = getAttemptWord(attempts);
-                    
-                    savedCompletedListHtml += `
-                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
-                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
-                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
-                            </div>
-                        </div>`;
-                }
-            }
-        });
+        // --- 1. ГЕНЕРАЦІЯ СТАТИСТИКИ ТА ЦІЛЕЙ (ДЛЯ ВСІХ) ---
+        document.getElementById('courseListTitle').style.display = 'flex';
+        let dashboardHtml = generateUserDashboardHTML(user);
 
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
@@ -1550,71 +1564,34 @@
 
             goalsHtml = `
                 <div class="section-title" style="margin-top: 0; justify-content: flex-start;">
-                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim"> 
+                    <img src="icons_skillHUB/aim.svg" style="width: 22px; height: 22px; margin-right: 6px;" alt="Aim" onerror="this.style.display='none'"> 
                     <span>Цілі та виконання</span>
                 </div>
-                <div class="stats-dashboard">
+                <div class="stats-dashboard" style="margin-bottom: 12px;">
                     ${statItems}
+                </div>
+                <div class="chart-container" style="height: 140px; padding: 10px 20px;">
+                    <canvas id="goalsChart"></canvas>
                 </div>
             `;
         }
 
-        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
+        document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
+        setTimeout(() => renderCharts(user), 50);
 
-        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
-        let globalBg = isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
-        let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
-        let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
-        let deadlineBadgeHtml = '';
-        let dlStr = user.deadline && user.deadline !== "undefined" && String(user.deadline).trim() !== "" ? String(user.deadline).trim() : "";
-        if (dlStr) {
-            let dlMs = getDeadlineMs(dlStr, user);
-            let isExpired = dlMs && Date.now() > dlMs;
-            let dTextRaw = formatDeadlineText(dlStr);
-            
-            let dText = isExpired ? `🔒 Дедлайн ${dTextRaw} (Завершено)` : `⏳ Дедлайн ${dTextRaw}`;
-            let dColor = isExpired ? 'var(--danger)' : '#f59e0b';
-            let dBg = isExpired ? 'var(--danger-bg)' : 'rgba(245, 158, 11, 0.15)';
-            
-            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: ${dColor}; background: ${dBg}; padding: 4px 8px; border-radius: 8px; display: inline-block; text-transform: none; letter-spacing: 0;">${escapeHTMLAttr(dText)}</div>`;
-        } else {
-            deadlineBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: var(--text-muted); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; display: inline-block; text-transform: none; letter-spacing: 0;">Без дедлайну</div>`;
+        // --- 2. ВІДОБРАЖЕННЯ СПИСКУ КУРСІВ ---
+        if (courseNames.length === 0) {
+            if (windowViewingEmployee) {
+                list.innerHTML = '<div style="text-align:center; color:var(--text-muted); padding: 30px;">Немає призначених курсів.</div>';
+            } else {
+                list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Не призначено жодного курсу.</div>';
+            }
+            return;
         }
 
-        document.getElementById('globalStatsContainer').innerHTML = `
-            <div class="section-title" style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
-                <div style="display: flex; align-items: center;">
-                    <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Stats">
-                    <span>Статистика навчання</span>
-                </div>
-                ${deadlineBadgeHtml}
-            </div>
-            <div class="stats-dashboard">
-                <div class="stat-item clickable" onclick="openCompletedModal()">
-                    <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
-                    <div class="stat-label">Пройдено</div>
-                </div>
-                <div class="stat-item">
-                    <div class="stat-val">${avgScore}%</div>
-                    <div class="stat-label">Сер. бал</div>
-                </div>
-            </div>
-            
-            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
-                <div class="progress-header">
-                    <div class="progress-title-text">Загальний прогрес</div>
-                    <div class="progress-percent-val" style="color: ${globalColor};">${globalPercent}%</div>
-                </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: ${globalPercent}%;"></div>
-                </div>
-            </div>
-            ${goalsHtml}
-        `;
-
         if (windowViewingEmployee) {
+            // Відображення карток для керівника (розгорнутий список з результатами)
             let coursesHtml = courseNames.map(name => {
                 let courseProducts = coursesMap[name] || [];
                 let parsedCourse = formatWithCustomEmoji(name, '');
@@ -1658,6 +1635,8 @@
             return;
         }
 
+        // --- Відображення карток для самого співробітника (згортані курси) ---
+        let userResults = user.results || {};
         let coursesHtml = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
             let safeName = escapeHTMLAttr(name);
@@ -1795,6 +1774,7 @@
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
         document.getElementById('theoryTitle').innerText = parsed.title;
 
+        // Починаємо рахувати час із відкриття теорії
         window.sessionTotalTime = 0;
         window.theoryEntryTime = Date.now();
 
@@ -1966,7 +1946,7 @@
         clearInterval(testTimerInterval);
         testTimerInterval = setInterval(() => {
             timeRemaining--;
-            totalTimeSpent++; 
+            totalTimeSpent++; // це рахує загальний час тестування (включаючи теорію)
             updateTimerUI();
             if (timeRemaining <= 0) {
                 clearInterval(testTimerInterval);
@@ -1983,6 +1963,7 @@
 
     function startTest() {
         if (window.isDeadlinePassed) return;
+        if (windowViewingEmployee) return;
 
         if (!currentProductData.test || currentProductData.test.trim() === "") {
             alert("Тест для цього продукту відсутній.");
@@ -1990,7 +1971,6 @@
         }
 
         let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
-        
         if (!warningShown) {
             switchView('warningView');
         } else {
@@ -2011,6 +1991,13 @@
             return;
         }
 
+        // Фіксуємо час, проведений за теорією і додаємо його
+        if (window.theoryEntryTime > 0) {
+            window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
+            window.theoryEntryTime = 0; // скидаємо, щоб не порахувати двічі
+        }
+        totalTimeSpent = window.sessionTotalTime;
+
         shuffleArray(parsedQuestions);
         parsedQuestions.forEach(q => {
             shuffleArray(q.answers);
@@ -2018,22 +2005,34 @@
         });
 
         currentQuestionIndex = 0;
-        totalTimeSpent = 0;
         isTestActive = true; 
         
-        if (typeof initWatermarks === 'function') initWatermarks();
-        if (typeof requestFullScreen === 'function') requestFullScreen();
+        cheatWarnings = 0; 
+        initWatermarks();  
+        requestFullScreen();
         
         switchView('testView');
         showQuestion(currentQuestionIndex);
     }
 
-    async function submitTest(isCheat = false) {
+    // Функції для повторної здачі або читання теорії, щоб час зберігався і не обнулявся
+    function retryTest() {
+        window.sessionTotalTime = totalTimeSpent;
+        window.theoryEntryTime = 0; 
+        startTest();
+    }
+
+    function repeatTheory() {
+        window.sessionTotalTime = totalTimeSpent;
+        window.theoryEntryTime = Date.now();
+        switchView('theoryView');
+    }
+
+    async function submitTest() {
         isTestActive = false; 
         clearInterval(testTimerInterval); 
-        
-        if (typeof removeWatermarks === 'function') removeWatermarks();
-        if (typeof exitFullScreen === 'function') exitFullScreen();
+        removeWatermarks();
+        exitFullScreen();
         
         let correctCount = 0;
 
@@ -2054,14 +2053,8 @@
         });
 
         let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
-        
-        if (isCheat) {
-            totalScore = 0;
-            correctCount = 0;
-        }
-        
         let passed = totalScore >= 80; 
-        let timeSpent = totalTimeSpent;
+        let timeSpent = totalTimeSpent; // загальний час читання + проходження
 
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
@@ -2102,25 +2095,19 @@
         fullCache.educationData = db;
         localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
 
-        if (isCheat) {
-            document.getElementById('resultEmoji').innerText = '🚨';
-            document.getElementById('resultTitle').innerText = 'Спроба списування!';
-            document.getElementById('resultTitle').style.color = 'var(--danger)';
-            document.getElementById('resultSubtitle').innerHTML = `Тест анульовано. Твій результат: <strong style="font-size:22px; color: var(--danger); margin: 0 4px;">0%</strong>`;
-        } else {
-            document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
-            document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
-            document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
-            document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
-        }
+        document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
+        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
+        document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
 
         let actionHtml = '';
-        if (passed && !isCheat) {
+        if (passed) {
             actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
         } else {
+            // Використовуємо нові функції для збереження часу
             actionHtml = `
-                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="startTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
-                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="switchView('theoryView')">ПОВТОРИТИ ТЕОРІЮ</button>
+                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
+                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>
             `;
         }
         document.getElementById('resultActionContainer').innerHTML = actionHtml;
@@ -2147,35 +2134,103 @@
         }
     }
 
+    // --- АНТИ-СУПЕР-ЧІТ ---
+    let cheatWarnings = 0;
+    
+    document.addEventListener('contextmenu', event => {
+        if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
+    });
+
+    document.addEventListener('copy', event => {
+        if (document.getElementById('testView').classList.contains('active')) {
+            event.preventDefault();
+            alert("Копіювання матеріалів тесту заборонено!");
+        }
+    });
+
+    document.addEventListener('keydown', (e) => {
+        if (document.getElementById('testView').classList.contains('active')) {
+            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
+               (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
+                e.preventDefault();
+                alert("Ця дія тимчасово заблокована задля чесності тестування!");
+            }
+        }
+    });
+
+    let isAppHidden = false;
+    function handleVisibilityLoss() {
+        if (document.getElementById('testView').classList.contains('active') && !isAppHidden) {
+            isAppHidden = true;
+            cheatWarnings++;
+            if (cheatWarnings >= 3) {
+                triggerAntiCheat();
+            } else {
+                alert(`Попередження (${cheatWarnings}/3): Згортання браузера або втрата фокусу заборонено!`);
+            }
+            setTimeout(() => { isAppHidden = false; }, 1000);
+        }
+    }
+
+    document.addEventListener("visibilitychange", () => { if (document.hidden) handleVisibilityLoss(); });
+    window.addEventListener("pagehide", handleVisibilityLoss);
+    window.addEventListener("blur", handleVisibilityLoss);
+
+    function initWatermarks() {
+        let container = document.getElementById('watermarkContainer');
+        if (!container) {
+            container = document.createElement('div');
+            container.id = 'watermarkContainer';
+            container.className = 'watermark-container';
+            document.body.appendChild(container);
+        }
+        container.innerHTML = ''; container.style.display = 'block';
+        const wmText = currentUser ? currentUser : "SkillHUB";
+        for (let i = 0; i < 25; i++) {
+            let wm = document.createElement('div'); wm.className = 'watermark-text';
+            wm.style.top = `${Math.random() * 100}%`; wm.style.left = `${Math.random() * 100}%`;
+            wm.innerText = wmText; container.appendChild(wm);
+        }
+    }
+
+    function removeWatermarks() {
+        let container = document.getElementById('watermarkContainer');
+        if (container) container.style.display = 'none';
+    }
+
+    function requestFullScreen() {
+        let elem = document.documentElement;
+        if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
+        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
+    }
+
+    function exitFullScreen() {
+        if (document.fullscreenElement || document.webkitFullscreenElement) {
+            if (document.exitFullscreen) document.exitFullscreen();
+            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
+        }
+    }
+
+    document.addEventListener('fullscreenchange', () => {
+        if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
+            cheatWarnings++;
+            if (cheatWarnings >= 3) triggerAntiCheat();
+            else { alert(`Попередження (${cheatWarnings}/3): Не виходьте з повноекранного режиму під час тесту!`); requestFullScreen(); }
+        }
+    });
+
     function triggerAntiCheat() {
         if (!isTestActive) return; 
         isTestActive = false; 
         clearInterval(testTimerInterval); 
-
-        document.body.classList.add('cheating');
-
-        parsedQuestions.forEach(q => {
-            q.answers.forEach(a => a.selected = false);
-        });
-
+        document.getElementById('antiCheatScreen').style.display = 'flex';
+        parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
         setTimeout(() => {
             alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
-            document.body.classList.remove('cheating');
-            submitTest(true);
+            document.getElementById('antiCheatScreen').style.display = 'none';
+            submitTest();
         }, 150);
     }
-
-    window.addEventListener('blur', triggerAntiCheat); 
-    window.addEventListener('pagehide', triggerAntiCheat); 
-    document.addEventListener('visibilitychange', () => { 
-        if (document.hidden && isTestActive) {
-            triggerAntiCheat(); 
-        } else if (!document.hidden && currentUser && !isTestActive) {
-            fetchFreshDataSilent();
-        }
-    });
-    document.addEventListener('touchcancel', triggerAntiCheat); 
-
 </script>
 </body>
 </html>
