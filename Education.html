@@ -565,7 +565,6 @@
 
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
-        // Замінено \s на [\s\u00A0\u202F], щоб парсити нерозривні пробіли з гугл-таблиць
         let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
         let n = parseFloat(str);
         if (isNaN(n)) return "0";
@@ -1085,57 +1084,40 @@
         let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
         let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
 
-        // --- НОВИЙ БЛОК ФІЛЬТРАЦІЇ ---
         let managedUsers = allUsers.filter(u => {
-            // Исключаем самого себя из подчиненного списка
             if (u.login === currentUser) return false;
 
             let uRoleStr = String(u.role).toLowerCase();
             let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
             let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
 
-            // Проверяем наличие целей (с учетом неразрывных пробелов)
+            let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
+            let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
+            
             let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
-
-            // Проверяем наличие курсов
-            let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
-            let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
             let hasCourses = (assignedCount > 0 || arrAssigned > 0);
-
-            // "Любое назначенное условие" - должно быть хотя бы что-то одно
             let hasGoalsOrCourses = hasGoals || hasCourses;
 
-            if (isAdmin) { 
-                // Владелец видит Руководителей и Сотрудников
-                // Владелец НЕ видит других Владельцев (сколько бы их ни было: 2, 3, 4 и т.д.)
+            if (isAdmin) {
                 if (uIsOwner) return false;
-                
-                // Показываем только тех, у кого есть цели или курсы (любое назначенное условие)
                 if (!hasGoalsOrCourses) return false;
-                
                 return true; 
-            } else { 
-                // Руководитель видит только своих подчиненных
+            } else {
                 let uDir = String(u.director).toLowerCase().trim();
                 let belongsToManager = uDir && (uDir === mShort || mName.includes(uDir) || uDir.includes(mShort));
 
                 if (!belongsToManager) return false;
-
-                // Руководитель НЕ видит других Руководителей или Владельцев
                 if (uIsDirector || uIsOwner) return false;
-                
-                // Показываем только тех, у кого есть цели или курсы
                 if (!hasGoalsOrCourses) return false;
 
                 return true;
             }
         });
-        // --- КІНЕЦЬ НОВОГО БЛОКУ ---
 
         let directors = [...new Set(managedUsers.map(u => u.director).filter(d => d))].sort();
 
@@ -1489,7 +1471,6 @@
         const textColor = isDark ? '#ffffff' : '#111827';
         const gridColor = isDark ? '#38383a' : '#e5e7eb';
 
-        // Використовуємо новий Regex для нерозривних пробілів: [\s\u00A0\u202F]
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
@@ -1498,13 +1479,14 @@
         let labels = [];
         let dataVals = [];
         
-        if (tPcs > 0) {
-            labels.push('Штуки');
-            dataVals.push(Math.min((fPcs / tPcs) * 100, 100));
+        // Змінено умови, щоб показувати "шт" та "грн", якщо є ВИКОНАННЯ, навіть коли ціль відсутня (0)
+        if (tPcs > 0 || fPcs !== 0) {
+            labels.push('шт');
+            dataVals.push(tPcs > 0 ? Math.min((fPcs / tPcs) * 100, 100) : 100);
         }
-        if (tUah > 0) {
-            labels.push('Гривні');
-            dataVals.push(Math.min((fUah / tUah) * 100, 100));
+        if (tUah > 0 || fUah !== 0) {
+            labels.push('грн');
+            dataVals.push(tUah > 0 ? Math.min((fUah / tUah) * 100, 100) : 100);
         }
 
         if (labels.length === 0) return;
@@ -1591,7 +1573,6 @@
             }
         });
 
-        // Використовуємо новий Regex для нерозривних пробілів: [\s\u00A0\u202F]
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
@@ -1600,32 +1581,39 @@
         let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
         let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
 
-        let pctPcs = tPcs > 0 ? (fPcs / tPcs) * 100 : 0;
-        let pctUah = tUah > 0 ? (fUah / tUah) * 100 : 0;
+        // Обчислення відсотка виконання. Якщо цілі немає, до загального % вона не враховується.
+        let validPcts = [];
+        if (tPcs > 0) validPcts.push((fPcs / tPcs) * 100);
+        if (tUah > 0) validPcts.push((fUah / tUah) * 100);
         
-        let execPctVal = Math.max(pctPcs, pctUah);
+        let execPctVal = validPcts.length > 0 ? Math.max(...validPcts) : 100;
         execPctVal = parseFloat(execPctVal.toFixed(1));
 
         let goalsHtml = "";
-        if (tPcs > 0 || tUah > 0 || execPctVal > 0) {
+        if (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0) {
             let isGoalCompleted = execPctVal >= 100;
             let execBg = isGoalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
             let execBorder = isGoalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
             let execColor = isGoalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
             let statItems = "";
-            if (tPcs > 0) {
+            // Змінено умови, щоб показувати "шт" та "грн", якщо є ВИКОНАННЯ, навіть коли ціль відсутня
+            if (tPcs > 0 || fPcs !== 0) {
+                let targetText = tPcs > 0 ? ` / ${formatNumber(tPcs)}` : '';
+                let labelText = tPcs > 0 ? 'Ціль (шт)' : 'Виконання (шт)';
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${displayFPcs} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(tPcs)}</span></div>
-                    <div class="stat-label">Ціль (шт)</div>
+                    <div class="stat-val" style="font-size:18px;">${displayFPcs} <span style="font-size:12px; color:var(--text-muted);">${targetText}</span></div>
+                    <div class="stat-label">${labelText}</div>
                 </div>`;
             }
-            if (tUah > 0) {
+            if (tUah > 0 || fUah !== 0) {
+                let targetText = tUah > 0 ? ` / ${formatNumber(tUah)}` : '';
+                let labelText = tUah > 0 ? 'Ціль (грн)' : 'Виконання (грн)';
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${displayFUah} <span style="font-size:12px; color:var(--text-muted);">/ ${formatNumber(tUah)}</span></div>
-                    <div class="stat-label">Ціль (грн)</div>
+                    <div class="stat-val" style="font-size:18px;">${displayFUah} <span style="font-size:12px; color:var(--text-muted);">${targetText}</span></div>
+                    <div class="stat-label">${labelText}</div>
                 </div>`;
             }
 
@@ -2074,7 +2062,7 @@
         if (windowViewingEmployee) return;
 
         if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для этого продукта отсутствует.");
+            alert("Тест для цього продукту відсутній.");
             return;
         }
 
@@ -2095,7 +2083,7 @@
         parsedQuestions = parseTestString(currentProductData.test);
 
         if (parsedQuestions.length === 0) {
-            alert("Ошибка обработки теста. Проверьте формат в таблице.");
+            alert("Помилка обробки тесту. Перевірте формат у таблиці.");
             return;
         }
 
@@ -2246,7 +2234,7 @@
     document.addEventListener('copy', event => {
         if (document.getElementById('testView').classList.contains('active')) {
             event.preventDefault();
-            alert("Копирование материалов теста запрещено!");
+            alert("Копіювання матеріалів тесту заборонено!");
         }
     });
 
@@ -2255,7 +2243,7 @@
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
                (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
                 e.preventDefault();
-                alert("Это действие временно заблокировано ради честности тестирования!");
+                alert("Ця дія тимчасово заблокована задля чесності тестування!");
             }
         }
     });
@@ -2313,7 +2301,7 @@
         });
 
         setTimeout(() => {
-            alert("⛔ Нарушение правил! Вы свернули окно или отвели фокус. Попытка засчитана с результатом 0%.");
+            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
             document.body.classList.remove('cheating');
             submitTest();
         }, 150);
