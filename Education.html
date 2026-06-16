@@ -67,9 +67,6 @@
             transition: background 0.3s ease, color 0.3s ease;
         }
         
-        body.cheating { background: #000 !important; color: #000 !important; }
-        body.cheating * { visibility: hidden !important; }
-
         .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
 
         .view { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); will-change: opacity, transform; }
@@ -230,11 +227,21 @@
             height: 250px;
             width: 100%;
         }
+
+        /* --- АНТИ-СУПЕР-ЧІТ ШИРМА --- */
+        #antiCheatScreen {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: #000; color: #fff; z-index: 999999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            font-size: 16px; font-weight: 800; text-align: center; padding: 24px; line-height: 1.5;
+        }
+        body.cheating .container { display: none !important; }
+        body.cheating #antiCheatScreen { display: flex !important; }
     </style>
 </head>
 <body>
 
-<div id="antiCheatScreen" style="position:fixed; top:0; left:0; width:100%; height:100%; background:#000; color:#fff; z-index:100000; display:none; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+<div id="antiCheatScreen">
     <div style="font-size: 70px; margin-bottom: 24px;">🚨</div>
     <div style="font-size: 24px; font-weight: 800;">ТЕСТ ЗАБЛОКОВАНО</div>
     <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
@@ -378,7 +385,7 @@
         <div id="globalStatsContainer"></div>
 
         <div class="section-title" id="courseListTitle" style="justify-content: flex-start;">
-            <img src="icons_skillHUB/light-bulb.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Idea" onerror="this.style.display='none'">
+            <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; margin-right: 6px;" alt="Check" onerror="this.style.display='none'">
             <span>Призначені курси</span>
         </div>
         <div id="courseList"></div>
@@ -1504,12 +1511,6 @@
         }
     }
 
-    function closeModals() {
-        document.getElementById('genericModalOverlay').classList.remove('active');
-        document.getElementById('genericModal').classList.remove('active');
-        document.body.style.overflow = ''; 
-    }
-
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
@@ -1578,7 +1579,6 @@
 
         document.getElementById('globalStatsContainer').innerHTML = dashboardHtml + goalsHtml;
         setTimeout(() => renderCharts(user), 50);
-
 
         // --- 2. ВІДОБРАЖЕННЯ СПИСКУ КУРСІВ ---
         if (courseNames.length === 0) {
@@ -2007,7 +2007,6 @@
         currentQuestionIndex = 0;
         isTestActive = true; 
         
-        cheatWarnings = 0; 
         initWatermarks();  
         requestFullScreen();
         
@@ -2135,8 +2134,6 @@
     }
 
     // --- АНТИ-СУПЕР-ЧІТ ---
-    let cheatWarnings = 0;
-    
     document.addEventListener('contextmenu', event => {
         if (document.getElementById('testView').classList.contains('active')) event.preventDefault();
     });
@@ -2157,24 +2154,6 @@
             }
         }
     });
-
-    let isAppHidden = false;
-    function handleVisibilityLoss() {
-        if (document.getElementById('testView').classList.contains('active') && !isAppHidden) {
-            isAppHidden = true;
-            cheatWarnings++;
-            if (cheatWarnings >= 3) {
-                triggerAntiCheat();
-            } else {
-                alert(`Попередження (${cheatWarnings}/3): Згортання браузера або втрата фокусу заборонено!`);
-            }
-            setTimeout(() => { isAppHidden = false; }, 1000);
-        }
-    }
-
-    document.addEventListener("visibilitychange", () => { if (document.hidden) handleVisibilityLoss(); });
-    window.addEventListener("pagehide", handleVisibilityLoss);
-    window.addEventListener("blur", handleVisibilityLoss);
 
     function initWatermarks() {
         let container = document.getElementById('watermarkContainer');
@@ -2213,9 +2192,7 @@
 
     document.addEventListener('fullscreenchange', () => {
         if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
-            cheatWarnings++;
-            if (cheatWarnings >= 3) triggerAntiCheat();
-            else { alert(`Попередження (${cheatWarnings}/3): Не виходьте з повноекранного режиму під час тесту!`); requestFullScreen(); }
+            triggerAntiCheat();
         }
     });
 
@@ -2223,14 +2200,33 @@
         if (!isTestActive) return; 
         isTestActive = false; 
         clearInterval(testTimerInterval); 
-        document.getElementById('antiCheatScreen').style.display = 'flex';
-        parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
+
+        // Миттєво ховаємо весь екран за чорною ширмою
+        // iOS сфотографує саме її, а не тест!
+        document.body.classList.add('cheating');
+
+        // Анулюємо всі вибрані відповіді
+        parsedQuestions.forEach(q => {
+            q.answers.forEach(a => a.selected = false);
+        });
+
+        // Даємо мікро-паузу (щоб екран встиг стати чорним для системи), потім караємо
         setTimeout(() => {
             alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
-            document.getElementById('antiCheatScreen').style.display = 'none';
+            document.body.classList.remove('cheating');
             submitTest();
         }, 150);
     }
+
+    // Тригери спрацьовування анти-чіта
+    window.addEventListener('blur', triggerAntiCheat); // Клік за межі вікна або шторка
+    window.addEventListener('pagehide', triggerAntiCheat); // Згортання додатка
+    document.addEventListener('visibilitychange', () => { 
+        if (document.hidden) triggerAntiCheat(); 
+    });
+    // Бонус: якщо свайп на iPhone переривається жестом системи
+    document.addEventListener('touchcancel', triggerAntiCheat); 
+
 </script>
 </body>
 </html>
