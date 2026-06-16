@@ -448,7 +448,7 @@
                 </p>
                 <p style="font-size: 15px; font-weight: 600; margin-bottom: 0; line-height: 1.5; color: var(--danger);">
                     <span style="font-size: 18px; display: inline-block; vertical-align: middle;">🚫</span> 
-                    <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або робити свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
+                    <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або делать свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
                 </p>
             </div>
 
@@ -1085,39 +1085,57 @@
         let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
         let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
 
+        // --- НОВИЙ БЛОК ФІЛЬТРАЦІЇ ---
         let managedUsers = allUsers.filter(u => {
+            // Исключаем самого себя
             if (u.login === currentUser) return false;
 
             let uRoleStr = String(u.role).toLowerCase();
             let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
             let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
 
-            let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
-            let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
-            
-            // Використовуємо новий Regex для нерозривних пробілів: [\s\u00A0\u202F]
+            // Проверяем наличие целей (с учетом неразрывных пробелов)
             let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             
-            let hasGoalsOrCourses = (assignedCount > 0 || arrAssigned > 0 || tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
+            let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
 
-            if (isAdmin) {
+            // Проверяем наличие курсов
+            let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
+            let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
+            let hasCourses = (assignedCount > 0 || arrAssigned > 0);
+
+            // Пользователь имеет хоть что-то для отображения
+            let hasGoalsOrCourses = hasGoals || hasCourses;
+
+            if (isAdmin) { 
+                // Владелец видит Руководителей и Сотрудников
+                // Владелец НЕ видит других Владельцев
                 if (uIsOwner) return false;
+                
+                // Показываем только тех, у кого есть цели или курсы
                 if (!hasGoalsOrCourses) return false;
+                
                 return true; 
-            } else {
+            } else { 
+                // Руководитель видит только своих подчиненных
                 let uDir = String(u.director).toLowerCase().trim();
                 let belongsToManager = uDir && (uDir === mShort || mName.includes(uDir) || uDir.includes(mShort));
 
                 if (!belongsToManager) return false;
+
+                // Руководитель НЕ видит других Руководителей или Владельцев
                 if (uIsDirector || uIsOwner) return false;
+                
+                // Показываем только тех, у кого есть цели или курсы
                 if (!hasGoalsOrCourses) return false;
 
                 return true;
             }
         });
+        // --- КІНЕЦЬ НОВОГО БЛОКУ ---
 
         let directors = [...new Set(managedUsers.map(u => u.director).filter(d => d))].sort();
 
@@ -2056,7 +2074,7 @@
         if (windowViewingEmployee) return;
 
         if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для цього продукту відсутній.");
+            alert("Тест для этого продукта отсутствует.");
             return;
         }
 
@@ -2077,7 +2095,7 @@
         parsedQuestions = parseTestString(currentProductData.test);
 
         if (parsedQuestions.length === 0) {
-            alert("Помилка обробки тесту. Перевірте формат у таблиці.");
+            alert("Ошибка обработки теста. Проверьте формат в таблице.");
             return;
         }
 
@@ -2228,7 +2246,7 @@
     document.addEventListener('copy', event => {
         if (document.getElementById('testView').classList.contains('active')) {
             event.preventDefault();
-            alert("Копіювання матеріалів тесту заборонено!");
+            alert("Копирование материалов теста запрещено!");
         }
     });
 
@@ -2237,7 +2255,7 @@
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
                (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
                 e.preventDefault();
-                alert("Ця дія тимчасово заблокована задля чесності тестування!");
+                alert("Это действие временно заблокировано ради честности тестирования!");
             }
         }
     });
@@ -2295,7 +2313,7 @@
         });
 
         setTimeout(() => {
-            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
+            alert("⛔ Нарушение правил! Вы свернули окно или отвели фокус. Попытка засчитана с результатом 0%.");
             document.body.classList.remove('cheating');
             submitTest();
         }, 150);
