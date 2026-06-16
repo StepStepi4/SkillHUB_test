@@ -565,7 +565,8 @@
 
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
-        let str = String(num).replace(/\s/g, '').replace(',', '.');
+        // Замінено \s на [\s\u00A0\u202F], щоб парсити нерозривні пробіли з гугл-таблиць
+        let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
         let n = parseFloat(str);
         if (isNaN(n)) return "0";
         return n.toLocaleString('uk-UA');
@@ -1084,47 +1085,39 @@
         let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
         let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
 
-        // --- НОВИЙ БЛОК ФІЛЬТРАЦІЇ ---
         let managedUsers = allUsers.filter(u => {
-            // Виключаємо себе зі списку
             if (u.login === currentUser) return false;
 
             let uRoleStr = String(u.role).toLowerCase();
             let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
             let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
 
-            // Перевіряємо, чи є в користувача цілі або курси
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
-            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-            let tUah = parseFloat(String(u.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-            let hasGoalsOrCourses = (assignedCount > 0 || arrAssigned > 0 || tPcs > 0 || tUah > 0);
+            
+            // Використовуємо новий Regex для нерозривних пробілів: [\s\u00A0\u202F]
+            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+            let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+            let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+            let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+            
+            let hasGoalsOrCourses = (assignedCount > 0 || arrAssigned > 0 || tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
 
             if (isAdmin) {
-                // Правило 1: Власник не повинен бачити власника
                 if (uIsOwner) return false;
-                // Правило 2: Власник не повинен бачити керівників у яких не встановлені цілі або курси
-                if (uIsDirector && !hasGoalsOrCourses) return false;
-                
-                return true; // Всі інші співробітники відображаються
+                if (!hasGoalsOrCourses) return false;
+                return true; 
             } else {
-                // Логіка для звичайного Керівника
                 let uDir = String(u.director).toLowerCase().trim();
                 let belongsToManager = uDir && (uDir === mShort || mName.includes(uDir) || uDir.includes(mShort));
 
-                // Керівник бачить тільки своїх людей
                 if (!belongsToManager) return false;
-
-                // Правило 3: Керівник не бачить інших керівників (і власників)
                 if (uIsDirector || uIsOwner) return false;
-                
-                // Правило 4: Керівник не бачить співробітників, які не мають цілей і назначених курсів
                 if (!hasGoalsOrCourses) return false;
 
                 return true;
             }
         });
-        // --- КІНЕЦЬ НОВОГО БЛОКУ ---
 
         let directors = [...new Set(managedUsers.map(u => u.director).filter(d => d))].sort();
 
@@ -1466,7 +1459,7 @@
     // --- ФУНКЦІЯ ВІДМАЛЬОВКИ ДІАГРАМИ ЦІЛЕЙ ---
     function renderCharts(user) {
         let goalsCanvas = document.getElementById('goalsChart');
-        if (!goalsCanvas) return; // Якщо полотна немає (немає цілей) - перериваємо
+        if (!goalsCanvas) return; 
 
         if (chartsInstances['goals']) {
             chartsInstances['goals'].destroy();
@@ -1478,10 +1471,11 @@
         const textColor = isDark ? '#ffffff' : '#111827';
         const gridColor = isDark ? '#38383a' : '#e5e7eb';
 
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-        let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-        let fUah = parseFloat(String(user.execUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+        // Використовуємо новий Regex для нерозривних пробілів: [\s\u00A0\u202F]
+        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         
         let labels = [];
         let dataVals = [];
@@ -1579,10 +1573,11 @@
             }
         });
 
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-        let fPcs = parseFloat(String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
-        let fUah = parseFloat(String(user.execUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+        // Використовуємо новий Regex для нерозривних пробілів: [\s\u00A0\u202F]
+        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
 
         let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
         let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
@@ -1675,7 +1670,6 @@
         setTimeout(() => renderCharts(user), 150);
 
         if (windowViewingEmployee) {
-            // Відображення карток для керівника (компактний список зі статичними блоками flex: 1)
             let coursesHtml = courseNames.map(name => {
                 let courseProducts = coursesMap[name] || [];
                 let parsedCourse = formatWithCustomEmoji(name, '📘');
@@ -1699,7 +1693,6 @@
                     
                     let borderStyle = idx === courseProducts.length - 1 ? '' : 'border-bottom: 1px solid var(--input-bg);';
                     
-                    // КОМПАКТНИЙ ТА СИМЕТРИЧНИЙ ВИГЛЯД (Flex: 1)
                     return `
                     <div style="padding: 14px 0; ${borderStyle} display: flex; flex-direction: column; gap: 10px;">
                         <div style="font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.3;">
@@ -1735,7 +1728,6 @@
             return;
         }
 
-        // --- Відображення карток для самого співробітника (згортані курси) ---
         let coursesHtml = courseNames.map(name => {
             let parsed = formatWithCustomEmoji(name, '📘');
             let safeName = escapeHTMLAttr(name);
@@ -1873,7 +1865,6 @@
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
         document.getElementById('theoryTitle').innerText = parsed.title;
 
-        // Починаємо рахувати час із відкриття теорії
         window.sessionTotalTime = 0;
         window.theoryEntryTime = Date.now();
 
@@ -2045,7 +2036,7 @@
         clearInterval(testTimerInterval);
         testTimerInterval = setInterval(() => {
             timeRemaining--;
-            totalTimeSpent++; // це рахує загальний час тестування (включаючи теорію)
+            totalTimeSpent++; 
             updateTimerUI();
             if (timeRemaining <= 0) {
                 clearInterval(testTimerInterval);
