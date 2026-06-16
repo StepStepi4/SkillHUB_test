@@ -448,7 +448,7 @@
                 </p>
                 <p style="font-size: 15px; font-weight: 600; margin-bottom: 0; line-height: 1.5; color: var(--danger);">
                     <span style="font-size: 18px; display: inline-block; vertical-align: middle;">🚫</span> 
-                    <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або делать свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
+                    <strong>Заборонено</strong> перемикатися між додатками, згортати вікно або робити свайпи екрану. Це призведе до миттєвого блокування тесту та результату 0%.
                 </p>
             </div>
 
@@ -1087,7 +1087,7 @@
 
         // --- НОВИЙ БЛОК ФІЛЬТРАЦІЇ ---
         let managedUsers = allUsers.filter(u => {
-            // Исключаем самого себя
+            // Исключаем самого себя из подчиненного списка
             if (u.login === currentUser) return false;
 
             let uRoleStr = String(u.role).toLowerCase();
@@ -1107,15 +1107,15 @@
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
             let hasCourses = (assignedCount > 0 || arrAssigned > 0);
 
-            // Пользователь имеет хоть что-то для отображения
+            // "Любое назначенное условие" - должно быть хотя бы что-то одно
             let hasGoalsOrCourses = hasGoals || hasCourses;
 
             if (isAdmin) { 
                 // Владелец видит Руководителей и Сотрудников
-                // Владелец НЕ видит других Владельцев
+                // Владелец НЕ видит других Владельцев (сколько бы их ни было: 2, 3, 4 и т.д.)
                 if (uIsOwner) return false;
                 
-                // Показываем только тех, у кого есть цели или курсы
+                // Показываем только тех, у кого есть цели или курсы (любое назначенное условие)
                 if (!hasGoalsOrCourses) return false;
                 
                 return true; 
