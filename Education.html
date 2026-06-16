@@ -1084,15 +1084,49 @@
         let mParts = mName.replace(/[\/\\,]/g, '').split(/\s+/);
         let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
 
-        let managedUsers = isAdmin ? allUsers : allUsers.filter(u => {
-            let uDir = String(u.director).toLowerCase().trim();
-            if (!uDir) return false;
-            return uDir === mShort || mName.includes(uDir) || uDir.includes(mShort);
-        });
-        
-        managedUsers = managedUsers.filter(u => u.login !== currentUser);
+        // --- НОВИЙ БЛОК ФІЛЬТРАЦІЇ ---
+        let managedUsers = allUsers.filter(u => {
+            // Виключаємо себе зі списку
+            if (u.login === currentUser) return false;
 
-        let directors = [...new Set(allUsers.map(u => u.director).filter(d => d))].sort();
+            let uRoleStr = String(u.role).toLowerCase();
+            let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
+            let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
+
+            // Перевіряємо, чи є в користувача цілі або курси
+            let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
+            let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
+            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+            let tUah = parseFloat(String(u.targetUah || "0").replace(/\s/g, '').replace(',', '.')) || 0;
+            let hasGoalsOrCourses = (assignedCount > 0 || arrAssigned > 0 || tPcs > 0 || tUah > 0);
+
+            if (isAdmin) {
+                // Правило 1: Власник не повинен бачити власника
+                if (uIsOwner) return false;
+                // Правило 2: Власник не повинен бачити керівників у яких не встановлені цілі або курси
+                if (uIsDirector && !hasGoalsOrCourses) return false;
+                
+                return true; // Всі інші співробітники відображаються
+            } else {
+                // Логіка для звичайного Керівника
+                let uDir = String(u.director).toLowerCase().trim();
+                let belongsToManager = uDir && (uDir === mShort || mName.includes(uDir) || uDir.includes(mShort));
+
+                // Керівник бачить тільки своїх людей
+                if (!belongsToManager) return false;
+
+                // Правило 3: Керівник не бачить інших керівників (і власників)
+                if (uIsDirector || uIsOwner) return false;
+                
+                // Правило 4: Керівник не бачить співробітників, які не мають цілей і назначених курсів
+                if (!hasGoalsOrCourses) return false;
+
+                return true;
+            }
+        });
+        // --- КІНЕЦЬ НОВОГО БЛОКУ ---
+
+        let directors = [...new Set(managedUsers.map(u => u.director).filter(d => d))].sort();
 
         let filterHtml = ``;
         if (isAdmin) {
