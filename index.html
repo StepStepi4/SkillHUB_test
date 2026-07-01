@@ -372,7 +372,7 @@
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
-        .desc-line { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .desc-line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
         .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
@@ -1279,6 +1279,39 @@
         for (let k in dict) { if (normalizeServiceName(k) === clean) return dict[k]; }
         return "";
     }
+    
+    window.findPriceForServiceText = function(name, p) {
+        let cleanName = normalizeServiceName(name);
+        let matchingTariffs = db.tariffs.filter(x => {
+            let n1 = normalizeServiceName(x.service);
+            let n2 = x.serviceRu ? normalizeServiceName(x.serviceRu) : "";
+            return n1.includes(cleanName) || cleanName.includes(n1) || (n2 && (n2.includes(cleanName) || cleanName.includes(n2)));
+        });
+        if (matchingTariffs.length === 0) return null;
+
+        let t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice);
+        if (!t) {
+            t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice || (p === 0 && x.minPrice === 0)); 
+            if (!t) t = matchingTariffs[0];
+        }
+        
+        if (t && t.cost) {
+            let rawCost = t.cost.toString().trim();
+            if (rawCost.includes('%')) {
+                if (p > 0) {
+                    let numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
+                    return numCost.toLocaleString('uk-UA') + " ₴";
+                }
+                return rawCost;
+            } else {
+                let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
+                if (cleanCost === '') return rawCost;
+                let numCost = parseFloat(cleanCost);
+                return isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
+            }
+        }
+        return null;
+    };
 
     function debounce(func, wait) {
         let timeout;
@@ -1585,9 +1618,10 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // ПЕРЕВІРКА НА УЦІНКУ
-            let isDiscount = shortName.toLowerCase().includes('уцінка');
-            let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" style="width: 20px; height: 20px; flex-shrink: 0;">` : '';
+            // ПЕРЕВІРКА НА УЦІНКУ + Витягування SN
+            let snMatchList = shortName.match(/^\[(?:Уцінка:\s*)?([A-Za-z0-9_-]+)\]/i);
+            let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
+            let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" style="width: 28px; height: 28px; flex-shrink: 0; margin-right: 6px;">` : '';
 
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
@@ -1611,11 +1645,11 @@
             return `
             <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
                 <div class="list-item-content">
-                    <div style="display:flex; align-items:center; gap: 6px;">
+                    <div style="display:flex; align-items:center; gap: 4px;">
                         ${discountIconHtml}
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}">${window.escapeHTML(r.cat)}</span>
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
                 </div>
                 <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
@@ -1672,15 +1706,25 @@
     });
 
     window.openRezervItemModal = function(catName, price, itemName, isDiscount = false) {
+        let sn = "";
+        let cleanItemName = itemName;
+        
+        // Витягуємо серійний номер з назви [Уцінка: SN25516...] або [SN25516...]
+        let snMatch = itemName.match(/^\[(?:Уцінка:\s*)?([A-Za-z0-9_-]+)\]/i);
+        if (snMatch) {
+            sn = snMatch[1].trim();
+            cleanItemName = itemName.replace(snMatch[0], '').trim();
+        }
+
         let searchVal = normalize(catName); let foundItem = null;
         if (db.categories && db.categories.length > 0) foundItem = db.categories.find(c => normalize(c.ua).includes(searchVal) || searchVal.includes(normalize(c.ua)));
 
         // Якщо товар уцінений, відкриваємо модалку навіть якщо категорія не знайдена в базі
         if (foundItem || isDiscount) {
             let itemData = foundItem || { category: catName, service: "" };
-            document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
+            document.getElementById('rezervItemTitle').innerText = cleanItemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             window.openModalBase('rezervItemModal');
-            renderRezervItemServices(itemData, price, isDiscount);
+            renderRezervItemServices(itemData, price, isDiscount, sn);
         } else {
             alert(`Категорію "${catName}" не знайдено.`);
         }
@@ -1731,12 +1775,23 @@
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
 
-    function renderRezervItemServices(item, p, isDiscount = false) {
+    function renderRezervItemServices(item, p, isDiscount = false, sn = "") {
         try {
             window.currentDevicePrice = p; // Зберігаємо ціну
+            
+            // Формуємо плашку з серійним номером
+            let snHtml = "";
+            if (sn) {
+                snHtml = `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:12px 16px; border-radius:12px; margin-bottom:16px; border:1px solid var(--border);">
+                    <div style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Серійний номер:</div>
+                    <div style="font-size:15px; font-weight:800; color:var(--primary); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="window.copyCode(event, this, '${window.escapeForJS(sn)}')">${sn} 📋</div>
+                </div>`;
+            }
+
             let techStr = buildTechInfoHTML(item, p);
-            safeUpdateHTML('rezervTechInfo', techStr);
-            document.getElementById('rezervTechInfo').style.display = techStr ? 'block' : 'none';
+            safeUpdateHTML('rezervTechInfo', snHtml + techStr);
+            document.getElementById('rezervTechInfo').style.display = (snHtml || techStr) ? 'block' : 'none';
 
             let listEl = document.getElementById('rezervServiceList');
             let dataForSort = [];
@@ -1747,7 +1802,7 @@
             if (isDiscount) {
                 if (titleEl) titleEl.innerText = "Сервіси для уцінки";
                 let sName = "Умови продажу сервісів";
-                let desc = window.findInDb(db.descriptions, sName) || "Опис умов продажу відсутній.";
+                let desc = window.findInDb(db.descriptions, sName) || "Опис умов продажу відсутній...";
                 
                 dataForSort = [{
                     name: sName,
@@ -1762,6 +1817,22 @@
                     descToggleHTML: generateDescToggleHTML(desc, "")
                 }];
                 if (btn) btn.style.display = 'none';
+
+                let extraBtn = `<button class="btn" style="margin-top: 16px; border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px;" onclick="window.open('https://sites.google.com/d/1DiDh4uvSb3a8cLQztHoYU5D0vnM4p4RC/p/1BgEzTDb2k8QRj15lSb58WyAy6wx9qtSa/edit', '_blank')">
+                    <span style="font-size: 18px;">❓</span> Як дізнатись причину уцінки
+                </button>`;
+                
+                requestAnimationFrame(() => { 
+                    safeUpdateHTML(listEl, dataForSort.map(s => generateServiceCardHTML(s, true, false)).join('') + extraBtn); 
+                    // Автоматично розгортаємо опис
+                    setTimeout(() => {
+                        let toggleWrapper = listEl.querySelector('.desc-toggle-wrapper');
+                        if (toggleWrapper && !toggleWrapper.nextElementSibling.classList.contains('show')) {
+                            toggleWrapper.click();
+                        }
+                    }, 50);
+                });
+                return;
             } else {
                 if (titleEl) titleEl.innerText = "Рекомендовані сервіси";
                 if (!item.service) { safeUpdateHTML(listEl, '<div style="color:var(--text-muted);">Немає сервісів</div>'); return; }
@@ -1950,7 +2021,8 @@
             if (l.startsWith('=')) return `<div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin: 12px 0 6px 0;">${l.substring(1).trim()}</div>`;
             
             let match = l.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/); 
-            let e = match ? match[0] : "🔹"; let t = match ? l.replace(e, '').trim() : l;
+            let e = match ? match[0] : "🔹"; 
+            let t = match ? l.replace(e, '').trim() : l;
             
             if (!match) {
                 let lower = t.toLowerCase();
@@ -1963,10 +2035,25 @@
                 else e = '🔹';
             }
 
+            // ЛОГІКА ДЛЯ ДИНАМІЧНИХ ЦІННИКІВ
+            let priceBadge = '';
+            // Знаходимо назву сервісу в подвійних лапках
+            let serviceMatch = t.match(/"([^"]+)"/);
+            if (serviceMatch && window.currentDevicePrice > 0) {
+                let sName = serviceMatch[1];
+                let costText = window.findPriceForServiceText(sName, window.currentDevicePrice);
+                if (costText) {
+                    priceBadge = `<div class="sc-price" style="font-size: 13px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap; margin-left: 8px;">${costText}</div>`;
+                }
+            }
+
             return `
-            <div class="desc-line">
-                <div class="desc-icon-box" style="display:flex; align-items:center; justify-content:center;">${window.renderIcon(e)}</div>
-                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1;">${t}</div>
+            <div class="desc-line" style="display:flex; align-items:center; width:100%; justify-content:space-between; padding: 10px 0;">
+                <div style="display:flex; align-items:center; gap:10px; flex:1; padding-right:10px;">
+                    <div class="desc-icon-box" style="display:flex; align-items:center; justify-content:center; flex-shrink:0;">${window.renderIcon(e)}</div>
+                    <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; word-break: break-word;">${t}</div>
+                </div>
+                ${priceBadge}
             </div>`;
         }).join('');
         return html;
