@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -631,6 +630,7 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
+        
         <div class="list-group">
             <div class="list-item">
                 <div class="list-item-content">
@@ -720,7 +720,7 @@
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
                 <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
             <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -1585,11 +1585,13 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick
+            // ПЕРЕВІРКА НА УЦІНКУ
+            let isDiscount = shortName.toLowerCase().includes('уцінка');
+            let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" style="width: 20px; height: 20px; flex-shrink: 0;">` : '';
+
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
 
-            // Перевірка наявності категорії в базі
             let searchVal = normalize(r.cat); 
             let catExists = false;
             if (searchVal && db.categories && db.categories.length > 0) {
@@ -1599,7 +1601,7 @@
                     return cUa.includes(searchVal) || searchVal.includes(cUa);
                 });
             } else {
-                catExists = true; // Якщо порожнє, не підсвічуємо як помилку
+                catExists = true; 
             }
 
             let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
@@ -1607,9 +1609,12 @@
             let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
 
             return `
-            <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}')">
+            <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
                 <div class="list-item-content">
-                    <span class="list-item-title rezervy-name">${window.escapeHTML(shortName)}</span>
+                    <div style="display:flex; align-items:center; gap: 6px;">
+                        ${discountIconHtml}
+                        <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
+                    </div>
                     <span class="list-item-subtitle rezervy-cat" style="${catStyle}">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
                 </div>
@@ -1666,14 +1671,16 @@
         }
     });
 
-    window.openRezervItemModal = function(catName, price, itemName) {
+    window.openRezervItemModal = function(catName, price, itemName, isDiscount = false) {
         let searchVal = normalize(catName); let foundItem = null;
         if (db.categories && db.categories.length > 0) foundItem = db.categories.find(c => normalize(c.ua).includes(searchVal) || searchVal.includes(normalize(c.ua)));
 
-        if (foundItem) {
+        // Якщо товар уцінений, відкриваємо модалку навіть якщо категорія не знайдена в базі
+        if (foundItem || isDiscount) {
+            let itemData = foundItem || { category: catName, service: "" };
             document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             window.openModalBase('rezervItemModal');
-            renderRezervItemServices(foundItem, price);
+            renderRezervItemServices(itemData, price, isDiscount);
         } else {
             alert(`Категорію "${catName}" не знайдено.`);
         }
@@ -1724,7 +1731,7 @@
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
 
-    function renderRezervItemServices(item, p) {
+    function renderRezervItemServices(item, p, isDiscount = false) {
         try {
             window.currentDevicePrice = p; // Зберігаємо ціну
             let techStr = buildTechInfoHTML(item, p);
@@ -1732,21 +1739,46 @@
             document.getElementById('rezervTechInfo').style.display = techStr ? 'block' : 'none';
 
             let listEl = document.getElementById('rezervServiceList');
-            if (!item.service) { safeUpdateHTML(listEl, '<div style="color:var(--text-muted);">Немає сервісів</div>'); return; }
+            let dataForSort = [];
+            let btn = document.getElementById('rezervCompareBtn');
+            let titleEl = document.getElementById('rezervRecommendTitle');
 
-            let dataForSort = calculateServicesArray(item, p);
-            
-            dataForSort.forEach(s => {
-                s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
-            });
+            // ЛОГІКА ДЛЯ УЦІНКИ
+            if (isDiscount) {
+                if (titleEl) titleEl.innerText = "Сервіси для уцінки";
+                let sName = "Умови продажу сервісів";
+                let desc = window.findInDb(db.descriptions, sName) || "Опис умов продажу відсутній.";
+                
+                dataForSort = [{
+                    name: sName,
+                    title: sName,
+                    brand: "ВАЖЛИВО",
+                    numCost: 0,
+                    label: "Довідка",
+                    cls: "brand-support",
+                    isFocus: true,
+                    code: "",
+                    isPackage: false,
+                    descToggleHTML: generateDescToggleHTML(desc, "")
+                }];
+                if (btn) btn.style.display = 'none';
+            } else {
+                if (titleEl) titleEl.innerText = "Рекомендовані сервіси";
+                if (!item.service) { safeUpdateHTML(listEl, '<div style="color:var(--text-muted);">Немає сервісів</div>'); return; }
+
+                dataForSort = calculateServicesArray(item, p);
+                
+                dataForSort.forEach(s => {
+                    s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+                });
+
+                if (btn) {
+                    if (dataForSort.filter(s => !s.isPackage).length >= 2) btn.style.display = 'block';
+                    else btn.style.display = 'none';
+                }
+            }
 
             window.lastModalServices = dataForSort;
-            
-            let btn = document.getElementById('rezervCompareBtn');
-            if (btn) {
-                if (dataForSort.filter(s => !s.isPackage).length >= 2) btn.style.display = 'block';
-                else btn.style.display = 'none';
-            }
 
             requestAnimationFrame(() => { safeUpdateHTML(listEl, dataForSort.map(s => generateServiceCardHTML(s, true, false)).join('')); });
         } catch(e) { console.error(e); }
