@@ -242,6 +242,11 @@
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
         
+        /* КЛАСС ДЛЯ УЦЕНКИ (Убрали красный фон и бордер) */
+        .list-item.discount-card {
+            background-color: transparent;
+        }
+        
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
         .list-item-title { font-size: 16px; font-weight: 600; line-height: 1.3;}
         .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
@@ -394,14 +399,14 @@
         
         .discount-tag-icon {
             position: absolute;
-            top: -10px;
-            left: -18px;
-            width: 32px;
-            height: 32px;
+            bottom: -16px;
+            right: -10px;
+            width: 26px;
+            height: 26px;
             transform-origin: top center;
-            animation: swayTag 3s ease-in-out infinite;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
-            z-index: 1;
+            animation: swayTag 3.5s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            z-index: 10;
             pointer-events: none;
         }
         
@@ -878,6 +883,7 @@
     // Глобальні змінні для роботи з модальним вікном уцінки
     window.currentRezervItem = null;
     window.currentRezervPrice = 0;
+    window.currentRezervIsDiscount = false;
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -1666,8 +1672,10 @@
 
             let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
 
+            let discountClass = isDiscount ? "discount-card" : "";
+
             return `
-            <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
+            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
                 <div class="list-item-content">
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
@@ -1676,8 +1684,8 @@
                     ${garantiyaHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
-                    ${discountIconHtml}
                     ${Math.round(r.price).toLocaleString('uk-UA')} ₴
+                    ${discountIconHtml}
                 </div>
             </div>`;
         }).join('');
@@ -1828,6 +1836,13 @@
             return;
         }
 
+        // ЯКЩО УЦІНКА, АЛЕ ПРИЧИНУ ЩЕ НЕ ОБРАНО -> ховаємо послуги
+        if (window.currentRezervIsDiscount && !discountReason) {
+            safeUpdateHTML(listEl, '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">👆 Оберіть причину уцінки, щоб побачити доступні сервіси</div>');
+            if(btn) btn.style.display = 'none';
+            return;
+        }
+
         let baseServicesArray = calculateServicesArray(item, p);
 
         // ЛОГІКА ПЕРЕТИНУ: Залишаємо тільки ті базові сервіси, які дозволені для обраної уцінки
@@ -1870,6 +1885,7 @@
             window.currentRezervItem = item;
             window.currentDevicePrice = p; 
             window.currentRezervPrice = p;
+            window.currentRezervIsDiscount = isDiscount;
             
             let snHtml = "";
             if (sn) {
@@ -1884,7 +1900,7 @@
 
             let discountHtml = "";
             if (isDiscount) {
-                let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка'));
+                let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка')).sort();
                 let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
 
                 discountHtml = `
@@ -1908,7 +1924,7 @@
             let titleEl = document.getElementById('rezervRecommendTitle');
             if (titleEl) titleEl.innerText = isDiscount ? "Сервіси для уцінки" : "Рекомендовані сервіси";
 
-            // Виклик початкового рендерингу (без обраної уцінки - всі сервіси категорії)
+            // Виклик початкового рендерингу (без обраної уцінки - сховає послуги або покаже всі для звичайного товару)
             window.updateRezervServicesFiltered("");
 
         } catch(e) { console.error(e); }
