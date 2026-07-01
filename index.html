@@ -242,11 +242,6 @@
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
         
-        /* КЛАСС ДЛЯ УЦЕНКИ */
-        .list-item.discount-card {
-            background-color: rgba(239, 68, 68, 0.05); /* Блідий червоний фон, без контуру */
-        }
-        
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
         .list-item-title { font-size: 16px; font-weight: 600; line-height: 1.3;}
         .list-item-subtitle { font-size: 13px; color: var(--text-muted); }
@@ -386,9 +381,29 @@
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
+        /* Стилі для цін та анімації ярлика уцінки */
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
-        .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
+        .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
+        
+        @keyframes swayTag {
+            0% { transform: rotate(-5deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-5deg); }
+        }
+        
+        .discount-tag-icon {
+            position: absolute;
+            top: -10px;
+            left: -18px;
+            width: 32px;
+            height: 32px;
+            transform-origin: top center;
+            animation: swayTag 3s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.15));
+            z-index: 1;
+            pointer-events: none;
+        }
         
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
@@ -1630,7 +1645,7 @@
             // ПЕРЕВІРКА НА УЦІНКУ + Витягування SN
             let snMatchList = shortName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
-            let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" style="width: 34px; height: 34px; flex-shrink: 0; margin-right: 8px;">` : '';
+            let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
@@ -1651,19 +1666,19 @@
 
             let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
 
-            let discountClass = isDiscount ? "discount-card" : "";
-
             return `
-            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
+            <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
                 <div class="list-item-content">
                     <div style="display:flex; align-items:center; gap: 4px;">
-                        ${discountIconHtml}
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
                     <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
                 </div>
-                <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
+                <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
+                    ${discountIconHtml}
+                    ${Math.round(r.price).toLocaleString('uk-UA')} ₴
+                </div>
             </div>`;
         }).join('');
         safeUpdateHTML(cont, html);
@@ -1779,48 +1794,17 @@
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
 
-    // НОВА ЛОГІКА ПОШУКУ УЦІНКИ ТА ПЕРЕТИНУ ПОСЛУГ
-    window.handleDiscountInput = function(val) {
-        const suggBox = document.getElementById('discountSuggestions');
-        const clearBtn = document.getElementById('clearDiscountBtn');
-        const descBox = document.getElementById('discountReasonDesc');
-
-        if (!val) {
-            suggBox.style.display = 'none';
-            clearBtn.style.display = 'none';
+    window.selectDiscountReason = function(reason) {
+        let descBox = document.getElementById('discountReasonDesc');
+        
+        if (!reason) {
             descBox.style.display = 'none';
-            window.updateRezervServicesFiltered(""); // Скидаємо до базової категорії
+            window.updateRezervServicesFiltered(""); 
             return;
         }
 
-        clearBtn.style.display = 'block';
-        let cleanVal = val.toLowerCase().trim();
-        
-        // Беремо дані з категорій
-        let keys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка'));
-        let matches = keys.filter(k => k.toLowerCase().includes(cleanVal));
-
-        if (matches.length > 0) {
-            suggBox.innerHTML = matches.map(m => `<div class="sugg-item" onclick="window.selectDiscountReason('${window.escapeForJS(m)}')">🏷️ ${window.escapeHTML(m)}</div>`).join('');
-            suggBox.style.display = 'block';
-        } else {
-            suggBox.style.display = 'none';
-        }
-    };
-
-    window.clearDiscountInput = function() {
-        document.getElementById('discountReasonInput').value = '';
-        window.handleDiscountInput('');
-    };
-
-    window.selectDiscountReason = function(reason) {
-        document.getElementById('discountReasonInput').value = reason;
-        document.getElementById('discountSuggestions').style.display = 'none';
-        document.getElementById('clearDiscountBtn').style.display = 'block';
-
         // Показуємо опис
         let descRaw = window.findInDb(db.descriptions, reason);
-        let descBox = document.getElementById('discountReasonDesc');
         if (descRaw) {
             descBox.innerHTML = parseDescriptionLines(descRaw);
             descBox.style.display = 'block';
@@ -1900,15 +1884,19 @@
 
             let discountHtml = "";
             if (isDiscount) {
+                let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка'));
+                let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
+
                 discountHtml = `
                 <div id="discountReasonBlock" style="margin-top: 16px; margin-bottom: 8px;">
-                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BA%D0%B0', '_blank')">
+                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BD%D0%BA%D0%B0', '_blank')">
                         <span style="font-size: 18px;">❓</span> Як дізнатись причину уцінки
                     </button>
                     <div class="input-group" style="position:relative; margin-bottom: 12px;">
-                        <input type="text" id="discountReasonInput" placeholder="Введіть причину уцінки..." autocomplete="off" oninput="window.handleDiscountInput(this.value)" style="border-color: var(--danger); box-shadow: 0 0 0 1px rgba(239,68,68,0.2);">
-                        <button id="clearDiscountBtn" class="clear-btn" onclick="window.clearDiscountInput()">×</button>
-                        <div id="discountSuggestions" class="suggestions" style="top: 100%; max-height: 200px;"></div>
+                        <select id="discountReasonSelect" onchange="window.selectDiscountReason(this.value)" style="border-color: var(--danger); box-shadow: 0 0 0 1px rgba(239,68,68,0.2); font-weight: 600; color: var(--text-main);">
+                            <option value="">-- Оберіть причину уцінки --</option>
+                            ${optionsHtml}
+                        </select>
                     </div>
                     <div id="discountReasonDesc" style="display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--primary-light); padding: 12px; margin-bottom: 12px;"></div>
                 </div>`;
