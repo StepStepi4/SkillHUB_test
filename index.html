@@ -2882,13 +2882,21 @@
     window.showChangelogModal = function(version, changelogText) {
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
-        let lines = String(changelogText).split('\n'); 
+        // Розділяємо текст на блоки по символу "--"
+        let blocks = String(changelogText).split(/(?:\r?\n)?\s*--\s*(?:\r?\n)?/);
         let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
         
-        lines.forEach((line) => {
-            let l = line.trim();
-            if (l) {
-                let lineStyle = "font-size:14px; line-height:1.5; color:var(--text-main);";
+        blocks.forEach((block) => {
+            if (!block.trim()) return;
+            
+            let lines = block.split(/\r?\n/);
+            let blockHtml = '';
+            
+            lines.forEach((line, index) => {
+                let l = line.trim();
+                if (!l) return;
+                
+                let lineStyle = "";
                 
                 // Перевірка маркерів кастомного форматування
                 if (l.startsWith('(AA+)')) {
@@ -2915,9 +2923,15 @@
                 // Збільшення Емодзі
                 l = l.replace(/([\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '<span style="font-size: 1.5em; vertical-align: middle; line-height: 1;">$1</span>');
 
-                html += `<div style="background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.04); ${lineStyle}">${l}</div>`;
+                let margin = blockHtml !== '' ? "margin-top: 6px;" : "";
+                blockHtml += `<div style="${lineStyle} ${margin}">${l}</div>`;
+            });
+            
+            if (blockHtml) {
+                html += `<div style="background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-size:14px; line-height:1.5; color:var(--text-main);">${blockHtml}</div>`;
             }
         });
+        
         html += '</div>';
         
         safeUpdateHTML('modalBody', html);
