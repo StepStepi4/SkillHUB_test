@@ -958,12 +958,25 @@
             .status-badge { font-size: calc(11px * ${scale}) !important; }
             .ua-name { font-size: calc(20px * ${scale}) !important; }
             
-            /* Нові правила для масштабування нижньої панелі */
-            :root { --nav-height: calc(76px * ${scale}) !important; }
-            .bottom-nav { border-radius: calc(40px * ${scale}) !important; }
-            .nav-item span { font-size: calc(11px * ${scale}) !important; }
-            .nav-icon { width: calc(24px * ${scale}) !important; height: calc(24px * ${scale}) !important; }
-            .icon-bulb { width: calc(28px * ${scale}) !important; height: calc(28px * ${scale}) !important; }
+            /* МАСШТАБУВАННЯ НИЖНЬОЇ ПАНЕЛІ ТА ІКОНОК */
+            .bottom-nav { 
+                height: calc(76px * ${scale}) !important; 
+                border-radius: calc(40px * ${scale}) !important; 
+            }
+            .nav-item span { 
+                font-size: calc(11px * ${scale}) !important; 
+            }
+            .nav-item .nav-icon { 
+                width: calc(24px * ${scale}) !important; 
+                height: calc(24px * ${scale}) !important; 
+            }
+            .nav-item .nav-icon.icon-bulb { 
+                width: calc(28px * ${scale}) !important; 
+                height: calc(28px * ${scale}) !important; 
+            }
+            .container { margin-bottom: calc((76px * ${scale}) + 40px) !important; }
+            .compare-bar { bottom: calc((76px * ${scale}) + 26px) !important; }
+            .floating-top { bottom: calc((76px * ${scale}) + 30px) !important; }
         `;
     };
 
@@ -1382,11 +1395,11 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        // Використовуємо &quot; для уникнення поломки HTML-атрибутів при інтерполяції в onclick="..."
+        // Використовуємо " для уникнення поломки HTML-атрибутів при інтерполяції в onclick="..."
         return String(str)
             .replace(/\\/g, '\\\\')
             .replace(/'/g, "\\'")
-            .replace(/"/g, '&quot;')
+            .replace(/"/g, '"')
             .replace(/\n/g, '\\n')
             .replace(/\r/g, '');
     }
