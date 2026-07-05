@@ -938,6 +938,9 @@
             document.head.appendChild(style); 
         }
         style.innerHTML = `
+            :root {
+                --nav-height: calc(76px * ${scale});
+            }
             input, select, textarea, button, .btn { font-size: calc(16px * ${scale}) !important; }
             .list-item-title { font-size: calc(16px * ${scale}) !important; }
             .list-item-subtitle { font-size: calc(13px * ${scale}) !important; }
@@ -957,6 +960,10 @@
             .sc-brand { font-size: calc(10px * ${scale}) !important; }
             .status-badge { font-size: calc(11px * ${scale}) !important; }
             .ua-name { font-size: calc(20px * ${scale}) !important; }
+            /* Масштабування нижньої панелі */
+            .nav-item span { font-size: calc(11px * ${scale}) !important; }
+            .nav-icon { width: calc(24px * ${scale}) !important; height: calc(24px * ${scale}) !important; }
+            .nav-icon.icon-bulb { width: calc(28px * ${scale}) !important; height: calc(28px * ${scale}) !important; }
         `;
     };
 
