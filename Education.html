@@ -11,6 +11,8 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
@@ -113,7 +115,6 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* Анімації пульсації для статусу */
         @keyframes pulse-yellow {
             0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
             70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
@@ -146,7 +147,7 @@
             align-items: center;
             z-index: 9990; 
             box-shadow: 0 8px 32px rgba(0,0,0,0.08);
-            padding: 0 16px;
+            padding: 0 8px; /* Зменшений відступ для 5 кнопок */
         }
         [data-theme="dark"] .bottom-nav { 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6);
@@ -179,6 +180,10 @@
         .icon-rezerv { -webkit-mask-image: url('Rezerv.svg'); mask-image: url('Rezerv.svg'); }
         .icon-bulb { -webkit-mask-image: url('bulb.svg'); mask-image: url('bulb.svg'); width: 28px; height: 28px; } 
         .icon-settings { -webkit-mask-image: url('settings.svg'); mask-image: url('settings.svg'); }
+        .icon-cabinet { 
+            -webkit-mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'); 
+            mask-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>'); 
+        }
 
         .nav-item span { 
             font-size: 11px; 
@@ -212,16 +217,15 @@
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
-        input[type="text"], input[type="number"], select, textarea { 
+        input[type="text"], input[type="password"], input[type="number"], select, textarea { 
             width: 100%; padding: 16px 20px; border-radius: 12px; 
             font-size: 16px; font-family: inherit; font-weight: 500; 
             background: var(--input-bg); color: var(--text-main); 
             border: 1px solid var(--border); 
             outline: none; transition: 0.2s; -webkit-appearance: none; appearance: none;
         }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+        input[type="text"]:focus, input[type="password"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         
-        /* Повзунок шрифта iOS Style */
         input[type="range"] {
             -webkit-appearance: none; appearance: none;
             width: 100%; background: transparent;
@@ -331,7 +335,6 @@
         .sugg-item:last-child { border-bottom: none; }
         .sugg-item:active { background: var(--input-bg); }
 
-        /* МОДАЛЬНІ ВІКНА (МАКСИМАЛЬНА ПЛОЩА) */
         .modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--modal-overlay); display: none; align-items: flex-end; justify-content: center; z-index: 100000; opacity: 0; transition: opacity 0.2s ease; -webkit-overflow-scrolling: touch;}
         .modal.show { display: flex; opacity: 1; }
         .modal-content { 
@@ -348,7 +351,6 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
         .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
         
-        /* ПРЕМІАЛЬНА КНОПКА ЗАКРИТТЯ "Х" */
         .modal-close { 
             background: var(--card-bg); border: 1px solid var(--border); 
             width: 36px; height: 36px; border-radius: 50%; 
@@ -422,7 +424,6 @@
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
-        /* Стилі для цін та анімації ярлика уцінки */
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
@@ -506,26 +507,11 @@
             background-size: 100% 100%; background-repeat: no-repeat;
         }
         
-        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
-        .rating-group {
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-        [data-theme="dark"] .rating-group {
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .rating-group:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
+        .rating-group { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        [data-theme="dark"] .rating-group { border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .rating-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        .rating-item {
-            display: flex; align-items: center;
-            padding: 12px 16px; background: var(--card-bg);
-            border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
-        }
+        .rating-item { display: flex; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
         .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
         .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
         .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706; }
@@ -541,68 +527,65 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        /* ========================================================== */
-        /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
-        /* ========================================================== */
-        
-        .reserves-search-trigger {
-            width: 53px; height: 53px; flex-shrink: 0;
-            background: var(--primary); color: white;
-            border: none; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
-        }
+        .reserves-search-trigger { width: 53px; height: 53px; flex-shrink: 0; background: var(--primary); color: white; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
 
-        .top-search-panel {
-            position: fixed; top: 0; left: 0; width: 100%; 
-            background: var(--nav-bg); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 100000; 
-            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
-            display: flex; gap: 10px; align-items: center; 
-            border-bottom: 1px solid var(--border);
-            
-            transform: translateY(-150%) scale(0.85); 
-            opacity: 0;
-            pointer-events: none; 
-            
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
-        }
+        .top-search-panel { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100000; padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border); transform: translateY(-150%) scale(0.85); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
+        .top-search-panel.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
         
-        .top-search-panel.show { 
-            transform: translateY(0) scale(1); 
-            opacity: 1;
-            pointer-events: auto; 
-        }
-        
-        .top-search-content {
-            flex: 1; position: relative; display: flex; align-items: center;
-        }
-        .top-search-content input {
-            width: 100%; padding: 12px 40px 12px 16px; margin: 0;
-            border-radius: 12px; border: 2px solid var(--primary);
-            background: var(--card-bg); font-size: 16px; color: var(--text-main);
-            outline: none; box-shadow: 0 0 0 3px var(--primary-light);
-        }
-        .top-search-clear {
-            position: absolute; right: 10px; width: 24px; height: 24px;
-            background: var(--text-muted); color: white; border: none; border-radius: 50%;
-            font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer;
-            display: none; align-items: center; justify-content: center; padding-bottom: 2px;
-        }
+        .top-search-content { flex: 1; position: relative; display: flex; align-items: center; }
+        .top-search-content input { width: 100%; padding: 12px 40px 12px 16px; margin: 0; border-radius: 12px; border: 2px solid var(--primary); background: var(--card-bg); font-size: 16px; color: var(--text-main); outline: none; box-shadow: 0 0 0 3px var(--primary-light); }
+        .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
         .top-search-clear:active { background: var(--danger); }
+        .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
+
+        /* === СТИЛІ КАБІНЕТУ СПІВРОБІТНИКА === */
+        .user-header { background: var(--card-bg); border-radius: 16px; padding: 20px; border: 1px solid var(--border); margin-bottom: 20px; text-align: left; }
+        .user-name { font-size: 20px; font-weight: 800; line-height: 1.2; margin-bottom: 6px; }
+        .user-role { font-size: 13px; font-weight: 600; color: var(--primary); margin-bottom: 12px; }
+        .user-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .user-info-item { display: flex; flex-direction: column; font-size: 12px; }
+        .user-info-label { color: var(--text-muted); font-weight: 600; margin-bottom: 2px;}
+        .user-info-val { font-weight: 700; color: var(--text-main); }
         
-        .top-search-close {
-            background: transparent; border: none; color: var(--text-muted);
-            font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
-        }
+        .section-title { font-size: 16px; font-weight: 800; margin: 24px 0 12px; display: flex; align-items: center; gap: 8px; text-align: left;}
+        
+        .kpi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .kpi-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden; text-align: left;}
+        .kpi-title { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px; }
+        .kpi-value { font-size: 22px; font-weight: 800; color: var(--text-main); line-height: 1; }
+        .kpi-sub { font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 6px; }
+        
+        .kpi-card.highlight { background: var(--primary-light); border-color: var(--primary); }
+        .kpi-card.highlight .kpi-value { color: var(--primary); }
+        
+        .chart-container { background: var(--card-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); position: relative; height: 250px; width: 100%; margin-bottom: 20px; }
+        .compare-box { background: var(--card-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--border); margin-bottom: 20px; text-align: left; }
+        .logout-btn { background: transparent; border: 1px solid var(--danger); color: var(--danger); margin-top: 10px; width: 100%; }
 
     </style>
 </head>
 <body>
+
+<div id="loginOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 99990; display: flex; flex-direction: column; justify-content: center; padding: 20px; transition: opacity 0.3s ease;">
+    <div style="max-width: 400px; width: 100%; margin: 0 auto;">
+        <div style="font-size: 48px; text-align: center; margin-bottom: 10px;">👤</div>
+        <div style="text-align: center; font-size: 24px; font-weight: 800; margin-bottom: 8px;">Авторизація</div>
+        <div style="text-align: center; font-size: 14px; color: var(--text-muted); margin-bottom: 30px;">Увійдіть до SkillHUB Assistant</div>
+        <form id="loginFormNative" onsubmit="window.handleLogin(event)">
+            <div class="input-group">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Логін</span>
+                <input type="text" id="authLogin" placeholder="Введіть свій логін" required autocomplete="username">
+            </div>
+            <div class="input-group">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Пароль</span>
+                <input type="password" id="authPass" placeholder="Введіть пароль" required autocomplete="current-password">
+            </div>
+            <button type="submit" class="btn btn-primary" style="margin-top: 10px;">УВІЙТИ</button>
+        </form>
+    </div>
+</div>
 
 <div id="topSearchPanel" class="top-search-panel">
     <div class="top-search-content">
@@ -686,7 +669,6 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
-        
         <div class="list-group">
             <div class="list-item">
                 <div class="list-item-content">
@@ -749,6 +731,69 @@
             <div id="appVersionDisp" style="display:inline-block; padding:6px 12px; background:var(--card-bg); border-radius:8px; border:1px solid var(--border); font-weight:bold; cursor:pointer; color:var(--primary);" onclick="if(db.appVersion) window.showChangelogModal(db.appVersion, db.changelog)">v1.0.0</div>
         </div>
     </div>
+
+    <div id="tab-cabinet" class="app-tab">
+        
+        <div class="user-header">
+            <div class="user-name" id="uiName">ПІБ співробітника</div>
+            <div class="user-role" id="uiRole">ПІБ Retail</div>
+            
+            <div class="user-info-grid">
+                <div class="user-info-item">
+                    <span class="user-info-label">Магазин</span>
+                    <span class="user-info-val" id="uiStore">-</span>
+                </div>
+                <div class="user-info-item">
+                    <span class="user-info-label">Керівник</span>
+                    <span class="user-info-val" id="uiDirector">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">📊 Поточні показники</div>
+        <div class="kpi-grid">
+            <div class="kpi-card">
+                <div class="kpi-title">План на місяць</div>
+                <div class="kpi-value" id="kpiPlanSht">0</div>
+                <div class="kpi-sub" id="kpiFactSht">Факт шт: 0</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Виторг (Грн)</div>
+                <div class="kpi-value" id="kpiFactGrn">0</div>
+            </div>
+            <div class="kpi-card highlight">
+                <div class="kpi-title">Виконання</div>
+                <div class="kpi-value" id="kpiPercent">0%</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-title">Ефективність</div>
+                <div class="kpi-value" id="kpiEff">0%</div>
+                <div class="kpi-sub" id="kpiShare">Доля: 0%</div>
+            </div>
+        </div>
+
+        <div class="section-title">📈 Динаміка виконання</div>
+        <div class="chart-container">
+            <canvas id="historyChart"></canvas>
+        </div>
+
+        <div class="section-title">⚔️ Порівняння з колегами</div>
+        <div class="compare-box">
+            <div class="input-group" style="margin-bottom: 12px;">
+                <span style="font-weight:600; display:block; margin-bottom:8px; font-size:13px; color:var(--text-muted);">Оберіть співробітника для порівняння</span>
+                <select id="compareSelect" onchange="window.handleCompareChange(this.value)">
+                    <option value="">-- Не обрано --</option>
+                </select>
+            </div>
+            <div class="chart-container" id="compareChartBox" style="display: none; height: 220px; border:none; padding:0; margin-bottom:0;">
+                <canvas id="compareChart"></canvas>
+            </div>
+        </div>
+
+        <button class="btn logout-btn" onclick="window.logout()">ВИЙТИ З КАБІНЕТУ</button>
+
+    </div>
+
 </div>
 
 <nav class="bottom-nav">
@@ -759,6 +804,10 @@
     <button class="nav-item" onclick="window.switchTab('tab-reserves')">
         <div class="nav-icon icon-rezerv"></div>
         <span>Резерви</span>
+    </button>
+    <button class="nav-item" onclick="window.switchTab('tab-cabinet')">
+        <div class="nav-icon icon-cabinet"></div>
+        <span>Кабінет</span>
     </button>
     <button class="nav-item" onclick="window.switchTab('tab-skillhub')">
         <div class="nav-icon icon-bulb"></div>
@@ -816,22 +865,18 @@
         <div class="modal-body">
             <div class="cert-manual-wrapper">
               <h2 class="cert-header">Об'єднання декількох сертифікатів</h2>
-
               <div class="cert-alert warning">
                 <strong>⚠️ Проблема:</strong> Бувають випадки, коли при продажі електронних послуг виникає помилка <em>«Немає на залишках...»</em>, або Ви хочете зробити знижку клієнту. В такому випадку потрібно об'єднати декілька позицій в один рахунок.
               </div>
-
               <div class="cert-example">
                 <h3>📋 Приклад вирішення</h3>
                 <p>Товар коштує <span class="cert-highlight">17 499 ₴</span>. Ідеально до нього продати <em>Сервіс (15 001 - 20 000)</em>, але його немає на залишку. Робимо наступні кроки:</p>
-
                 <ul class="cert-steps">
                   <li><strong>Обираємо декілька менших за діапазоном позицій</strong><br> Наприклад: <em>Сервіс (10 001 - <span class="brace-highlight">15 000</span>)</em> та <em>Сервіс (2 001 - <span class="brace-highlight">3 000</span>)</em>.</li>
                   <li><strong>Перевіряємо суму діапазонів</strong><br> У нас виходить сума крайніх діапазонів: <span class="brace-highlight">15 000 + 3 000</span> = <span class="cert-highlight">18 000</span>. Оскільки товар коштує 17 499, тобто діапазон повністю підходить.</li>
                   <li><strong>Завершуємо продаж</strong><br> Проводимо продаж і видаємо клієнту тікети.</li>
                 </ul>
               </div>
-
               <div class="cert-alert info">
                 <strong>✅ Важливо:</strong> Скидати фото тікетів в групу <em>«Support» / «Екта»</em> не потрібно, ключі автоматично активуються по API.
               </div>
@@ -928,6 +973,12 @@
     window.currentRezervPrice = 0;
     window.currentRezervIsDiscount = false;
 
+    // Змінні для Кабінету
+    window.cabinetUsers = [];
+    window.currentUser = null;
+    window.historyChartInstance = null;
+    window.compareChartInstance = null;
+
     // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
         localStorage.setItem('skillhub_font_scale', scale);
@@ -938,6 +989,9 @@
             document.head.appendChild(style); 
         }
         style.innerHTML = `
+            :root {
+                --nav-height: calc(76px * ${scale});
+            }
             input, select, textarea, button, .btn { font-size: calc(16px * ${scale}) !important; }
             .list-item-title { font-size: calc(16px * ${scale}) !important; }
             .list-item-subtitle { font-size: calc(13px * ${scale}) !important; }
@@ -958,7 +1012,7 @@
             .status-badge { font-size: calc(11px * ${scale}) !important; }
             .ua-name { font-size: calc(20px * ${scale}) !important; }
             
-            /* МАСШТАБУВАННЯ НИЖНЬОЇ ПАНЕЛІ ТА ІКОНОК */
+            /* МАСШТАБУВАННЯ НИЖНЬОЇ ПАНЕЛІ ТА ІКОНОК (5 КНОПОК) */
             .bottom-nav { 
                 height: calc(76px * ${scale}) !important; 
                 border-radius: calc(40px * ${scale}) !important; 
@@ -970,7 +1024,7 @@
                 width: calc(24px * ${scale}) !important; 
                 height: calc(24px * ${scale}) !important; 
             }
-            .nav-item .nav-icon.icon-bulb { 
+            .nav-item .nav-icon.icon-bulb, .nav-item .nav-icon.icon-cabinet { 
                 width: calc(28px * ${scale}) !important; 
                 height: calc(28px * ${scale}) !important; 
             }
@@ -980,11 +1034,9 @@
         `;
     };
 
-    // Ініціалізація масштабу шрифтів
     let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
     document.getElementById('fontSizeSlider').value = savedFontScale;
     window.updateFontScale(savedFontScale);
-    // --------------------------------------
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -1010,11 +1062,12 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzqN7GVBm8Q2CtutMNdxvLipQzjQ5zap0bL4d4plqphvNH3TJChsZFR9mf8nCbOMC8Gqw/exec';
+    // ОНОВЛЕНИЙ API_URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxzn3Y0kZfr17mdqBDxNHSvsY9vbgRy3KV04V8NPzqvdDBJZfKR8OvyZEg_Z3If1a5PwQ/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
-    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+    let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], educationData: {} };
     let currentCategoryData = null;
     let currentServiceData = null; 
     let savedScrollY = 0; 
@@ -1026,6 +1079,187 @@
     let modalCompareSelection = [];
     window.lastModalServices = [];
     window.allServicesSearchList = [];
+
+    // --- ЛОГІКА КАБІНЕТУ ТА АВТОРИЗАЦІЇ ---
+
+    window.getVal = function(userObj, searchKey) {
+        if (!userObj) return "-";
+        const cleanSearch = searchKey.toLowerCase().replace(/\s+/g, '');
+        for (let key in userObj) {
+            let cleanKey = key.toLowerCase().replace(/\s+/g, '');
+            if (cleanKey.includes(cleanSearch) || cleanSearch.includes(cleanKey)) {
+                return userObj[key];
+            }
+        }
+        return "-";
+    }
+
+    window.extractHistory = function(userObj) {
+        let labels = [];
+        let data = [];
+        const regex = /^\d{2}\.\d{4}$/; // Формат місяця: 01.2025, 02.2025 і т.д.
+        let keys = Object.keys(userObj).filter(k => regex.test(k.trim())).sort();
+        keys.forEach(k => {
+            labels.push(k);
+            let val = String(userObj[k]).replace(/[^\d.,-]/g, '').replace(',', '.');
+            data.push(parseFloat(val) || 0);
+        });
+        return { labels, data };
+    }
+
+    window.renderHistoryChart = function(user) {
+        const hist = window.extractHistory(user);
+        const ctx = document.getElementById('historyChart').getContext('2d');
+
+        if (window.historyChartInstance) window.historyChartInstance.destroy();
+
+        if (hist.labels.length === 0) {
+            // Фейкові дані для краси, якщо колонок ще немає
+            hist.labels = ['Січень', 'Лютий', 'Березень'];
+            hist.data = [0, 0, 0];
+        }
+
+        window.historyChartInstance = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: hist.labels,
+                datasets: [{
+                    label: 'Виконання (%)',
+                    data: hist.data,
+                    borderColor: '#10b981',
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)',
+                    borderWidth: 3,
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#10b981',
+                    pointRadius: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { display: false } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    };
+
+    window.handleCompareChange = function(targetLogin) {
+        const box = document.getElementById('compareChartBox');
+        if (!targetLogin) {
+            box.style.display = 'none';
+            return;
+        }
+        const targetUser = window.cabinetUsers.find(u => window.getVal(u, 'login') === targetLogin);
+        if (targetUser) {
+            box.style.display = 'block';
+            window.renderCompareChart(window.currentUser, targetUser);
+        }
+    };
+
+    window.renderCompareChart = function(u1, u2) {
+        const ctx = document.getElementById('compareChart').getContext('2d');
+        if (window.compareChartInstance) window.compareChartInstance.destroy();
+
+        const labels = ['Виконання %', 'Ефективність', 'Доля %'];
+        const parseFloatStrict = (str) => parseFloat(String(str).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
+
+        const data1 = [
+            parseFloatStrict(window.getVal(u1, 'Виконання(%)')),
+            parseFloatStrict(window.getVal(u1, 'Ефективність')),
+            parseFloatStrict(window.getVal(u1, 'Доля'))
+        ];
+
+        const data2 = [
+            parseFloatStrict(window.getVal(u2, 'Виконання(%)')),
+            parseFloatStrict(window.getVal(u2, 'Ефективність')),
+            parseFloatStrict(window.getVal(u2, 'Доля'))
+        ];
+
+        let name1 = window.getVal(u1, 'ПІБ співробітника').split(' ')[0] || "Ви";
+        let name2 = window.getVal(u2, 'ПІБ співробітника').split(' ')[0] || "Колега";
+
+        window.compareChartInstance = new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [
+                    { label: name1 + " (Ви)", data: data1, backgroundColor: '#10b981', borderRadius: 4 },
+                    { label: name2, data: data2, backgroundColor: '#94a3b8', borderRadius: 4 }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom' }, tooltip: { enabled: true } },
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(0,0,0,0.05)' } },
+                    x: { grid: { display: false } }
+                }
+            }
+        });
+    };
+
+    window.renderDashboard = function(user) {
+        window.currentUser = user;
+        document.getElementById('uiName').innerText = window.getVal(user, 'ПІБ співробітника') || "Співробітник";
+        document.getElementById('uiRole').innerText = window.getVal(user, 'ПІБ Retail');
+        document.getElementById('uiStore').innerText = window.getVal(user, 'Магазин');
+        document.getElementById('uiDirector').innerText = window.getVal(user, 'Керівник');
+
+        document.getElementById('kpiPlanSht').innerText = window.getVal(user, 'План на місяць');
+        document.getElementById('kpiFactSht').innerText = "Факт шт: " + window.getVal(user, 'Шт');
+        
+        document.getElementById('kpiFactGrn').innerText = window.getVal(user, 'Грн');
+
+        document.getElementById('kpiPercent').innerText = window.getVal(user, 'Виконання(%)') || "0%";
+        document.getElementById('kpiEff').innerText = window.getVal(user, 'Ефективність') || "0%";
+        document.getElementById('kpiShare').innerText = "Доля: " + (window.getVal(user, 'Доля') || "0%");
+
+        const select = document.getElementById('compareSelect');
+        select.innerHTML = '<option value="">-- Не обрано --</option>';
+        window.cabinetUsers.forEach(u => {
+            let name = window.getVal(u, 'ПІБ співробітника');
+            let log = window.getVal(u, 'login');
+            if (log !== window.getVal(user, 'login') && name !== "-") {
+                select.add(new Option(name, log));
+            }
+        });
+
+        window.renderHistoryChart(user);
+    };
+
+    window.handleLogin = function(e) {
+        e.preventDefault();
+        const login = document.getElementById('authLogin').value.trim();
+        const pass = document.getElementById('authPass').value.trim();
+        
+        const user = window.cabinetUsers.find(u => window.getVal(u, 'login') === login && window.getVal(u, 'password') === pass);
+        if (user) {
+            localStorage.setItem('skillhub_user_login', login);
+            document.getElementById('loginOverlay').style.opacity = '0';
+            setTimeout(() => { 
+                document.getElementById('loginOverlay').style.display = 'none'; 
+            }, 300);
+            window.renderDashboard(user);
+            window.switchTab('tab-cabinet');
+        } else {
+            alert("Невірний логін або пароль!");
+        }
+    };
+
+    window.logout = function() {
+        localStorage.removeItem('skillhub_user_login');
+        document.getElementById('loginOverlay').style.display = 'flex';
+        setTimeout(() => { document.getElementById('loginOverlay').style.opacity = '1'; }, 10);
+        document.getElementById('authPass').value = '';
+    };
+
+    // --- КІНЕЦЬ ЛОГІКИ КАБІНЕТУ ---
 
     window.buildServiceSearchList = function() {
         let uniqueMap = new Map();
@@ -1085,7 +1319,7 @@
     };
 
     function sanitizeDb(data) {
-        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [] };
+        if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], educationData: {} };
         data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
         data.tariffs = data.tariffs || [];
@@ -1099,6 +1333,7 @@
         data.trainingData = data.trainingData || [];
         data.skillHubButtons = data.skillHubButtons || [];
         data.sellerRatings = data.sellerRatings || [];
+        data.educationData = data.educationData || { cabinetUsers: [] };
         return data;
     }
 
@@ -1106,7 +1341,8 @@
         'tab-search': 'SkillHUB Assistant',
         'tab-reserves': 'Активні резерви',
         'tab-skillhub': 'SkillHUB',
-        'tab-settings': 'Налаштування'
+        'tab-settings': 'Налаштування',
+        'tab-cabinet': 'Особистий кабінет'
     };
 
     const elCatInput = document.getElementById('catInput');
@@ -1696,6 +1932,17 @@
             document.getElementById('appVersionDisp').style.display = 'inline-block';
         }
         document.getElementById('appLoader').classList.add('hidden');
+        
+        // --- ПЕРЕВІРКА АВТОРИЗАЦІЇ ---
+        window.cabinetUsers = (db.educationData && db.educationData.cabinetUsers) ? db.educationData.cabinetUsers : [];
+        const savedLogin = localStorage.getItem('skillhub_user_login');
+        if (savedLogin && window.cabinetUsers.some(u => window.getVal(u, 'login') === savedLogin)) {
+            document.getElementById('loginOverlay').style.display = 'none';
+            let currentUser = window.cabinetUsers.find(u => window.getVal(u, 'login') === savedLogin);
+            window.renderDashboard(currentUser);
+        } else {
+            document.getElementById('loginOverlay').style.display = 'flex';
+        }
     }
 
     window.saveDefaultStore = function() {
@@ -2029,7 +2276,7 @@
 
                 discountHtml = `
                 <div id="discountReasonBlock" style="margin-top: 16px; margin-bottom: 8px;">
-                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/головна/інструкції/інструкції/уцінка?authuser=0', '_blank')">
+                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BA%D0%B0', '_blank')">
                         <span style="font-size: 18px;">❓</span> Як дізнатись причину уцінки
                     </button>
                     <div class="input-group" style="position:relative; margin-bottom: 12px;">
