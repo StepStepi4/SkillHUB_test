@@ -435,7 +435,7 @@
                 <span style="font-size: 20px;">⚖️</span>
                 <span style="line-height: 1; padding-top: 2px;">Порівняння показників</span>
             </div>
-            <input type="text" id="compareSearchInput" class="admin-select" list="compareUsersList" placeholder="🔍 Введіть ім'я колеги..." oninput="handleCompareSearch()" style="margin-bottom: 16px;">
+            <input type="text" id="compareSearchInput" class="admin-select" list="compareUsersList" placeholder="🔍 Введіть ПІБ колеги..." oninput="handleCompareSearch()" style="margin-bottom: 16px;">
             <datalist id="compareUsersList"></datalist>
             <div id="compareChartContainer" style="display: none;">
                 <div class="chart-container" style="height: 180px;">
@@ -445,7 +445,7 @@
 
             <div class="section-title" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
                 <span style="font-size: 20px;">📈</span>
-                <span style="line-height: 1; padding-top: 2px;">Історія виконання (2025-2026)</span>
+                <span style="line-height: 1; padding-top: 2px;">Історія виконання</span>
             </div>
             <div class="chart-container" style="height: 200px;" id="historyChartWrapper">
                 <canvas id="historyChart"></canvas>
@@ -545,7 +545,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwMDEZtBs_slzXvyacB56kTF21tcH12E4azPzMbh_u1kIAOQi_9u9wqBQRF5189ZjFJRg/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz5ZWd89gHruQAbG_31QZx3v0IAcgVDV-AlHox39IZe_AAzy_AkEO2klMVrZBllF3T0Wg/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -736,7 +736,6 @@
                 exitBtn.style.display = 'flex';
             }
             
-            // Якщо перейшли в кабінет - завжди скидаємо на вкладку "Навчання"
             if (viewId === 'courseView') {
                 switchCabinetTab('learning');
             }
@@ -1041,9 +1040,10 @@
         windowViewingEmployee = null;
         let user = db.users.find(u => u.login === currentUser);
         
-        let rawName = user.name && String(user.name).trim() !== "" && user.name !== "undefined" ? String(user.name) : currentUser;
-        let nameParts = rawName.replace(/[\/\\,]/g, '').trim().split(/\s+/);
-        let firstName = nameParts.length > 1 ? nameParts[1] : nameParts[0];
+        let rawName = user.name && String(user.name).trim() !== "" ? String(user.name) : currentUser;
+        let nameParts = rawName.split(/\s+/);
+        // Беремо перше ім'я (для "Прізвище Ім'я По-батькові" це буде nameParts[1])
+        let firstName = nameParts.length >= 2 ? nameParts[1] : nameParts[0];
         if(!firstName || firstName === "") firstName = "Колега";
 
         document.getElementById('courseViewTitle').innerText = 'Особистий кабінет';
@@ -1228,12 +1228,11 @@
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
             
-            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+            let tPcs = parseFloat(String(u.target || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             
-            let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
+            let hasGoals = (tPcs > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = (assignedCount > 0 || arrAssigned > 0);
             let hasGoalsOrCourses = hasGoals || hasCourses;
 
@@ -1255,11 +1254,10 @@
 
         window.adminManagedUsers = managedUsers; 
 
-        // Наповнюємо Datalist для пошуку
+        // Підказки (Datalist) по імені
         let datalistHtml = managedUsers.sort((a,b) => a.name.localeCompare(b.name)).map(u => {
             let rName = u.name && String(u.name).trim() !== "" ? String(u.name) : u.login;
-            let cName = rName.replace(/[\/\\,]/g, '').trim();
-            return `<option value="${escapeHTMLAttr(cName)}" data-login="${escapeHTMLAttr(u.login)}"></option>`;
+            return `<option value="${escapeHTMLAttr(rName)}" data-login="${escapeHTMLAttr(u.login)}"></option>`;
         }).join('');
         
         let filterHtml = `
@@ -1281,21 +1279,19 @@
             return;
         }
 
-        // Шукаємо точний збіг у списку
         let options = list.options;
         let matchedLogin = null;
         for (let i = 0; i < options.length; i++) {
-            if (options[i].value === val) {
+            if (options[i].value.toLowerCase() === val.toLowerCase()) {
                 matchedLogin = options[i].getAttribute('data-login');
                 break;
             }
         }
 
         if (matchedLogin) {
-            input.value = ""; // Очищаємо після вибору
+            input.value = ""; 
             viewEmployeeDetails(matchedLogin);
         } else {
-            // Фільтруємо список під час введення
             let lowVal = val.toLowerCase();
             let filtered = window.adminManagedUsers.filter(u => {
                 let n = (u.name || "").toLowerCase();
@@ -1595,19 +1591,19 @@
         document.getElementById('statsDirectorName').innerText = directorName;
 
         // Поточні цілі
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let tPcs = parseFloat(String(user.target || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        
+        let execPctVal = parseFloat(String(user.execPct || "0").replace('%', '').trim());
+        if (isNaN(execPctVal) || execPctVal === 0) {
+            let validPcts = [];
+            if (tPcs > 0) validPcts.push((fPcs / tPcs) * 100);
+            execPctVal = validPcts.length > 0 ? Math.max(...validPcts) : 0;
+        }
 
         let displayFPcs = fPcs < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fPcs))}</span>` : formatNumber(fPcs);
         let displayFUah = fUah < 0 ? `<span style="color: var(--success);">+${formatNumber(Math.abs(fUah))}</span>` : formatNumber(fUah);
-
-        let validPcts = [];
-        if (tPcs > 0) validPcts.push((fPcs / tPcs) * 100);
-        if (tUah > 0) validPcts.push((fUah / tUah) * 100);
-        let execPctVal = validPcts.length > 0 ? Math.max(...validPcts) : 100;
-        execPctVal = parseFloat(execPctVal.toFixed(1));
 
         let isGoalCompleted = execPctVal >= 100;
         let execBg = isGoalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
@@ -1615,39 +1611,36 @@
         let execColor = isGoalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
         let goalsHtml = "";
-        if (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0) {
+        if (tPcs > 0 || fPcs !== 0 || fUah !== 0) {
             let statItems = "";
-            if (tPcs > 0 || fPcs !== 0) {
-                let targetText = tPcs > 0 ? ` / ${formatNumber(tPcs)}` : '';
-                let labelText = tPcs > 0 ? 'Ціль (шт)' : 'Виконання (шт)';
+            
+            // Якщо є план, показуємо План
+            if (tPcs > 0) {
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${displayFPcs} <span style="font-size:12px; color:var(--text-muted);">${targetText}</span></div>
-                    <div class="stat-label">${labelText}</div>
+                    <div class="stat-val" style="font-size:18px;">${formatNumber(tPcs)}</div>
+                    <div class="stat-label">План</div>
                 </div>`;
             }
-            if (tUah > 0 || fUah !== 0) {
-                let targetText = tUah > 0 ? ` / ${formatNumber(tUah)}` : '';
-                let labelText = tUah > 0 ? 'Ціль (грн)' : 'Виконання (грн)';
+            
+            // Завжди показуємо факт, якщо є хоч якісь продажі
+            if (fPcs !== 0 || fUah !== 0) {
                 statItems += `
                 <div class="stat-item">
-                    <div class="stat-val" style="font-size:18px;">${displayFUah} <span style="font-size:12px; color:var(--text-muted);">${targetText}</span></div>
-                    <div class="stat-label">${labelText}</div>
+                    <div class="stat-val" style="font-size:18px;">${displayFUah} <span style="font-size:12px; color:var(--text-muted);">(${displayFPcs} шт)</span></div>
+                    <div class="stat-label">Факт</div>
                 </div>`;
             }
 
             statItems += `
             <div class="stat-item" style="background: ${execBg}; border-color: ${execBorder};">
-                <div class="stat-val" style="font-size:20px; color: ${execColor};">${execPctVal}%</div>
+                <div class="stat-val" style="font-size:20px; color: ${execColor};">${parseFloat(execPctVal.toFixed(1))}%</div>
                 <div class="stat-label" style="color: ${execColor};">Виконання</div>
             </div>`;
 
             goalsHtml = `
                 <div class="stats-dashboard">
                     ${statItems}
-                </div>
-                <div class="chart-container">
-                    <canvas id="statsGoalsChart"></canvas>
                 </div>
             `;
         } else {
@@ -1656,18 +1649,18 @@
 
         document.getElementById('statsCurrentMonthContainer').innerHTML = goalsHtml;
 
-        // Populate compare datalist
-        let compareUsers = db.users.filter(u => u.login !== user.login); // All others
+        // Datalist для порівняння (шукаємо по ПІБ)
+        let compareUsers = db.users.filter(u => u.login !== user.login);
         let dlHtml = compareUsers.sort((a,b) => a.name.localeCompare(b.name)).map(u => {
-            let cName = (u.name && String(u.name).trim() !== "" ? String(u.name) : u.login).replace(/[\/\\,]/g, '').trim();
+            let cName = (u.name && String(u.name).trim() !== "" ? String(u.name) : u.login);
             return `<option value="${escapeHTMLAttr(cName)}" data-login="${escapeHTMLAttr(u.login)}"></option>`;
         }).join('');
         document.getElementById('compareUsersList').innerHTML = dlHtml;
-        document.getElementById('compareChartContainer').style.display = 'none'; // reset comparison
+        document.getElementById('compareChartContainer').style.display = 'none'; 
         document.getElementById('compareSearchInput').value = '';
-        window.statsCurrentUserForCompare = user; // Зберігаємо для порівняння
+        window.statsCurrentUserForCompare = user; 
 
-        // Історія (графік + список)
+        // Історія 
         let historyObj = user.history || {};
         let hKeys = Object.keys(historyObj).sort((a, b) => {
             let [mA, yA] = a.split('.');
@@ -1680,7 +1673,6 @@
         let chartData = [];
 
         if (hKeys.length > 0) {
-            // Щоб графік не був "порожнім" якщо менше 3-х місяців, залишимо як є, Chart.js впорається
             hKeys.forEach(k => {
                 let raw = String(historyObj[k]).trim(); // "5531 / 5909 / 107%"
                 let parts = raw.split('/').map(s => s.trim());
@@ -1713,7 +1705,7 @@
                         <div class="history-pct" style="color: ${color};">${p_pct}</div>
                         <div class="history-details">План: ${p_plan} | Факт: ${p_fact}</div>
                     </div>
-                </div>` + historyHtmlList; // зворотній порядок для списку
+                </div>` + historyHtmlList; 
             });
         } else {
             historyHtmlList = `<div style="text-align:center; color:var(--text-muted); font-size:14px; font-weight:600; padding:20px;">Історія відсутня.</div>`;
@@ -1723,12 +1715,6 @@
         document.getElementById('historyListContainer').innerHTML = historyHtmlList;
 
         setTimeout(() => {
-            // Малюємо цілі
-            if (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0) {
-                renderGoalsChart('statsGoalsChart', user);
-            }
-            
-            // Малюємо історію
             if (hKeys.length > 0) {
                 document.getElementById('historyChartWrapper').style.display = 'block';
                 renderHistoryChart('historyChart', chartLabels, chartData);
@@ -1743,7 +1729,7 @@
         
         let matchedLogin = null;
         for (let i = 0; i < list.options.length; i++) {
-            if (list.options[i].value === val) {
+            if (list.options[i].value.toLowerCase() === val.toLowerCase()) {
                 matchedLogin = list.options[i].getAttribute('data-login');
                 break;
             }
@@ -1756,65 +1742,6 @@
                 renderComparisonChart('compareChart', window.statsCurrentUserForCompare, competitor);
             }
         }
-    }
-
-    function renderGoalsChart(canvasId, user) {
-        let canvas = document.getElementById(canvasId);
-        if (!canvas) return; 
-
-        if (chartsInstances[canvasId]) {
-            chartsInstances[canvasId].destroy();
-            delete chartsInstances[canvasId];
-        }
-
-        const theme = localStorage.getItem('theme') || 'light';
-        const isDark = theme === 'dark';
-        const textColor = isDark ? '#ffffff' : '#111827';
-        const gridColor = isDark ? '#38383a' : '#e5e7eb';
-
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        
-        let labels = [];
-        let dataVals = [];
-        
-        if (tPcs > 0 || fPcs !== 0) {
-            labels.push('шт');
-            dataVals.push(tPcs > 0 ? Math.min((fPcs / tPcs) * 100, 100) : 100);
-        }
-        if (tUah > 0 || fUah !== 0) {
-            labels.push('грн');
-            dataVals.push(tUah > 0 ? Math.min((fUah / tUah) * 100, 100) : 100);
-        }
-
-        if (labels.length === 0) return;
-
-        chartsInstances[canvasId] = new Chart(canvas, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [
-                    { 
-                        data: dataVals, 
-                        backgroundColor: '#10b981', 
-                        borderRadius: 6, 
-                        barThickness: labels.length === 1 ? 32 : 24 
-                    }
-                ]
-            },
-            options: {
-                indexAxis: 'y',
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
-                scales: {
-                    x: { max: 100, grid: { color: gridColor }, ticks: { color: textColor, callback: v => v + '%' } },
-                    y: { grid: { display: false }, ticks: { color: textColor, font: { family: 'Inter', weight: 'bold' } } }
-                }
-            }
-        });
     }
 
     function renderHistoryChart(canvasId, labels, dataVals) {
@@ -1877,21 +1804,23 @@
         const gridColor = isDark ? '#38383a' : '#e5e7eb';
 
         function getPct(u) {
-            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let validPcts = [];
-            if (tPcs > 0) validPcts.push((fPcs / tPcs) * 100);
-            if (tUah > 0) validPcts.push((fUah / tUah) * 100);
-            return validPcts.length > 0 ? Math.max(...validPcts) : 0;
+            let p = parseFloat(String(u.execPct || "0").replace('%', '').trim());
+            if (isNaN(p) || p === 0) {
+                let tPcs = parseFloat(String(u.target || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+                let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+                if (tPcs > 0) p = (fPcs / tPcs) * 100;
+            }
+            return p || 0;
         }
 
         let pct1 = getPct(user1);
         let pct2 = getPct(user2);
 
-        let n1 = (user1.name || user1.login).split(' ')[0];
-        let n2 = (user2.name || user2.login).split(' ')[0];
+        let n1 = (user1.name || user1.login).split(/\s+/);
+        n1 = n1.length >= 2 ? n1[1] : n1[0];
+
+        let n2 = (user2.name || user2.login).split(/\s+/);
+        n2 = n2.length >= 2 ? n2[1] : n2[0];
 
         chartsInstances[canvasId] = new Chart(canvas, {
             type: 'bar',
@@ -1916,13 +1845,6 @@
                 }
             }
         });
-    }
-
-    // --- ФУНКЦІЯ ВІДМАЛЬОВКИ ДІАГРАМИ ЦІЛЕЙ У НАВЧАННІ (ЗАЛИШИЛАСЯ ДЛЯ СУМІСНОСТІ АБО ЯКЩО ПОТРІБНА) ---
-    function renderCharts(user) {
-        let goalsCanvas = document.getElementById('goalsChart');
-        if (!goalsCanvas) return; 
-        renderGoalsChart('goalsChart', user);
     }
 
     function renderCourses(user) {
@@ -1988,7 +1910,6 @@
         let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
         let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
-        // У вкладці "Навчання" залишаємо тільки статистику навчання (цілі переїхали в Статистику)
         document.getElementById('globalStatsContainer').innerHTML = `
             <div class="stats-dashboard">
                 <div class="stat-item clickable" onclick="openCompletedModal()">
