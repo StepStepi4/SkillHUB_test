@@ -301,11 +301,14 @@
 
                 <div id="errorMsg">Невірний логін або пароль!</div>
 
+                <!-- ЗМІНЕНО: Пошук по ПІБ -->
                 <div class="input-group">
-                    <span class="input-label">Логін</span>
-                    <input type="text" id="loginInput" placeholder="Введіть ваш логін" autocapitalize="off" onkeypress="if(event.key === 'Enter') handleLogin()">
+                    <span class="input-label">ПІБ або Логін</span>
+                    <input type="text" id="loginInput" list="loginDatalist" placeholder="Почніть вводити ПІБ..." autocapitalize="words" autocomplete="off" oninput="checkPasswordRequirement()" onkeypress="if(event.key === 'Enter') handleLogin()">
+                    <datalist id="loginDatalist"></datalist>
                 </div>
-                <div class="input-group">
+                
+                <div class="input-group" id="passwordGroup">
                     <span class="input-label">Пароль</span>
                     <input type="password" id="passInput" placeholder="Введіть пароль" onkeypress="if(event.key === 'Enter') handleLogin()">
                 </div>
@@ -397,6 +400,7 @@
             </div>
         </div>
 
+        <!-- Перемикач Навчання/Статистика -->
         <div class="segmented-control" id="cabinetToggleContainer">
             <div class="segment-btn active" id="tabBtnLearning" onclick="switchCabinetTab('learning')">📚 Навчання</div>
             <div class="segment-btn" id="tabBtnStats" onclick="switchCabinetTab('stats')">📊 Статистика</div>
@@ -407,6 +411,7 @@
             <span id="deadlineText"></span>
         </div>
 
+        <!-- КОНТЕНТ НАВЧАННЯ -->
         <div id="learningContent">
             <div id="globalStatsContainer"></div>
 
@@ -417,6 +422,7 @@
             <div id="courseList"></div>
         </div>
 
+        <!-- КОНТЕНТ СТАТИСТИКИ -->
         <div id="statsContent" style="display: none;">
             <div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
                 <div style="font-size: 12px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 4px;">Магазин</div>
@@ -696,7 +702,7 @@
             document.getElementById('learningContent').style.display = 'none';
             document.getElementById('statsContent').style.display = 'block';
             
-            let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
+            let user = windowViewingEmployee || db.users.find(u => u.login === currentUser || u.name === currentUser);
             renderStatsTab(user);
         }
     }
@@ -811,7 +817,7 @@
     function startDeadlineTimer() {
         clearInterval(deadlineInterval);
         
-        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
+        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser || u.name === currentUser);
         if (!user) return;
 
         let dlMs = getDeadlineMs(user.deadline, user);
@@ -885,6 +891,37 @@
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
     }
 
+    function populateDatalists() {
+        if (!db || !db.users) return;
+        const loginDl = document.getElementById('loginDatalist');
+        
+        let optionsHtml = db.users.sort((a,b) => a.name.localeCompare(b.name)).map(u => {
+            let n = escapeHTMLAttr(u.name);
+            return `<option value="${n}"></option>`;
+        }).join('');
+        
+        if(loginDl) loginDl.innerHTML = optionsHtml;
+    }
+
+    function checkPasswordRequirement() {
+        if (!db || !db.users) return;
+        const val = document.getElementById('loginInput').value.trim().toLowerCase();
+        
+        const user = db.users.find(u => (u.name || "").toLowerCase() === val || (u.login || "").toLowerCase() === val);
+        const passGroup = document.getElementById('passwordGroup');
+        
+        if (user) {
+            let requiresPass = (user.assigned && user.assigned.length > 0) || (user.pass && user.pass !== "");
+            if (requiresPass) {
+                passGroup.style.display = 'block';
+            } else {
+                passGroup.style.display = 'none';
+            }
+        } else {
+            passGroup.style.display = 'block'; 
+        }
+    }
+
     async function fetchFreshDataSilent() {
         if (!navigator.onLine) return;
 
@@ -902,8 +939,11 @@
                 db = data.educationData;
                 globalAchievements = data.achievementData || []; 
 
+                populateDatalists();
+                checkPasswordRequirement();
+
                 if (currentUser) {
-                    let user = db.users.find(u => u.login === currentUser);
+                    let user = db.users.find(u => u.login === currentUser || u.name === currentUser);
                     if (user) {
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
@@ -917,7 +957,7 @@
                             renderAdminView();
                         } else if (document.getElementById('courseView').classList.contains('active')) {
                             if (windowViewingEmployee) {
-                                let updatedEmp = db.users.find(u => u.login === windowViewingEmployee.login);
+                                let updatedEmp = db.users.find(u => u.login === windowViewingEmployee.login || u.name === windowViewingEmployee.name);
                                 if (updatedEmp) {
                                     windowViewingEmployee = updatedEmp;
                                     buildCoursesMap(updatedEmp);
@@ -961,7 +1001,9 @@
     document.addEventListener('DOMContentLoaded', async () => {
         let draftL = localStorage.getItem('skillhub_draft_login');
         let draftP = localStorage.getItem('skillhub_draft_pass');
-        if (draftL) document.getElementById('loginInput').value = draftL;
+        if (draftL) { 
+            document.getElementById('loginInput').value = draftL;
+        }
         if (draftP) document.getElementById('passInput').value = draftP;
 
         try {
@@ -971,6 +1013,8 @@
                 if (parsedDb && parsedDb.educationData) {
                     db = parsedDb.educationData;
                     globalAchievements = parsedDb.achievementData || []; 
+                    populateDatalists();
+                    checkPasswordRequirement();
                 }
             }
         } catch(e) { console.error("Cache parsing error"); }
@@ -981,9 +1025,9 @@
             let savedCreds = localStorage.getItem('skillhub_edu_creds');
             let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
 
-            if (parsedCreds && parsedCreds.login && parsedCreds.pass) {
+            if (parsedCreds && parsedCreds.login) {
                 document.getElementById('loginInput').value = parsedCreds.login;
-                document.getElementById('passInput').value = parsedCreds.pass;
+                if(parsedCreds.pass) document.getElementById('passInput').value = parsedCreds.pass;
                 document.getElementById('rememberMe').checked = true;
                 
                 if (db && db.users && db.users.length > 0) {
@@ -1038,11 +1082,11 @@
 
     function switchToMyCabinet() {
         windowViewingEmployee = null;
-        let user = db.users.find(u => u.login === currentUser);
+        let user = db.users.find(u => u.login === currentUser || u.name === currentUser);
         
         let rawName = user.name && String(user.name).trim() !== "" ? String(user.name) : currentUser;
         let nameParts = rawName.split(/\s+/);
-        // Беремо перше ім'я (для "Прізвище Ім'я По-батькові" це буде nameParts[1])
+        // Витягуємо Ім'я (друге слово у форматі "Прізвище Ім'я По-батькові")
         let firstName = nameParts.length >= 2 ? nameParts[1] : nameParts[0];
         if(!firstName || firstName === "") firstName = "Колега";
 
@@ -1075,11 +1119,11 @@
         const err = document.getElementById('errorMsg');
 
         try {
-            const l = document.getElementById('loginInput').value.trim();
+            const l = document.getElementById('loginInput').value.trim().toLowerCase();
             const p = document.getElementById('passInput').value.trim();
 
-            if (!l || !p) { 
-                if(!isAuto) { err.innerText = "Введіть логін та пароль"; err.style.display = 'block'; }
+            if (!l) { 
+                if(!isAuto) { err.innerText = "Оберіть ПІБ або введіть логін"; err.style.display = 'block'; }
                 return; 
             }
 
@@ -1096,14 +1140,24 @@
                 } else {
                     err.innerText = "База даних порожня. Перевірте інтернет!";
                     err.style.display = 'block';
+                    if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
                     return;
                 }
             }
 
-            const user = db && db.users && db.users.find(u => String(u.login).trim() === l && String(u.pass).trim() === p);
+            const user = db && db.users && db.users.find(u => (u.name || "").toLowerCase() === l || (u.login || "").toLowerCase() === l);
 
             if (user) {
-                currentUser = user.login;
+                let requiresPass = (user.assigned && user.assigned.length > 0) || (user.pass && user.pass !== "");
+                
+                if (requiresPass && user.pass !== p && !isAuto) {
+                    err.innerText = "Невірний пароль!";
+                    err.style.display = 'block';
+                    if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
+                    return;
+                }
+
+                currentUser = user.login || user.name;
                 err.style.display = 'none';
 
                 localStorage.setItem('skillhub_draft_login', l);
@@ -1115,17 +1169,17 @@
                     localStorage.setItem('skillhub_session_token', myToken);
                 }
 
-                if (navigator.onLine) {
+                if (navigator.onLine && user.login) {
                     try {
                         fetch(API_URL, {
                             method: 'POST', cache: 'no-store', mode: 'no-cors',
-                            body: JSON.stringify({ action: 'set_session', login: currentUser, token: myToken })
+                            body: JSON.stringify({ action: 'set_session', login: user.login, token: myToken })
                         });
                     } catch(e) {}
                 } 
                 
-                if (isAuto && db.activeSessions && db.activeSessions[currentUser]) {
-                    if (db.activeSessions[currentUser] !== myToken) {
+                if (isAuto && db.activeSessions && user.login && db.activeSessions[user.login]) {
+                    if (db.activeSessions[user.login] !== myToken) {
                         logout(true); 
                         return;
                     }
@@ -1155,7 +1209,7 @@
                 }
                 
             } else {
-                err.innerText = "Невірний логін або пароль!";
+                err.innerText = "Співробітника не знайдено!";
                 err.style.display = 'block';
                 
                 if(isAuto) {
@@ -1179,10 +1233,13 @@
             alert("Ваш акаунт було відкрито на іншому пристрої. Сесію скинуто.");
         } else if (explicit && currentUser && navigator.onLine) {
             try {
-                fetch(API_URL, {
-                    method: 'POST', cache: 'no-store', mode: 'no-cors',
-                    body: JSON.stringify({ action: 'set_session', login: currentUser, token: '' })
-                });
+                let userObj = db.users.find(u => u.login === currentUser || u.name === currentUser);
+                if(userObj && userObj.login) {
+                    fetch(API_URL, {
+                        method: 'POST', cache: 'no-store', mode: 'no-cors',
+                        body: JSON.stringify({ action: 'set_session', login: userObj.login, token: '' })
+                    });
+                }
             } catch(e) {}
         }
 
@@ -1199,6 +1256,7 @@
             document.getElementById('passInput').value = '';
             localStorage.removeItem('skillhub_draft_login');
             localStorage.removeItem('skillhub_draft_pass');
+            checkPasswordRequirement(); 
         }
 
         switchView('loginView');
@@ -1206,7 +1264,7 @@
 
     // --- ПАНЕЛЬ КЕРІВНИКА (ADMIN VIEW) ---
     function renderAdminView() {
-        let currentUserObj = db.users.find(u => u.login === currentUser);
+        let currentUserObj = db.users.find(u => u.login === currentUser || u.name === currentUser);
         let isAdmin = windowUserRole === 'admin';
         
         let allUsers = db.users.filter(u => {
@@ -1219,7 +1277,7 @@
         let mShort = mParts.length >= 2 ? mParts[0] + ' ' + mParts[1] : mName;
 
         let managedUsers = allUsers.filter(u => {
-            if (u.login === currentUser) return false;
+            if (u.login === currentUser || u.name === currentUser) return false;
 
             let uRoleStr = String(u.role).toLowerCase();
             let uIsOwner = uRoleStr.includes('власник') || uRoleStr.includes('владелец') || uRoleStr.includes('admin') || uRoleStr.includes('адмін');
@@ -1254,14 +1312,13 @@
 
         window.adminManagedUsers = managedUsers; 
 
-        // Підказки (Datalist) по імені
         let datalistHtml = managedUsers.sort((a,b) => a.name.localeCompare(b.name)).map(u => {
-            let rName = u.name && String(u.name).trim() !== "" ? String(u.name) : u.login;
-            return `<option value="${escapeHTMLAttr(rName)}" data-login="${escapeHTMLAttr(u.login)}"></option>`;
+            let cName = (u.name && String(u.name).trim() !== "" ? String(u.name) : u.login).replace(/[\/\\,]/g, '').trim();
+            return `<option value="${escapeHTMLAttr(cName)}" data-login="${escapeHTMLAttr(u.login)}"></option>`;
         }).join('');
         
         let filterHtml = `
-            <input type="text" id="adminEmpSearch" class="admin-select" list="adminEmpDatalist" placeholder="🔍 Пошук співробітника..." oninput="handleAdminSearch()">
+            <input type="text" id="adminEmpSearch" class="admin-select" list="adminEmpDatalist" placeholder="🔍 Введіть ПІБ співробітника..." oninput="handleAdminSearch()">
             <datalist id="adminEmpDatalist">${datalistHtml}</datalist>
         `;
 
@@ -1409,7 +1466,7 @@
             }
 
             return `
-            <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login)}')" style="background: ${cardBg}; border-color: ${cardBorder};">
+            <div class="list-card" onclick="viewEmployeeDetails('${escapeHTMLAttr(u.login || u.name)}')" style="background: ${cardBg}; border-color: ${cardBorder};">
                 <div style="flex:1;">
                     <div style="font-size:15px; font-weight:700; color:var(--text-main); margin-bottom:6px;">${escapeHTMLAttr(displayName)}</div>
                     
@@ -1439,8 +1496,8 @@
         document.getElementById('adminUsersList').innerHTML = listHtml;
     }
 
-    function viewEmployeeDetails(login) {
-        windowViewingEmployee = db.users.find(u => u.login === login);
+    function viewEmployeeDetails(loginOrName) {
+        windowViewingEmployee = db.users.find(u => u.login === loginOrName || u.name === loginOrName);
         if(!windowViewingEmployee) return;
         
         buildCoursesMap(windowViewingEmployee);
@@ -1461,7 +1518,8 @@
     function checkNewAchievements(user) {
         if (!user || !user.achievements) return;
         let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
-        let savedCount = parseInt(localStorage.getItem(`ach_count_${user.login}`)) || 0;
+        let loginKey = user.login || user.name;
+        let savedCount = parseInt(localStorage.getItem(`ach_count_${loginKey}`)) || 0;
 
         const achBtn = document.getElementById('achBtn');
 
@@ -1491,10 +1549,11 @@
 
             document.body.style.overflow = 'hidden'; 
 
-            let user = db.users.find(u => u.login === currentUser);
+            let user = db.users.find(u => u.login === currentUser || u.name === currentUser);
             if(user && user.achievements) {
                  let count = String(user.achievements).split(',').filter(s => s.trim() !== "").length;
-                 localStorage.setItem(`ach_count_${user.login}`, count);
+                 let loginKey = user.login || user.name;
+                 localStorage.setItem(`ach_count_${loginKey}`, count);
             }
 
             renderAchievements();
@@ -1519,7 +1578,7 @@
     }
 
     function renderAchievements() {
-        let user = db.users.find(u => u.login === currentUser);
+        let user = db.users.find(u => u.login === currentUser || u.name === currentUser);
         let achListEl = document.getElementById('achList');
 
         if (!user || !user.achievements) {
@@ -1619,7 +1678,7 @@
                 statItems += `
                 <div class="stat-item">
                     <div class="stat-val" style="font-size:18px;">${formatNumber(tPcs)}</div>
-                    <div class="stat-label">План</div>
+                    <div class="stat-label">План на місяць</div>
                 </div>`;
             }
             
@@ -1650,7 +1709,8 @@
         document.getElementById('statsCurrentMonthContainer').innerHTML = goalsHtml;
 
         // Datalist для порівняння (шукаємо по ПІБ)
-        let compareUsers = db.users.filter(u => u.login !== user.login);
+        let loginOrName = user.login || user.name;
+        let compareUsers = db.users.filter(u => u.login !== loginOrName && u.name !== loginOrName);
         let dlHtml = compareUsers.sort((a,b) => a.name.localeCompare(b.name)).map(u => {
             let cName = (u.name && String(u.name).trim() !== "" ? String(u.name) : u.login);
             return `<option value="${escapeHTMLAttr(cName)}" data-login="${escapeHTMLAttr(u.login)}"></option>`;
@@ -1725,18 +1785,18 @@
     function handleCompareSearch() {
         let input = document.getElementById('compareSearchInput');
         let list = document.getElementById('compareUsersList');
-        let val = input.value.trim();
+        let val = input.value.trim().toLowerCase();
         
         let matchedLogin = null;
         for (let i = 0; i < list.options.length; i++) {
-            if (list.options[i].value.toLowerCase() === val.toLowerCase()) {
-                matchedLogin = list.options[i].getAttribute('data-login');
+            if (list.options[i].value.toLowerCase() === val) {
+                matchedLogin = list.options[i].getAttribute('data-login') || list.options[i].value;
                 break;
             }
         }
 
         if (matchedLogin) {
-            let competitor = db.users.find(u => u.login === matchedLogin);
+            let competitor = db.users.find(u => (u.login || "").toLowerCase() === matchedLogin.toLowerCase() || (u.name || "").toLowerCase() === matchedLogin.toLowerCase());
             if (competitor && window.statsCurrentUserForCompare) {
                 document.getElementById('compareChartContainer').style.display = 'block';
                 renderComparisonChart('compareChart', window.statsCurrentUserForCompare, competitor);
@@ -1848,7 +1908,7 @@
     }
 
     function renderCourses(user) {
-        if (!user) user = db.users.find(u => u.login === currentUser);
+        if (!user) user = db.users.find(u => u.login === currentUser || u.name === currentUser);
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
@@ -2044,7 +2104,7 @@
         const list = document.getElementById('productList');
         const products = coursesMap[name];
 
-        let currentUserObj = windowViewingEmployee || db.users.find(u => u.login === currentUser);
+        let currentUserObj = windowViewingEmployee || db.users.find(u => u.login === currentUser || u.name === currentUser);
         let userResults = currentUserObj.results || {};
 
         let completedCount = 0;
@@ -2417,7 +2477,7 @@
         let timeSpent = totalTimeSpent;
 
         let cleanP = getCleanName(currentProductData.product);
-        let currentUserObj = db.users.find(u => u.login === currentUser);
+        let currentUserObj = db.users.find(u => u.login === currentUser || u.name === currentUser);
         if (!currentUserObj.results) currentUserObj.results = {};
 
         let oldRes = currentUserObj.results[cleanP] || "0/0%/0";
