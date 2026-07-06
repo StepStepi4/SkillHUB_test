@@ -106,26 +106,11 @@
             display: flex; align-items: center; gap: 6px; padding: 6px 10px; 
             background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
             font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; 
-            transition: all 0.3s ease;
         }
         .dot { width: 8px; height: 8px; border-radius: 50%; }
         .dot.green { background: #34d399; }
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
-
-        /* Анімації пульсації для статусу */
-        @keyframes pulse-yellow {
-            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
-        }
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
-        }
-        .dot.yellow.pulse { animation: pulse-yellow 1.5s infinite; }
-        .dot.green.pulse { animation: pulse-green 2s infinite; }
 
         /* ПЛАВАЮЧЕ МЕНЮ */
         .bottom-nav {
@@ -212,38 +197,14 @@
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
-        input[type="text"], input[type="number"], select, textarea { 
+        input, select, textarea { 
             width: 100%; padding: 16px 20px; border-radius: 12px; 
             font-size: 16px; font-family: inherit; font-weight: 500; 
             background: var(--input-bg); color: var(--text-main); 
             border: 1px solid var(--border); 
             outline: none; transition: 0.2s; -webkit-appearance: none; appearance: none;
         }
-        input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
-        
-        /* Повзунок шрифта iOS Style */
-        input[type="range"] {
-            -webkit-appearance: none; appearance: none;
-            width: 100%; background: transparent;
-            padding: 0; margin: 0;
-        }
-        input[type="range"]:focus { outline: none; }
-        input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 24px; width: 24px;
-            border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-            cursor: pointer;
-            margin-top: -10px;
-        }
-        [data-theme="dark"] input[type="range"]::-webkit-slider-thumb { background: #e5e5ea; }
-        input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px;
-            cursor: pointer;
-            background: var(--border);
-            border-radius: 2px;
-        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         
         select {
             background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='20' height='20' viewBox='0 0 24 24' fill='none' stroke='%238e8e93' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -280,8 +241,6 @@
         }
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
-        
-        .list-item.discount-card { background-color: transparent; }
         
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
         .list-item-title { font-size: 16px; font-weight: 600; line-height: 1.3;}
@@ -413,7 +372,7 @@
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
         
-        .desc-line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
+        .desc-line { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
         .desc-icon-box { display: flex; align-items: center; justify-content: center; font-size: 18px; width: 24px; min-width: 24px; background: transparent; border: none; }
@@ -422,29 +381,9 @@
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
-        /* Стилі для цін та анімації ярлика уцінки */
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
-        .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
-        
-        @keyframes swayTag {
-            0% { transform: rotate(-5deg); }
-            50% { transform: rotate(10deg); }
-            100% { transform: rotate(-5deg); }
-        }
-        
-        .discount-tag-icon {
-            position: absolute;
-            bottom: -22px; 
-            right: -10px;
-            width: 26px;
-            height: 26px;
-            transform-origin: top center;
-            animation: swayTag 3.5s ease-in-out infinite;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-            z-index: 10;
-            pointer-events: none;
-        }
+        .rezervy-price { font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
         
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
@@ -545,6 +484,7 @@
         /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
         /* ========================================================== */
         
+        /* Кнопка виклику пошуку поруч із вибором магазину */
         .reserves-search-trigger {
             width: 53px; height: 53px; flex-shrink: 0;
             background: var(--primary); color: white;
@@ -554,6 +494,7 @@
         }
         .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
 
+        /* Сама випадаюча панель (ховається за межами екрану зверху) */
         .top-search-panel {
             position: fixed; top: 0; left: 0; width: 100%; 
             background: var(--nav-bg); 
@@ -572,6 +513,7 @@
         }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
         
+        /* Клас, який активує анімацію випадання */
         .top-search-panel.show { 
             transform: translateY(0) scale(1); 
             opacity: 1;
@@ -587,6 +529,7 @@
             background: var(--card-bg); font-size: 16px; color: var(--text-main);
             outline: none; box-shadow: 0 0 0 3px var(--primary-light);
         }
+        /* Кнопка "Х" для очищення вводу */
         .top-search-clear {
             position: absolute; right: 10px; width: 24px; height: 24px;
             background: var(--text-muted); color: white; border: none; border-radius: 50%;
@@ -595,6 +538,7 @@
         }
         .top-search-clear:active { background: var(--danger); }
         
+        /* Кнопка скасування/закриття панелі */
         .top-search-close {
             background: transparent; border: none; color: var(--text-muted);
             font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
@@ -614,7 +558,7 @@
 
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
-    <div class="loader-text" id="mainLoaderText">Підготовка</div>
+    <div class="loader-text" id="mainLoaderText">Синхронізація даних...</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
     </div>
@@ -636,7 +580,7 @@
     
     <div class="status-container" id="statusContainer">
         <div class="status-badge">
-            <div id="statusDot" class="dot yellow pulse"></div>
+            <div id="statusDot" class="dot yellow"></div>
             <span id="statusText">Підключення</span>
         </div>
     </div>
@@ -686,7 +630,6 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
-        
         <div class="list-group">
             <div class="list-item">
                 <div class="list-item-content">
@@ -696,18 +639,6 @@
                 <button id="themeToggle" class="toggle-switch">
                     <div class="toggle-knob"></div>
                 </button>
-            </div>
-
-            <div class="list-item" style="flex-direction:column; align-items:flex-start;">
-                <div class="list-item-content" style="margin-bottom: 10px; width:100%;">
-                    <span class="list-item-title">Розмір тексту</span>
-                    <span class="list-item-subtitle">Налаштуйте масштаб інтерфейсу</span>
-                </div>
-                <div style="display:flex; align-items:center; width:100%; gap:12px; color:var(--text-muted);">
-                    <span style="font-size: 13px; font-weight:700;">A</span>
-                    <input type="range" id="fontSizeSlider" min="0.85" max="1.3" step="0.05" value="1" oninput="window.updateFontScale(this.value)">
-                    <span style="font-size: 20px; font-weight:700;">A</span>
-                </div>
             </div>
             
             <div class="list-item" style="flex-direction:column; align-items:flex-start;">
@@ -788,7 +719,7 @@
         <div id="rezervItemBody" class="modal-body">
             <div id="rezervTechInfo"></div>
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);">Рекомендовані сервіси</span>
                 <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
             </div>
             <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
@@ -922,56 +853,6 @@
 
 <script>
     window.currentDevicePrice = 0; 
-    
-    // Глобальні змінні для роботи з модальним вікном уцінки
-    window.currentRezervItem = null;
-    window.currentRezervPrice = 0;
-    window.currentRezervIsDiscount = false;
-
-    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
-    window.updateFontScale = function(scale) {
-        localStorage.setItem('skillhub_font_scale', scale);
-        let style = document.getElementById('dynamicFontScale');
-        if(!style) { 
-            style = document.createElement('style'); 
-            style.id = 'dynamicFontScale'; 
-            document.head.appendChild(style); 
-        }
-        style.innerHTML = `
-            :root {
-                --nav-height: calc(76px * ${scale});
-            }
-            input, select, textarea, button, .btn { font-size: calc(16px * ${scale}) !important; }
-            .list-item-title { font-size: calc(16px * ${scale}) !important; }
-            .list-item-subtitle { font-size: calc(13px * ${scale}) !important; }
-            .list-item-value { font-size: calc(16px * ${scale}) !important; }
-            .sc-title { font-size: calc(15px * ${scale}) !important; }
-            .sc-price { font-size: calc(15px * ${scale}) !important; }
-            .tech-val { font-size: calc(14px * ${scale}) !important; }
-            .tech-label { font-size: calc(11px * ${scale}) !important; }
-            .desc-line div { font-size: calc(13px * ${scale}) !important; }
-            .modal-title { font-size: calc(18px * ${scale}) !important; }
-            .rating-name { font-size: calc(15px * ${scale}) !important; }
-            .rating-score { font-size: calc(15px * ${scale}) !important; }
-            .rating-desc { font-size: calc(12px * ${scale}) !important; }
-            .rezervy-name { font-size: calc(14px * ${scale}) !important; }
-            .rezervy-cat { font-size: calc(12px * ${scale}) !important; }
-            .rezervy-price { font-size: calc(15px * ${scale}) !important; }
-            .sc-brand { font-size: calc(10px * ${scale}) !important; }
-            .status-badge { font-size: calc(11px * ${scale}) !important; }
-            .ua-name { font-size: calc(20px * ${scale}) !important; }
-            /* Масштабування нижньої панелі */
-            .nav-item span { font-size: calc(11px * ${scale}) !important; }
-            .nav-icon { width: calc(24px * ${scale}) !important; height: calc(24px * ${scale}) !important; }
-            .nav-icon.icon-bulb { width: calc(28px * ${scale}) !important; height: calc(28px * ${scale}) !important; }
-        `;
-    };
-
-    // Ініціалізація масштабу шрифтів
-    let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
-    document.getElementById('fontSizeSlider').value = savedFontScale;
-    window.updateFontScale(savedFontScale);
-    // --------------------------------------
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -997,7 +878,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzqN7GVBm8Q2CtutMNdxvLipQzjQ5zap0bL4d4plqphvNH3TJChsZFR9mf8nCbOMC8Gqw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzp0B9IQDgaET9NbDcp2ZHU7OwreCkjXA_Qb9qM2PbFHGD8tcnouC6NUOeqbBMW_-QwyA/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1382,7 +1263,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1397,39 +1278,6 @@
         for (let k in dict) { if (normalizeServiceName(k) === clean) return dict[k]; }
         return "";
     }
-    
-    window.findPriceForServiceText = function(name, p) {
-        let cleanName = normalizeServiceName(name);
-        let matchingTariffs = db.tariffs.filter(x => {
-            let n1 = normalizeServiceName(x.service);
-            let n2 = x.serviceRu ? normalizeServiceName(x.serviceRu) : "";
-            return n1.includes(cleanName) || cleanName.includes(n1) || (n2 && (n2.includes(cleanName) || cleanName.includes(n2)));
-        });
-        if (matchingTariffs.length === 0) return null;
-
-        let t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice);
-        if (!t) {
-            t = matchingTariffs.find(x => p >= x.minPrice && p <= x.maxPrice || (p === 0 && x.minPrice === 0)); 
-            if (!t) t = matchingTariffs[0];
-        }
-        
-        if (t && t.cost) {
-            let rawCost = t.cost.toString().trim();
-            if (rawCost.includes('%')) {
-                if (p > 0) {
-                    let numCost = Math.round(p * parseFloat(rawCost.replace(',', '.'))/100);
-                    return numCost.toLocaleString('uk-UA') + " ₴";
-                }
-                return rawCost;
-            } else {
-                let cleanCost = rawCost.replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.');
-                if (cleanCost === '') return rawCost;
-                let numCost = parseFloat(cleanCost);
-                return isNaN(numCost) ? rawCost : numCost.toLocaleString('uk-UA') + " ₴";
-            }
-        }
-        return null;
-    };
 
     function debounce(func, wait) {
         let timeout;
@@ -1459,19 +1307,10 @@
         const dot = document.getElementById('statusDot');
         const txt = document.getElementById('statusText');
         if(!dot || !txt) return;
-        
-        // Скидаємо попередні класи
         dot.className = 'dot'; 
-        
-        if (state === 'ok') {
-            dot.classList.add('green', 'pulse');
-        } else if (state === 'error') {
-            dot.classList.add('red');
-        } else if (state === 'loading') {
-            dot.classList.add('yellow', 'pulse');
-        } else {
-            dot.classList.add('yellow');
-        }
+        if (state === 'ok') dot.classList.add('green');
+        else if (state === 'error') dot.classList.add('red');
+        else dot.classList.add('yellow');
         txt.innerText = text;
     }
 
@@ -1590,7 +1429,7 @@
     window.init = init;
 
     async function refreshData(first = false) {
-        if(first) setAppStatus('loading', 'Підготовка');
+        if(first) setAppStatus('loading', 'Оновлення...');
         let pInt; 
         try {
             const controller = new AbortController();
@@ -1629,7 +1468,7 @@
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
-            setAppStatus('ok', 'Готовий до роботи');
+            setAppStatus('ok', 'Дані актуальні');
             
             setTimeout(() => {
                 if (db.appVersion && savedVersion !== db.appVersion) {
@@ -1745,14 +1584,11 @@
         let html = matches.map(r => {
             let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // ПЕРЕВІРКА НА УЦІНКУ + Витягування SN
-            let snMatchList = shortName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
-            let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
-            let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
+            // FIX: Екрануємо лапки спеціально для HTML-атрибуту onclick
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-
+            // Перевірка наявності категорії в базі
             let searchVal = normalize(r.cat); 
             let catExists = false;
             if (searchVal && db.categories && db.categories.length > 0) {
@@ -1762,28 +1598,18 @@
                     return cUa.includes(searchVal) || searchVal.includes(cUa);
                 });
             } else {
-                catExists = true; 
+                catExists = true; // Якщо порожнє, не підсвічуємо як помилку
             }
 
             let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
 
-            let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
-
-            let discountClass = isDiscount ? "discount-card" : "";
-
             return `
-            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
+            <div class="list-item" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}')">
                 <div class="list-item-content">
-                    <div style="display:flex; align-items:center; gap: 4px;">
-                        <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
-                    </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
-                    ${garantiyaHtml}
+                    <span class="list-item-title rezervy-name">${window.escapeHTML(shortName)}</span>
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}">${window.escapeHTML(r.cat)}</span>
                 </div>
-                <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
-                    ${Math.round(r.price).toLocaleString('uk-UA')} ₴
-                    ${discountIconHtml}
-                </div>
+                <div class="list-item-value rezervy-price">${Math.round(r.price).toLocaleString('uk-UA')} ₴</div>
             </div>`;
         }).join('');
         safeUpdateHTML(cont, html);
@@ -1796,23 +1622,27 @@
     const topInput = document.getElementById('topReservesSearchInput');
     const clearTopBtn = document.getElementById('clearTopSearchBtn');
 
+    // Відкриття панелі при кліку на лупу
     openTopBtn.onclick = () => {
         topPanel.classList.add('show');
         setTimeout(() => topInput.focus(), 300);
     };
 
+    // Закриття панелі
     closeTopBtn.onclick = () => {
         topPanel.classList.remove('show');
         topInput.value = '';
         clearTopBtn.style.display = 'none';
-        window.renderRezervyList(); 
+        window.renderRezervyList(); // Скидаємо фільтр
     };
 
+    // Подія при введенні тексту (показ хрестика і фільтрація)
     topInput.addEventListener('input', () => {
         clearTopBtn.style.display = topInput.value.length > 0 ? 'flex' : 'none';
         window.renderRezervyList();
     });
 
+    // Клік по "Х" в пошуку
     clearTopBtn.onclick = () => {
         topInput.value = '';
         clearTopBtn.style.display = 'none';
@@ -1820,6 +1650,7 @@
         window.renderRezervyList();
     };
     
+    // Закриття панелі при кліку в порожнє місце
     document.addEventListener('click', function(event) {
         if (topPanel.classList.contains('show')) {
             if (!topPanel.contains(event.target) && event.target !== openTopBtn && !openTopBtn.contains(event.target)) {
@@ -1831,24 +1662,14 @@
         }
     });
 
-    window.openRezervItemModal = function(catName, price, itemName, isDiscount = false) {
-        let sn = "";
-        let cleanItemName = itemName;
-        
-        let snMatch = itemName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
-        if (snMatch) {
-            sn = snMatch[1].trim();
-            cleanItemName = itemName.replace(snMatch[0], '').trim();
-        }
-
+    window.openRezervItemModal = function(catName, price, itemName) {
         let searchVal = normalize(catName); let foundItem = null;
         if (db.categories && db.categories.length > 0) foundItem = db.categories.find(c => normalize(c.ua).includes(searchVal) || searchVal.includes(normalize(c.ua)));
 
-        if (foundItem || isDiscount) {
-            let itemData = foundItem || { category: catName, service: "" };
-            document.getElementById('rezervItemTitle').innerText = cleanItemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
+        if (foundItem) {
+            document.getElementById('rezervItemTitle').innerText = itemName + ` — ${Math.round(price).toLocaleString('uk-UA')} ₴`;
             window.openModalBase('rezervItemModal');
-            renderRezervItemServices(itemData, price, isDiscount, sn);
+            renderRezervItemServices(foundItem, price);
         } else {
             alert(`Категорію "${catName}" не знайдено.`);
         }
@@ -1899,138 +1720,31 @@
         document.querySelector('.gallery-nav.next').style.display = currentPhotos.length > 1 ? 'block' : 'none';
     }
 
-    window.selectDiscountReason = function(reason) {
-        let descBox = document.getElementById('discountReasonDesc');
-        
-        if (!reason) {
-            descBox.style.display = 'none';
-            window.updateRezervServicesFiltered(""); 
-            return;
-        }
-
-        // Показуємо опис
-        let descRaw = window.findInDb(db.descriptions, reason);
-        if (descRaw) {
-            descBox.innerHTML = parseDescriptionLines(descRaw);
-            descBox.style.display = 'block';
-        } else {
-            descBox.style.display = 'none';
-        }
-
-        // Фільтруємо послуги
-        window.updateRezervServicesFiltered(reason);
-    };
-
-    window.updateRezervServicesFiltered = function(discountReason) {
-        let item = window.currentRezervItem;
-        let p = window.currentRezervPrice;
-        let listEl = document.getElementById('rezervServiceList');
-        let btn = document.getElementById('rezervCompareBtn');
-
-        if (!item || !item.service) {
-            safeUpdateHTML(listEl, '<div style="color:var(--text-muted);">Немає сервісів</div>');
-            if(btn) btn.style.display = 'none';
-            return;
-        }
-
-        // ЯКЩО УЦІНКА, АЛЕ ПРИЧИНУ ЩЕ НЕ ОБРАНО -> ховаємо послуги
-        if (window.currentRezervIsDiscount && !discountReason) {
-            let warnHtml = `
-            <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--clr-support-bg); border: 1px solid rgba(253, 224, 71, 0.4); border-radius: 12px; padding: 16px; margin-top: 8px;">
-                <span style="font-size: 22px; line-height: 1;">💡</span>
-                <span style="font-size: 13px; font-weight: 600; color: var(--clr-support-text); line-height: 1.4;">
-                    Будь ласка, оберіть причину уцінки вище, щоб побачити доступні сервіси для цього пристрою.
-                </span>
-            </div>`;
-            safeUpdateHTML(listEl, warnHtml);
-            if(btn) btn.style.display = 'none';
-            return;
-        }
-
-        let baseServicesArray = calculateServicesArray(item, p);
-
-        // ЛОГІКА ПЕРЕТИНУ: Залишаємо тільки ті базові сервіси, які дозволені для обраної уцінки
-        if (discountReason && db.categories) {
-            let discountCat = db.categories.find(c => String(c.ua).trim().toLowerCase() === String(discountReason).trim().toLowerCase());
-            if (discountCat && discountCat.service) {
-                let allowedDiscountServices = discountCat.service.split('|').map(s => normalizeServiceName(s));
-
-                if (allowedDiscountServices.length > 0) {
-                    baseServicesArray = baseServicesArray.filter(s => {
-                        let sClean = normalizeServiceName(s.name);
-                        return allowedDiscountServices.some(ds => sClean.includes(ds) || ds.includes(sClean));
-                    });
-                } else {
-                    baseServicesArray = [];
-                }
-            } else {
-                baseServicesArray = [];
-            }
-        }
-
-        baseServicesArray.forEach(s => {
-            s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
-        });
-
-        if (btn) {
-            if (baseServicesArray.filter(s => !s.isPackage).length >= 2) btn.style.display = 'block';
-            else {
-                btn.style.display = 'none';
-                if (isModalCompareMode) window.toggleModalCompareMode();
-            }
-        }
-
-        window.lastModalServices = baseServicesArray;
-        safeUpdateHTML(listEl, baseServicesArray.map(s => generateServiceCardHTML(s, true, false)).join(''));
-    };
-
-    function renderRezervItemServices(item, p, isDiscount = false, sn = "") {
+    function renderRezervItemServices(item, p) {
         try {
-            window.currentRezervItem = item;
-            window.currentDevicePrice = p; 
-            window.currentRezervPrice = p;
-            window.currentRezervIsDiscount = isDiscount;
-            
-            let snHtml = "";
-            if (sn) {
-                snHtml = `
-                <div style="display:flex; justify-content:space-between; align-items:center; background:var(--input-bg); padding:12px 16px; border-radius:12px; margin-bottom:16px; border:1px solid var(--border);">
-                    <div style="font-size:12px; color:var(--text-muted); font-weight:600; text-transform:uppercase;">Серійний номер:</div>
-                    <div style="font-size:15px; font-weight:800; color:var(--primary); cursor:pointer; display:flex; align-items:center; gap:6px;" onclick="window.copyCode(event, this, '${window.escapeForJS(sn)}')">${sn} 📋</div>
-                </div>`;
-            }
-
+            window.currentDevicePrice = p; // Зберігаємо ціну
             let techStr = buildTechInfoHTML(item, p);
+            safeUpdateHTML('rezervTechInfo', techStr);
+            document.getElementById('rezervTechInfo').style.display = techStr ? 'block' : 'none';
 
-            let discountHtml = "";
-            if (isDiscount) {
-                let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка')).sort();
-                let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
+            let listEl = document.getElementById('rezervServiceList');
+            if (!item.service) { safeUpdateHTML(listEl, '<div style="color:var(--text-muted);">Немає сервісів</div>'); return; }
 
-                discountHtml = `
-                <div id="discountReasonBlock" style="margin-top: 16px; margin-bottom: 8px;">
-                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BA%D0%B0', '_blank')">
-                        <span style="font-size: 18px;">❓</span> Як дізнатись причину уцінки
-                    </button>
-                    <div class="input-group" style="position:relative; margin-bottom: 12px;">
-                        <select id="discountReasonSelect" onchange="window.selectDiscountReason(this.value)" style="font-weight: 600; color: var(--text-main); text-align: center; text-align-last: center;">
-                            <option value="">-- Оберіть причину уцінки --</option>
-                            ${optionsHtml}
-                        </select>
-                    </div>
-                    <div id="discountReasonDesc" style="display: none; background: var(--card-bg); border-radius: 12px; border: 1px solid var(--primary-light); padding: 12px; margin-bottom: 12px;"></div>
-                </div>`;
+            let dataForSort = calculateServicesArray(item, p);
+            
+            dataForSort.forEach(s => {
+                s.descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), s.code);
+            });
+
+            window.lastModalServices = dataForSort;
+            
+            let btn = document.getElementById('rezervCompareBtn');
+            if (btn) {
+                if (dataForSort.filter(s => !s.isPackage).length >= 2) btn.style.display = 'block';
+                else btn.style.display = 'none';
             }
 
-            safeUpdateHTML('rezervTechInfo', snHtml + techStr + discountHtml);
-            document.getElementById('rezervTechInfo').style.display = (snHtml || techStr || discountHtml) ? 'block' : 'none';
-
-            let titleEl = document.getElementById('rezervRecommendTitle');
-            if (titleEl) titleEl.innerText = isDiscount ? "Сервіси для уцінки" : "Рекомендовані сервіси";
-
-            // Виклик початкового рендерингу (без обраної уцінки - сховає послуги або покаже всі для звичайного товару)
-            window.updateRezervServicesFiltered("");
-
+            requestAnimationFrame(() => { safeUpdateHTML(listEl, dataForSort.map(s => generateServiceCardHTML(s, true, false)).join('')); });
         } catch(e) { console.error(e); }
     }
 
@@ -2147,11 +1861,8 @@
         }
         
         const fields = [
-            ['💵', 'Платний ремонт', calcPrice], 
-            ['🔧', 'Найдорожчі деталі', item.expensiveParts],
-            ['✅', 'Гарантійні випадки', item.garant], 
-            ['🛡️', 'Гарантія', item.garantiya], 
-            ['❌', 'Негарантійні випадки', item.negarant]
+            ['💵', 'Платний ремонт', calcPrice], ['🔧', 'Найдорожчі деталі', item.expensiveParts],
+            ['✅', 'Гарантійні випадки', item.garant], ['❌', 'Негарантійні випадки', item.negarant]
         ];
         
         fields.forEach(f => {
@@ -2203,8 +1914,7 @@
             if (l.startsWith('=')) return `<div style="font-size:11px; font-weight:700; text-transform:uppercase; color:var(--text-muted); margin: 12px 0 6px 0;">${l.substring(1).trim()}</div>`;
             
             let match = l.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/); 
-            let e = match ? match[0] : "🔹"; 
-            let t = match ? l.replace(e, '').trim() : l;
+            let e = match ? match[0] : "🔹"; let t = match ? l.replace(e, '').trim() : l;
             
             if (!match) {
                 let lower = t.toLowerCase();
@@ -2217,23 +1927,10 @@
                 else e = '🔹';
             }
 
-            let priceBadge = '';
-            let serviceMatch = t.match(/"([^"]+)"/);
-            if (serviceMatch && window.currentDevicePrice > 0) {
-                let sName = serviceMatch[1];
-                let costText = window.findPriceForServiceText(sName, window.currentDevicePrice);
-                if (costText) {
-                    priceBadge = `<div class="sc-price" style="font-size: 13px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap; margin-left: 8px;">${costText}</div>`;
-                }
-            }
-
             return `
-            <div class="desc-line" style="display:flex; align-items:center; width:100%; justify-content:space-between; padding: 10px 0;">
-                <div style="display:flex; align-items:center; gap:10px; flex:1; padding-right:10px;">
-                    <div class="desc-icon-box" style="display:flex; align-items:center; justify-content:center; flex-shrink:0;">${window.renderIcon(e)}</div>
-                    <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; word-break: break-word;">${t}</div>
-                </div>
-                ${priceBadge}
+            <div class="desc-line">
+                <div class="desc-icon-box" style="display:flex; align-items:center; justify-content:center;">${window.renderIcon(e)}</div>
+                <div style="font-size: 13px; line-height: 1.4; color: var(--text-main); font-weight: 500; flex: 1;">${t}</div>
             </div>`;
         }).join('');
         return html;
@@ -2885,60 +2582,17 @@
         window.openModalBase('descModal', name, code, priceLabel);
     }
 
-    // Оновлена функція Changelog для відображення як в Telegram
     window.showChangelogModal = function(version, changelogText) {
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
-        // Розділяємо текст на блоки по символу "--"
-        let blocks = String(changelogText).split(/(?:\r?\n)?\s*--\s*(?:\r?\n)?/);
-        let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
-        
-        blocks.forEach((block) => {
-            if (!block.trim()) return;
-            
-            let lines = block.split(/\r?\n/);
-            let blockHtml = '';
-            
-            lines.forEach((line, index) => {
-                let l = line.trim();
-                if (!l) return;
-                
-                let lineStyle = "";
-                
-                // Перевірка маркерів кастомного форматування
-                if (l.startsWith('(AA+)')) {
-                    l = l.substring(5).trim().toUpperCase();
-                    lineStyle += " font-weight:800;";
-                } else if (l.startsWith('(Аа+)')) {
-                    l = l.substring(5).trim();
-                    l = l.charAt(0).toUpperCase() + l.slice(1);
-                    lineStyle += " font-weight:800;";
-                } else if (l.startsWith('(аа*)')) {
-                    l = l.substring(5).trim();
-                    lineStyle += " font-style:italic;";
-                } else if (l.startsWith('(КР+)')) {
-                    l = l.substring(5).trim().toUpperCase();
-                    lineStyle += " font-weight:800; color:var(--danger);";
-                } else if (l.startsWith('(Кр+)')) {
-                    l = l.substring(5).trim();
-                    lineStyle += " font-weight:800; color:var(--danger);";
-                } else if (l.startsWith('(кр*)')) {
-                    l = l.substring(5).trim();
-                    lineStyle += " font-style:italic; color:var(--danger);";
-                }
-
-                // Збільшення Емодзі
-                l = l.replace(/([\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '<span style="font-size: 1.5em; vertical-align: middle; line-height: 1;">$1</span>');
-
-                let margin = blockHtml !== '' ? "margin-top: 6px;" : "";
-                blockHtml += `<div style="${lineStyle} ${margin}">${l}</div>`;
-            });
-            
-            if (blockHtml) {
-                html += `<div style="background:var(--card-bg); padding:12px 16px; border-radius:16px; border:1px solid var(--border); box-shadow: 0 2px 8px rgba(0,0,0,0.04); font-size:14px; line-height:1.5; color:var(--text-main);">${blockHtml}</div>`;
+        let lines = String(changelogText).split('\n'); let html = '<div style="background:var(--card-bg); border-radius:16px; border:1px solid var(--border);">';
+        lines.forEach((line, index) => {
+            const l = line.trim();
+            if (l) {
+                let border = index !== lines.length - 1 ? 'border-bottom:1px solid var(--border);' : '';
+                html += `<div style="display:flex; align-items:flex-start; font-size:13px; line-height:1.4; color:var(--text-main); padding:16px; ${border}"><span style="flex:1;">${l}</span></div>`;
             }
         });
-        
         html += '</div>';
         
         safeUpdateHTML('modalBody', html);
@@ -2995,6 +2649,57 @@
             btn.disabled = false;
             btn.innerText = 'ВІДПРАВИТИ';
         });
+    };
+
+    // --- ЛОГИКА АВТОРИЗАЦИИ НАВЧАННЯ ---
+    window.openEduLoginModal = function() {
+        const savedLogin = localStorage.getItem('edu_saved_login');
+        const savedPass = localStorage.getItem('edu_saved_pass');
+        
+        if (savedLogin && savedPass && db.educationData) {
+            const isValid = db.educationData.users.some(u => String(u.login).trim() === String(savedLogin).trim() && String(u.pass).trim() === String(savedPass).trim());
+            if (isValid) {
+                window.location.href = 'education.html';
+                return;
+            }
+        }
+        
+        document.getElementById('eduLoginInput').value = savedLogin || "";
+        document.getElementById('eduPassInput').value = savedPass || "";
+        document.getElementById('eduRememberCheck').checked = !!savedLogin;
+        document.getElementById('eduAuthError').style.display = 'none';
+        
+        window.openModalBase('eduLoginModal');
+    };
+
+    window.processEduLogin = function() {
+        const login = document.getElementById('eduLoginInput').value.trim();
+        const pass = document.getElementById('eduPassInput').value.trim();
+        const remember = document.getElementById('eduRememberCheck').checked;
+        const errEl = document.getElementById('eduAuthError');
+
+        if (!db.educationData || !db.educationData.users) {
+            errEl.innerText = "База даних ще завантажується...";
+            errEl.style.display = 'block';
+            return;
+        }
+
+        const isValid = db.educationData.users.some(u => String(u.login).trim() === login && String(u.pass).trim() === pass);
+
+        if (isValid) {
+            if (remember) {
+                localStorage.setItem('edu_saved_login', login);
+                localStorage.setItem('edu_saved_pass', pass);
+            } else {
+                localStorage.removeItem('edu_saved_login');
+                localStorage.removeItem('edu_saved_pass');
+                sessionStorage.setItem('edu_temp_auth', 'true'); 
+            }
+            window.location.href = 'education.html';
+        } else {
+            errEl.innerText = "Невірний логін або пароль!";
+            errEl.style.display = 'block';
+        }
     };
 
     init();
