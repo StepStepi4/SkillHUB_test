@@ -780,34 +780,6 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
-<div id="rezervItemModal" class="modal">
-    <div class="modal-content" style="max-height: 95vh;">
-        <div class="modal-header" style="align-items:flex-start;">
-            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
-            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
-        </div>
-        <div id="rezervItemBody" class="modal-body">
-            <div id="rezervTechInfo"></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
-                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
-            </div>
-            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
-        </div>
-    </div>
-</div>
-
-<div id="descModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
-            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
-        </div>
-        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
-    </div>
-</div>
-
 <div id="klochCalcModal" class="modal">
     <div class="modal-content">
         <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
@@ -868,6 +840,34 @@
             </div>
 
         </div>
+    </div>
+</div>
+
+<div id="rezervItemModal" class="modal">
+    <div class="modal-content" style="max-height: 95vh;">
+        <div class="modal-header" style="align-items:flex-start;">
+            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
+            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
+        </div>
+        <div id="rezervItemBody" class="modal-body">
+            <div id="rezervTechInfo"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
+                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
+            </div>
+            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="descModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
+            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
+        </div>
+        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
+        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
     </div>
 </div>
 
@@ -1064,8 +1064,8 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwKJ92A7UwNx7Pvj2NABaUeq44d3nUecdK0j7Mu7jtbzbHfuxzIrIgolqT4hWgecwIzEQ/exec';
-    const CACHE_KEY = 'skillhub_v2_flat'; // Змінено ключ кешу для примусового оновлення даних
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxX8HSusB0MTLhBQnlQ_GwnwM60ENEq4yHsgUJBOUxmrJpISwv322QjGKVY33iYmMNaCQ/exec';
+    const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1450,7 +1450,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1528,7 +1528,6 @@
         const txt = document.getElementById('statusText');
         if(!dot || !txt) return;
         
-        // Скидаємо попередні класи
         dot.className = 'dot'; 
         
         if (state === 'ok') {
@@ -1592,7 +1591,6 @@
         safeUpdateHTML(container, html);
     };
 
-    // --- ЛОГІКА КАЛЬКУЛЯТОРА КЛОЧКІВСЬКОЇ ---
     window.openKlochCalc = function() {
         if (db.klochCalcData && db.klochCalcData.relevance) {
             document.getElementById('klochRelevance').innerText = db.klochCalcData.relevance;
@@ -1624,7 +1622,6 @@
             if (matchedRule) {
                 appliedPercent = matchedRule.percent;
             } else if (rules.length > 0 && price > rules[rules.length - 1].max) {
-                // Якщо сума вище останнього максимального кроку - множимо на останній коефіцієнт
                 appliedPercent = rules[rules.length - 1].percent;
             }
             
@@ -1744,7 +1741,6 @@
             navigator.clipboard.writeText(text).then(() => successAnim()).catch(() => fallbackCopy());
         } else fallbackCopy();
     }
-    // ------------------------------------------
 
     window.renderRatingModalContent = function() {
         const container = document.getElementById('ratingModalBody');
@@ -1955,14 +1951,11 @@
         
         let matches = db.rezervyData.filter(r => r.store === store);
 
-        // Фільтрація по пошуку (Додано безпечний доступ до r.name та r.cat, щоб уникнути помилок .toLowerCase())
         if (searchQuery) {
             matches = matches.filter(r => {
-                let nameStr = r.name ? String(r.name) : "";
-                let catStr = r.cat ? String(r.cat) : "";
-                let shortName = nameStr.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
-                let catName = catStr.toLowerCase();
-                return shortName.includes(searchQuery) || catName.includes(searchQuery) || nameStr.toLowerCase().includes(searchQuery);
+                let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
+                let catName = r.cat.toLowerCase();
+                return shortName.includes(searchQuery) || catName.includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
             });
         }
 
@@ -1971,18 +1964,17 @@
         matches.sort((a, b) => b.price - a.price);
 
         let html = matches.map(r => {
-            let nameStr = r.name ? String(r.name) : "";
-            let shortName = nameStr.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
+            let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
-            // ПЕРЕВІРКА НА УЦІНКУ + Витягування SN
             let snMatchList = shortName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
-            let safeCatOnClick = String(r.cat || "").replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName || "").replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            // ВИПРАВЛЕННЯ: Екрануємо подвійні лапки для HTML-атрибуту onclick 
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
-            let searchVal = normalize(r.cat || ""); 
+            let searchVal = normalize(r.cat); 
             let catExists = false;
             if (searchVal && db.categories && db.categories.length > 0) {
                 catExists = db.categories.some(c => {
@@ -1995,9 +1987,7 @@
             }
 
             let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
-
             let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
-
             let discountClass = isDiscount ? "discount-card" : "";
 
             return `
@@ -2006,7 +1996,7 @@
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat || "")}</span>
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
@@ -2018,7 +2008,6 @@
         safeUpdateHTML(cont, html);
     }
 
-    // --- ЛОГІКА ДЛЯ ВЕРХНЬОЇ ПАНЕЛІ ПОШУКУ ---
     const topPanel = document.getElementById('topSearchPanel');
     const openTopBtn = document.getElementById('openTopSearchBtn');
     const closeTopBtn = document.getElementById('closeTopSearchBtn');
@@ -2062,12 +2051,12 @@
 
     window.openRezervItemModal = function(catName, price, itemName, isDiscount = false) {
         let sn = "";
-        let cleanItemName = itemName || "";
+        let cleanItemName = itemName;
         
-        let snMatch = cleanItemName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
+        let snMatch = itemName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
         if (snMatch) {
             sn = snMatch[1].trim();
-            cleanItemName = cleanItemName.replace(snMatch[0], '').trim();
+            cleanItemName = itemName.replace(snMatch[0], '').trim();
         }
 
         let searchVal = normalize(catName); let foundItem = null;
@@ -2137,7 +2126,6 @@
             return;
         }
 
-        // Показуємо опис
         let descRaw = window.findInDb(db.descriptions, reason);
         if (descRaw) {
             descBox.innerHTML = parseDescriptionLines(descRaw);
@@ -2146,7 +2134,6 @@
             descBox.style.display = 'none';
         }
 
-        // Фільтруємо послуги
         window.updateRezervServicesFiltered(reason);
     };
 
@@ -2162,7 +2149,6 @@
             return;
         }
 
-        // ЯКЩО УЦІНКА, АЛЕ ПРИЧИНУ ЩЕ НЕ ОБРАНО -> ховаємо послуги
         if (window.currentRezervIsDiscount && !discountReason) {
             let warnHtml = `
             <div style="display: flex; align-items: flex-start; gap: 12px; background: var(--clr-support-bg); border: 1px solid rgba(253, 224, 71, 0.4); border-radius: 12px; padding: 16px; margin-top: 8px;">
@@ -2178,7 +2164,6 @@
 
         let baseServicesArray = calculateServicesArray(item, p);
 
-        // ЛОГІКА ПЕРЕТИНУ: Залишаємо тільки ті базові сервіси, які дозволені для обраної уцінки
         if (discountReason && db.categories) {
             let discountCat = db.categories.find(c => String(c.ua).trim().toLowerCase() === String(discountReason).trim().toLowerCase());
             if (discountCat && discountCat.service) {
@@ -2236,9 +2221,12 @@
                 let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка')).sort();
                 let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
 
+                // ВИПРАВЛЕННЯ: Оновлено посилання для кнопки "Як дізнатись причину уцінки"
+                let newSiteUrl = "https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BD%D0%BA%D0%B0?authuser=0";
+                
                 discountHtml = `
                 <div id="discountReasonBlock" style="margin-top: 16px; margin-bottom: 8px;">
-                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BA%D0%B0', '_blank')">
+                    <button class="btn" style="border-radius: 12px; font-size: 15px; background: var(--card-bg); color: var(--text-main); border: 2px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); font-weight: 700; width: 100%; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px;" onclick="window.open('${newSiteUrl}', '_blank')">
                         <span style="font-size: 18px;">❓</span> Як дізнатись причину уцінки
                     </button>
                     <div class="input-group" style="position:relative; margin-bottom: 12px;">
@@ -2257,7 +2245,6 @@
             let titleEl = document.getElementById('rezervRecommendTitle');
             if (titleEl) titleEl.innerText = isDiscount ? "Сервіси для уцінки" : "Рекомендовані сервіси";
 
-            // Виклик початкового рендерингу (без обраної уцінки - сховає послуги або покаже всі для звичайного товару)
             window.updateRezervServicesFiltered("");
 
         } catch(e) { console.error(e); }
@@ -3114,6 +3101,7 @@
         window.openModalBase('descModal', name, code, priceLabel);
     }
 
+    // Оновлена функція Changelog для відображення як в Telegram
     window.showChangelogModal = function(version, changelogText) {
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
