@@ -955,8 +955,8 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxOheaO5dCbXcWAvFT_B39PIYqGIUBfuWlnH7PbKv8F--ZWWmf39QIY6qRyRWxNVkDESg/exec';
-    const CACHE_KEY = 'skillhub_v1_flat'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxX8HSusB0MTLhBQnlQ_GwnwM60ENEq4yHsgUJBOUxmrJpISwv322QjGKVY33iYmMNaCQ/exec';
+    const CACHE_KEY = 'skillhub_v2_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1883,8 +1883,8 @@
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
-            let safeCatOnClick = window.escapeForJS(rCat).replace(/"/g, '&quot;');
-            let safeNameOnClick = window.escapeForJS(shortName).replace(/"/g, '&quot;');
+            let safeCatOnClick = window.escapeForJS(rCat).replace(/"/g, '"');
+            let safeNameOnClick = window.escapeForJS(shortName).replace(/"/g, '"');
 
             let searchVal = normalize(rCat); 
             let catExists = false;
