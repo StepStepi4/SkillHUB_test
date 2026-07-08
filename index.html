@@ -113,7 +113,6 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
-        /* Анімації пульсації для статусу */
         @keyframes pulse-yellow {
             0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
             70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
@@ -186,12 +185,8 @@
             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
         }
         
-        .nav-item.active { 
-            color: var(--rozetka-green-dark); 
-        }
-        [data-theme="dark"] .nav-item.active { 
-            color: var(--primary); 
-        }
+        .nav-item.active { color: var(--rozetka-green-dark); }
+        [data-theme="dark"] .nav-item.active { color: var(--primary); }
         
         .nav-item.active .nav-icon { 
             transform: translateY(-2px) scale(1.15); 
@@ -206,9 +201,7 @@
             transform: translateY(-1px); 
             text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); 
         }
-        [data-theme="dark"] .nav-item.active span {
-            text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
-        }
+        [data-theme="dark"] .nav-item.active span { text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2); }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -221,28 +214,18 @@
         }
         input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         
-        /* Повзунок шрифта iOS Style */
         input[type="range"] {
             -webkit-appearance: none; appearance: none;
-            width: 100%; background: transparent;
-            padding: 0; margin: 0;
+            width: 100%; background: transparent; padding: 0; margin: 0;
         }
         input[type="range"]:focus { outline: none; }
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            height: 24px; width: 24px;
-            border-radius: 50%;
-            background: #ffffff;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
-            cursor: pointer;
-            margin-top: -10px;
+            -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
+            background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; margin-top: -10px;
         }
         [data-theme="dark"] input[type="range"]::-webkit-slider-thumb { background: #e5e5ea; }
         input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px;
-            cursor: pointer;
-            background: var(--border);
-            border-radius: 2px;
+            width: 100%; height: 4px; cursor: pointer; background: var(--border); border-radius: 2px;
         }
         
         select {
@@ -250,7 +233,7 @@
             background-repeat: no-repeat; background-position: right 16px center; cursor: pointer;
         }
         
-        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; }
+        .clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); width: 24px; height: 24px; background-color: var(--primary); border: none; border-radius: 50%; cursor: pointer; display: none; padding: 0; transition: background-color 0.2s, transform 0.1s; -webkit-tap-highlight-color: transparent; color: white; font-size: 18px; font-weight: bold; line-height: 24px; text-align: center; z-index: 10; }
         .clear-btn:active { background-color: var(--danger); transform: translateY(-50%) scale(1.1); }
 
         .btn {
@@ -280,7 +263,6 @@
         }
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
-        
         .list-item.discount-card { background-color: transparent; }
         
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
@@ -309,14 +291,8 @@
         .service-card:active { background: var(--input-bg); transform: scale(0.98); }
         
         .sc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;}
-        
-        .sc-brand { 
-            font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; 
-            border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;
-        }
-        
+        .sc-brand { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;}
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
-        
         .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
@@ -348,7 +324,6 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
         .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
         
-        /* ПРЕМІАЛЬНА КНОПКА ЗАКРИТТЯ "Х" */
         .modal-close { 
             background: var(--card-bg); border: 1px solid var(--border); 
             width: 36px; height: 36px; border-radius: 50%; 
@@ -359,10 +334,8 @@
             position: relative; flex-shrink: 0;
         }
         .modal-close::before, .modal-close::after {
-            content: ''; position: absolute;
-            width: 14px; height: 2px;
-            background-color: currentColor;
-            border-radius: 2px; transition: 0.2s;
+            content: ''; position: absolute; width: 14px; height: 2px;
+            background-color: currentColor; border-radius: 2px; transition: 0.2s;
         }
         .modal-close::before { transform: rotate(45deg); }
         .modal-close::after { transform: rotate(-45deg); }
@@ -398,21 +371,17 @@
         .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); pointer-events: none;}
         .service-card.compare-mode { padding-left: 50px; }
         .service-card.compare-mode .checkbox { left: 16px; }
-        
         .service-card.selected { border-color: var(--primary); background: var(--primary-light); }
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        .desc-toggle-wrapper {
-            display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
-        }
+        .desc-toggle-wrapper { display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;}
         .desc-toggle-wrapper svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.5; transition: transform 0.3s ease; }
         .desc-content { display: none; padding-top: 12px; margin-top: 8px; border-top: 1px dashed var(--border); }
         .desc-content.show { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
-        
         .desc-line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
@@ -422,7 +391,6 @@
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
-        /* Стилі для цін та анімації ярлика уцінки */
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
@@ -434,16 +402,8 @@
         }
         
         .discount-tag-icon {
-            position: absolute;
-            bottom: -22px; 
-            right: -10px;
-            width: 26px;
-            height: 26px;
-            transform-origin: top center;
-            animation: swayTag 3.5s ease-in-out infinite;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
-            z-index: 10;
-            pointer-events: none;
+            position: absolute; bottom: -22px; right: -10px; width: 26px; height: 26px;
+            transform-origin: top center; animation: swayTag 3.5s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 10; pointer-events: none;
         }
         
         #rezervItemModal { z-index: 100010; }
@@ -454,7 +414,7 @@
         #ratingModal { z-index: 100045; }
         #klochCalcModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
-        
+
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
         .gallery-nav.next { right: 10px; }
@@ -478,13 +438,7 @@
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
 
-        .cert-manual-wrapper {
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            color: #334155; line-height: 1.4; max-width: 800px;
-            margin: 0 auto; padding: 12px; background-color: #f8fafc;
-            border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            text-align: left; font-size: 12px;
-        }
+        .cert-manual-wrapper { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 12px; background-color: #f8fafc; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left; font-size: 12px;}
         .cert-header { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 0; font-size: 15px; font-weight: 700; }
         .cert-alert { padding: 10px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid; font-size: 12px; }
         .cert-alert.warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
@@ -494,10 +448,7 @@
         .cert-steps { margin: 10px 0 0 0; padding-left: 0; list-style-type: none; counter-reset: step-counter; }
         .cert-steps li { position: relative; padding-left: 32px; margin-bottom: 12px; font-size: 12px; }
         .cert-steps li::before {
-            content: counter(step-counter); counter-increment: step-counter; position: absolute;
-            left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+            content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
         }
         .cert-highlight { font-weight: 600; color: #111827; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-size: 11px; white-space: nowrap; }
         .brace-highlight { position: relative; display: inline-block; padding-bottom: 6px; font-weight: 600; white-space: nowrap; }
@@ -507,26 +458,11 @@
             background-size: 100% 100%; background-repeat: no-repeat;
         }
         
-        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
-        .rating-group {
-            margin-bottom: 20px;
-            padding-bottom: 16px;
-            border-bottom: 1px solid rgba(0,0,0,0.06);
-        }
-        [data-theme="dark"] .rating-group {
-            border-bottom: 1px solid rgba(255,255,255,0.08);
-        }
-        .rating-group:last-child {
-            border-bottom: none;
-            margin-bottom: 0;
-            padding-bottom: 0;
-        }
+        .rating-group { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.06); }
+        [data-theme="dark"] .rating-group { border-bottom: 1px solid rgba(255,255,255,0.08); }
+        .rating-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
 
-        .rating-item {
-            display: flex; align-items: center;
-            padding: 12px 16px; background: var(--card-bg);
-            border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
-        }
+        .rating-item { display: flex; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
         .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
         .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
         .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706; }
@@ -542,65 +478,21 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        /* ========================================================== */
-        /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
-        /* ========================================================== */
-        
-        .reserves-search-trigger {
-            width: 53px; height: 53px; flex-shrink: 0;
-            background: var(--primary); color: white;
-            border: none; border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: 0.2s;
-        }
+        .reserves-search-trigger { width: 53px; height: 53px; flex-shrink: 0; background: var(--primary); color: white; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
 
         .top-search-panel {
-            position: fixed; top: 0; left: 0; width: 100%; 
-            background: var(--nav-bg); 
-            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
-            z-index: 100000; 
-            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
-            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
-            display: flex; gap: 10px; align-items: center; 
-            border-bottom: 1px solid var(--border);
-            
-            transform: translateY(-150%) scale(0.85); 
-            opacity: 0;
-            pointer-events: none; 
-            
-            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100000; padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border);
+            transform: translateY(-150%) scale(0.85); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
+        .top-search-panel.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
         
-        .top-search-panel.show { 
-            transform: translateY(0) scale(1); 
-            opacity: 1;
-            pointer-events: auto; 
-        }
-        
-        .top-search-content {
-            flex: 1; position: relative; display: flex; align-items: center;
-        }
-        .top-search-content input {
-            width: 100%; padding: 12px 40px 12px 16px; margin: 0;
-            border-radius: 12px; border: 2px solid var(--primary);
-            background: var(--card-bg); font-size: 16px; color: var(--text-main);
-            outline: none; box-shadow: 0 0 0 3px var(--primary-light);
-        }
-        .top-search-clear {
-            position: absolute; right: 10px; width: 24px; height: 24px;
-            background: var(--text-muted); color: white; border: none; border-radius: 50%;
-            font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer;
-            display: none; align-items: center; justify-content: center; padding-bottom: 2px;
-        }
+        .top-search-content { flex: 1; position: relative; display: flex; align-items: center; }
+        .top-search-content input { width: 100%; padding: 12px 40px 12px 16px; margin: 0; border-radius: 12px; border: 2px solid var(--primary); background: var(--card-bg); font-size: 16px; color: var(--text-main); outline: none; box-shadow: 0 0 0 3px var(--primary-light); }
+        .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
         .top-search-clear:active { background: var(--danger); }
-        
-        .top-search-close {
-            background: transparent; border: none; color: var(--text-muted);
-            font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
-        }
-
+        .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
     </style>
 </head>
 <body>
@@ -687,7 +579,6 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
-        
         <div class="list-group">
             <div class="list-item">
                 <div class="list-item-content">
@@ -809,22 +700,32 @@
 </div>
 
 <div id="klochCalcModal" class="modal">
-    <div class="modal-content" style="max-height: 90vh;">
-        <div class="modal-header">
-            <div class="modal-title" style="width: 100%;">🧮 Калькулятор бонусів</div>
+    <div class="modal-content">
+        <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
+            <div style="display:flex; flex-direction:column;">
+                <div class="modal-title" style="width: 100%;">🧮 Калькулятор бонусів</div>
+                <div style="font-size: 11px; color: var(--text-muted); font-weight: 500; margin-top: 4px;">
+                    Актуально на <span id="klochRelevance" style="font-weight: 700; color: var(--primary);"></span>
+                </div>
+            </div>
             <button class="modal-close" onclick="window.closeKlochCalc()"></button>
         </div>
         <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
-            <div id="klochRelevance" style="font-size: 12px; color: var(--primary); font-weight: 700; text-align: center; text-transform: uppercase;"></div>
-
+            
             <div class="input-group" style="margin-bottom: 0;">
                 <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Вартість товару (₴)</span>
-                <input type="number" id="klochPrice" placeholder="Наприклад, 2200" oninput="window.calculateKlochBonus()">
+                <div style="position: relative;">
+                    <input type="number" id="klochPrice" placeholder="Наприклад, 2200" oninput="window.calculateKlochBonus(); document.getElementById('clearKlochPriceBtn').style.display = this.value ? 'block' : 'none';">
+                    <button id="clearKlochPriceBtn" class="clear-btn" style="display:none;" onclick="document.getElementById('klochPrice').value=''; this.style.display='none'; document.getElementById('klochPrice').focus(); window.calculateKlochBonus();">×</button>
+                </div>
             </div>
 
             <div class="input-group" style="margin-bottom: 0;">
                 <span style="font-weight:600; display:block; margin-bottom:8px; font-size:14px; color:var(--text-muted);">Кількість (шт)</span>
-                <input type="number" id="klochQty" placeholder="1" value="1" oninput="window.calculateKlochBonus()">
+                <div style="position: relative;">
+                    <input type="number" id="klochQty" placeholder="1" value="1" oninput="window.calculateKlochBonus(); document.getElementById('clearKlochQtyBtn').style.display = this.value ? 'block' : 'none';">
+                    <button id="clearKlochQtyBtn" class="clear-btn" style="display:block;" onclick="document.getElementById('klochQty').value=''; this.style.display='none'; document.getElementById('klochQty').focus(); window.calculateKlochBonus();">×</button>
+                </div>
             </div>
 
             <div style="background: var(--primary-light); border-radius: 16px; padding: 16px; text-align: center; border: 1px dashed var(--primary); transition: 0.3s;" id="klochResultBox">
@@ -835,23 +736,28 @@
 
             <div style="display: flex; gap: 10px;">
                 <button class="btn btn-primary" style="flex: 1; padding: 14px; font-size: 15px;" onclick="window.addKlochToList()">➕ Додати в список</button>
-                <button class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); width: 50px; padding: 0;" onclick="window.clearKlochForm()">🗑️</button>
             </div>
 
             <div style="border-top: 1px dashed var(--border); margin: 6px 0;"></div>
 
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <span style="font-weight:700; font-size:14px; color:var(--text-main);">📋 Тимчасовий список</span>
-                <button style="background: transparent; border: none; color: var(--danger); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px;" onclick="window.clearKlochList()">Очистити список</button>
+                <button style="background: transparent; border: none; color: var(--danger); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px;" onclick="window.clearKlochList()">Очистити</button>
             </div>
 
             <div id="klochListContainer" style="display: flex; flex-direction: column; gap: 8px;">
                 </div>
 
-            <div style="display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-top: 8px;">
-                <span style="font-size: 14px; font-weight: 700; color: var(--text-muted);">Загальна сума:</span>
-                <span id="klochTotalSum" style="font-size: 18px; font-weight: 900; color: var(--primary);">0.00 ₴</span>
+            <div style="display: flex; gap: 8px; margin-top: 8px;">
+                <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
+                    <span style="font-size: 14px; font-weight: 700; color: var(--text-muted);">Загальна сума:</span>
+                    <span id="klochTotalSum" style="font-size: 18px; font-weight: 900; color: var(--primary);">0.00 ₴</span>
+                </div>
+                <button id="exportKlochBtn" class="btn" style="background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); width: 50px; padding: 0; flex-shrink: 0;" onclick="window.exportKlochList()">
+                    <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect></svg>
+                </button>
             </div>
+
         </div>
     </div>
 </div>
@@ -1049,7 +955,6 @@
         }
     });
 
-    // Оновлений API URL
     const API_URL = 'https://script.google.com/macros/s/AKfycbxOheaO5dCbXcWAvFT_B39PIYqGIUBfuWlnH7PbKv8F--ZWWmf39QIY6qRyRWxNVkDESg/exec';
     const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
@@ -1436,7 +1341,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1583,7 +1488,7 @@
         if (db.klochCalcData && db.klochCalcData.relevance) {
             document.getElementById('klochRelevance').innerText = db.klochCalcData.relevance;
         } else {
-            document.getElementById('klochRelevance').innerText = "Актуальність не вказана";
+            document.getElementById('klochRelevance').innerText = "не вказано";
         }
         window.clearKlochForm();
         window.renderKlochList();
@@ -1644,8 +1549,14 @@
     }
 
     window.clearKlochForm = function() {
-        document.getElementById('klochPrice').value = '';
-        document.getElementById('klochQty').value = '1';
+        let priceEl = document.getElementById('klochPrice');
+        let qtyEl = document.getElementById('klochQty');
+        priceEl.value = '';
+        qtyEl.value = '1';
+        
+        document.getElementById('clearKlochPriceBtn').style.display = 'none';
+        document.getElementById('clearKlochQtyBtn').style.display = 'block'; // 1 is default
+        
         window.calculateKlochBonus();
     }
 
@@ -1687,6 +1598,43 @@
 
         container.innerHTML = html;
         totalSpan.innerText = total.toFixed(2) + ' ₴';
+    }
+
+    window.exportKlochList = function() {
+        if (window.klochList.length === 0) {
+            alert("Список порожній, немає що копіювати.");
+            return;
+        }
+
+        let text = "🧮 Розрахунок бонусів:\n\n";
+        let total = 0;
+        window.klochList.forEach((item, index) => {
+            // Оновлено: прибрано вивід коефіцієнта з експорту
+            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт\n`;
+            text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
+            total += item.result;
+        });
+        text += `\n💰 Загальна сума: ${total.toFixed(2)} ₴`;
+
+        let btn = document.getElementById('exportKlochBtn');
+        let originalHtml = btn.innerHTML;
+
+        const successAnim = () => {
+            btn.innerHTML = '✅';
+            setTimeout(() => { btn.innerHTML = originalHtml; }, 2000);
+        };
+
+        const fallbackCopy = () => {
+            let t = document.createElement("textarea"); t.value = text;
+            t.style.position = "fixed"; t.style.opacity = "0"; document.body.appendChild(t);
+            t.focus(); t.select();
+            try { document.execCommand('copy'); successAnim(); } catch (err) {}
+            t.remove();
+        };
+
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(text).then(() => successAnim()).catch(() => fallbackCopy());
+        } else fallbackCopy();
     }
     // ------------------------------------------
 
@@ -1920,8 +1868,8 @@
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeCatOnClick = window.escapeForJS(r.cat).replace(/"/g, '&quot;');
+            let safeNameOnClick = window.escapeForJS(shortName).replace(/"/g, '&quot;');
 
             let searchVal = normalize(r.cat); 
             let catExists = false;
