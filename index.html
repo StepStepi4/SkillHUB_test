@@ -780,6 +780,34 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
+<div id="rezervItemModal" class="modal">
+    <div class="modal-content" style="max-height: 95vh;">
+        <div class="modal-header" style="align-items:flex-start;">
+            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
+            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
+        </div>
+        <div id="rezervItemBody" class="modal-body">
+            <div id="rezervTechInfo"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
+                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
+            </div>
+            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="descModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
+            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
+        </div>
+        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
+        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
+    </div>
+</div>
+
 <div id="klochCalcModal" class="modal">
     <div class="modal-content">
         <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
@@ -840,34 +868,6 @@
             </div>
 
         </div>
-    </div>
-</div>
-
-<div id="rezervItemModal" class="modal">
-    <div class="modal-content" style="max-height: 95vh;">
-        <div class="modal-header" style="align-items:flex-start;">
-            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
-            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
-        </div>
-        <div id="rezervItemBody" class="modal-body">
-            <div id="rezervTechInfo"></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
-                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
-            </div>
-            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
-        </div>
-    </div>
-</div>
-
-<div id="descModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
-            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
-        </div>
-        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
     </div>
 </div>
 
@@ -1064,9 +1064,8 @@
         }
     });
 
-    // ОНОВЛЕНИЙ API ЗГІДНО ЗАВДАННЯ
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxX8HSusB0MTLhBQnlQ_GwnwM60ENEq4yHsgUJBOUxmrJpISwv322QjGKVY33iYmMNaCQ/exec';
-    const CACHE_KEY = 'skillhub_v1_flat'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwKJ92A7UwNx7Pvj2NABaUeq44d3nUecdK0j7Mu7jtbzbHfuxzIrIgolqT4hWgecwIzEQ/exec';
+    const CACHE_KEY = 'skillhub_v2_flat'; // Змінено ключ кешу для примусового оновлення даних
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1392,7 +1391,6 @@
             window.scrollTo(0, savedScrollY);
         }
         
-        // Добавлено klochCalcModal
         if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal' || modalId === 'klochCalcModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
@@ -1416,7 +1414,6 @@
     }
 
     function checkOpenModals() {
-        // Добавлено klochCalcModal
         const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
@@ -1555,7 +1552,6 @@
             let linkStr = String(btn.link).trim();
             let nm = String(btn.name).toLowerCase();
             
-            // Інтегровано логіку розпізнавання калькулятора
             if (linkStr === "Calculator_kloch") {
                 actionStr = `onclick="window.openKlochCalc()"`;
             } else if (linkStr === "--") {
@@ -1628,7 +1624,7 @@
             if (matchedRule) {
                 appliedPercent = matchedRule.percent;
             } else if (rules.length > 0 && price > rules[rules.length - 1].max) {
-                // Если сумма выше последнего максимального шага
+                // Якщо сума вище останнього максимального кроку - множимо на останній коефіцієнт
                 appliedPercent = rules[rules.length - 1].percent;
             }
             
@@ -1959,12 +1955,14 @@
         
         let matches = db.rezervyData.filter(r => r.store === store);
 
-        // Фільтрація по пошуку
+        // Фільтрація по пошуку (Додано безпечний доступ до r.name та r.cat, щоб уникнути помилок .toLowerCase())
         if (searchQuery) {
             matches = matches.filter(r => {
-                let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
-                let catName = r.cat.toLowerCase();
-                return shortName.includes(searchQuery) || catName.includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
+                let nameStr = r.name ? String(r.name) : "";
+                let catStr = r.cat ? String(r.cat) : "";
+                let shortName = nameStr.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
+                let catName = catStr.toLowerCase();
+                return shortName.includes(searchQuery) || catName.includes(searchQuery) || nameStr.toLowerCase().includes(searchQuery);
             });
         }
 
@@ -1973,17 +1971,18 @@
         matches.sort((a, b) => b.price - a.price);
 
         let html = matches.map(r => {
-            let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
+            let nameStr = r.name ? String(r.name) : "";
+            let shortName = nameStr.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
             // ПЕРЕВІРКА НА УЦІНКУ + Витягування SN
             let snMatchList = shortName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeCatOnClick = String(r.cat || "").replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeNameOnClick = String(shortName || "").replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
 
-            let searchVal = normalize(r.cat); 
+            let searchVal = normalize(r.cat || ""); 
             let catExists = false;
             if (searchVal && db.categories && db.categories.length > 0) {
                 catExists = db.categories.some(c => {
@@ -2007,7 +2006,7 @@
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat || "")}</span>
                     ${garantiyaHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
@@ -2063,12 +2062,12 @@
 
     window.openRezervItemModal = function(catName, price, itemName, isDiscount = false) {
         let sn = "";
-        let cleanItemName = itemName;
+        let cleanItemName = itemName || "";
         
-        let snMatch = itemName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
+        let snMatch = cleanItemName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
         if (snMatch) {
             sn = snMatch[1].trim();
-            cleanItemName = itemName.replace(snMatch[0], '').trim();
+            cleanItemName = cleanItemName.replace(snMatch[0], '').trim();
         }
 
         let searchVal = normalize(catName); let foundItem = null;
@@ -3115,7 +3114,6 @@
         window.openModalBase('descModal', name, code, priceLabel);
     }
 
-    // Оновлена функція Changelog для відображення як в Telegram
     window.showChangelogModal = function(version, changelogText) {
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
