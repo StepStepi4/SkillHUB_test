@@ -113,6 +113,7 @@
         .dot.red { background: var(--danger); }
         .dot.yellow { background: #fbbf24; }
 
+        /* Анімації пульсації для статусу */
         @keyframes pulse-yellow {
             0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
             70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
@@ -185,8 +186,12 @@
             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1); 
         }
         
-        .nav-item.active { color: var(--rozetka-green-dark); }
-        [data-theme="dark"] .nav-item.active { color: var(--primary); }
+        .nav-item.active { 
+            color: var(--rozetka-green-dark); 
+        }
+        [data-theme="dark"] .nav-item.active { 
+            color: var(--primary); 
+        }
         
         .nav-item.active .nav-icon { 
             transform: translateY(-2px) scale(1.15); 
@@ -201,7 +206,9 @@
             transform: translateY(-1px); 
             text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); 
         }
-        [data-theme="dark"] .nav-item.active span { text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2); }
+        [data-theme="dark"] .nav-item.active span {
+            text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2);
+        }
 
         /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
@@ -214,18 +221,28 @@
         }
         input[type="text"]:focus, input[type="number"]:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
         
+        /* Повзунок шрифта iOS Style */
         input[type="range"] {
             -webkit-appearance: none; appearance: none;
-            width: 100%; background: transparent; padding: 0; margin: 0;
+            width: 100%; background: transparent;
+            padding: 0; margin: 0;
         }
         input[type="range"]:focus { outline: none; }
         input[type="range"]::-webkit-slider-thumb {
-            -webkit-appearance: none; height: 24px; width: 24px; border-radius: 50%;
-            background: #ffffff; box-shadow: 0 2px 6px rgba(0,0,0,0.25); cursor: pointer; margin-top: -10px;
+            -webkit-appearance: none;
+            height: 24px; width: 24px;
+            border-radius: 50%;
+            background: #ffffff;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.25);
+            cursor: pointer;
+            margin-top: -10px;
         }
         [data-theme="dark"] input[type="range"]::-webkit-slider-thumb { background: #e5e5ea; }
         input[type="range"]::-webkit-slider-runnable-track {
-            width: 100%; height: 4px; cursor: pointer; background: var(--border); border-radius: 2px;
+            width: 100%; height: 4px;
+            cursor: pointer;
+            background: var(--border);
+            border-radius: 2px;
         }
         
         select {
@@ -263,6 +280,7 @@
         }
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
         .list-item:active { background: var(--input-bg); }
+        
         .list-item.discount-card { background-color: transparent; }
         
         .list-item-content { display: flex; flex-direction: column; gap: 4px; flex: 1; padding-right: 10px; overflow: hidden; }
@@ -291,8 +309,14 @@
         .service-card:active { background: var(--input-bg); transform: scale(0.98); }
         
         .sc-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 10px;}
-        .sc-brand { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;}
+        
+        .sc-brand { 
+            font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; 
+            border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px;
+        }
+        
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
+        
         .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
@@ -324,6 +348,7 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-shrink: 0; }
         .modal-title { font-size: 18px; font-weight: 700; color: var(--text-main); line-height: 1.3;}
         
+        /* ПРЕМІАЛЬНА КНОПКА ЗАКРИТТЯ "Х" */
         .modal-close { 
             background: var(--card-bg); border: 1px solid var(--border); 
             width: 36px; height: 36px; border-radius: 50%; 
@@ -334,8 +359,10 @@
             position: relative; flex-shrink: 0;
         }
         .modal-close::before, .modal-close::after {
-            content: ''; position: absolute; width: 14px; height: 2px;
-            background-color: currentColor; border-radius: 2px; transition: 0.2s;
+            content: ''; position: absolute;
+            width: 14px; height: 2px;
+            background-color: currentColor;
+            border-radius: 2px; transition: 0.2s;
         }
         .modal-close::before { transform: rotate(45deg); }
         .modal-close::after { transform: rotate(-45deg); }
@@ -371,17 +398,21 @@
         .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); pointer-events: none;}
         .service-card.compare-mode { padding-left: 50px; }
         .service-card.compare-mode .checkbox { left: 16px; }
+        
         .service-card.selected { border-color: var(--primary); background: var(--primary-light); }
         .service-card.selected .checkbox { border-color: var(--primary); background: var(--primary); }
         .service-card.selected .checkbox::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
 
-        .desc-toggle-wrapper { display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;}
+        .desc-toggle-wrapper {
+            display: inline-flex; align-items: center; gap: 4px; padding: 6px 0; cursor: pointer; font-weight: 700; font-size: 13px; color: var(--primary); transition: 0.2s; margin-top: 4px;
+        }
         .desc-toggle-wrapper svg { width: 16px; height: 16px; stroke: currentColor; stroke-width: 2.5; transition: transform 0.3s ease; }
         .desc-content { display: none; padding-top: 12px; margin-top: 8px; border-top: 1px dashed var(--border); }
         .desc-content.show { display: block; animation: fadeIn 0.2s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
         
         .desc-code { display: flex; justify-content: space-between; background: var(--input-bg); padding: 12px 16px; border-radius: 12px; margin-bottom: 16px; font-weight: 600; cursor: pointer; border: 1px solid var(--border);}
+        
         .desc-line { display: flex; align-items: center; gap: 10px; padding: 10px 0; border-bottom: 1px solid rgba(0,0,0,0.05); }
         [data-theme="dark"] .desc-line { border-bottom: 1px solid rgba(255,255,255,0.05); }
         .desc-line:last-child { border-bottom: none; }
@@ -391,6 +422,7 @@
         .floating-top.show { opacity: 1; pointer-events: auto;}
         .floating-top:active { transform: scale(0.9); }
 
+        /* Стилі для цін та анімації ярлика уцінки */
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
@@ -402,8 +434,16 @@
         }
         
         .discount-tag-icon {
-            position: absolute; bottom: -22px; right: -10px; width: 26px; height: 26px;
-            transform-origin: top center; animation: swayTag 3.5s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 10; pointer-events: none;
+            position: absolute;
+            bottom: -22px; 
+            right: -10px;
+            width: 26px;
+            height: 26px;
+            transform-origin: top center;
+            animation: swayTag 3.5s ease-in-out infinite;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            z-index: 10;
+            pointer-events: none;
         }
         
         #rezervItemModal { z-index: 100010; }
@@ -414,7 +454,7 @@
         #ratingModal { z-index: 100045; }
         #klochCalcModal { z-index: 100050; }
         #galleryModal { z-index: 100060; }
-
+        
         .gallery-nav { background: rgba(255,255,255,0.2); border: none; color: white; font-size: 24px; padding: 10px; cursor: pointer; border-radius: 50%; position: absolute; top: 50%; transform: translateY(-50%); z-index: 10; }
         .gallery-nav.prev { left: 10px; }
         .gallery-nav.next { right: 10px; }
@@ -438,7 +478,13 @@
             border: 2px solid var(--rozetka-green-dark); border-radius: 16px; margin-top: 20px;
         }
 
-        .cert-manual-wrapper { font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #334155; line-height: 1.4; max-width: 800px; margin: 0 auto; padding: 12px; background-color: #f8fafc; border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); text-align: left; font-size: 12px;}
+        .cert-manual-wrapper {
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            color: #334155; line-height: 1.4; max-width: 800px;
+            margin: 0 auto; padding: 12px; background-color: #f8fafc;
+            border-radius: 10px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            text-align: left; font-size: 12px;
+        }
         .cert-header { color: #1e293b; border-bottom: 2px solid #e2e8f0; padding-bottom: 8px; margin-top: 0; font-size: 15px; font-weight: 700; }
         .cert-alert { padding: 10px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid; font-size: 12px; }
         .cert-alert.warning { background-color: #fffbeb; border-color: #f59e0b; color: #92400e; }
@@ -448,7 +494,10 @@
         .cert-steps { margin: 10px 0 0 0; padding-left: 0; list-style-type: none; counter-reset: step-counter; }
         .cert-steps li { position: relative; padding-left: 32px; margin-bottom: 12px; font-size: 12px; }
         .cert-steps li::before {
-            content: counter(step-counter); counter-increment: step-counter; position: absolute; left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
+            content: counter(step-counter); counter-increment: step-counter; position: absolute;
+            left: 0; top: -2px; background-color: #3b82f6; color: white; width: 22px; height: 22px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-weight: 600; font-size: 11px; box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
         }
         .cert-highlight { font-weight: 600; color: #111827; background-color: #f1f5f9; padding: 2px 4px; border-radius: 4px; font-size: 11px; white-space: nowrap; }
         .brace-highlight { position: relative; display: inline-block; padding-bottom: 6px; font-weight: 600; white-space: nowrap; }
@@ -458,11 +507,26 @@
             background-size: 100% 100%; background-repeat: no-repeat;
         }
         
-        .rating-group { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.06); }
-        [data-theme="dark"] .rating-group { border-bottom: 1px solid rgba(255,255,255,0.08); }
-        .rating-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
+        .rating-group {
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid rgba(0,0,0,0.06);
+        }
+        [data-theme="dark"] .rating-group {
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+        }
+        .rating-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
 
-        .rating-item { display: flex; align-items: center; padding: 12px 16px; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px; }
+        .rating-item {
+            display: flex; align-items: center;
+            padding: 12px 16px; background: var(--card-bg);
+            border: 1px solid var(--border); border-radius: 12px; margin-bottom: 8px;
+        }
         .rating-item.top-1 { border-color: #fcd34d; background-color: rgba(251, 191, 36, 0.15); border-left: 4px solid #fbbf24; }
         .rating-item.top-2 { border-color: #cbd5e1; background-color: rgba(148, 163, 184, 0.15); border-left: 4px solid #94a3b8; }
         .rating-item.top-3 { border-color: #fdba74; background-color: rgba(249, 115, 22, 0.15); border-left: 4px solid #d97706; }
@@ -478,21 +542,65 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        .reserves-search-trigger { width: 53px; height: 53px; flex-shrink: 0; background: var(--primary); color: white; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        /* ========================================================== */
+        /* --- НОВІ СТИЛІ ДЛЯ ВЕРХНЬОГО ВИТІКАЮЧОГО ПОШУКУ РЕЗЕРВІВ --- */
+        /* ========================================================== */
+        
+        .reserves-search-trigger {
+            width: 53px; height: 53px; flex-shrink: 0;
+            background: var(--primary); color: white;
+            border: none; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: 0.2s;
+        }
         .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
 
         .top-search-panel {
-            position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100000; padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border);
-            transform: translateY(-150%) scale(0.85); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
+            position: fixed; top: 0; left: 0; width: 100%; 
+            background: var(--nav-bg); 
+            backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px);
+            z-index: 100000; 
+            padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+            display: flex; gap: 10px; align-items: center; 
+            border-bottom: 1px solid var(--border);
+            
+            transform: translateY(-150%) scale(0.85); 
+            opacity: 0;
+            pointer-events: none; 
+            
+            transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
         }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
-        .top-search-panel.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
         
-        .top-search-content { flex: 1; position: relative; display: flex; align-items: center; }
-        .top-search-content input { width: 100%; padding: 12px 40px 12px 16px; margin: 0; border-radius: 12px; border: 2px solid var(--primary); background: var(--card-bg); font-size: 16px; color: var(--text-main); outline: none; box-shadow: 0 0 0 3px var(--primary-light); }
-        .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
+        .top-search-panel.show { 
+            transform: translateY(0) scale(1); 
+            opacity: 1;
+            pointer-events: auto; 
+        }
+        
+        .top-search-content {
+            flex: 1; position: relative; display: flex; align-items: center;
+        }
+        .top-search-content input {
+            width: 100%; padding: 12px 40px 12px 16px; margin: 0;
+            border-radius: 12px; border: 2px solid var(--primary);
+            background: var(--card-bg); font-size: 16px; color: var(--text-main);
+            outline: none; box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        .top-search-clear {
+            position: absolute; right: 10px; width: 24px; height: 24px;
+            background: var(--text-muted); color: white; border: none; border-radius: 50%;
+            font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer;
+            display: none; align-items: center; justify-content: center; padding-bottom: 2px;
+        }
         .top-search-clear:active { background: var(--danger); }
-        .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
+        
+        .top-search-close {
+            background: transparent; border: none; color: var(--text-muted);
+            font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px;
+        }
+
     </style>
 </head>
 <body>
@@ -579,6 +687,7 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
+        
         <div class="list-group">
             <div class="list-item">
                 <div class="list-item-content">
@@ -671,34 +780,6 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
-<div id="rezervItemModal" class="modal">
-    <div class="modal-content" style="max-height: 95vh;">
-        <div class="modal-header" style="align-items:flex-start;">
-            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
-            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
-        </div>
-        <div id="rezervItemBody" class="modal-body">
-            <div id="rezervTechInfo"></div>
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
-                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
-                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
-            </div>
-            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
-        </div>
-    </div>
-</div>
-
-<div id="descModal" class="modal">
-    <div class="modal-content">
-        <div class="modal-header">
-            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
-            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
-        </div>
-        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
-        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
-    </div>
-</div>
-
 <div id="klochCalcModal" class="modal">
     <div class="modal-content">
         <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
@@ -759,6 +840,34 @@
             </div>
 
         </div>
+    </div>
+</div>
+
+<div id="rezervItemModal" class="modal">
+    <div class="modal-content" style="max-height: 95vh;">
+        <div class="modal-header" style="align-items:flex-start;">
+            <div class="modal-title" id="rezervItemTitle" style="color:var(--primary); line-height:1.3; width: 100%;"></div>
+            <button class="modal-close" onclick="window.closeModalBase('rezervItemModal')"></button>
+        </div>
+        <div id="rezervItemBody" class="modal-body">
+            <div id="rezervTechInfo"></div>
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                <span style="font-weight:700; font-size:12px; text-transform:uppercase; color:var(--text-muted);" id="rezervRecommendTitle">Рекомендовані сервіси</span>
+                <button id="rezervCompareBtn" class="compare-toggle-btn" style="display:none;" onclick="window.toggleModalCompareMode()">Порівняти</button>
+            </div>
+            <div id="rezervServiceList" style="display:flex; flex-direction:column; gap:12px;"></div>
+        </div>
+    </div>
+</div>
+
+<div id="descModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <div class="modal-title" id="modalTitle" style="width: 100%; display: flex; align-items: flex-start; justify-content: space-between; gap: 10px;">Опис</div>
+            <button class="modal-close" onclick="window.closeModalBase('descModal')"></button>
+        </div>
+        <div id="modalBody" class="modal-body" style="padding-bottom: 20px;"></div>
+        <button class="btn btn-primary" onclick="window.closeModalBase('descModal')">Зрозуміло</button>
     </div>
 </div>
 
@@ -955,8 +1064,9 @@
         }
     });
 
+    // ОНОВЛЕНИЙ API ЗГІДНО ЗАВДАННЯ
     const API_URL = 'https://script.google.com/macros/s/AKfycbxX8HSusB0MTLhBQnlQ_GwnwM60ENEq4yHsgUJBOUxmrJpISwv322QjGKVY33iYmMNaCQ/exec';
-    const CACHE_KEY = 'skillhub_v2_flat'; 
+    const CACHE_KEY = 'skillhub_v1_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -975,23 +1085,21 @@
     window.buildServiceSearchList = function() {
         let uniqueMap = new Map();
         
-        if(db.tariffs && Array.isArray(db.tariffs)) {
+        if(db.tariffs) {
             db.tariffs.forEach(t => {
-                if(t && t.service) {
-                    let origName = String(t.service).trim();
+                if(t.service) {
+                    let origName = t.service.trim();
                     if(!uniqueMap.has(origName)) {
                         uniqueMap.set(origName, { orig: origName, ru: t.serviceRu || "", en: t.serviceEn || "" });
                     }
                 }
             });
         }
-        if(db.descriptions && typeof db.descriptions === 'object') {
+        if(db.descriptions) {
             Object.keys(db.descriptions).forEach(k => {
-                if (k) {
-                    let origName = String(k).trim();
-                    if(!uniqueMap.has(origName)) {
-                        uniqueMap.set(origName, { orig: origName, ru: "", en: "" });
-                    }
+                let origName = k.trim();
+                if(!uniqueMap.has(origName)) {
+                    uniqueMap.set(origName, { orig: origName, ru: "", en: "" });
                 }
             });
         }
@@ -1033,19 +1141,19 @@
 
     function sanitizeDb(data) {
         if(!data) return { categories: [], descriptions: {}, tariffs: [], montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
-        data.categories = Array.isArray(data.categories) ? data.categories : [];
+        data.categories = data.categories || [];
         data.descriptions = data.descriptions || {};
-        data.tariffs = Array.isArray(data.tariffs) ? data.tariffs : [];
+        data.tariffs = data.tariffs || [];
         data.montazhData = data.montazhData || { cities: [], services: [] };
-        if (!Array.isArray(data.montazhData.cities)) data.montazhData.cities = [];
-        if (!Array.isArray(data.montazhData.services)) data.montazhData.services = [];
+        if (!data.montazhData.cities) data.montazhData.cities = [];
+        if (!data.montazhData.services) data.montazhData.services = [];
         data.serviceCodes = data.serviceCodes || {};
-        data.rezervyData = Array.isArray(data.rezervyData) ? data.rezervyData : [];
+        data.rezervyData = data.rezervyData || [];
         data.rezervyDate = data.rezervyDate || ""; 
         data.serviceBrands = data.serviceBrands || {};
-        data.trainingData = Array.isArray(data.trainingData) ? data.trainingData : [];
-        data.skillHubButtons = Array.isArray(data.skillHubButtons) ? data.skillHubButtons : [];
-        data.sellerRatings = Array.isArray(data.sellerRatings) ? data.sellerRatings : [];
+        data.trainingData = data.trainingData || [];
+        data.skillHubButtons = data.skillHubButtons || [];
+        data.sellerRatings = data.sellerRatings || [];
         data.klochCalcData = data.klochCalcData || { rules: [], relevance: "" };
         return data;
     }
@@ -1284,6 +1392,7 @@
             window.scrollTo(0, savedScrollY);
         }
         
+        // Добавлено klochCalcModal
         if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal' || modalId === 'klochCalcModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
@@ -1307,6 +1416,7 @@
     }
 
     function checkOpenModals() {
+        // Добавлено klochCalcModal
         const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
@@ -1332,7 +1442,7 @@
     const normalize = (str) => str ? String(str).toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
     window.escapeHTML = function(str) {
-        if (str === null || str === undefined) return '';
+        if (!str) return '';
         return String(str)
             .replace(/&/g, '\u0026amp;')
             .replace(/</g, '\u0026lt;')
@@ -1343,7 +1453,7 @@
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1438,13 +1548,14 @@
 
     window.renderSkillHubTab = function() {
         const container = document.getElementById('dynamicSkillHubButtons');
-        if (!container || !db.skillHubButtons || !Array.isArray(db.skillHubButtons)) return;
+        if (!container || !db.skillHubButtons) return;
 
         let html = db.skillHubButtons.map(btn => {
             let actionStr = '';
-            let linkStr = String(btn.link || "").trim();
-            let nm = String(btn.name || "").toLowerCase();
+            let linkStr = String(btn.link).trim();
+            let nm = String(btn.name).toLowerCase();
             
+            // Інтегровано логіку розпізнавання калькулятора
             if (linkStr === "Calculator_kloch") {
                 actionStr = `onclick="window.openKlochCalc()"`;
             } else if (linkStr === "--") {
@@ -1473,8 +1584,8 @@
                     ${window.renderIcon(btn.emoji)}
                 </div>
                 <div class="list-item-content" style="flex:1; text-align:left;">
-                    <span class="list-item-title">${window.escapeHTML(btn.name)}</span>
-                    <span class="list-item-subtitle">${window.escapeHTML(btn.desc)}</span>
+                    <span class="list-item-title">${btn.name}</span>
+                    <span class="list-item-subtitle">${btn.desc}</span>
                 </div>
                 <div class="list-item-arrow" style="margin-left: auto;">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -1517,7 +1628,7 @@
             if (matchedRule) {
                 appliedPercent = matchedRule.percent;
             } else if (rules.length > 0 && price > rules[rules.length - 1].max) {
-                // Якщо сума вище останнього максимального кроку - множимо на останній коефіцієнт
+                // Если сумма выше последнего максимального шага
                 appliedPercent = rules[rules.length - 1].percent;
             }
             
@@ -1557,7 +1668,7 @@
         qtyEl.value = '1';
         
         document.getElementById('clearKlochPriceBtn').style.display = 'none';
-        document.getElementById('clearKlochQtyBtn').style.display = 'block'; // 1 is default
+        document.getElementById('clearKlochQtyBtn').style.display = 'block';
         
         window.calculateKlochBonus();
     }
@@ -1643,7 +1754,7 @@
         const container = document.getElementById('ratingModalBody');
         if (!container) return;
         
-        if (!db.sellerRatings || !Array.isArray(db.sellerRatings) || db.sellerRatings.length === 0) {
+        if (!db.sellerRatings || db.sellerRatings.length === 0) {
             safeUpdateHTML(container, '<div style="text-align:center; padding:20px; color:var(--text-muted); font-weight:600;">Дані оновлюються...</div>');
             return;
         }
@@ -1651,7 +1762,7 @@
         let groups = {};
         db.sellerRatings.forEach(r => {
             let nom = r.nomination || "Загальний рейтинг";
-            let cleanNom = String(nom).replace(/\s*#\d+\s*$/, '').trim(); 
+            let cleanNom = nom.replace(/\s*#\d+\s*$/, '').trim(); 
             if (!groups[cleanNom]) groups[cleanNom] = [];
             groups[cleanNom].push(r);
         });
@@ -1677,10 +1788,10 @@
                     <div class="rating-rank">${rankDisplay}</div>
                     <div class="rating-info">
                         <div class="rating-header-row">
-                            <span class="rating-name">${window.escapeHTML(item.name)}</span>
-                            <span class="rating-score">${window.escapeHTML(item.result)}</span>
+                            <span class="rating-name">${item.name}</span>
+                            <span class="rating-score">${item.result}</span>
                         </div>
-                        <div class="rating-desc">${window.escapeHTML(item.nomination)}</div>
+                        <div class="rating-desc">${item.nomination}</div>
                     </div>
                 </div>`;
             });
@@ -1751,18 +1862,14 @@
             setAppStatus('ok', 'Готовий до роботи');
             
             setTimeout(() => {
-                try {
-                    if (db.appVersion && savedVersion !== db.appVersion) {
-                        if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
-                        try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
-                    }
-                    enableUI(); window.populateFilters();
-                    window.renderSkillHubTab();
-                    if(currentCategoryData || currentServiceData) renderServices(); 
-                    if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
-                } catch(e) {
-                    console.error("UI render after refresh error:", e);
+                if (db.appVersion && savedVersion !== db.appVersion) {
+                    if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
+                    try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
                 }
+                enableUI(); window.populateFilters();
+                window.renderSkillHubTab();
+                if(currentCategoryData || currentServiceData) renderServices(); 
+                if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
             }, 400); 
             
         } catch (e) { 
@@ -1795,7 +1902,7 @@
 
     function enableUI() { 
         elCatInput.disabled = false; 
-        if (db.appVersion && !String(db.appVersion).startsWith("Error")) {
+        if (db.appVersion && !db.appVersion.startsWith("Error")) {
             safeUpdateHTML('appVersionDisp', `Версія ${db.appVersion}`);
             document.getElementById('appVersionDisp').style.display = 'inline-block';
         }
@@ -1808,7 +1915,7 @@
         const reserveFilter = document.getElementById('storeFilter');
         if (reserveFilter) {
             reserveFilter.value = val;
-            window.renderRezervyList();
+            if (document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
         }
     }
 
@@ -1816,11 +1923,10 @@
         const storeSel = document.getElementById('storeFilter');
         const defaultSel = document.getElementById('defaultStoreSelect');
         
-        if (db.rezervyData && Array.isArray(db.rezervyData)) {
-            // Фільтруємо null/undefined
-            const stores = [...new Set(db.rezervyData.map(r => r && r.store ? String(r.store).trim() : null).filter(Boolean))].sort();
+        if (db.rezervyData) {
+            const stores = [...new Set(db.rezervyData.map(r => r.store))].sort();
             let h = '<option value="">-- Оберіть магазин --</option>';
-            stores.forEach(s => { if (s !== "Не вказано") h += `<option value="${s}">${s}</option>`; });
+            stores.forEach(s => { if (s && s !== "Не вказано") h += `<option value="${s}">${s}</option>`; });
             
             let currentStoreSelVal = storeSel.value;
             let currentDefaultSelVal = defaultSel.value;
@@ -1829,10 +1935,7 @@
             safeUpdateHTML(defaultSel, h.replace('Оберіть магазин', 'Не вибрано'));
             
             let savedStore = currentStoreSelVal || currentDefaultSelVal || (function(){ try { return localStorage.getItem('skillhub_default_store'); } catch(e){ return null; } })();
-            if (savedStore && stores.includes(savedStore)) { 
-                storeSel.value = savedStore; 
-                defaultSel.value = savedStore; 
-            }
+            if (savedStore) { storeSel.value = savedStore; defaultSel.value = savedStore; }
         }
     }
 
@@ -1853,40 +1956,34 @@
         }
 
         if (!store) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Оберіть магазин вище</div>'); return; }
-        if (!db.rezervyData || !Array.isArray(db.rezervyData)) { safeUpdateHTML(cont, '<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Помилка даних</div>'); return; }
         
-        let matches = db.rezervyData.filter(r => r && r.store === store);
+        let matches = db.rezervyData.filter(r => r.store === store);
 
         // Фільтрація по пошуку
         if (searchQuery) {
             matches = matches.filter(r => {
-                let nameSafe = String(r.name || "").toLowerCase();
-                let catSafe = String(r.cat || "").toLowerCase();
-                let shortName = nameSafe.replace(/^(телевізор|ноутбук|смартфон|мобільний телефон|планшет|холодильник|пральна машина|мікрохвильова піч|кавомашина|пилосос)\s*/i, '');
-                return shortName.includes(searchQuery) || catSafe.includes(searchQuery) || nameSafe.includes(searchQuery);
+                let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '').toLowerCase();
+                let catName = r.cat.toLowerCase();
+                return shortName.includes(searchQuery) || catName.includes(searchQuery) || r.name.toLowerCase().includes(searchQuery);
             });
         }
 
         if (matches.length === 0) { safeUpdateHTML(cont, `<div style="padding:20px; text-align:center; color:var(--text-muted); font-weight:600;">Немає товарів</div>`); return; }
 
-        matches.sort((a, b) => (Number(b.price) || 0) - (Number(a.price) || 0));
+        matches.sort((a, b) => b.price - a.price);
 
         let html = matches.map(r => {
-            let rName = String(r.name || "");
-            let rCat = String(r.cat || "");
-            let rPrice = Number(r.price) || 0;
-
-            let shortName = rName.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
+            let shortName = r.name.replace(/^(Телевізор|Ноутбук|Смартфон|Мобільний телефон|Планшет|Холодильник|Пральна машина|Мікрохвильова піч|Кавомашина|Пилосос)\s*/i, '');
             
             // ПЕРЕВІРКА НА УЦІНКУ + Витягування SN
             let snMatchList = shortName.match(/^\[Уцінка:\s*([^\]]+)\]/i);
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
-            let safeCatOnClick = window.escapeForJS(rCat).replace(/"/g, '"');
-            let safeNameOnClick = window.escapeForJS(shortName).replace(/"/g, '"');
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '"');
 
-            let searchVal = normalize(rCat); 
+            let searchVal = normalize(r.cat); 
             let catExists = false;
             if (searchVal && db.categories && db.categories.length > 0) {
                 catExists = db.categories.some(c => {
@@ -1905,16 +2002,16 @@
             let discountClass = isDiscount ? "discount-card" : "";
 
             return `
-            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${rPrice}, '${safeNameOnClick}', ${isDiscount})">
+            <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
                 <div class="list-item-content">
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(rCat)}</span>
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
-                    ${Math.round(rPrice).toLocaleString('uk-UA')} ₴
+                    ${Math.round(r.price).toLocaleString('uk-UA')} ₴
                     ${discountIconHtml}
                 </div>
             </div>`;
@@ -2137,7 +2234,7 @@
 
             let discountHtml = "";
             if (isDiscount) {
-                let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && String(ua).toLowerCase().startsWith('уцінка')).sort();
+                let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка')).sort();
                 let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
 
                 discountHtml = `
@@ -2207,7 +2304,7 @@
                         return `<div class="sugg-item" data-idx="${idx}">
                             <span style="flex-shrink:0; width: 24px; height: 24px; display:flex; align-items:center; justify-content:center;">${window.renderIcon(m.icon)}</span> 
                             ${brandBadge} 
-                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${window.escapeHTML(text)}</span>
+                            <span style="flex:1; line-height:1.3; margin-left: 6px;">${text}</span>
                         </div>`;
                     }).join('');
                     safeUpdateHTML(elSuggList, html);
@@ -2240,7 +2337,7 @@
             elCatInput.value = item.name;
             safeUpdateHTML('uaTitle', `<div style="display:flex; align-items:center; gap:8px;">
                 <div style="width:24px; height:24px; display:flex; justify-content:center; align-items:center;">${window.renderIcon(item.icon)}</div>
-                <span>${window.escapeHTML(item.name)}</span>
+                <span>${item.name}</span>
             </div>`);
             safeUpdateHTML('itemCategory', item.brandText ? "Послуга від " + item.brandText : "Окрема послуга");
         } else {
@@ -2249,7 +2346,7 @@
             elCatInput.value = item.ua; 
             safeUpdateHTML('uaTitle', `<div style="display:flex; align-items:center; gap:8px;">
                 <div style="width:24px; height:24px; display:flex; justify-content:center; align-items:center;">${window.renderIcon(item.icon)}</div>
-                <span>${window.escapeHTML(item.ua)}</span>
+                <span>${item.ua}</span>
             </div>`); 
             safeUpdateHTML('itemCategory', item.category || ""); 
         }
@@ -2270,7 +2367,7 @@
             else if (t.includes('висок')) s = "color: #f97316; font-weight: 600;";
             else if (t.includes('середн')) s = "color: #eab308; font-weight: 600;";
             else if (t.includes('низьк')) s = "color: #10b981; font-weight: 600;";
-            html += `<div class="tech-row"><div class="tech-icon" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px;">${window.renderIcon('⚙️')}</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${window.escapeHTML(item.complexity)}</div></div></div>`;
+            html += `<div class="tech-row"><div class="tech-icon" style="display:flex; align-items:center; justify-content:center; width:26px; height:26px;">${window.renderIcon('⚙️')}</div><div class="tech-text-wrap"><div class="tech-label">Складність</div><div class="tech-val" style="${s}">${item.complexity}</div></div></div>`;
         }
         
         let calcPrice = item.price ? item.price.toString() : "";
@@ -2486,9 +2583,9 @@
             <div class="sc-header" style="align-items: center;">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
                     ${brandHtml}
-                    <div class="sc-title">${focusHtml} <span style="flex:1;">${window.escapeHTML(s.title)}</span></div>
+                    <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
                 </div>
-                <div class="sc-price">${window.escapeHTML(s.label)}</div>
+                <div class="sc-price">${s.label}</div>
             </div>
             ${availHtml}
             ${descHtml}
