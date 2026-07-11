@@ -429,7 +429,6 @@
             <span id="deadlineText"></span>
         </div>
         
-        <!-- Новий блок статистики та продажів -->
         <div id="cabinetRichStats" style="display:none; margin-bottom: 24px;"></div>
 
         <div id="globalStatsContainer"></div>
@@ -537,7 +536,6 @@
 
     let chartsInstances = {};
 
-    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
         let style = document.getElementById('dynamicFontScale');
         if(!style) { 
@@ -584,7 +582,6 @@
 
     let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
     window.updateFontScale(savedFontScale);
-    // --------------------------------------
 
     let db = null;
     let globalAchievements = []; 
@@ -609,51 +606,110 @@
     let totalTimeSpent = 0;
     const TIME_PER_QUESTION = 25; 
 
-    // --- ПАРСЕР ДАНИХ (Гнучке мапування назв стовпчиків) ---
-    function normalizeUsers(users) {
-        return users.map(u => {
+    // --- НАДІЙНИЙ ПАРСЕР ДАНИХ (Абсолютно стійкий до формату бази: об'єкти чи двовимірні масиви) ---
+    function normalizeUsers(usersData) {
+        if (!Array.isArray(usersData) || usersData.length === 0) return [];
+        let objects = [];
+        
+        // Перевіряємо чи віддає база двовимірний масив (масив масивів)
+        if (Array.isArray(usersData[0])) {
+            let headers = usersData[0].map(h => String(h).trim().toLowerCase());
+            for (let i = 1; i < usersData.length; i++) {
+                let row = usersData[i];
+                let obj = { _rawMap: {}, _raw: {} };
+                headers.forEach((h, idx) => {
+                    obj._rawMap[h] = row[idx];
+                    obj._raw[h] = row[idx]; // Запасне
+                });
+                objects.push(obj);
+            }
+        } else {
+            // База віддає масив об'єктів
+            objects = usersData.map(u => {
+                let obj = { _rawMap: {}, _raw: u, ...u };
+                for (let k in u) {
+                    obj._rawMap[String(k).trim().toLowerCase()] = u[k];
+                }
+                return obj;
+            });
+        }
+
+        return objects.map(u => {
+            let rm = u._rawMap;
+            let getV = (...keys) => {
+                for(let k of keys) {
+                    if (rm[k] !== undefined) return rm[k];
+                }
+                return undefined;
+            };
+
             return {
                 ...u,
-                login: u['Login'] !== undefined ? String(u['Login']).trim() : (u.login || ''),
-                pass: u['Password'] !== undefined ? String(u['Password']).trim() : (u.pass || u.password || ''),
-                role: u['Role'] !== undefined ? u['Role'] : (u.role || ''),
-                name: u['ПІБ'] !== undefined ? u['ПІБ'] : (u.name || ''),
-                shortName: u['Скорочено укр'] !== undefined ? u['Скорочено укр'] : (u.shortName || ''),
-                director: u['Director'] !== undefined ? u['Director'] : (u.director || ''),
-                store: u['Магазин'] !== undefined ? u['Магазин'] : (u.store || ''),
-                deadline: u['Дедлайн'] !== undefined ? u['Дедлайн'] : (u.deadline || ''),
-                achievements: u['Achievement'] !== undefined ? u['Achievement'] : (u.achievements || ''),
-                targetPcs: u['Ціль (шт)'] !== undefined ? u['Ціль (шт)'] : (u.targetPcs || ''),
-                targetUah: u['Ціль (грн)'] !== undefined ? u['Ціль (грн)'] : (u.targetUah || ''),
-                execPcs: u['Виконання шт'] !== undefined ? u['Виконання шт'] : (u.execPcs || ''),
-                execUah: u['Виконання грн'] !== undefined ? u['Виконання грн'] : (u.execUah || ''),
-                testTime: u['Витрачений час на тестування'] !== undefined ? u['Витрачений час на тестування'] : (u.testTime || ''),
-                curPlan: u['План на місяць'] !== undefined ? u['План на місяць'] : '',
-                curPcs: u['Шт'] !== undefined ? u['Шт'] : '',
-                curUah: u['Грн'] !== undefined ? u['Грн'] : '',
-                curExecPct: u['Виконання плану (%)'] !== undefined ? u['Виконання плану (%)'] : '',
-                curEff: u['Ефективність'] !== undefined ? u['Ефективність'] : '',
-                curShare: u['Доля'] !== undefined ? u['Доля'] : '',
-                _raw: u // Зберігаємо сирі дані для історії років
+                login: getV('login', 'логін') !== undefined ? String(getV('login', 'логін')).trim() : (u.login || ''),
+                pass: getV('password', 'пароль') !== undefined ? String(getV('password', 'пароль')).trim() : (u.pass || u.password || ''),
+                role: getV('role', 'роль') !== undefined ? getV('role', 'роль') : (u.role || ''),
+                name: getV('піб', 'name') !== undefined ? getV('піб', 'name') : (u.name || ''),
+                shortName: getV('скорочено укр', 'shortname') !== undefined ? getV('скорочено укр', 'shortname') : (u.shortName || ''),
+                director: getV('director', 'керівник') !== undefined ? getV('director', 'керівник') : (u.director || ''),
+                store: getV('магазин', 'store') !== undefined ? getV('магазин', 'store') : (u.store || ''),
+                deadline: getV('дедлайн', 'deadline') !== undefined ? getV('дедлайн', 'deadline') : (u.deadline || ''),
+                achievements: getV('achievement', 'achievements') !== undefined ? getV('achievement', 'achievements') : (u.achievements || ''),
+                targetPcs: getV('ціль (шт)') !== undefined ? getV('ціль (шт)') : (u.targetPcs || ''),
+                targetUah: getV('ціль (грн)') !== undefined ? getV('ціль (грн)') : (u.targetUah || ''),
+                execPcs: getV('виконання шт') !== undefined ? getV('виконання шт') : (u.execPcs || ''),
+                execUah: getV('виконання грн') !== undefined ? getV('виконання грн') : (u.execUah || ''),
+                testTime: getV('витрачений час на тестування') !== undefined ? getV('витрачений час на тестування') : (u.testTime || ''),
+                curPlan: getV('план на місяць') !== undefined ? getV('план на місяць') : '',
+                curPcs: getV('шт') !== undefined ? getV('шт') : '',
+                curUah: getV('грн') !== undefined ? getV('грн') : '',
+                curExecPct: getV('виконання плану (%)') !== undefined ? getV('виконання плану (%)') : '',
+                curEff: getV('ефективність') !== undefined ? getV('ефективність') : '',
+                curShare: getV('доля') !== undefined ? getV('доля') : '',
+                assigned: getV('призначені курси', 'assigned') !== undefined ? getV('призначені курси', 'assigned') : (u.assigned || []),
+                results: getV('результати', 'results') !== undefined ? getV('результати', 'results') : (u.results || {}),
+                tableStats: getV('tablestats') !== undefined ? getV('tablestats') : (u.tableStats || {})
             };
         });
     }
 
-    // --- ПАРСЕР ІСТОРІЇ (2025, 2026...) ---
+    // --- ПАРСЕР КУРСІВ (Так само стійкий до формату) ---
+    function normalizeCourses(coursesData) {
+        if (!Array.isArray(coursesData) || coursesData.length === 0) return [];
+        if (Array.isArray(coursesData[0])) {
+            let headers = coursesData[0].map(h => String(h).trim().toLowerCase());
+            let objects = [];
+            for (let i = 1; i < coursesData.length; i++) {
+                let row = coursesData[i];
+                let obj = {};
+                headers.forEach((h, idx) => { obj[h] = row[idx]; });
+                objects.push({
+                    course: obj['course'] || obj['курс'] || row[0] || '',
+                    product: obj['product'] || obj['продукт'] || row[1] || '',
+                    info: obj['info'] || obj['інформація'] || row[2] || '',
+                    test: obj['test'] || obj['тест'] || row[3] || ''
+                });
+            }
+            return objects;
+        }
+        return coursesData;
+    }
+
     function parseHistory(user) {
         let history = {};
         let years = new Set();
         let regex = /^(0[1-9]|1[0-2])\.(\d{4})$/;
         
-        for (let key in user._raw) {
-            let match = key.match(regex);
+        let mapToCheck = user._rawMap || user._raw || {};
+        
+        for (let key in mapToCheck) {
+            let cleanKey = String(key).trim().toLowerCase();
+            let match = cleanKey.match(regex);
             if (match) {
                 let month = match[1];
                 let year = match[2];
-                let val = String(user._raw[key] || '').trim();
-                if (!val) continue;
+                let val = String(mapToCheck[key] || '').trim();
+                if (!val || val === 'undefined') continue;
                 
-                // Формат: 2136 / 1525 / 71%
                 let parts = val.split('/').map(s => s.trim());
                 let plan = parseFloat(parts[0]) || 0;
                 let fact = parseFloat(parts[1]) || 0;
@@ -933,7 +989,8 @@
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 
                 db = data.educationData;
-                db.users = normalizeUsers(db.users); // ПАРСІНГ СТОВПЧИКІВ
+                db.users = normalizeUsers(db.users); 
+                db.courses = normalizeCourses(db.courses);
 
                 globalAchievements = data.achievementData || []; 
 
@@ -998,6 +1055,7 @@
                 if (parsedDb && parsedDb.educationData) {
                     db = parsedDb.educationData;
                     db.users = normalizeUsers(db.users);
+                    db.courses = normalizeCourses(db.courses);
                     globalAchievements = parsedDb.achievementData || []; 
                 }
             }
@@ -1040,11 +1098,31 @@
         }
     });
 
+    // Надійно розбираємо призначені курси
     function buildCoursesMap(user) {
         coursesMap = {}; 
-        let currentUserAssigned = user.assigned || [];
+        
+        let asg = user.assigned;
+        let currentUserAssigned = [];
+        if (Array.isArray(asg)) {
+            currentUserAssigned = asg;
+        } else if (typeof asg === 'string') {
+            try {
+                let parsed = JSON.parse(asg);
+                if (Array.isArray(parsed)) currentUserAssigned = parsed;
+                else currentUserAssigned = asg.split(',').map(s=>s.trim()).filter(s=>s);
+            } catch(e) {
+                currentUserAssigned = asg.split(',').map(s=>s.trim()).filter(s=>s);
+            }
+        }
 
-        (db.courses || []).forEach(c => {
+        let crs = db.courses || [];
+        if (!Array.isArray(crs) && crs && typeof crs === 'object') {
+            crs = Object.values(crs);
+        }
+
+        crs.forEach(c => {
+            if (!c || !c.product) return;
             let isAssigned = currentUserAssigned.some(assignedName => {
                 let aClean = getCleanName(assignedName);
                 let pClean = getCleanName(c.product);
@@ -1063,6 +1141,7 @@
     function switchToMyCabinet() {
         windowViewingEmployee = null;
         let user = db.users.find(u => u.login === currentUser);
+        if(!user) { logout(); return; }
         
         let rawName = user.name && String(user.name).trim() !== "" ? String(user.name) : currentUser;
         let nameParts = rawName.replace(/[\/\\,]/g, '').trim().split(/\s+/);
@@ -1079,13 +1158,16 @@
             document.getElementById('adminPanelBtn').style.display = 'none';
         }
 
-        buildCoursesMap(user);
-        renderCabinetStats(user); 
-        renderCourses(user);
-        startDeadlineTimer();
-        checkNewAchievements(user);
-        
-        switchView('courseView');
+        try {
+            buildCoursesMap(user);
+            renderCabinetStats(user); 
+            renderCourses(user);
+            startDeadlineTimer();
+            checkNewAchievements(user);
+            switchView('courseView');
+        } catch(e) {
+            console.error("Помилка рендеру кабінету:", e);
+        }
     }
 
     function switchToAdminPanel() {
@@ -1221,7 +1303,11 @@
             let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
 
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
-            let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
+            
+            let asg = u.assigned;
+            let arrAssigned = 0;
+            if(Array.isArray(asg)) arrAssigned = asg.length;
+            else if(typeof asg === 'string') arrAssigned = asg.split(',').filter(s=>s.trim()).length;
             
             let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
             let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
@@ -1230,7 +1316,8 @@
             
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = (assignedCount > 0 || arrAssigned > 0);
-            let hasHistory = Object.keys(parseHistory(u).history).length > 0;
+            let hasHistory = false;
+            try { hasHistory = Object.keys(parseHistory(u).history).length > 0; } catch(e){}
 
             if (isAdmin) {
                 if (uIsOwner) return false;
@@ -1310,13 +1397,20 @@
         let validAvgs = 0;
 
         users.forEach(u => {
-            let st = u.tableStats || {};
+            let st = u.tableStats;
+            if(typeof st === 'string') { try{ st = JSON.parse(st); }catch(e){st={};} }
+            else if(!st) st = {};
+            
             groupAssigned += parseInt(st.assigned) || 0;
             groupPassed += (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             
             let sum = 0, count = 0;
-            for (let key in (u.results || {})) {
-                let resStr = u.results[key];
+            let uRes = u.results;
+            if(typeof uRes === 'string') { try{ uRes = JSON.parse(uRes); }catch(e){uRes={};} }
+            else if(!uRes) uRes = {};
+            
+            for (let key in uRes) {
+                let resStr = uRes[key];
                 let score = 0;
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                 if (match) score = parseInt(match[2], 10) || 0;
@@ -1337,7 +1431,10 @@
         document.getElementById('adminStatsContainer').innerHTML = statsHtml;
 
         let listHtml = users.map(u => {
-            let st = u.tableStats || {};
+            let st = u.tableStats;
+            if(typeof st === 'string') { try{ st = JSON.parse(st); }catch(e){st={};} }
+            else if(!st) st = {};
+            
             let uPass = (parseInt(st.on100) || 0) + (parseInt(st.on90) || 0) + (parseInt(st.on80) || 0);
             let uTotal = parseInt(st.assigned) || 0;
             
@@ -1427,7 +1524,7 @@
     function renderCabinetStats(user) {
         if (!user) return;
         const container = document.getElementById('cabinetRichStats');
-        container.style.display = 'block';
+        if(!container) return;
         
         // 1. Цілі (шт / грн)
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
@@ -1522,10 +1619,15 @@
                 <span style="font-size:18px;">⚖️</span> Порівняти показники
             </button>`;
 
-        container.innerHTML = targetsBlock + curMonthHtml + historyHtml + compareHtml;
+        if(targetsBlock || curMonthHtml || historyHtml) {
+            container.innerHTML = targetsBlock + curMonthHtml + historyHtml + compareHtml;
+            container.style.display = 'block';
+        } else {
+            container.style.display = 'none';
+        }
 
         if (sortedYears.length > 0) {
-            renderHistoryYear(sortedYears[0]);
+            setTimeout(()=> renderHistoryYear(sortedYears[0]), 50);
         }
     }
 
@@ -1533,18 +1635,23 @@
         let hist = window.currentUserHistory[year];
         if (!hist) return;
 
-        document.getElementById('historyTotalsArea').innerHTML = `
-            <div class="stats-dashboard" style="margin-top: 16px;">
-                <div class="stat-item"><div class="stat-val">${formatNumber(hist.totalPlan)}</div><div class="stat-label">План ${year}</div></div>
-                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(hist.totalFact)}</div><div class="stat-label">Факт ${year}</div></div>
-                <div class="stat-item"><div class="stat-val" style="color:${hist.totalPct >= 100 ? 'var(--success)' : 'var(--text-main)'};">${hist.totalPct}%</div><div class="stat-label">Виконання</div></div>
-            </div>
-            <div style="text-align:center; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 12px;">
-                Виконаних планів (100%+): <span style="color:var(--success); font-weight: 800; font-size: 14px;">${hist.over100Count}</span>
-            </div>
-        `;
+        let area = document.getElementById('historyTotalsArea');
+        if(area) {
+            area.innerHTML = `
+                <div class="stats-dashboard" style="margin-top: 16px;">
+                    <div class="stat-item"><div class="stat-val">${formatNumber(hist.totalPlan)}</div><div class="stat-label">План ${year}</div></div>
+                    <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(hist.totalFact)}</div><div class="stat-label">Факт ${year}</div></div>
+                    <div class="stat-item"><div class="stat-val" style="color:${hist.totalPct >= 100 ? 'var(--success)' : 'var(--text-main)'};">${hist.totalPct}%</div><div class="stat-label">Виконання</div></div>
+                </div>
+                <div style="text-align:center; font-size: 12px; font-weight: 600; color: var(--text-muted); margin-top: 12px;">
+                    Виконаних планів (100%+): <span style="color:var(--success); font-weight: 800; font-size: 14px;">${hist.over100Count}</span>
+                </div>
+            `;
+        }
 
         let canvas = document.getElementById('historyChartCanvas');
+        if(!canvas) return;
+
         if (chartsInstances['history']) chartsInstances['history'].destroy();
 
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
@@ -1627,8 +1734,8 @@
         
         let matches = db.users.filter(u => {
             if (u.login === myUser.login) return false;
-            if (!u.shortName) return false;
-            return u.shortName.toLowerCase().includes(term);
+            let sn = u.shortName || u.name || u.login || "";
+            return sn.toLowerCase().includes(term);
         });
         
         if (matches.length === 0) {
@@ -1640,7 +1747,7 @@
         let html = matches.map(u => `
             <div style="padding: 12px 16px; border-bottom: 1px solid var(--border); cursor: pointer; font-size: 14px; font-weight: 600;" 
                  onclick="selectCompareOpponent('${escapeHTMLAttr(u.login)}')">
-                ${escapeHTMLAttr(u.shortName)} <span style="font-size:11px; color:var(--text-muted); font-weight:400;">(${escapeHTMLAttr(u.store || '')})</span>
+                ${escapeHTMLAttr(u.shortName || u.name)} <span style="font-size:11px; color:var(--text-muted); font-weight:400;">(${escapeHTMLAttr(u.store || '')})</span>
             </div>
         `).join('');
         dd.innerHTML = html;
@@ -1684,7 +1791,7 @@
                     </div>
                     
                     <div style="flex:1; background:var(--card-bg); border-radius:12px; padding:12px; text-align:center; border: 1px solid var(--border);">
-                        <div style="font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:4px; line-height:1.2;">${escapeHTMLAttr(oppUser.shortName)}</div>
+                        <div style="font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:4px; line-height:1.2;">${escapeHTMLAttr(oppUser.shortName || oppUser.name)}</div>
                         <div style="font-size:14px; font-weight:800;">${formatNumber(o.totalPlan)} / ${formatNumber(o.totalFact)}</div>
                         <div style="font-size:18px; font-weight:900; color:${o.totalPct>=100?'var(--success)':'var(--text-main)'}; margin:4px 0;">${o.totalPct}%</div>
                         <div style="font-size:11px; color:var(--text-muted); font-weight:600;">100%+ планів: <span style="color:var(--success);">${o.over100Count}</span></div>
@@ -1723,7 +1830,7 @@
                     labels: sortedM,
                     datasets: [
                         { label: 'Ви (Факт)', data: myData, borderColor: '#10b981', backgroundColor: '#10b981', tension: 0.3, borderWidth: 2, pointRadius: 3 },
-                        { label: oppUser.shortName, data: oppData, borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, borderWidth: 2, pointRadius: 3 }
+                        { label: oppUser.shortName || oppUser.name, data: oppData, borderColor: '#3b82f6', backgroundColor: '#3b82f6', tension: 0.3, borderWidth: 2, pointRadius: 3 }
                     ]
                 },
                 options: {
@@ -1744,9 +1851,14 @@
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
+        if(!list) return;
+        
         const courseNames = Object.keys(coursesMap);
 
-        let userResults = user.results || {};
+        let userResults = user.results;
+        if(typeof userResults === 'string') { try{ userResults=JSON.parse(userResults); }catch(e){userResults={};} }
+        else if(!userResults) userResults = {};
+
         let totalAssigned = 0;
         let totalCompleted = 0;
         let totalScoreSum = 0;
@@ -1791,43 +1903,45 @@
         let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
         let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
-        // Блок "Витрачений час на тестування" ТІЛЬКИ для Керівника або Власника
         let timeSpentGlobalHtml = '';
         if ((windowUserRole === 'admin' || windowUserRole === 'director') && user.testTime) {
             timeSpentGlobalHtml = `
             <div class="stat-item" style="width: 100%; margin-top: 12px; flex: none;">
-                <div class="stat-val" style="font-size: 16px;">${user.testTime}</div>
+                <div class="stat-val" style="font-size: 16px;">${escapeHTMLAttr(user.testTime)}</div>
                 <div class="stat-label">Витрачений час на тестування</div>
             </div>`;
         }
 
-        document.getElementById('globalStatsContainer').innerHTML = `
-            <div class="section-title" style="margin-top: 0; display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-                <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; display: block;" alt="Stats">
-                <span style="line-height: 1; padding-top: 2px;">Прогрес навчання</span>
-            </div>
-            <div class="stats-dashboard">
-                <div class="stat-item clickable" onclick="openCompletedModal()">
-                    <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
-                    <div class="stat-label">Пройдено</div>
+        let globCont = document.getElementById('globalStatsContainer');
+        if(globCont) {
+            globCont.innerHTML = `
+                <div class="section-title" style="margin-top: 0; display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
+                    <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; display: block;" alt="Stats">
+                    <span style="line-height: 1; padding-top: 2px;">Прогрес навчання</span>
                 </div>
-                <div class="stat-item">
-                    <div class="stat-val">${avgScore}%</div>
-                    <div class="stat-label">Сер. бал</div>
+                <div class="stats-dashboard">
+                    <div class="stat-item clickable" onclick="openCompletedModal()">
+                        <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
+                        <div class="stat-label">Пройдено</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-val">${avgScore}%</div>
+                        <div class="stat-label">Сер. бал</div>
+                    </div>
+                    ${timeSpentGlobalHtml}
                 </div>
-                ${timeSpentGlobalHtml}
-            </div>
-            
-            <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
-                <div class="progress-header">
-                    <div class="progress-title-text">Загальний прогрес</div>
-                    <div class="progress-percent-val" style="color: ${globalColor};">${globalPercent}%</div>
+                
+                <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
+                    <div class="progress-header">
+                        <div class="progress-title-text">Загальний прогрес</div>
+                        <div class="progress-percent-val" style="color: ${globalColor};">${globalPercent}%</div>
+                    </div>
+                    <div class="progress-track">
+                        <div class="progress-fill" style="width: ${globalPercent}%;"></div>
+                    </div>
                 </div>
-                <div class="progress-track">
-                    <div class="progress-fill" style="width: ${globalPercent}%;"></div>
-                </div>
-            </div>
-        `;
+            `;
+        }
         
         if (courseNames.length === 0) {
             list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
@@ -1841,7 +1955,7 @@
                 
                 let productsHtml = courseProducts.map((p, idx) => {
                     let cleanP = getCleanName(p.product);
-                    let resStr = user.results[cleanP];
+                    let resStr = userResults[cleanP];
                     let score = 0, attempts = 0, time = 0;
                     if (resStr) {
                         let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
@@ -1928,7 +2042,10 @@
         const products = coursesMap[name];
 
         let currentUserObj = windowViewingEmployee || db.users.find(u => u.login === currentUser);
-        let userResults = currentUserObj.results || {};
+        
+        let userResults = currentUserObj.results;
+        if(typeof userResults === 'string') { try{ userResults=JSON.parse(userResults); }catch(e){userResults={};} }
+        else if(!userResults) userResults = {};
 
         let completedCount = 0;
         products.forEach(p => {
@@ -2274,7 +2391,11 @@
 
         let cleanP = getCleanName(currentProductData.product);
         let currentUserObj = db.users.find(u => u.login === currentUser);
+        
         if (!currentUserObj.results) currentUserObj.results = {};
+        if (typeof currentUserObj.results === 'string') {
+            try { currentUserObj.results = JSON.parse(currentUserObj.results); } catch(e) { currentUserObj.results = {}; }
+        }
 
         let oldRes = currentUserObj.results[cleanP] || "0/0%/0";
         let attempts = 0, oldScore = 0, oldTime = 0;
