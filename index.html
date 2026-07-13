@@ -409,7 +409,6 @@
     <button id="closeTopSearchBtn" class="top-search-close">Скасувати</button>
 </div>
 
-<!-- ЗАВАНТАЖУВАЧ -->
 <div id="appLoader" class="app-loader">
     <div class="spinner" id="loaderSpinner"></div>
     <div class="loader-text" id="mainLoaderText">Підготовка</div>
@@ -417,15 +416,6 @@
         <div class="progress-bar" id="progressBar"></div>
     </div>
 </div>
-
-<!-- ДОДАНО: Швидке приховування лоадера, якщо дані вже є в кеші (забирає блимання при виході з Навчання) -->
-<script>
-    if (localStorage.getItem('skillhub_v4_flat')) {
-        let loader = document.getElementById('appLoader');
-        loader.style.display = 'none';
-        loader.classList.add('hidden');
-    }
-</script>
 
 <div class="container">
     
@@ -793,11 +783,58 @@
 <script>
     window.currentDevicePrice = 0; 
     
+    // Глобальні змінні для роботи з модальним вікном уцінки
     window.currentRezervItem = null;
     window.currentRezervPrice = 0;
     window.currentRezervIsDiscount = false;
     
+    // Тимчасовий масив для калькулятора Клочківської
     window.klochList = [];
+
+    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
+    window.updateFontScale = function(scale) {
+        localStorage.setItem('skillhub_font_scale', scale);
+        let style = document.getElementById('dynamicFontScale');
+        if(!style) { 
+            style = document.createElement('style'); 
+            style.id = 'dynamicFontScale'; 
+            document.head.appendChild(style); 
+        }
+        style.innerHTML = `
+            :root {
+                --nav-height: calc(76px * ${scale});
+            }
+            input, select, textarea, button, .btn { font-size: calc(16px * ${scale}) !important; }
+            .list-item-title { font-size: calc(16px * ${scale}) !important; }
+            .list-item-subtitle { font-size: calc(13px * ${scale}) !important; }
+            .list-item-value { font-size: calc(16px * ${scale}) !important; }
+            .sc-title { font-size: calc(15px * ${scale}) !important; }
+            .sc-price { font-size: calc(15px * ${scale}) !important; }
+            .tech-val { font-size: calc(14px * ${scale}) !important; }
+            .tech-label { font-size: calc(11px * ${scale}) !important; }
+            .desc-line div { font-size: calc(13px * ${scale}) !important; }
+            .modal-title { font-size: calc(18px * ${scale}) !important; }
+            .rating-name { font-size: calc(15px * ${scale}) !important; }
+            .rating-score { font-size: calc(15px * ${scale}) !important; }
+            .rating-desc { font-size: calc(12px * ${scale}) !important; }
+            .rezervy-name { font-size: calc(14px * ${scale}) !important; }
+            .rezervy-cat { font-size: calc(12px * ${scale}) !important; }
+            .rezervy-price { font-size: calc(15px * ${scale}) !important; }
+            .sc-brand { font-size: calc(10px * ${scale}) !important; }
+            .status-badge { font-size: calc(11px * ${scale}) !important; }
+            .ua-name { font-size: calc(20px * ${scale}) !important; }
+            /* Масштабування нижньої панелі */
+            .nav-item span { font-size: calc(11px * ${scale}) !important; }
+            .nav-icon { width: calc(24px * ${scale}) !important; height: calc(24px * ${scale}) !important; }
+            .nav-icon.icon-bulb { width: calc(28px * ${scale}) !important; height: calc(28px * ${scale}) !important; }
+        `;
+    };
+
+    // Ініціалізація масштабу шрифтів
+    let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
+    document.getElementById('fontSizeSlider').value = savedFontScale;
+    window.updateFontScale(savedFontScale);
+    // --------------------------------------
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -823,8 +860,8 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbzZxq1adf5I_XWwYbR4wJ0iWWksw6mUmjcYwbSklzUWzITNkbsFOF16C0lthmng-cJIOA/exec';
-    const CACHE_KEY = 'skillhub_v4_flat'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwpGy-Hh-El6fOXTGEtLFOdmnPSvdbTnOsPuj8eSaOd2urfh7AgeiQSVJTcpTuA9fbNGw/exec';
+    const CACHE_KEY = 'skillhub_v4_flat'; // ЗМІНЕНО КЛЮЧ КЕШУ ДЛЯ ПРИМУСОВОГО ОНОВЛЕННЯ БАЗИ
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1161,7 +1198,7 @@
                 
                 if (document.getElementById('montazhCity')) window.updateMontazhResults(); 
                 else if (document.querySelector('#rezervItemModal.show')) window.updateRezervResults();
-                else window.updateSetupResults(); 
+                else window.updateSetupResults();
             }
         }
     }
@@ -1196,6 +1233,7 @@
 
     const normalize = (str) => str ? String(str).toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
+    // ВИПРАВЛЕННЯ: Екранування сутностей за допомогою Unicode, щоб редактор/браузер їх не знищив
     window.escapeHTML = function(str) {
         if (!str) return '';
         return String(str)
@@ -1563,16 +1601,8 @@
                 window.renderSkillHubTab();
                 setAppStatus('ok', 'Готовий до роботи');
                 refreshData(false); 
-            } catch(e) { 
-                document.getElementById('appLoader').style.display = 'flex';
-                document.getElementById('appLoader').classList.remove('hidden');
-                await refreshData(true); 
-            }
-        } else {
-            document.getElementById('appLoader').style.display = 'flex';
-            document.getElementById('appLoader').classList.remove('hidden');
-            await refreshData(true); 
-        }
+            } catch(e) { await refreshData(true); }
+        } else await refreshData(true); 
     }
     
     window.init = init;
@@ -1585,9 +1615,7 @@
             
             const pBar = document.getElementById('progressBar');
             const pCont = document.getElementById('progressContainer');
-            
-            // Показуємо прогрес-бар ТІЛЬКИ якщо лоадер дійсно видимий
-            if (first || !document.getElementById('appLoader').classList.contains('hidden')) {
+            if (first || document.getElementById('appLoader').classList.contains('hidden') === false) {
                 document.getElementById('loaderSpinner').style.display = 'none';
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
@@ -1598,7 +1626,7 @@
                 if (progress < 90) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
             }, 300);
 
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 30000);
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
             clearTimeout(timeoutId);
             
@@ -1652,17 +1680,11 @@
 
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
         try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
-        
-        // Відновлюємо видимість лоадера при ручному оновленні
-        let loader = document.getElementById('appLoader');
-        loader.style.display = 'flex';
-        loader.classList.remove('hidden');
-        
+        document.getElementById('appLoader').classList.remove('hidden');
         document.getElementById('loaderSpinner').style.display = 'none';
         document.getElementById('progressContainer').style.display = 'block';
         document.getElementById('progressBar').style.width = '0%';
         document.getElementById('mainLoaderText').innerText = "Оновлення бази...";
-        
         await refreshData(true); 
     });
 
@@ -1672,9 +1694,7 @@
             safeUpdateHTML('appVersionDisp', `Версія ${db.appVersion}`);
             document.getElementById('appVersionDisp').style.display = 'inline-block';
         }
-        let loader = document.getElementById('appLoader');
-        loader.classList.add('hidden');
-        setTimeout(() => loader.style.display = 'none', 300); // Повністю приховуємо елемент
+        document.getElementById('appLoader').classList.add('hidden');
     }
 
     window.saveDefaultStore = function() {
@@ -1746,6 +1766,8 @@
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
+            // ВИПРАВЛЕННЯ: Екрануємо під час створення HTML. 
+            // Використовуємо \u0026quot; замість лапок, щоб уникнути конфліктів у браузері
             let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\u0026quot;');
             let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\u0026quot;');
 
@@ -2875,9 +2897,11 @@
         window.openModalBase('descModal', name, code, priceLabel);
     }
 
+    // Оновлена функція Changelog для відображення як в Telegram
     window.showChangelogModal = function(version, changelogText) {
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
+        // Розділяємо текст на блоки по символу "--"
         let blocks = String(changelogText).split(/(?:\r?\n)?\s*--\s*(?:\r?\n)?/);
         let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
         
@@ -2893,6 +2917,7 @@
                 
                 let lineStyle = "";
                 
+                // Перевірка маркерів кастомного форматування
                 if (l.startsWith('(AA+)')) {
                     l = l.substring(5).trim().toUpperCase();
                     lineStyle += " font-weight:800;";
@@ -2914,6 +2939,7 @@
                     lineStyle += " font-style:italic; color:var(--danger);";
                 }
 
+                // Збільшення Емодзі
                 l = l.replace(/([\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '<span style="font-size: 1.5em; vertical-align: middle; line-height: 1;">$1</span>');
 
                 let margin = blockHtml !== '' ? "margin-top: 6px;" : "";
