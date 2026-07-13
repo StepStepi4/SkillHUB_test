@@ -616,7 +616,6 @@
         return 'спроб';
     }
 
-    // Надійна функція для перетворення будь-якого рядка (з пробілами тощо) в число
     function parseCleanFloat(val) {
         if (val === null || val === undefined || val === "") return 0;
         let str = String(val).replace(/[^\d,\.]/g, '').replace(',', '.');
@@ -651,7 +650,6 @@
         return ds;
     }
 
-    // Функція для отримання повного імені (Прізвище + Ім'я)
     function getFullName(fullNameStr) {
         if(!fullNameStr) return "Колега";
         let parts = fullNameStr.replace(/[\/\\,]/g, '').trim().split(/\s+/);
@@ -840,6 +838,7 @@
     }
 
     function adaptAllUsers(users, courses) {
+        if (!users) return;
         let validProductKeys = new Set((courses || []).map(c => getCleanName(c.product)));
         
         users.forEach(u => {
@@ -865,16 +864,22 @@
 
             const data = await response.json();
             if (!data.error) {
+                if (data.appVersion && String(data.appVersion).startsWith("Error")) {
+                    localStorage.setItem('skillhub_server_error', data.appVersion);
+                } else {
+                    localStorage.removeItem('skillhub_server_error');
+                }
+
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 
                 db = data.educationData;
-                if (db.users && db.courses) {
+                if (db && db.users && db.courses) {
                     adaptAllUsers(db.users, db.courses);
                 }
                 globalAchievements = data.achievementData || []; 
 
                 if (currentUser) {
-                    let user = db.users.find(u => u.login === currentUser);
+                    let user = db && db.users ? db.users.find(u => u.login === currentUser) : null;
                     if (user) {
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
@@ -933,7 +938,7 @@
                 let parsedDb = JSON.parse(cachedData);
                 if (parsedDb && parsedDb.educationData) {
                     db = parsedDb.educationData;
-                    if (db.users && db.courses) {
+                    if (db && db.users && db.courses) {
                         adaptAllUsers(db.users, db.courses);
                     }
                     globalAchievements = parsedDb.achievementData || []; 
@@ -1057,12 +1062,27 @@
             err.style.display = 'none';
 
             if (!db || !db.users || db.users.length === 0) {
-                if (navigator.onLine) await fetchFreshDataSilent();
-                else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
+                err.innerHTML = "Завантаження бази даних... Зачекайте пару секунд і спробуйте знову.";
+                err.style.display = 'block';
+                if (navigator.onLine) {
+                    document.getElementById('loader').style.display = 'flex';
+                    await fetchFreshDataSilent();
+                    document.getElementById('loader').style.display = 'none';
+                } else { 
+                    err.innerText = "База даних порожня. Перевірте інтернет!"; 
+                    err.style.display = 'block'; 
+                    if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
+                    return; 
+                }
             }
 
+            // Розширений перехоплювач помилок сервера
             if (!db || !db.users || db.users.length === 0) {
-                err.innerText = "Помилка завантаження даних. Спробуйте оновити сторінку.";
+                let cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
+                let serverError = cachedData.appVersion && String(cachedData.appVersion).includes("Error") ? cachedData.appVersion : "";
+                
+                err.innerHTML = "Помилка завантаження даних. Спробуйте оновити сторінку." + 
+                                (serverError ? ("<br><br><span style='font-size:10px; color:gray'>Деталі: " + serverError + "</span>") : "<br><br><span style='font-size:11px; font-weight:700;'>Оновіть розгортання Google Apps Script (Нова версія).</span>");
                 err.style.display = 'block';
                 if(isAuto) { localStorage.removeItem('skillhub_edu_creds'); switchView('loginView'); }
                 if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
@@ -1461,7 +1481,6 @@
         
         sortedYears.forEach(year => {
             let histMonths = (user.history || []).filter(h => h.month.endsWith(year));
-            // Затримка, щоб елементи canvas встигли з'явитися в DOM
             setTimeout(() => {
                 let canvas = document.getElementById(`historyChartCanvas_${year}`);
                 if (canvas) {
