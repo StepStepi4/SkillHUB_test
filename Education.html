@@ -495,6 +495,7 @@
 </div>
 
 <script>
+    // НОВА АКТУАЛЬНА ССЫЛКА НА ТВОЙ СЕРВЕР (ИЗ ТВОЕГО СООБЩЕНИЯ)
     const API_URL = 'https://script.google.com/macros/s/AKfycbwZSK8XPD_NDw_x-2MQAf76LqDqwvVGclaIlFK9XaMPIG95szcZbwOeg9u_2i2YpTqx8Q/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
@@ -1481,6 +1482,7 @@
         
         sortedYears.forEach(year => {
             let histMonths = (user.history || []).filter(h => h.month.endsWith(year));
+            // Затримка, щоб елементи canvas встигли з'явитися в DOM
             setTimeout(() => {
                 let canvas = document.getElementById(`historyChartCanvas_${year}`);
                 if (canvas) {
