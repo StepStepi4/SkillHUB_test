@@ -92,6 +92,9 @@
         }
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; will-change: transform; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
+        
+        @keyframes spinIcon { 100% { transform: rotate(360deg); } }
+        .spinning-icon { animation: spinIcon 1s linear infinite; }
 
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 8px 0; text-align: center; letter-spacing: -0.5px;}
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500;}
@@ -99,6 +102,7 @@
         
         .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
 
+        /* --- ЛОГІН --- */
         .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
         .login-card { background: var(--card-bg); border-radius: 24px; padding: 32px 24px; box-shadow: 0 12px 32px rgba(0,0,0,0.06); border: 1px solid var(--border); }
 
@@ -126,7 +130,7 @@
         .btn-secondary { background: var(--input-bg); color: var(--text-main); border: 1px solid var(--border); }
         .btn-secondary:active { transform: scale(0.96); background: var(--border); }
 
-        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; gap: 12px; padding: 0; background: transparent; border: none; box-shadow: none; position: relative; z-index: 100;}
+        .nav-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 12px; padding: 0; background: transparent; border: none; box-shadow: none; position: relative; z-index: 100;}
         .nav-header h2 { font-size: 24px !important; margin: 0; font-weight: 800; letter-spacing: -0.5px; line-height: 1.2; color: var(--text-main); }
         .nav-actions { display: flex; gap: 6px; background: transparent; padding: 0; border: none; box-shadow: none; position: relative; z-index: 9999;}
 
@@ -140,6 +144,15 @@
         .floating-exit { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); width: auto; height: 48px; background: rgba(255,255,255,0.9); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); border: 1px solid var(--border); border-radius: 24px; padding: 0 20px; display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.1); z-index: 9000; cursor: pointer; transition: 0.2s; color: var(--text-main); font-weight: 700; font-size: 14px; text-transform: uppercase; }
         .floating-exit:active { transform: translateX(-50%) scale(0.95); background: var(--input-bg); }
 
+        /* --- ВКЛАДКИ (ТАБИ) --- */
+        .tabs-wrapper { display: flex; position: relative; background: var(--input-bg); border-radius: 16px; padding: 4px; margin-bottom: 24px; border: 1px solid var(--border); box-shadow: inset 0 2px 4px rgba(0,0,0,0.02); }
+        .tab-btn { flex: 1; text-align: center; padding: 12px; font-size: 14px; font-weight: 700; color: var(--text-muted); cursor: pointer; z-index: 2; transition: color 0.3s; user-select: none; }
+        .tab-btn.active { color: var(--text-main); }
+        .tab-slider { position: absolute; top: 4px; bottom: 4px; background: var(--card-bg); border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: 0.3s cubic-bezier(0.25, 1, 0.5, 1); z-index: 1; }
+        .tab-content { display: none; animation: fadeIn 0.3s; }
+        .tab-content.active { display: block; }
+
+        /* --- СТАТИСТИКА ТА ПРОГРЕС --- */
         .progress-widget { background: var(--card-bg); border-radius: 20px; padding: 20px; margin-bottom: 24px; border: 1px solid var(--border); box-shadow: 0 6px 16px rgba(0,0,0,0.03); transition: all 0.3s ease; }
         .progress-header { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 12px; }
         .progress-title-text { font-size: 12px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
@@ -154,7 +167,7 @@
         .stat-val { font-size: 22px; font-weight: 900; color: var(--text-main); line-height: 1; margin-bottom: 6px; transition: color 0.3s ease;}
         .stat-label { font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.3s ease;}
 
-        .cabinet-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.03); }
+        .cabinet-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; box-shadow: 0 6px 16px rgba(0,0,0,0.03); margin-bottom: 24px; }
         .cabinet-card-title { font-size: 15px; font-weight: 800; color: var(--text-muted); text-transform: uppercase; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
         
         .badge { padding: 4px 8px; border-radius: 8px; font-size: 12px; font-weight: 800; display: inline-flex; align-items: center; justify-content: center; }
@@ -163,8 +176,18 @@
         .badge-info { background: var(--info-bg); color: var(--info-text); }
         .badge-purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
 
-        .chart-container { background: var(--chart-bg); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; height: 250px; width: 100%; }
+        .chart-container { background: var(--chart-bg); border-radius: 20px; border: 1px solid var(--border); padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; height: 250px; width: 100%; }
+        
+        .table-container { width: 100%; overflow-x: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 24px; }
+        .stats-table { width: 100%; border-collapse: collapse; min-width: 450px; }
+        .stats-table th { background: var(--input-bg); color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
+        .stats-table td { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--input-bg); }
+        .stats-table tr:last-child td { border-bottom: none; }
 
+        .cabinet-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media (min-width: 768px) { .cabinet-grid { grid-template-columns: 2fr 1fr; } }
+
+        /* --- КАРТКИ НАВЧАННЯ --- */
         .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 14px; padding: 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
@@ -214,7 +237,7 @@
         .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s; }
         .ach-card.zoomed .ach-card-desc { max-height: 200px; opacity: 1; margin-top: 8px; }
 
-        .ach-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-bg); z-index: 10002; width: 90%; border-radius: 28px; padding: 28px 24px; text-align: left; opacity: 0; display: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2); max-height: 85vh; flex-direction: column; will-change: transform, opacity; }
+        .ach-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-bg); z-index: 10002; width: 90%; max-width: 400px; border-radius: 28px; padding: 28px 24px; text-align: left; opacity: 0; display: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2); max-height: 85vh; flex-direction: column; will-change: transform, opacity; }
         .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
         .notification-dot { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
@@ -231,6 +254,7 @@
         .watermark-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; overflow: hidden; opacity: 0.04; }
         .watermark-text { font-size: 20px; font-weight: 900; color: var(--text-main); position: absolute; transform: rotate(-30deg); white-space: nowrap; }
 
+        /* --- АНТИ-СУПЕР-ЧІТ ШИРМА --- */
         #antiCheatScreen { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: #000; color: #fff; z-index: 999999; display: none; flex-direction: column; justify-content: center; align-items: center; font-size: 16px; font-weight: 800; text-align: center; padding: 24px; line-height: 1.5; }
         body.cheating .container { display: none !important; }
         body.cheating #antiCheatScreen { display: flex !important; }
@@ -329,7 +353,7 @@
                         <circle cx="12" cy="7" r="4"></circle>
                     </svg>
                 </button>
-                <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary); z-index: 9999;">
+                <button class="back-btn-sleek" id="btnRefreshAdmin" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary); z-index: 9999;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 4 23 10 17 10"></polyline>
                         <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
@@ -351,6 +375,7 @@
         <div id="adminUsersList"></div>
     </div>
 
+    <!-- Основний кабінет / Курси -->
     <div id="courseView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -373,7 +398,7 @@
                     <img src="medal.svg" alt="Achievements" style="width: 32px; height: 32px; object-fit: contain;" onerror="this.outerHTML='<span style=\\'font-size:28px;\\'>🏅</span>'">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
-                <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary); z-index: 9999;">
+                <button class="back-btn-sleek" id="btnRefreshCab" onclick="forceRefresh()" title="Оновити дані" style="color: var(--primary); z-index: 9999;">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <polyline points="23 4 23 10 17 10"></polyline>
                         <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path>
@@ -389,22 +414,46 @@
             </div>
         </div>
 
-        <!-- ІЄРАРХІЯ БЛОКІВ КАБІНЕТУ -->
-        <div id="block-progress"></div>
-        <div id="block-month"></div>
-        <div id="block-history"></div>
-        <div id="block-targets"></div>
-        <div id="block-compare"></div>
-
-        <div id="courseListTitleWrapper" style="display: none;">
-            <div class="section-title" id="courseListTitle" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-                <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; display: block;" alt="Check" onerror="this.style.display='none'">
-                <span style="line-height: 1; padding-top: 2px;">Призначені курси</span>
-            </div>
+        <!-- ТАБИ НАВІГАЦІЇ -->
+        <div class="tabs-wrapper" id="cabinetTabs">
+            <div class="tab-slider" id="tabSlider" style="left: 4px; width: calc(33.333% - 8px);"></div>
+            <div class="tab-btn active" data-target="tab-learning" data-index="0" onclick="switchCabinetTab('tab-learning')">Навчання</div>
+            <div class="tab-btn" data-target="tab-goals" data-index="1" onclick="switchCabinetTab('tab-goals')">Цілі</div>
+            <div class="tab-btn" data-target="tab-stats" data-index="2" onclick="switchCabinetTab('tab-stats')">Статистика</div>
         </div>
-        <div id="courseList"></div>
+
+        <div id="deadlineContainer" style="display:none;">
+            <span style="font-size:20px;">⏳</span>
+            <span id="deadlineText"></span>
+        </div>
+
+        <!-- Вкладка 1: НАВЧАННЯ -->
+        <div id="tab-learning" class="tab-content active">
+            <div id="globalStatsContainer"></div>
+            <div id="courseListTitleWrapper" style="display: none;">
+                <div class="section-title" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
+                    <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; display: block;" alt="Check" onerror="this.style.display='none'">
+                    <span style="line-height: 1; padding-top: 2px;">Призначені курси</span>
+                </div>
+            </div>
+            <div id="courseList"></div>
+        </div>
+
+        <!-- Вкладка 2: ЦІЛІ -->
+        <div id="tab-goals" class="tab-content">
+            <div id="block-targets"></div>
+            <div id="block-month"></div>
+        </div>
+
+        <!-- Вкладка 3: СТАТИСТИКА -->
+        <div id="tab-stats" class="tab-content">
+            <div id="block-history"></div>
+            <div id="block-compare"></div>
+        </div>
+
     </div>
 
+    <!-- Решта блоків без змін -->
     <div id="productView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -495,11 +544,13 @@
 </div>
 
 <script>
-    // НОВА АКТУАЛЬНА ССЫЛКА НА ТВОЙ СЕРВЕР (ИЗ ТВОЕГО СООБЩЕНИЯ)
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwZSK8XPD_NDw_x-2MQAf76LqDqwvVGclaIlFK9XaMPIG95szcZbwOeg9u_2i2YpTqx8Q/exec'; 
+    // АКТУАЛЬНИЙ API URL
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwMsnsjQjnKAzBsYaqnbzaHi305PBPkDXlM3NS1B76s4tu9GBIVpbxg8NmpiCYVAZMh3g/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
+    let globalCabinetData = []; 
+    let currentCompareLogin = "";
 
     window.updateFontScale = function(scale) {
         let style = document.getElementById('dynamicFontScale');
@@ -567,10 +618,6 @@
     window.isDeadlinePassed = false;
     let isTestActive = false; 
 
-    let currentQuestionIndex = 0;
-    let totalTimeSpent = 0;
-    const TIME_PER_QUESTION = 25; 
-
     function getCleanName(str) {
         if (!str) return "";
         return String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, '');
@@ -632,18 +679,6 @@
         return n.toLocaleString('uk-UA');
     }
     
-    function formatPercent(val) {
-        if (val === "" || val === null || val === undefined) return "0%";
-        let str = String(val).trim().replace(',', '.');
-        if (str.includes('%')) {
-            let n = parseFloat(str.replace('%', ''));
-            return isNaN(n) ? '0%' : +(n).toFixed(2) + '%';
-        }
-        let n = parseFloat(str);
-        if (isNaN(n)) return '0%';
-        return +(n * 100).toFixed(2) + '%';
-    }
-    
     function formatDeadlineText(deadlineStr) {
         if (!deadlineStr || deadlineStr === "undefined" || String(deadlineStr).trim() === "") return null;
         let ds = String(deadlineStr).trim();
@@ -658,6 +693,22 @@
         return parts[0];
     }
 
+    function switchCabinetTab(tabId) {
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+
+        let activeBtn = document.querySelector(`.tab-btn[data-target="${tabId}"]`);
+        if (activeBtn) {
+            activeBtn.classList.add('active');
+            let idx = parseInt(activeBtn.getAttribute('data-index'));
+            let slider = document.getElementById('tabSlider');
+            slider.style.left = `calc(${idx * 33.333}% + 4px)`;
+            slider.style.width = `calc(33.333% - 8px)`;
+        }
+
+        document.getElementById(tabId).classList.add('active');
+    }
+
     function handleFloatingBack() {
         let activeView = document.querySelector('.view.active').id;
         if (activeView === 'loginView' || activeView === 'adminView') {
@@ -665,7 +716,7 @@
         } else if (activeView === 'courseView') {
             if (windowViewingEmployee || windowUserRole === 'admin' || windowUserRole === 'director') {
                 windowViewingEmployee = null;
-                switchView('adminView');
+                switchToAdminPanel();
             } else {
                 window.location.href = 'index.html'; 
             }
@@ -766,8 +817,8 @@
         if (!user) return;
 
         let dlMs = getDeadlineMs(user.deadline, user);
-        let dlContainer = document.getElementById('deadlineContainerInline');
-        let dlText = document.getElementById('deadlineTextInline');
+        let dlContainer = document.getElementById('deadlineContainer');
+        let dlText = document.getElementById('deadlineText');
 
         if (!dlMs || !dlContainer || !dlText) {
             if(dlContainer) dlContainer.style.display = 'none';
@@ -831,11 +882,22 @@
             alert("Немає підключення до інтернету!");
             return;
         }
+
+        let adminBtn = document.getElementById('btnRefreshAdmin');
+        let cabBtn = document.getElementById('btnRefreshCab');
+        if(adminBtn) adminBtn.querySelector('svg').classList.add('spinning-icon');
+        if(cabBtn) cabBtn.querySelector('svg').classList.add('spinning-icon');
+
         document.getElementById('loaderText').innerText = "Оновлення даних...";
         document.getElementById('loader').style.display = 'flex';
+        
         await fetchFreshDataSilent();
+        
         document.getElementById('loader').style.display = 'none';
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
+
+        if(adminBtn) adminBtn.querySelector('svg').classList.remove('spinning-icon');
+        if(cabBtn) cabBtn.querySelector('svg').classList.remove('spinning-icon');
     }
 
     function adaptAllUsers(users, courses) {
@@ -851,6 +913,18 @@
                 }
             }
         });
+    }
+
+    // Допоміжний парсер для нового формату (3651 / 1843 / 50%)
+    function parseCabTargetStr(valStr) {
+        if(!valStr) return { plan:0, sold:0, exec:"0%" };
+        let parts = String(valStr).split('/').map(p => p.trim());
+        if(parts.length >= 3) {
+            return { plan: parseCleanFloat(parts[0]), sold: parseCleanFloat(parts[1]), exec: parts[2] };
+        } else if(parts.length === 1) {
+            return { plan: 0, sold: parseCleanFloat(parts[0]), exec: "0%" };
+        }
+        return { plan: 0, sold: 0, exec: "0%" };
     }
 
     async function fetchFreshDataSilent() {
@@ -874,10 +948,9 @@
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 
                 db = data.educationData;
-                if (db && db.users && db.courses) {
-                    adaptAllUsers(db.users, db.courses);
-                }
+                if (db && db.users && db.courses) adaptAllUsers(db.users, db.courses);
                 globalAchievements = data.achievementData || []; 
+                globalCabinetData = data.cabinetData || [];
 
                 if (currentUser) {
                     let user = db && db.users ? db.users.find(u => u.login === currentUser) : null;
@@ -939,10 +1012,9 @@
                 let parsedDb = JSON.parse(cachedData);
                 if (parsedDb && parsedDb.educationData) {
                     db = parsedDb.educationData;
-                    if (db && db.users && db.courses) {
-                        adaptAllUsers(db.users, db.courses);
-                    }
+                    if (db && db.users && db.courses) adaptAllUsers(db.users, db.courses);
                     globalAchievements = parsedDb.achievementData || []; 
+                    globalCabinetData = parsedDb.cabinetData || []; 
                 }
             }
         } catch(e) {}
@@ -985,7 +1057,6 @@
 
     function buildCoursesMap(user) {
         coursesMap = {}; 
-        
         let currentUserAssigned = [];
         if (user.assigned && Array.isArray(user.assigned)) {
             currentUserAssigned = user.assigned.map(a => getCleanName(a.replace('✦', '')));
@@ -1022,18 +1093,15 @@
         }
 
         try {
+            switchCabinetTab('tab-learning'); 
+            currentCompareLogin = "";
             buildCoursesMap(user);
             renderCourses(user);
             renderCabinetStats(user); 
             startDeadlineTimer();
             checkNewAchievements(user);
             switchView('courseView');
-            
-            // Швидке завантаження ачівок (у фоні)
-            renderAchievements();
-        } catch(e) {
-            console.error("Помилка рендеру кабінету:", e);
-        }
+        } catch(e) { console.error("Помилка рендеру кабінету:", e); }
     }
 
     function switchToAdminPanel() {
@@ -1047,7 +1115,6 @@
         const err = document.getElementById('errorMsg');
 
         try {
-            // Прибираємо регістр (великі літери) для надійності входу
             const l = document.getElementById('loginInput').value.trim().toLowerCase();
             const p = document.getElementById('passInput').value.trim();
 
@@ -1077,7 +1144,6 @@
                 }
             }
 
-            // Розширений перехоплювач помилок сервера
             if (!db || !db.users || db.users.length === 0) {
                 let cachedData = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
                 let serverError = cachedData.appVersion && String(cachedData.appVersion).includes("Error") ? cachedData.appVersion : "";
@@ -1090,11 +1156,7 @@
                 return;
             }
 
-            // Порівнюємо логін без чутливості до регістру
-            const user = db.users.find(u => 
-                String(u.login).trim().toLowerCase() === l && 
-                String(u.pass).trim() === p
-            );
+            const user = db.users.find(u => String(u.login).trim().toLowerCase() === l && String(u.pass).trim() === p);
 
             if (user) {
                 currentUser = user.login;
@@ -1204,18 +1266,18 @@
             
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = assignedCount > 0;
-            let hasHistory = u.history && u.history.length > 0;
+            let hasCabData = globalCabinetData.some(c => c.login === u.login);
 
             if (isAdmin) {
                 if (uIsOwner) return false;
-                if (!hasGoals && !hasCourses && !hasHistory) return false;
+                if (!hasGoals && !hasCourses && !hasCabData) return false;
                 return true; 
             } else {
                 let uDir = String(u.director).toLowerCase().trim();
                 let belongsToManager = uDir && (uDir === mShort || mName.includes(uDir) || uDir.includes(mShort));
                 if (!belongsToManager) return false;
                 if (uIsDirector || uIsOwner) return false;
-                if (!hasGoals && !hasCourses && !hasHistory) return false;
+                if (!hasGoals && !hasCourses && !hasCabData) return false;
                 return true;
             }
         });
@@ -1278,10 +1340,7 @@
     }
 
     function renderAdminStatsAndList(users) {
-        let groupAssigned = 0;
-        let groupPassed = 0;
-        let groupAvgSum = 0;
-        let validAvgs = 0;
+        let groupAssigned = 0, groupPassed = 0, groupAvgSum = 0, validAvgs = 0;
 
         users.forEach(u => {
             let assignedCount = u.assigned ? u.assigned.length : 0;
@@ -1349,7 +1408,6 @@
             } else { achHtml = '<span style="font-size:12px; color:var(--text-muted);">Немає нагороди</span>'; }
 
             let displayName = u.name.replace(/[\/\\,]/g, '').trim(); 
-            
             let roleStr = String(u.role).toLowerCase();
             let isHead = roleStr.includes('керівник') || roleStr.includes('власник') || roleStr.includes('директор');
             
@@ -1401,200 +1459,334 @@
         document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 18px;">${escapeHTMLAttr(firstName)}</strong>`;
         document.getElementById('courseViewNavActions').style.display = 'none'; 
         
+        currentCompareLogin = ""; 
+        switchCabinetTab('tab-learning');
         renderCourses(windowViewingEmployee);
         renderCabinetStats(windowViewingEmployee);
         startDeadlineTimer(); 
         switchView('courseView');
     }
 
-    function renderCabinetStats(user) {
-        if (!user) return;
+    // =========================================================================
+    // ОСОБИСТИЙ КАБІНЕТ (ВКЛАДКИ ЦІЛІ ТА СТАТИСТИКА)
+    // =========================================================================
+    function openCompare() {
+        document.getElementById('compareOverlay').style.display = 'block';
+        document.getElementById('compareSearchInput').value = '';
+        document.getElementById('compareDropdown').innerHTML = '';
+        document.getElementById('compareDropdown').style.display = 'none';
+        document.getElementById('compareResultsArea').innerHTML = '';
+        document.getElementById('compareResultsArea').style.display = 'none';
         
-        // 1. ПОТОЧНИЙ МІСЯЦЬ
-        let curMonthHtml = '';
-        let cm = user.currentMonth || {};
-        if (cm.plan || cm.pcs || cm.grn || cm.execution) {
-            let curExecStr = formatPercent(cm.execution);
-            let curEffStr = formatPercent(cm.efficiency);
-            let curShareStr = formatPercent(cm.share);
-            let curPctNum = parseFloat(curExecStr) || 0;
+        document.body.style.overflow = 'hidden'; 
+        document.getElementById('compareModal').classList.add('active');
+    }
 
-            curMonthHtml = `
-            <div class="cabinet-card" style="margin-bottom: 24px;">
-                <div class="cabinet-card-title">📅 Поточний місяць</div>
-                <div style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;">
-                    <div style="display:flex; justify-content:space-between;"><span>План:</span> <strong>${cm.plan || '0'}</strong></div>
-                    <div style="display:flex; justify-content:space-between;"><span>Шт:</span> <strong>${cm.pcs || '0'}</strong></div>
-                    <div style="display:flex; justify-content:space-between;"><span>Грн:</span> <strong>${cm.grn || '0'}</strong></div>
-                    <div style="margin-top: 8px;">
-                        <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:6px;">
-                            <span>Виконання плану:</span> <span style="color:var(--success);">${curExecStr}</span>
-                        </div>
-                        <div class="progress-track" style="height:10px; border-radius:5px;">
-                            <div class="progress-fill" style="width:${Math.min(curPctNum, 100)}%; background:var(--success); border-radius:5px;"></div>
-                        </div>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; margin-top: 8px; align-items:center;">
-                        <span>Ефективність:</span> 
-                        <span class="badge badge-info">${curEffStr}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span>Доля:</span> 
-                        <span class="badge badge-purple">${curShareStr}</span>
-                    </div>
-                </div>
-            </div>`;
+    function closeCompare() {
+        document.getElementById('compareModal').classList.remove('active');
+        document.body.style.overflow = ''; 
+        setTimeout(() => document.getElementById('compareOverlay').style.display = 'none', 300);
+        
+        // Перемалювати графіки, якщо порівняння активне
+        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
+        renderCabinetStats(user);
+    }
+
+    function handleCompareSearch(val) {
+        let query = val.toLowerCase().trim();
+        let dropdown = document.getElementById('compareDropdown');
+        
+        if (query.length < 2) {
+            dropdown.style.display = 'none';
+            return;
         }
-        document.getElementById('block-month').innerHTML = curMonthHtml;
 
-        // 2. ІСТОРІЯ (Графіки одна під одною)
-        let yearlyStats = user.yearlyStats || {};
-        let sortedYears = Object.keys(yearlyStats).sort();
-        let historyHtml = '';
+        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
         
-        Object.keys(chartsInstances).forEach(k => {
-            if (k.startsWith('history_')) { chartsInstances[k].destroy(); }
+        let filtered = globalCabinetData.filter(emp => {
+            if (emp.login === user.login) return false;
+            let nameStr = String(emp.pib).toLowerCase();
+            return nameStr.includes(query);
         });
 
-        if (sortedYears.length > 0) {
-            sortedYears.forEach(year => {
-                let yStat = user.yearlyStats[year];
-                historyHtml += `
-                <div class="cabinet-card" style="margin-bottom: 24px;">
-                    <div class="cabinet-card-title">📈 Статистика за ${year} рік</div>
-                    <div class="chart-container" style="height: 220px; margin-bottom: 16px; padding: 12px;">
-                        <canvas id="historyChartCanvas_${year}"></canvas>
-                    </div>
-                    <div class="stats-dashboard" style="margin-top: 16px;">
-                        <div class="stat-item"><div class="stat-val">${formatNumber(yStat.plan)}</div><div class="stat-label">План ${year}</div></div>
-                        <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(yStat.fact)}</div><div class="stat-label">Факт ${year}</div></div>
-                        <div class="stat-item"><div class="stat-val" style="color:${parseFloat(yStat.execution) >= 100 ? 'var(--success)' : 'var(--text-main)'};">${yStat.execution}</div><div class="stat-label">Виконання</div></div>
-                    </div>
-                </div>`;
-            });
+        if (filtered.length === 0) {
+            dropdown.innerHTML = `<div style="padding: 12px; color: var(--text-muted); font-size: 14px;">Співробітника не знайдено</div>`;
+            dropdown.style.display = 'block';
+            return;
         }
-        document.getElementById('block-history').innerHTML = historyHtml;
 
-        // Малюємо графіки
+        let html = filtered.map(emp => {
+            return `<div style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--input-bg); font-weight: 600; font-size: 14px; transition: background 0.2s;" 
+                         onclick="selectCompareEmployee('${escapeHTMLAttr(emp.login)}')">
+                        ${escapeHTMLAttr(emp.pib)}
+                    </div>`;
+        }).join('');
+
+        dropdown.innerHTML = html;
+        dropdown.style.display = 'block';
+    }
+
+    function selectCompareEmployee(login) {
+        currentCompareLogin = login;
+        document.getElementById('compareDropdown').style.display = 'none';
+        
+        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
+        let cabData = globalCabinetData.find(c => c.login === user.login);
+        let compareEmp = globalCabinetData.find(c => c.login === login);
+        
+        if (!cabData || !compareEmp) return;
+
+        let area = document.getElementById('compareResultsArea');
+        area.style.display = 'block';
+
+        let name1 = cabData.pib.split(' ')[0] || "Ви";
+        let name2 = compareEmp.pib.split(' ')[0] || "Колега";
+
+        let tableRows = '';
+        cabData.monthsHistory.forEach(m => {
+            let compM = compareEmp.monthsHistory.find(cm => cm.monthYear === m.monthYear);
+            let compHTML = '';
+            if (compM) {
+                let v = parseInt(compM.execution) || 0;
+                compHTML = `<td><span class="badge ${v >= 100 ? 'badge-success' : 'badge-danger'}">${compM.execution}</span></td>`;
+            } else {
+                compHTML = `<td><span style="color:var(--text-muted);">-</span></td>`;
+            }
+
+            tableRows += `
+                <tr>
+                    <td><strong>${escapeHTMLAttr(m.monthYear)}</strong></td>
+                    <td><span class="badge ${parseInt(m.execution) >= 100 ? 'badge-success' : 'badge-danger'}">${escapeHTMLAttr(m.execution)}</span></td>
+                    ${compHTML}
+                </tr>
+            `;
+        });
+
+        area.innerHTML = `
+            <div style="font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 16px; text-align: center;">
+                ${escapeHTMLAttr(name1)} 🆚 ${escapeHTMLAttr(name2)}
+            </div>
+            <div class="table-container" style="margin-bottom: 0;">
+                <table class="stats-table" style="min-width: 100%;">
+                    <thead>
+                        <tr>
+                            <th>Місяць</th>
+                            <th>${escapeHTMLAttr(name1)} (%)</th>
+                            <th>${escapeHTMLAttr(name2)} (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows || '<tr><td colspan="3" style="text-align:center;">Немає історії</td></tr>'}
+                    </tbody>
+                </table>
+            </div>
+            <button class="btn btn-glow" style="margin-top: 24px;" onclick="closeCompare()">ЗБЕРЕГТИ І ЗАКРИТИ</button>
+        `;
+    }
+
+    function renderCabinetStats(user) {
+        if (!user || !globalCabinetData) return;
+        
+        let cabData = globalCabinetData.find(c => String(c.login).toLowerCase() === String(user.login).toLowerCase());
+        
+        let bMonth = document.getElementById('block-month');
+        let bHist = document.getElementById('block-history');
+        let bComp = document.getElementById('block-compare');
+
+        if (!cabData) {
+            bMonth.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Даних за поточний місяць немає.</div>`;
+            bHist.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Історія продажів порожня.</div>`;
+            bComp.innerHTML = '';
+            return;
+        }
+
+        // Вкладка ЦІЛІ: Поточний місяць
+        let cm = cabData.currentMonth || {};
+        let curExecStr = formatPercent(cm.execution);
+        let curEffStr = formatPercent(cm.efficiency);
+        let curShareStr = formatPercent(cm.share);
+        let curPctNum = parseFloat(curExecStr) || 0;
+
+        let curMonthHtml = `
+        <div class="cabinet-card" style="margin-bottom: 0;">
+            <div class="cabinet-card-title">📅 ${escapeHTMLAttr(cm.planTitle || 'Поточний місяць')}</div>
+            <div style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;">
+                <div style="display:flex; justify-content:space-between;"><span>План:</span> <strong>${formatNumber(cm.plan)}</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Шт:</span> <strong>${cm.pcs || '0'}</strong></div>
+                <div style="display:flex; justify-content:space-between;"><span>Грн:</span> <strong>${formatNumber(cm.grn)}</strong></div>
+                <div style="margin-top: 8px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:6px;">
+                        <span>Виконання плану:</span> <span style="color:${curPctNum >= 100 ? 'var(--success)' : 'var(--danger)'};">${curExecStr}</span>
+                    </div>
+                    <div class="progress-track" style="height:10px; border-radius:5px;">
+                        <div class="progress-fill" style="width:${Math.min(curPctNum, 100)}%; background:${curPctNum >= 100 ? 'var(--success)' : 'var(--danger)'}; border-radius:5px;"></div>
+                    </div>
+                </div>
+                <div style="display:flex; justify-content:space-between; margin-top: 8px; align-items:center;">
+                    <span>Ефективність:</span> <span class="badge badge-info">${curEffStr}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span>Доля:</span> <span class="badge badge-purple">${curShareStr}</span>
+                </div>
+            </div>
+        </div>`;
+        bMonth.innerHTML = curMonthHtml;
+
+        // Вкладка СТАТИСТИКА: Історія + Порівняння
+        Object.keys(chartsInstances).forEach(k => {
+            if (k === 'salesHistory' || k.startsWith('history_')) chartsInstances[k].destroy();
+        });
+
+        let compareEmp = currentCompareLogin ? globalCabinetData.find(c => c.login === currentCompareLogin) : null;
+
+        // Сортуємо місяці хронологічно, припускаючи формат MM.YYYY
+        let sortedHistory = [...cabData.monthsHistory].sort((a, b) => {
+            let [m1, y1] = a.monthYear.split('.');
+            let [m2, y2] = b.monthYear.split('.');
+            if(y1 !== y2) return y1 - y2;
+            return m1 - m2;
+        });
+
+        let tableRows = '';
+        sortedHistory.forEach(m => {
+            let compHTML = '';
+            if (compareEmp) {
+                let compM = compareEmp.monthsHistory.find(cm => cm.monthYear === m.monthYear);
+                if (compM) {
+                    let val = parseInt(compM.execution) || 0;
+                    compHTML = `<td><span class="badge ${val >= 100 ? 'badge-success' : 'badge-danger'}">${escapeHTMLAttr(compM.execution)}</span></td>`;
+                } else {
+                    compHTML = `<td><span style="color:var(--text-muted);">-</span></td>`;
+                }
+            }
+
+            tableRows += `
+                <tr>
+                    <td><strong>${escapeHTMLAttr(m.monthYear)}</strong></td>
+                    <td>${formatNumber(m.plan)}</td>
+                    <td>${formatNumber(m.sold)}</td>
+                    <td><span class="badge ${parseInt(m.execution) >= 100 ? 'badge-success' : 'badge-danger'}">${escapeHTMLAttr(m.execution)}</span></td>
+                    ${compHTML}
+                </tr>
+            `;
+        });
+
+        let histHtml = `
+            <div class="stats-dashboard" style="margin-bottom: 24px;">
+                <div class="stat-item"><div class="stat-val">${formatNumber(cabData.totals.plan2025)}</div><div class="stat-label">План 2025</div></div>
+                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(cabData.totals.sold2025)}</div><div class="stat-label">Продано 2025</div></div>
+                <div class="stat-item"><div class="stat-val">${formatNumber(cabData.totals.plan2026)}</div><div class="stat-label">План 2026</div></div>
+                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(cabData.totals.sold2026)}</div><div class="stat-label">Продано 2026</div></div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="salesHistoryChart"></canvas>
+            </div>
+
+            <div class="table-container">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Місяць</th>
+                            <th>План</th>
+                            <th>Продано</th>
+                            <th>Виконання (%)</th>
+                            ${compareEmp ? `<th>Колега (%)</th>` : ''}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows || '<tr><td colspan="5" style="text-align:center;">Немає історії</td></tr>'}
+                    </tbody>
+                </table>
+            </div>
+        `;
+        bHist.innerHTML = histHtml;
+
+        let compHtml = `
+            <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-size: 14px; gap: 8px; border: 1px solid var(--primary-light); color: var(--primary); background: rgba(16, 185, 129, 0.05);" onclick="openCompare()">
+                <span style="font-size:18px;">⚖️</span> ${compareEmp ? 'Змінити користувача для порівняння' : 'Порівняти з колегою'}
+            </button>`;
+        bComp.innerHTML = compHtml;
+
         const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
         const tColor = isDark ? '#ffffff' : '#111827';
         const gridC = isDark ? '#38383a' : '#e5e7eb';
-        
-        sortedYears.forEach(year => {
-            let histMonths = (user.history || []).filter(h => h.month.endsWith(year));
-            // Затримка, щоб елементи canvas встигли з'явитися в DOM
-            setTimeout(() => {
-                let canvas = document.getElementById(`historyChartCanvas_${year}`);
-                if (canvas) {
-                    chartsInstances[`history_${year}`] = new Chart(canvas, {
-                        type: 'bar',
-                        data: {
-                            labels: histMonths.map(m => m.month),
-                            datasets: [
-                                { label: 'План', data: histMonths.map(m => m.plan), backgroundColor: '#3b82f6', borderRadius: 4 },
-                                { label: 'Факт', data: histMonths.map(m => m.fact), backgroundColor: '#10b981', borderRadius: 4 }
-                            ]
-                        },
-                        options: {
-                            responsive: true, maintainAspectRatio: false,
-                            plugins: {
-                                legend: { labels: { color: tColor, font: { family: 'Inter', size: 11 } } },
-                                tooltip: {
-                                    callbacks: {
-                                        label: function(context) {
-                                            let label = context.dataset.label || '';
-                                            let pct = histMonths[context.dataIndex].execution;
-                                            if (label) label += ': ';
-                                            label += context.raw;
-                                            if (context.datasetIndex === 1) label += ` (${pct})`;
-                                            return label;
-                                        }
-                                    }
-                                }
-                            },
-                            scales: {
-                                x: { grid: { display: false }, ticks: { color: tColor } },
-                                y: { grid: { color: gridC, drawBorder: false }, ticks: { color: tColor } }
-                            }
-                        }
-                    });
+
+        let canvas = document.getElementById('salesHistoryChart');
+        if (canvas) {
+            const labels = sortedHistory.map(m => m.monthYear);
+            const planData = sortedHistory.map(m => m.plan);
+            const soldData = sortedHistory.map(m => m.sold);
+
+            let datasets = [
+                { 
+                    label: `План`, 
+                    data: planData, 
+                    type: 'bar',
+                    backgroundColor: isDark ? '#38383a' : '#cbd5e1',
+                    borderRadius: 4,
+                    order: 2
+                },
+                { 
+                    label: `Продано (${cabData.pib.split(' ')[0] || "Ви"})`, 
+                    data: soldData, 
+                    type: 'line',
+                    borderColor: '#10b981',
+                    backgroundColor: '#10b981',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    order: 1
                 }
-            }, 100);
-        });
+            ];
 
-        // 3. ЦІЛІ (Залишок)
-        let tPcs = parseCleanFloat(user.targetPcs);
-        let fPcs = parseCleanFloat(user.execPcs);
-        let rPcs = Math.max(0, tPcs - fPcs);
-        let pctPcs = tPcs > 0 ? (fPcs / tPcs * 100) : (fPcs > 0 ? 100 : 0);
+            if (compareEmp) {
+                const compSold = labels.map(l => {
+                    let f = compareEmp.monthsHistory.find(cm => cm.monthYear === l);
+                    return f ? f.sold : 0;
+                });
+                datasets.push({
+                    label: `Продано (${compareEmp.pib.split(' ')[0] || "Колега"})`,
+                    data: compSold,
+                    type: 'line',
+                    borderColor: '#3b82f6',
+                    backgroundColor: '#3b82f6',
+                    borderWidth: 3,
+                    tension: 0.3,
+                    borderDash: [5, 5],
+                    pointRadius: 4,
+                    order: 0
+                });
+            }
 
-        let tUah = parseCleanFloat(user.targetUah);
-        let fUah = parseCleanFloat(user.execUah);
-        let rUah = Math.max(0, tUah - fUah);
-        let pctUah = tUah > 0 ? (fUah / tUah * 100) : (fUah > 0 ? 100 : 0);
-        
-        let targetsHtml = '';
-        if (tPcs > 0 || fPcs > 0) {
-            targetsHtml += `
-                <div style="margin-bottom: 20px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">
-                        <span>Ціль: ${formatNumber(tPcs)}</span>
-                        <span>Виконано: ${formatNumber(fPcs)}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
-                        <span>Залишилось: <strong style="color:var(--text-main);">${formatNumber(rPcs)} шт</strong></span>
-                        <span style="color:#0ea5e9;">${pctPcs.toFixed(1)}%</span>
-                    </div>
-                    <div class="progress-track" style="height:12px; background:var(--input-bg); border-radius:6px;">
-                        <div class="progress-fill" style="width:${Math.min(pctPcs, 100)}%; background:linear-gradient(90deg, #0284c7, #38bdf8); border-radius:6px;"></div>
-                    </div>
-                </div>`;
+            chartsInstances['salesHistory'] = new Chart(canvas, {
+                data: { labels: labels, datasets: datasets },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { position: 'top', labels: { color: tColor, font: { family: 'Inter', size: 11 } } }
+                    },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: tColor } },
+                        y: { grid: { color: gridC, drawBorder: false }, ticks: { color: tColor } }
+                    }
+                }
+            });
         }
-        if (tUah > 0 || fUah > 0) {
-            targetsHtml += `
-                <div style="margin-bottom: 12px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">
-                        <span>Ціль: ${formatNumber(tUah)}</span>
-                        <span>Виконано: ${formatNumber(fUah)}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
-                        <span>Залишилось: <strong style="color:var(--text-main);">${formatNumber(rUah)} грн</strong></span>
-                        <span style="color:#f59e0b;">${pctUah.toFixed(1)}%</span>
-                    </div>
-                    <div class="progress-track" style="height:12px; background:var(--input-bg); border-radius:6px;">
-                        <div class="progress-fill" style="width:${Math.min(pctUah, 100)}%; background:linear-gradient(90deg, #d97706, #fbbf24); border-radius:6px;"></div>
-                    </div>
-                </div>`;
-        }
-        
-        let targetsBlock = targetsHtml ? `
-            <div class="cabinet-card" style="margin-bottom: 24px; border-color: var(--primary-light);">
-                <div class="cabinet-card-title">🎯 Цілі і їх виконання</div>
-                ${targetsHtml}
-            </div>` : '';
-        document.getElementById('block-targets').innerHTML = targetsBlock;
-
-        // 4. КНОПКА ПОРІВНЯТИ
-        let compareHtml = `
-            <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-size: 14px; gap: 8px;" onclick="openCompare()">
-                <span style="font-size:18px;">⚖️</span> Порівняти показники
-            </button>`;
-        document.getElementById('block-compare').innerHTML = compareHtml;
     }
 
+    // =========================================================================
+    // ВІДОБРАЖЕННЯ ЦІЛЕЙ (EDUCATION) ТА НАВЧАННЯ
+    // =========================================================================
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
-        if(!list) return;
-        
         const courseNames = Object.keys(coursesMap);
 
         let userResults = user.testResults || {};
-        let totalAssigned = 0;
-        let totalCompleted = 0;
-        let totalScoreSum = 0;
-        let scoreCount = 0;
-        
+        let totalAssigned = 0, totalCompleted = 0, totalScoreSum = 0, scoreCount = 0;
         savedCompletedListHtml = ""; 
 
         if (courseNames.length > 0) {
@@ -1610,14 +1802,12 @@
 
                     totalScoreSum += score;
                     scoreCount++;
-                    if (score >= 80) totalCompleted++;
-                    
-                    if (attempts > 0) {
-                        let isPass = score >= 80;
-                        let stColor = isPass ? 'var(--success)' : 'var(--danger)';
-                        let stIcon = isPass ? '✅' : '⏳';
+                    if (score >= 80) {
+                        totalCompleted++;
                         let attWord = getAttemptWord(attempts);
                         let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '';
+                        let stColor = 'var(--success)';
+                        let stIcon = '✅';
                         
                         savedCompletedListHtml += `
                             <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
@@ -1632,6 +1822,58 @@
             });
         }
 
+        // БЛОК ЦІЛЕЙ EDUCATION
+        let tPcs = parseCleanFloat(user.targetPcs);
+        let tUah = parseCleanFloat(user.targetUah);
+        let fPcs = parseCleanFloat(user.execPcs);
+        let fUah = parseCleanFloat(user.execUah);
+
+        let rPcs = Math.max(0, tPcs - fPcs);
+        let pctPcs = tPcs > 0 ? (fPcs / tPcs * 100) : (fPcs > 0 ? 100 : 0);
+        let rUah = Math.max(0, tUah - fUah);
+        let pctUah = tUah > 0 ? (fUah / tUah * 100) : (fUah > 0 ? 100 : 0);
+
+        let targetsHtml = '';
+        if (tPcs > 0 || fPcs > 0) {
+            targetsHtml += `
+                <div style="margin-bottom: 20px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">
+                        <span>Ціль: ${formatNumber(tPcs)} шт</span>
+                        <span>Виконано: ${formatNumber(fPcs)} шт</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+                        <span>Залишилось: <strong style="color:var(--text-main);">${formatNumber(rPcs)} шт</strong></span>
+                        <span style="color:#0ea5e9;">${pctPcs.toFixed(1)}%</span>
+                    </div>
+                    <div class="progress-track" style="height:12px; background:var(--input-bg); border-radius:6px;">
+                        <div class="progress-fill" style="width:${Math.min(pctPcs, 100)}%; background:linear-gradient(90deg, #0284c7, #38bdf8); border-radius:6px;"></div>
+                    </div>
+                </div>`;
+        }
+        if (tUah > 0 || fUah > 0) {
+            targetsHtml += `
+                <div style="margin-bottom: 12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">
+                        <span>Ціль: ${formatNumber(tUah)} грн</span>
+                        <span>Виконано: ${formatNumber(fUah)} грн</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
+                        <span>Залишилось: <strong style="color:var(--text-main);">${formatNumber(rUah)} грн</strong></span>
+                        <span style="color:#f59e0b;">${pctUah.toFixed(1)}%</span>
+                    </div>
+                    <div class="progress-track" style="height:12px; background:var(--input-bg); border-radius:6px;">
+                        <div class="progress-fill" style="width:${Math.min(pctUah, 100)}%; background:linear-gradient(90deg, #d97706, #fbbf24); border-radius:6px;"></div>
+                    </div>
+                </div>`;
+        }
+        
+        let targetsBlock = targetsHtml ? `
+            <div class="cabinet-card" style="margin-bottom: 24px; border-color: var(--primary-light);">
+                <div class="cabinet-card-title">🎯 Цілі (Навчання)</div>
+                ${targetsHtml}
+            </div>` : '';
+        document.getElementById('block-targets').innerHTML = targetsBlock;
+
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
         let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
         
@@ -1640,16 +1882,7 @@
         let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
         let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
 
-        let timeSpentGlobalHtml = '';
-        if ((windowUserRole === 'admin' || windowUserRole === 'director') && user.timeSpent) {
-            timeSpentGlobalHtml = `
-            <div class="stat-item" style="width: 100%; margin-top: 12px; flex: none;">
-                <div class="stat-val" style="font-size: 16px;">${escapeHTMLAttr(user.timeSpent)}</div>
-                <div class="stat-label">Витрачений час на тестування</div>
-            </div>`;
-        }
-
-        let globCont = document.getElementById('block-progress');
+        let globCont = document.getElementById('globalStatsContainer');
         let courseListWrapper = document.getElementById('courseListTitleWrapper');
 
         if(globCont) {
@@ -1668,14 +1901,8 @@
                             <div class="stat-val">${avgScore}%</div>
                             <div class="stat-label">Сер. бал</div>
                         </div>
-                        ${timeSpentGlobalHtml}
                     </div>
                     
-                    <div id="deadlineContainerInline" style="display:none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 16px; padding: 8px 16px; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; width: fit-content; margin-left: auto; margin-right: auto;">
-                        <span style="font-size:20px;">⏳</span>
-                        <span id="deadlineTextInline" style="font-size: 14px; font-weight: 800; color: var(--danger);"></span>
-                    </div>
-
                     <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
                         <div class="progress-header">
                             <div class="progress-title-text">Загальний прогрес</div>
@@ -1694,57 +1921,7 @@
         }
         
         if (courseNames.length === 0) {
-            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
-            return;
-        }
-
-        if (windowViewingEmployee) {
-            let coursesHtml = courseNames.map(name => {
-                let courseProducts = coursesMap[name] || [];
-                let parsedCourse = formatWithCustomEmoji(name, '📘');
-                
-                let productsHtml = courseProducts.map((p, idx) => {
-                    let cleanP = getCleanName(p.product);
-                    let resStr = userResults[cleanP];
-                    let score = 0, attempts = 0, time = 0;
-                    if (resStr) {
-                        let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                        if (match) { attempts = parseInt(match[1], 10) || 0; score = parseInt(match[2], 10) || 0; time = parseInt(match[3], 10) || 0; }
-                        else { let sm = String(resStr).match(/(\d+)%/); if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; } }
-                    }
-                    let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '0хв 0с';
-                    let borderStyle = idx === courseProducts.length - 1 ? '' : 'border-bottom: 1px solid var(--input-bg);';
-                    
-                    return `
-                    <div style="padding: 14px 0; ${borderStyle} display: flex; flex-direction: column; gap: 10px;">
-                        <div style="font-size: 15px; font-weight: 700; color: var(--text-main); line-height: 1.3;">${escapeHTMLAttr(p.product)}</div>
-                        <div style="display: flex; gap: 8px; width: 100%;">
-                            <div style="flex: 1; background: ${score>=80?'rgba(16, 185, 129, 0.08)':'rgba(239, 68, 68, 0.08)'}; border: 1px solid ${score>=80?'rgba(16, 185, 129, 0.2)':'rgba(239, 68, 68, 0.2)'}; padding: 10px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size: 10px; text-transform: uppercase; color: ${score>=80?'var(--success)':'var(--danger)'}; margin-bottom: 6px; font-weight: 700;">Результат</span>
-                                <span style="color:${score>=80?'var(--success)':'var(--danger)'}; font-size: 16px; font-weight: 900; line-height: 1;">${score}%</span>
-                            </div>
-                            <div style="flex: 1; background: var(--input-bg); border: 1px solid var(--border); padding: 10px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Спроби</span>
-                                <span style="color:var(--text-main); font-size: 16px; font-weight: 900; line-height: 1;">${attempts}</span>
-                            </div>
-                            <div style="flex: 1; background: var(--input-bg); border: 1px solid var(--border); padding: 10px 4px; border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <span style="font-size: 10px; text-transform: uppercase; color: var(--text-muted); margin-bottom: 6px; font-weight: 700;">Час</span>
-                                <span style="color:var(--text-main); font-size: 15px; font-weight: 900; line-height: 1;">${timeStr}</span>
-                            </div>
-                        </div>
-                    </div>`;
-                }).join('');
-
-                return `
-                <div class="list-card" style="flex-direction: column; align-items: stretch; cursor: default; padding: 20px; box-shadow: 0 8px 24px rgba(0,0,0,0.03);">
-                    <div style="font-size: 18px; font-weight: 900; color: var(--primary); margin-bottom: 8px; display: flex; align-items: center; gap: 8px;">
-                        <span>${parsedCourse.icon}</span> ${escapeHTMLAttr(parsedCourse.title)}
-                    </div>
-                    ${productsHtml}
-                </div>`;
-            }).join('');
-            
-            list.innerHTML = coursesHtml;
+            if(list) list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
             return;
         }
 
@@ -1780,7 +1957,7 @@
             </div>`;
         }).join('');
 
-        requestAnimationFrame(() => list.innerHTML = coursesHtml);
+        requestAnimationFrame(() => { if(list) list.innerHTML = coursesHtml; });
     }
 
     function openCourse(name) {
@@ -1853,7 +2030,8 @@
                     <div style="font-size: 14px; font-weight: 800; color: ${scoreColor};">${scoreText}</div>
                     <div class="list-card-arrow">❯</div>
                 </div>
-            </div>`;
+            </div>
+            `;
         }).join('');
 
         requestAnimationFrame(() => {
@@ -1873,48 +2051,23 @@
         const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
 
-        const formattedHTML = rawInfo.split('\n')
-            .map(line => line.trim())
-            .filter(line => line.length > 0)
+        const formattedHTML = rawInfo.split('\n').map(line => line.trim()).filter(line => line.length > 0)
             .map(line => {
                 let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
                 
-                if (line.startsWith('(AA+)')) {
-                    line = line.substring(5).trim().toUpperCase();
-                    textStyle += " font-weight:800; margin-top:8px;";
-                } else if (line.startsWith('(Аа+)')) {
-                    line = line.substring(5).trim();
-                    line = line.charAt(0).toUpperCase() + line.slice(1);
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                } else if (line.startsWith('(аа*)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-style:italic;";
-                } else if (line.startsWith('(КР+)')) {
-                    line = line.substring(5).trim().toUpperCase();
-                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
-                } else if (line.startsWith('(Кр+)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
-                } else if (line.startsWith('(кр*)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-style:italic; color:var(--danger);";
-                } else if (line.startsWith('[Aa]')) { 
-                    line = line.substring(4).trim();
-                    line = line.charAt(0).toUpperCase() + line.slice(1);
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                } else if (line.startsWith('[AA]')) { 
-                    line = line.substring(4).trim().toUpperCase();
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                }
+                if (line.startsWith('(AA+)')) { line = line.substring(5).trim().toUpperCase(); textStyle += " font-weight:800; margin-top:8px;"; } 
+                else if (line.startsWith('(Аа+)')) { line = line.substring(5).trim(); line = line.charAt(0).toUpperCase() + line.slice(1); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; } 
+                else if (line.startsWith('(аа*)')) { line = line.substring(5).trim(); textStyle += " font-style:italic;"; } 
+                else if (line.startsWith('(КР+)')) { line = line.substring(5).trim().toUpperCase(); textStyle += " font-weight:800; color:var(--danger); margin-top:8px;"; } 
+                else if (line.startsWith('(Кр+)')) { line = line.substring(5).trim(); textStyle += " font-weight:800; color:var(--danger); margin-top:8px;"; } 
+                else if (line.startsWith('(кр*)')) { line = line.substring(5).trim(); textStyle += " font-style:italic; color:var(--danger);"; } 
+                else if (line.startsWith('[Aa]')) { line = line.substring(4).trim(); line = line.charAt(0).toUpperCase() + line.slice(1); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; } 
+                else if (line.startsWith('[AA]')) { line = line.substring(4).trim().toUpperCase(); textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;"; }
 
                 let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
-                let emoji = "";
-                let text = line;
+                let emoji = "", text = line;
 
-                if (match) {
-                    emoji = match[0];
-                    text = line.replace(emoji, '').trim();
-                }
+                if (match) { emoji = match[0]; text = line.replace(emoji, '').trim(); }
 
                 if (emoji) {
                     return `
@@ -1925,8 +2078,7 @@
                 } else {
                     return `<div class="theory-line" style="${textStyle}">${text}</div>`;
                 }
-            })
-            .join('');
+            }).join('');
 
         contentBox.innerHTML = formattedHTML;
         updateTestButtonState();
@@ -1935,8 +2087,7 @@
 
     function parseTestString(testStr) {
         let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
-        let questions = [];
-        let currentQ = null;
+        let questions = [], currentQ = null;
 
         lines.forEach(line => {
             let qMatch = line.match(/^(\d+)\.\s*(.*)/);
@@ -1948,10 +2099,7 @@
                 if (aMatch && currentQ) {
                     let ansText = aMatch[1];
                     let isCorrect = false;
-                    if (ansText.includes('(+)')) {
-                        isCorrect = true;
-                        ansText = ansText.replace(/\(\+\)/g, '').trim();
-                    }
+                    if (ansText.includes('(+)')) { isCorrect = true; ansText = ansText.replace(/\(\+\)/g, '').trim(); }
                     currentQ.answers.push({ text: ansText, correct: isCorrect });
                 }
             }
@@ -1962,13 +2110,11 @@
             let correctCount = q.answers.filter(a => a.correct).length;
             if (correctCount > 1) q.type = 'checkbox';
         });
-
         return questions;
     }
 
     function updateSelection(qIndex, aIndex) {
         let q = parsedQuestions[qIndex];
-        
         if (q.type === 'radio') {
             q.answers.forEach((ans, idx) => {
                 ans.selected = (idx === aIndex);
@@ -1993,13 +2139,8 @@
         let el = document.getElementById('testTimer');
         el.innerText = `${m}:${s}`;
 
-        if (timeRemaining <= 10) {
-            el.style.color = "white";
-            el.style.background = "var(--danger)";
-        } else {
-            el.style.color = "var(--danger)";
-            el.style.background = "var(--danger-bg)";
-        }
+        if (timeRemaining <= 10) { el.style.color = "white"; el.style.background = "var(--danger)"; } 
+        else { el.style.color = "var(--danger)"; el.style.background = "var(--danger-bg)"; }
     }
 
     function showQuestion(index) {
@@ -2028,26 +2169,16 @@
         `;
 
         let btn = document.getElementById('submitTestBtn');
-        if (index === parsedQuestions.length - 1) {
-            btn.innerText = "ЗАВЕРШИТИ ТЕСТ";
-            btn.onclick = () => submitTest();
-        } else {
-            btn.innerText = "НАСТУПНЕ ПИТАННЯ";
-            btn.onclick = () => nextQuestion();
-        }
+        if (index === parsedQuestions.length - 1) { btn.innerText = "ЗАВЕРШИТИ ТЕСТ"; btn.onclick = () => submitTest(); } 
+        else { btn.innerText = "НАСТУПНЕ ПИТАННЯ"; btn.onclick = () => nextQuestion(); }
 
         timeRemaining = TIME_PER_QUESTION; 
         updateTimerUI();
 
         clearInterval(testTimerInterval);
         testTimerInterval = setInterval(() => {
-            timeRemaining--;
-            totalTimeSpent++; 
-            updateTimerUI();
-            if (timeRemaining <= 0) {
-                clearInterval(testTimerInterval);
-                nextQuestion(); 
-            }
+            timeRemaining--; totalTimeSpent++; updateTimerUI();
+            if (timeRemaining <= 0) { clearInterval(testTimerInterval); nextQuestion(); }
         }, 1000);
     }
 
@@ -2061,10 +2192,7 @@
         if (window.isDeadlinePassed) return;
         if (windowViewingEmployee) return;
 
-        if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для цього продукту відсутній.");
-            return;
-        }
+        if (!currentProductData.test || currentProductData.test.trim() === "") { alert("Тест для цього продукту відсутній."); return; }
 
         let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
         if (!warningShown) switchView('warningView');
@@ -2078,11 +2206,7 @@
 
     function proceedToTest() {
         parsedQuestions = parseTestString(currentProductData.test);
-
-        if (parsedQuestions.length === 0) {
-            alert("Помилка обробки тесту. Перевірте формат у таблиці.");
-            return;
-        }
+        if (parsedQuestions.length === 0) { alert("Помилка обробки тесту. Перевірте формат у таблиці."); return; }
 
         if (window.theoryEntryTime > 0) {
             window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
@@ -2152,7 +2276,6 @@
         attempts++;
         let bestScore = Math.max(oldScore, totalScore);
         let bestTime = oldTime;
-        
         if (totalScore > oldScore) bestTime = timeSpent;
         else if (totalScore === oldScore && (timeSpent < oldTime || oldTime === 0)) bestTime = timeSpent;
 
