@@ -630,7 +630,6 @@
         return n.toLocaleString('uk-UA');
     }
     
-    // --- ПРАВИЛЬНЕ ФОРМАТУВАННЯ ВІДСОТКІВ (Конвертація з десяткових) ---
     function formatPercent(val) {
         if (val === "" || val === null || val === undefined) return "0%";
         let str = String(val).trim().replace(',', '.');
@@ -828,76 +827,23 @@
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
     }
 
-    // --- АДАПТЕР ДЛЯ ОЧИЩЕННЯ ТА ФОРМАТУВАННЯ ДАНИХ ВІД ВАШОГО СКРИПТА ---
+    // --- ГОЛОВНЕ ВИПРАВЛЕННЯ: АДАПТЕР ДЛЯ ДАНИХ З СЕРВЕРА ---
     function adaptAllUsers(users, courses) {
         let validProductKeys = new Set((courses || []).map(c => getCleanName(c.product)));
         
         users.forEach(u => {
+            // Сервер вже надіслав готові об'єкти u.history, u.yearlyStats та u.currentMonth!
+            // Ми беремо u.results (де лежать тільки тести, бо сервер відфільтрував системні колонки)
             let res = u.results || {};
             
-            // ВІДОКРЕМЛЮЄМО РЕЗУЛЬТАТИ ТЕСТІВ ВІД СИСТЕМНИХ КОЛОНОК
+            // Створюємо окремий об'єкт тільки для тестів
             u.testResults = {}; 
             for (let k in res) {
                 if (validProductKeys.has(k)) {
                     u.testResults[k] = res[k];
                 }
             }
-            
-            // ПАРСИНГ ПОТОЧНОГО МІСЯЦЯ ТА КОНВЕРТАЦІЯ ВІДСОТКІВ
-            u.currentMonth = {
-                plan: res['планнамісяць'] || "",
-                pcs: res['шт'] || "",
-                grn: res['грн'] || "",
-                execution: res['виконанняплану'] || res['виконанняплану'] || "",
-                efficiency: res['ефективність'] || "",
-                share: res['доля'] || ""
-            };
-            
-            // ДОДАТКОВІ ПОЛЯ
-            u.store = u.store || res['магазин'] || "";
-            u.director = u.director || res['director'] || res['керівник'] || "";
-            u.shortName = u.shortName || res['скороченоукр'] || "";
-            u.role = u.role || res['role'] || res['роль'] || "";
-            u.timeSpent = u.timeSpent || res['витраченийчаснатестування'] || res['витраченийчас'] || "";
-            
-            // ІСТОРІЯ ТА ГРАФІКИ ПО РОКАХ
-            u.history = [];
-            u.yearlyStats = {};
-            let yearRegex = /^(0[1-9]|1[0-2])20(\d{2})$/; // Шукає колонки типу "01.2025"
-            
-            for (let key in res) {
-                let match = key.match(yearRegex);
-                if (match) {
-                    let monthNum = match[1];
-                    let yearNum = "20" + match[2];
-                    let rawVal = res[key];
-                    let parts = String(rawVal).split('/').map(p => p.trim());
-                    
-                    let plan = 0, fact = 0, pctStr = "0%", pctNum = 0;
-                    if (parts.length >= 2) {
-                        plan = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
-                        fact = parseFloat(parts[1].replace(/\s+/g, '').replace(',', '.')) || 0;
-                        pctStr = parts[2] || (plan > 0 ? Math.round((fact/plan)*100) + "%" : "0%");
-                        pctNum = parseFloat(pctStr.replace('%', '').replace(/\s+/g, '').replace(',', '.')) || 0;
-                    } else {
-                        fact = parseFloat(String(rawVal).replace(/\s+/g, '').replace(',', '.')) || 0;
-                    }
-                    
-                    u.history.push({ month: `${monthNum}.${yearNum}`, raw: rawVal, plan, fact, execution: pctStr });
-                    
-                    if (!u.yearlyStats[yearNum]) u.yearlyStats[yearNum] = { year: yearNum, plan: 0, fact: 0, overfulfilledCount: 0 };
-                    
-                    u.yearlyStats[yearNum].plan += plan;
-                    u.yearlyStats[yearNum].fact += fact;
-                    if (pctNum >= 100) u.yearlyStats[yearNum].overfulfilledCount++;
-                }
-            }
-            
-            // Рахуємо загальний відсоток за рік
-            for (let yr in u.yearlyStats) {
-                let yp = u.yearlyStats[yr].plan, yf = u.yearlyStats[yr].fact;
-                u.yearlyStats[yr].execution = yp > 0 ? Math.round((yf/yp)*100) + "%" : "0%";
-            }
+            // МИ БІЛЬШЕ НЕ ПЕРЕЗАПИСУЄМО ІСТОРІЮ І ПОТОЧНИЙ МІСЯЦЬ! Вони залишаються цілими.
         });
     }
 
@@ -1189,7 +1135,6 @@
         switchView('loginView');
     }
 
-    // --- ПАНЕЛЬ КЕРІВНИКА (ADMIN VIEW) ---
     function renderAdminView() {
         let currentUserObj = db.users.find(u => u.login === currentUser);
         let isAdmin = windowUserRole === 'admin';
@@ -1422,15 +1367,11 @@
         switchView('courseView');
     }
 
-    // =========================================================================
-    // ОСОБИСТИЙ КАБІНЕТ (Блок статистики з графіками)
-    // =========================================================================
     function renderCabinetStats(user) {
         if (!user) return;
         const container = document.getElementById('cabinetRichStats');
         if(!container) return;
         
-        // 1. Цілі (шт / грн)
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let pctPcs = tPcs > 0 ? (fPcs / tPcs * 100) : (fPcs > 0 ? 100 : 0);
@@ -1470,7 +1411,6 @@
                 ${targetsHtml}
             </div>` : '';
 
-        // 2. Статистика поточного місяця
         let curMonthHtml = '';
         let cm = user.currentMonth || {};
         if (cm.plan || cm.pcs || cm.grn || cm.execution) {
@@ -1501,7 +1441,6 @@
             </div>`;
         }
 
-        // 3. Історія по роках
         let yearlyStats = user.yearlyStats || {};
         let sortedYears = Object.keys(yearlyStats).sort();
         
@@ -1524,7 +1463,6 @@
             </div>`;
         }
 
-        // 4. Кнопка порівняння
         let compareHtml = `
             <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-size: 14px; gap: 8px;" onclick="openCompare()">
                 <span style="font-size:18px;">⚖️</span> Порівняти показники
@@ -1622,7 +1560,6 @@
         renderHistoryYear(year);
     }
 
-    // --- МОДАЛКА ПОРІВНЯННЯ ---
     window.openCompare = function() {
         document.getElementById('compareOverlay').style.display = 'block';
         document.getElementById('compareModal').classList.add('active');
@@ -1758,9 +1695,6 @@
         });
     }
 
-    // =========================================================================
-    // ПРОГРЕС КУРСІВ ТА СПИСКИ
-    // =========================================================================
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
