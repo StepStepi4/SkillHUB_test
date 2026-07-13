@@ -389,6 +389,11 @@
             </div>
         </div>
 
+        <div id="deadlineContainerInline" style="display:none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 16px; padding: 8px 16px; align-items: center; justify-content: center; gap: 10px; margin-bottom: 24px; width: 100%;">
+            <span style="font-size:20px;">⏳</span>
+            <span id="deadlineTextInline" style="font-size: 14px; font-weight: 800; color: var(--danger);"></span>
+        </div>
+
         <!-- ІЄРАРХІЯ БЛОКІВ КАБІНЕТУ -->
         <div id="block-progress"></div>
         <div id="block-month"></div>
@@ -817,6 +822,15 @@
         document.getElementById('loaderText').innerText = "Оновлення даних...";
         document.getElementById('loader').style.display = 'flex';
         await fetchFreshDataSilent();
+        
+        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
+        if (user && document.getElementById('courseView').classList.contains('active')) {
+            renderCabinetStats(user);
+            renderCourses(user);
+        } else if (document.getElementById('adminView').classList.contains('active')) {
+            renderAdminView();
+        }
+        
         document.getElementById('loader').style.display = 'none';
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
     }
@@ -1148,10 +1162,14 @@
 
             let assignedCount = u.assigned ? u.assigned.length : 0;
             
-            let tPcs = parseFloat(String(u.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let tUah = parseFloat(String(u.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fPcs = parseFloat(String(u.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-            let fUah = parseFloat(String(u.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+            let tPcsStr = String(u.targetPcs || "0").replace(/\s/g, '').replace(',', '.');
+            let tPcs = parseFloat(tPcsStr) || 0;
+            let fPcsStr = String(u.execPcs || "0").replace(/\s/g, '').replace(',', '.');
+            let fPcs = parseFloat(fPcsStr) || 0;
+            let tUahStr = String(u.targetUah || "0").replace(/\s/g, '').replace(',', '.');
+            let tUah = parseFloat(tUahStr) || 0;
+            let fUahStr = String(u.execUah || "0").replace(/\s/g, '').replace(',', '.');
+            let fUah = parseFloat(fUahStr) || 0;
             
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = assignedCount > 0;
@@ -1400,6 +1418,25 @@
 
         // 2. ІСТОРІЯ (Графіки одна під одною)
         let yearlyStats = user.yearlyStats || {};
+        
+        // Автоматична генерація yearlyStats, якщо воно порожнє і є history
+        if (Object.keys(yearlyStats).length === 0 && user.history && user.history.length > 0) {
+            user.history.forEach(h => {
+                let parts = h.month.split(/[\s.]+/);
+                let year = parts.length > 1 ? parts[parts.length - 1] : new Date().getFullYear().toString();
+                if (!yearlyStats[year]) yearlyStats[year] = { plan: 0, fact: 0, execution: "0%" };
+                yearlyStats[year].plan += parseFloat(String(h.plan).replace(/\s/g, '').replace(',', '.')) || 0;
+                yearlyStats[year].fact += parseFloat(String(h.fact).replace(/\s/g, '').replace(',', '.')) || 0;
+            });
+            for (let y in yearlyStats) {
+                if (yearlyStats[y].plan > 0) {
+                    yearlyStats[y].execution = ((yearlyStats[y].fact / yearlyStats[y].plan) * 100).toFixed(1) + '%';
+                } else {
+                    yearlyStats[y].execution = yearlyStats[y].fact > 0 ? "100%" : "0%";
+                }
+            }
+        }
+
         let sortedYears = Object.keys(yearlyStats).sort();
         let historyHtml = '';
         
@@ -1409,7 +1446,7 @@
 
         if (sortedYears.length > 0) {
             sortedYears.forEach(year => {
-                let yStat = user.yearlyStats[year];
+                let yStat = yearlyStats[year];
                 historyHtml += `
                 <div class="cabinet-card" style="margin-bottom: 24px;">
                     <div class="cabinet-card-title">📈 Статистика за ${year} рік</div>
@@ -1473,13 +1510,17 @@
         });
 
         // 3. ЦІЛІ (Залишок)
-        let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let tPcsStr = String(user.targetPcs || "0").replace(/\s/g, '').replace(',', '.');
+        let fPcsStr = String(user.execPcs || "0").replace(/\s/g, '').replace(',', '.');
+        let tPcs = parseFloat(tPcsStr) || 0;
+        let fPcs = parseFloat(fPcsStr) || 0;
         let rPcs = Math.max(0, tPcs - fPcs);
         let pctPcs = tPcs > 0 ? (fPcs / tPcs * 100) : (fPcs > 0 ? 100 : 0);
 
-        let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let tUahStr = String(user.targetUah || "0").replace(/\s/g, '').replace(',', '.');
+        let fUahStr = String(user.execUah || "0").replace(/\s/g, '').replace(',', '.');
+        let tUah = parseFloat(tUahStr) || 0;
+        let fUah = parseFloat(fUahStr) || 0;
         let rUah = Math.max(0, tUah - fUah);
         let pctUah = tUah > 0 ? (fUah / tUah * 100) : (fUah > 0 ? 100 : 0);
         
@@ -1616,11 +1657,6 @@
                         <div class="stat-label">Сер. бал</div>
                     </div>
                     ${timeSpentGlobalHtml}
-                </div>
-                
-                <div id="deadlineContainerInline" style="display:none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 16px; padding: 8px 16px; align-items: center; justify-content: center; gap: 10px; margin-bottom: 16px; width: fit-content; margin-left: auto; margin-right: auto;">
-                    <span style="font-size:20px;">⏳</span>
-                    <span id="deadlineTextInline" style="font-size: 14px; font-weight: 800; color: var(--danger);"></span>
                 </div>
 
                 <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
@@ -1819,511 +1855,371 @@
             .map(line => line.trim())
             .filter(line => line.length > 0)
             .map(line => {
-                let textStyle = "font-size: 15px; line-height: 1.5; font-weight: 500;";
-                
-                if (line.startsWith('(AA+)')) {
-                    line = line.substring(5).trim().toUpperCase();
-                    textStyle += " font-weight:800; margin-top:8px;";
-                } else if (line.startsWith('(Аа+)')) {
-                    line = line.substring(5).trim();
-                    line = line.charAt(0).toUpperCase() + line.slice(1);
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                } else if (line.startsWith('(аа*)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-style:italic;";
-                } else if (line.startsWith('(КР+)')) {
-                    line = line.substring(5).trim().toUpperCase();
-                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
-                } else if (line.startsWith('(Кр+)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-weight:800; color:var(--danger); margin-top:8px;";
-                } else if (line.startsWith('(кр*)')) {
-                    line = line.substring(5).trim();
-                    textStyle += " font-style:italic; color:var(--danger);";
-                } else if (line.startsWith('[Aa]')) { 
-                    line = line.substring(4).trim();
-                    line = line.charAt(0).toUpperCase() + line.slice(1);
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                } else if (line.startsWith('[AA]')) { 
-                    line = line.substring(4).trim().toUpperCase();
-                    textStyle += " font-weight:800; color:var(--text-main); margin-top:8px;";
-                }
+                let textStyle = "font-size: 15px; font-weight: 500; color: var(--text-main);";
+                if(line.startsWith('✅')) textStyle += " color: var(--success); font-weight: 700;";
+                if(line.startsWith('❌') || line.startsWith('⚠️')) textStyle += " color: var(--danger); font-weight: 700;";
+                if(line.startsWith('⭐')) textStyle += " color: #f59e0b; font-weight: 800;";
+                return `<div class="theory-line" style="${textStyle}">${escapeHTMLAttr(line)}</div>`;
+            }).join('');
+            
+        contentBox.innerHTML = formattedHTML || '<div class="theory-line">Інформація відсутня</div>';
 
-                let match = line.match(/^(\u00a9|\u00ae|[\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/);
-                let emoji = "";
-                let text = line;
-
-                if (match) {
-                    emoji = match[0];
-                    text = line.replace(emoji, '').trim();
-                }
-
-                if (emoji) {
-                    return `
-                    <div class="theory-line" style="display: flex; align-items: center; gap: 14px;">
-                        <div style="font-size: 24px; display: flex; align-items: center; justify-content: center; width: 30px; height: 30px; flex-shrink: 0;">${emoji}</div>
-                        <div style="flex: 1; ${textStyle}">${text}</div>
-                    </div>`;
-                } else {
-                    return `<div class="theory-line" style="${textStyle}">${text}</div>`;
-                }
-            })
-            .join('');
-
-        contentBox.innerHTML = formattedHTML;
         updateTestButtonState();
         switchView('theoryView');
     }
 
-    function parseTestString(testStr) {
-        let lines = testStr.split('\n').map(l => l.trim()).filter(l => l);
-        let questions = [];
-        let currentQ = null;
-
-        lines.forEach(line => {
-            let qMatch = line.match(/^(\d+)\.\s*(.*)/);
-            if (qMatch) {
-                if (currentQ) questions.push(currentQ);
-                currentQ = { text: qMatch[2], answers: [], type: 'radio' };
-            } else {
-                let aMatch = line.match(/^\d+\/[a-zа-яA-ZА-Я0-9]\)\s*(.*)/);
-                if (aMatch && currentQ) {
-                    let ansText = aMatch[1];
-                    let isCorrect = false;
-                    if (ansText.includes('(+)')) {
-                        isCorrect = true;
-                        ansText = ansText.replace(/\(\+\)/g, '').trim();
-                    }
-                    currentQ.answers.push({ text: ansText, correct: isCorrect });
-                }
-            }
-        });
-        if (currentQ) questions.push(currentQ);
-
-        questions.forEach(q => {
-            let correctCount = q.answers.filter(a => a.correct).length;
-            if (correctCount > 1) q.type = 'checkbox';
-        });
-
-        return questions;
+    /* ФУНКЦІЇ ДЛЯ МОДАЛЬНОГО ВІКНА "ПОРІВНЯТИ ПОКАЗНИКИ" */
+    function openCompare() {
+        document.getElementById('compareOverlay').classList.add('active');
+        document.getElementById('compareModal').classList.add('active');
+        document.getElementById('compareSearchInput').value = '';
+        document.getElementById('compareDropdown').style.display = 'none';
+        document.getElementById('compareResultsArea').style.display = 'none';
     }
 
-    function updateSelection(qIndex, aIndex) {
-        let q = parsedQuestions[qIndex];
+    function closeCompare() {
+        document.getElementById('compareOverlay').classList.remove('active');
+        document.getElementById('compareModal').classList.remove('active');
+    }
+
+    function handleCompareSearch(query) {
+        let val = query.toLowerCase().trim();
+        let dd = document.getElementById('compareDropdown');
+        if (val.length < 2) { dd.style.display = 'none'; return; }
         
-        if (q.type === 'radio') {
-            q.answers.forEach((ans, idx) => {
-                ans.selected = (idx === aIndex);
-                let label = document.getElementById(`lbl_q${qIndex}_a${idx}`);
-                if (label) {
-                    if (ans.selected) label.classList.add('selected');
-                    else label.classList.remove('selected');
-                }
-            });
+        let myLogin = windowViewingEmployee ? windowViewingEmployee.login : currentUser;
+        let users = db.users.filter(u => u.name && u.name.toLowerCase().includes(val) && u.login !== myLogin);
+        if (users.length === 0) {
+            dd.innerHTML = '<div style="padding:12px; color:var(--text-muted); text-align:center; font-size:14px;">Не знайдено</div>';
         } else {
-            let input = document.getElementById(`q${qIndex}_a${aIndex}`);
-            q.answers[aIndex].selected = input.checked;
-            let label = document.getElementById(`lbl_q${qIndex}_a${aIndex}`);
-            if (input.checked) label.classList.add('selected');
-            else label.classList.remove('selected');
+            dd.innerHTML = users.map(u => `<div style="padding:12px; border-bottom:1px solid var(--border); cursor:pointer; color:var(--text-main); font-weight:600; font-size:14px;" onclick="selectCompareUser('${u.login}')">${escapeHTMLAttr(u.name)}</div>`).join('');
         }
+        dd.style.display = 'block';
     }
 
-    function updateTimerUI() {
-        let m = Math.floor(timeRemaining / 60).toString().padStart(2, '0');
-        let s = (timeRemaining % 60).toString().padStart(2, '0');
-        let el = document.getElementById('testTimer');
-        el.innerText = `${m}:${s}`;
-
-        if (timeRemaining <= 10) {
-            el.style.color = "white";
-            el.style.background = "var(--danger)";
-        } else {
-            el.style.color = "var(--danger)";
-            el.style.background = "var(--danger-bg)";
-        }
-    }
-
-    function showQuestion(index) {
-        if (index >= parsedQuestions.length) { submitTest(); return; }
-
-        let q = parsedQuestions[index];
-        document.getElementById('testHeaderTitle').innerText = `Питання ${index + 1} з ${parsedQuestions.length}`;
-
-        let answersHtml = q.answers.map((ans, aIndex) => {
-            let checkedAttr = ans.selected ? 'checked' : '';
-            let selectedClass = ans.selected ? 'selected' : '';
-            return `
-            <label class="answer-label ${selectedClass}" id="lbl_q${index}_a${aIndex}">
-                <input type="${q.type}" name="q_${index}" id="q${index}_a${aIndex}" ${checkedAttr} onchange="updateSelection(${index}, ${aIndex})">
-                <span style="flex:1;">${ans.text}</span>
-            </label>`;
-        }).join('');
-
-        let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
-
-        document.getElementById('testContainer').innerHTML = `
-            <div class="question-card">
-                <div class="question-title">${q.text} ${hint}</div>
-                ${answersHtml}
-            </div>
-        `;
-
-        let btn = document.getElementById('submitTestBtn');
-        if (index === parsedQuestions.length - 1) {
-            btn.innerText = "ЗАВЕРШИТИ ТЕСТ";
-            btn.onclick = () => submitTest();
-        } else {
-            btn.innerText = "НАСТУПНЕ ПИТАННЯ";
-            btn.onclick = () => nextQuestion();
-        }
-
-        timeRemaining = TIME_PER_QUESTION; 
-        updateTimerUI();
-
-        clearInterval(testTimerInterval);
-        testTimerInterval = setInterval(() => {
-            timeRemaining--;
-            totalTimeSpent++; 
-            updateTimerUI();
-            if (timeRemaining <= 0) {
-                clearInterval(testTimerInterval);
-                nextQuestion(); 
-            }
-        }, 1000);
-    }
-
-    function nextQuestion() {
-        clearInterval(testTimerInterval);
-        currentQuestionIndex++;
-        showQuestion(currentQuestionIndex);
-    }
-
-    function startTest() {
-        if (window.isDeadlinePassed) return;
-        if (windowViewingEmployee) return;
-
-        if (!currentProductData.test || currentProductData.test.trim() === "") {
-            alert("Тест для цього продукту відсутній.");
-            return;
-        }
-
-        let warningShown = sessionStorage.getItem('skillhub_test_warning_shown');
-        if (!warningShown) switchView('warningView');
-        else proceedToTest();
-    }
-
-    function acceptWarningAndStart() {
-        sessionStorage.setItem('skillhub_test_warning_shown', 'true');
-        proceedToTest();
-    }
-
-    function proceedToTest() {
-        parsedQuestions = parseTestString(currentProductData.test);
-
-        if (parsedQuestions.length === 0) {
-            alert("Помилка обробки тесту. Перевірте формат у таблиці.");
-            return;
-        }
-
-        if (window.theoryEntryTime > 0) {
-            window.sessionTotalTime += Math.floor((Date.now() - window.theoryEntryTime) / 1000);
-            window.theoryEntryTime = 0; 
-        }
-        totalTimeSpent = window.sessionTotalTime;
-
-        shuffleArray(parsedQuestions);
-        parsedQuestions.forEach(q => { shuffleArray(q.answers); q.answers.forEach(a => a.selected = false); });
-
-        currentQuestionIndex = 0;
-        isTestActive = true; 
+    function selectCompareUser(login) {
+        document.getElementById('compareDropdown').style.display = 'none';
+        let otherUser = db.users.find(u => u.login === login);
+        let myUser = windowViewingEmployee || db.users.find(u => u.login === currentUser);
         
-        initWatermarks();  
-        requestFullScreen();
+        let myCm = myUser.currentMonth || {};
+        let otCm = otherUser.currentMonth || {};
         
-        switchView('testView');
-        showQuestion(currentQuestionIndex);
-    }
+        let myShare = formatPercent(myCm.share);
+        let otShare = formatPercent(otCm.share);
+        let myEff = formatPercent(myCm.efficiency);
+        let otEff = formatPercent(otCm.efficiency);
 
-    function retryTest() {
-        window.sessionTotalTime = totalTimeSpent;
-        window.theoryEntryTime = 0; 
-        startTest();
-    }
-
-    function repeatTheory() {
-        window.sessionTotalTime = totalTimeSpent;
-        window.theoryEntryTime = Date.now();
-        switchView('theoryView');
-    }
-
-    async function submitTest() {
-        isTestActive = false; 
-        clearInterval(testTimerInterval); 
-        removeWatermarks();
-        exitFullScreen();
-        
-        let correctCount = 0;
-        parsedQuestions.forEach((q) => {
-            let isQuestionCorrect = true;
-            let answeredAnything = false;
-            q.answers.forEach((ans) => {
-                if (ans.selected) answeredAnything = true;
-                if (!!ans.selected !== ans.correct) isQuestionCorrect = false;
-            });
-            if (isQuestionCorrect && answeredAnything) correctCount++;
-        });
-
-        let totalScore = Math.round((correctCount / parsedQuestions.length) * 100);
-        let passed = totalScore >= 80; 
-        let timeSpent = totalTimeSpent;
-
-        let cleanP = getCleanName(currentProductData.product);
-        let currentUserObj = db.users.find(u => u.login === currentUser);
-        
-        if (!currentUserObj.testResults) currentUserObj.testResults = {};
-        if (!currentUserObj.results) currentUserObj.results = {};
-
-        let oldRes = currentUserObj.testResults[cleanP] || "0/0%/0";
-        let attempts = 0, oldScore = 0, oldTime = 0;
-
-        let match = String(oldRes).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-        if (match) { attempts = parseInt(match[1], 10) || 0; oldScore = parseInt(match[2], 10) || 0; oldTime = parseInt(match[3], 10) || 0; }
-        else { let scoreMatch = String(oldRes).match(/(\d+)%/); if (scoreMatch) { oldScore = parseInt(scoreMatch[1], 10) || 0; attempts = 1; } }
-
-        attempts++;
-        let bestScore = Math.max(oldScore, totalScore);
-        let bestTime = oldTime;
-        
-        if (totalScore > oldScore) bestTime = timeSpent;
-        else if (totalScore === oldScore && (timeSpent < oldTime || oldTime === 0)) bestTime = timeSpent;
-
-        let newVal = `${attempts}/${bestScore}%/${bestTime}`;
-        currentUserObj.testResults[cleanP] = newVal;
-        currentUserObj.results[cleanP] = newVal; 
-
-        let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
-        fullCache.educationData = db;
-        localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
-
-        document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
-        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
-        document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
-        document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
-
-        let actionHtml = '';
-        if (passed) {
-            actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
-        } else {
-            actionHtml = `
-                <button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
-                <button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>
-            `;
-        }
-        document.getElementById('resultActionContainer').innerHTML = actionHtml;
-
-        switchView('resultView');
-
-        if (navigator.onLine) {
-            try {
-                fetch(API_URL, {
-                    method: 'POST', cache: 'no-store', mode: 'no-cors',
-                    body: JSON.stringify({ action: 'save_score', login: currentUser, product: currentProductData.product, score: totalScore, time: timeSpent })
-                }).catch(e => saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent));
-            } catch (e) {
-                saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
-            }
-        } else {
-            saveOfflineResult(currentUser, currentProductData.product, totalScore, timeSpent);
-        }
-    }
-
-    document.addEventListener('contextmenu', event => { if (document.getElementById('testView').classList.contains('active')) event.preventDefault(); });
-    document.addEventListener('copy', event => {
-        if (document.getElementById('testView').classList.contains('active')) { event.preventDefault(); alert("Копіювання матеріалів тесту заборонено!"); }
-    });
-    document.addEventListener('keydown', (e) => {
-        if (document.getElementById('testView').classList.contains('active')) {
-            if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'i')) || 
-               (e.ctrlKey && (e.key === 'p' || e.key === 'P' || e.key === 's' || e.key === 'S' || e.key === 'f' || e.key === 'F'))) {
-                e.preventDefault(); alert("Ця дія тимчасово заблокована задля чесності тестування!");
-            }
-        }
-    });
-
-    function initWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (!container) {
-            container = document.createElement('div');
-            container.id = 'watermarkContainer';
-            container.className = 'watermark-container';
-            document.body.appendChild(container);
-        }
-        container.innerHTML = ''; container.style.display = 'block';
-        const wmText = currentUser ? currentUser : "SkillHUB";
-        for (let i = 0; i < 25; i++) {
-            let wm = document.createElement('div'); wm.className = 'watermark-text';
-            wm.style.top = `${Math.random() * 100}%`; wm.style.left = `${Math.random() * 100}%`;
-            wm.innerText = wmText; container.appendChild(wm);
-        }
-    }
-
-    function removeWatermarks() {
-        let container = document.getElementById('watermarkContainer');
-        if (container) container.style.display = 'none';
-    }
-
-    function requestFullScreen() {
-        let elem = document.documentElement;
-        if (elem.requestFullscreen) elem.requestFullscreen().catch(err => console.log(err));
-        else if (elem.webkitRequestFullscreen) elem.webkitRequestFullscreen();
-    }
-
-    function exitFullScreen() {
-        if (document.fullscreenElement || document.webkitFullscreenElement) {
-            if (document.exitFullscreen) document.exitFullscreen();
-            else if (document.webkitExitFullscreen) document.webkitExitFullscreen();
-        }
-    }
-
-    document.addEventListener('fullscreenchange', () => {
-        if (!document.fullscreenElement && document.getElementById('testView').classList.contains('active')) {
-            triggerAntiCheat();
-        }
-    });
-
-    function triggerAntiCheat() {
-        if (!isTestActive) return; 
-        isTestActive = false; 
-        clearInterval(testTimerInterval); 
-
-        document.body.classList.add('cheating');
-        parsedQuestions.forEach(q => { q.answers.forEach(a => a.selected = false); });
-
-        setTimeout(() => {
-            alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%.");
-            document.body.classList.remove('cheating');
-            submitTest();
-        }, 150);
-    }
-
-    window.addEventListener('blur', triggerAntiCheat); 
-    window.addEventListener('pagehide', triggerAntiCheat); 
-    document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); });
-    document.addEventListener('touchcancel', triggerAntiCheat); 
-
-    function openCompletedModal() {
-        if (!savedCompletedListHtml) return;
-        document.getElementById('genericModalOverlay').style.display = 'block';
-        
         let html = `
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
-                <div class="ach-modal-title" style="margin:0; flex:1; text-align:left;">Статистика курсів</div>
-                <button class="back-btn-sleek" onclick="closeModals()" style="width:32px; height:32px; background:var(--input-bg);">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="18" y1="6" x2="6" y2="18"></line>
-                        <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                </button>
-            </div>
-            <div style="max-height: 50vh; overflow-y: auto; text-align: left; padding-right: 8px;" class="modal-scrollable">
-                ${savedCompletedListHtml}
-            </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px;">
+            <div style="width: 48%; font-weight:800; color:var(--primary); font-size:15px;">${escapeHTMLAttr(myUser.name.split(' ')[0])} (Ви)</div>
+            <div style="width: 48%; font-weight:800; color:var(--info-text); text-align:right; font-size:15px;">${escapeHTMLAttr(otherUser.name.split(' ')[0])}</div>
+        </div>
+        
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; font-weight:600;">
+            <div style="width: 48%; color:var(--text-main);">План: ${myCm.plan || 0}</div>
+            <div style="width: 48%; text-align:right; color:var(--text-main);">План: ${otCm.plan || 0}</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; font-weight:600;">
+            <div style="width: 48%; color:var(--text-main);">Шт: ${myCm.pcs || 0}</div>
+            <div style="width: 48%; text-align:right; color:var(--text-main);">Шт: ${otCm.pcs || 0}</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; font-weight:600;">
+            <div style="width: 48%; color:var(--text-main);">Грн: ${myCm.grn || 0}</div>
+            <div style="width: 48%; text-align:right; color:var(--text-main);">Грн: ${otCm.grn || 0}</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; font-weight:600;">
+            <div style="width: 48%; color:var(--text-main);">Ефективність: <span class="badge badge-info" style="margin-left:4px;">${myEff}</span></div>
+            <div style="width: 48%; text-align:right; color:var(--text-main);"><span class="badge badge-info" style="margin-right:4px;">${otEff}</span> :Ефективність</div>
+        </div>
+        <div style="display:flex; justify-content:space-between; margin-bottom: 8px; font-size: 14px; font-weight:600;">
+            <div style="width: 48%; color:var(--text-main);">Доля: <span class="badge badge-purple" style="margin-left:4px;">${myShare}</span></div>
+            <div style="width: 48%; text-align:right; color:var(--text-main);"><span class="badge badge-purple" style="margin-right:4px;">${otShare}</span> :Доля</div>
+        </div>
         `;
-        document.getElementById('genericModal').innerHTML = html;
-        setTimeout(() => document.getElementById('genericModal').classList.add('active'), 10);
-    }
-
-    window.closeModals = function() {
-        document.getElementById('genericModal').classList.remove('active');
-        setTimeout(() => document.getElementById('genericModalOverlay').style.display = 'none', 300);
+        document.getElementById('compareResultsArea').innerHTML = html;
+        document.getElementById('compareResultsArea').style.display = 'block';
     }
 
     function toggleAchievements() {
+        let drw = document.getElementById('achDrawer');
         let overlay = document.getElementById('achOverlay');
-        let drawer = document.getElementById('achDrawer');
-        let isOpened = drawer.classList.contains('open');
-
-        if (isOpened) {
-            drawer.classList.remove('open');
+        let btn = document.getElementById('achBtn');
+        let dot = document.getElementById('achNotificationDot');
+        
+        if (drw.classList.contains('open')) {
+            drw.classList.remove('open');
             overlay.classList.remove('active');
-            let items = drawer.querySelectorAll('.ach-card');
-            items.forEach(el => el.classList.remove('zoomed'));
         } else {
-            overlay.classList.add('active');
-            drawer.classList.add('open');
+            if(btn) btn.classList.remove('has-new');
+            if(dot) dot.style.display = 'none';
             renderAchievements();
+            drw.classList.add('open');
+            overlay.classList.add('active');
+            let user = db.users.find(u => u.login === currentUser);
+            if(user) localStorage.setItem('skillhub_last_achievements_' + currentUser, user.achievements || '');
+        }
+    }
+
+    function checkNewAchievements(user) {
+        let savedAchs = localStorage.getItem('skillhub_last_achievements_' + currentUser) || '';
+        let currentAchs = user.achievements || '';
+        let btn = document.getElementById('achBtn');
+        let dot = document.getElementById('achNotificationDot');
+        
+        if (currentAchs !== savedAchs && currentAchs.length > 0) {
+            if(btn) btn.classList.add('has-new');
+            if(dot) dot.style.display = 'block';
+        } else {
+            if(btn) btn.classList.remove('has-new');
+            if(dot) dot.style.display = 'none';
         }
     }
 
     function renderAchievements() {
-        const achList = document.getElementById('achList');
-        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
-        let myCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(s => s) : [];
-        let html = '';
-
-        if (globalAchievements.length === 0) {
-            achList.innerHTML = '<div style="color:var(--text-muted); font-size:14px; text-align:center;">База нагород порожня</div>';
+        let user = db.users.find(u => u.login === currentUser);
+        let userAchCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(s => s) : [];
+        
+        let container = document.getElementById('achList');
+        if (userAchCodes.length === 0) {
+            container.innerHTML = '<div style="color:var(--text-muted); text-align:center; padding: 20px; font-weight:600;">У вас поки немає нагород. Проходьте курси, щоб отримувати їх!</div>';
             return;
         }
-
-        let myNewCodes = [];
-        if (!windowViewingEmployee && user.login === currentUser) {
-            let viewedAchs = JSON.parse(localStorage.getItem('skillhub_viewed_achs') || '[]');
-            myNewCodes = myCodes.filter(c => !viewedAchs.includes(c));
-            if (myNewCodes.length > 0) {
-                localStorage.setItem('skillhub_viewed_achs', JSON.stringify(myCodes));
-                document.getElementById('achBtn').classList.remove('has-new');
-                document.getElementById('achNotificationDot').style.display = 'none';
-            }
-        }
-
-        globalAchievements.forEach(ach => {
-            let isEarned = myCodes.includes(ach.code);
-            let opacity = isEarned ? '1' : '0.4';
-            let filter = isEarned ? 'none' : 'grayscale(100%)';
-            let bg = isEarned ? 'var(--card-bg)' : 'var(--input-bg)';
-            let borderColor = isEarned ? 'var(--primary-light)' : 'transparent';
-            
-            let isNew = myNewCodes.includes(ach.code);
-            let badgeHtml = isNew ? `<div style="position:absolute; top:-6px; right:-6px; background:var(--danger); color:white; font-size:10px; font-weight:900; padding:4px 8px; border-radius:10px; text-transform:uppercase; box-shadow:0 4px 10px rgba(239,68,68,0.3); border:2px solid var(--card-bg);">Нове!</div>` : '';
-
-            let imgHtml = '';
-            if (ach.code) {
-                imgHtml = `<img src="Achievement/${escapeHTMLAttr(ach.code)}.svg" class="ach-icon" data-ext-index="0" data-code="${escapeHTMLAttr(ach.code)}" onerror="handleAchImageError(this)">`;
-            } else {
-                imgHtml = `<span style="font-size:32px;">🏅</span>`;
-            }
-
-            html += `
-            <div class="ach-card" style="opacity: ${opacity}; filter: ${filter}; background: ${bg}; border-color: ${borderColor};" onclick="this.classList.toggle('zoomed')">
-                ${badgeHtml}
-                <div class="ach-icon-wrapper">${imgHtml}</div>
-                <div style="flex:1;">
-                    <div class="ach-card-title">${escapeHTMLAttr(ach.name)}</div>
-                    <div class="ach-card-desc">${escapeHTMLAttr(ach.desc)}</div>
+        
+        let html = userAchCodes.map(code => {
+            let achDef = globalAchievements.find(a => a.code === code) || { title: "Секретне досягнення", description: "Деталі невідомі" };
+            return `
+            <div class="ach-card" onclick="toggleZoom(this)">
+                <div class="ach-icon-wrapper">
+                    <img src="Achievement/${escapeHTMLAttr(code)}.svg" class="ach-icon" data-code="${escapeHTMLAttr(code)}" data-ext-index="0" onerror="handleAchImageError(this)" alt="Ach">
+                </div>
+                <div style="flex: 1; display:flex; flex-direction:column; justify-content:center;">
+                    <div class="ach-card-title">${escapeHTMLAttr(achDef.title)}</div>
+                    <div class="ach-card-desc">${escapeHTMLAttr(achDef.description)}</div>
                 </div>
             </div>`;
-        });
-        achList.innerHTML = html;
+        }).join('');
+        container.innerHTML = html;
     }
 
-    function checkNewAchievements(user) {
-        if (!user || user.login !== currentUser) return;
-        let myCodes = user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(s => s) : [];
-        let viewedAchs = JSON.parse(localStorage.getItem('skillhub_viewed_achs') || '[]');
-        
-        let hasNew = myCodes.some(c => !viewedAchs.includes(c));
-        let btn = document.getElementById('achBtn');
-        let dot = document.getElementById('achNotificationDot');
-        
-        if (hasNew) {
-            btn.classList.add('has-new');
-            dot.style.display = 'block';
+    function toggleZoom(card) {
+        let allCards = document.querySelectorAll('.ach-card');
+        if (card.classList.contains('zoomed')) {
+            card.classList.remove('zoomed');
         } else {
-            btn.classList.remove('has-new');
-            dot.style.display = 'none';
+            allCards.forEach(c => c.classList.remove('zoomed'));
+            card.classList.add('zoomed');
+            setTimeout(() => { card.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 300);
         }
+    }
+
+    function openCompletedModal() {
+        if (!savedCompletedListHtml) return;
+        let genericModal = document.getElementById('genericModal');
+        let genericOverlay = document.getElementById('genericModalOverlay');
+        genericModal.innerHTML = `
+            <div class="ach-modal-title">Історія тестів</div>
+            <div class="modal-scrollable" style="margin-top: 16px;">
+                ${savedCompletedListHtml}
+            </div>
+        `;
+        genericModal.classList.add('active');
+        genericOverlay.classList.add('active');
+    }
+
+    function closeModals() {
+        document.getElementById('genericModal').classList.remove('active');
+        document.getElementById('genericModalOverlay').classList.remove('active');
+        document.getElementById('compareOverlay').classList.remove('active');
+        document.getElementById('compareModal').classList.remove('active');
+    }
+
+    function startTest() { switchView('warningView'); }
+
+    function acceptWarningAndStart() {
+        if(window.isDeadlinePassed) { alert("Дедлайн пройшов."); return; }
+        document.body.classList.remove('cheating');
+        
+        parsedQuestions = [];
+        let rawQ = currentProductData.questions || "";
+        let qBlocks = rawQ.split(/\[питання\]/i).filter(b => b.trim() !== '');
+
+        qBlocks.forEach(block => {
+            let lines = block.split('\n').map(l => l.trim()).filter(l => l !== '');
+            if (lines.length > 0) {
+                let qText = lines[0];
+                let type = 'radio';
+                if (qText.includes('[кілька]')) { type = 'checkbox'; qText = qText.replace('[кілька]', '').trim(); }
+                let answers = [];
+                for (let i = 1; i < lines.length; i++) {
+                    let ans = lines[i];
+                    let isCorrect = false;
+                    if (ans.startsWith('+')) { isCorrect = true; ans = ans.substring(1).trim(); }
+                    else if (ans.startsWith('-')) { ans = ans.substring(1).trim(); }
+                    if (ans !== '') answers.push({ text: ans, isCorrect: isCorrect });
+                }
+                if (answers.length > 0) {
+                    shuffleArray(answers);
+                    parsedQuestions.push({ question: qText, type: type, answers: answers });
+                }
+            }
+        });
+
+        if (parsedQuestions.length === 0) { alert("У цьому тесті немає питань."); return; }
+
+        shuffleArray(parsedQuestions);
+        if (parsedQuestions.length > 12) parsedQuestions = parsedQuestions.slice(0, 12);
+        
+        currentQuestionIndex = 0;
+        window.sessionTotalTime = 0;
+        isTestActive = true;
+
+        switchView('testView');
+        renderQuestion();
+        setupAntiCheat();
+    }
+
+    function setupAntiCheat() {
+        window.onblur = () => { if (isTestActive && !windowUserRole.includes('admin')) failTestCheating(); };
+        document.addEventListener('visibilitychange', () => { if (document.hidden && isTestActive && !windowUserRole.includes('admin')) failTestCheating(); });
+    }
+
+    function removeAntiCheat() {
+        window.onblur = null;
+        document.removeEventListener('visibilitychange', () => {});
+    }
+
+    function failTestCheating() {
+        isTestActive = false;
+        clearInterval(testTimerInterval);
+        removeAntiCheat();
+        document.body.classList.add('cheating');
+        saveOfflineResult(currentUser, getCleanName(currentProductData.product), 0, window.sessionTotalTime);
+        if (navigator.onLine) forceRefresh();
+        
+        setTimeout(() => {
+            document.body.classList.remove('cheating');
+            openCourse(currentCourseName);
+        }, 5000);
+    }
+
+    function renderQuestion() {
+        const container = document.getElementById('testContainer');
+        const q = parsedQuestions[currentQuestionIndex];
+        
+        document.getElementById('testHeaderTitle').innerText = `Питання ${currentQuestionIndex + 1} з ${parsedQuestions.length}`;
+        
+        let ansHtml = q.answers.map((a, i) => `
+            <label class="answer-label" onclick="updateSelection(this, '${q.type}')">
+                <input type="${q.type}" name="q_ans" value="${i}">
+                <span style="flex:1; line-height:1.4;">${escapeHTMLAttr(a.text)}</span>
+            </label>
+        `).join('');
+
+        container.innerHTML = `
+            <div class="question-card">
+                <div class="question-title">${escapeHTMLAttr(q.question)}</div>
+                <div style="display:flex; flex-direction:column; gap:8px;">${ansHtml}</div>
+            </div>
+        `;
+
+        const btn = document.getElementById('submitTestBtn');
+        btn.onclick = submitAnswer;
+        btn.innerText = (currentQuestionIndex === parsedQuestions.length - 1) ? "ЗАВЕРШИТИ ТЕСТ" : "НАСТУПНЕ ПИТАННЯ";
+        
+        timeRemaining = TIME_PER_QUESTION;
+        updateTimerDisplay();
+        
+        clearInterval(testTimerInterval);
+        testTimerInterval = setInterval(() => {
+            timeRemaining--;
+            window.sessionTotalTime++;
+            updateTimerDisplay();
+            if (timeRemaining <= 0) { clearInterval(testTimerInterval); submitAnswer(); }
+        }, 1000);
+    }
+
+    function updateSelection(label, type) {
+        if (type === 'radio') {
+            document.querySelectorAll('.answer-label').forEach(el => el.classList.remove('selected'));
+            label.classList.add('selected');
+        } else {
+            let cb = label.querySelector('input');
+            setTimeout(() => {
+                if (cb.checked) label.classList.add('selected');
+                else label.classList.remove('selected');
+            }, 10);
+        }
+    }
+
+    function updateTimerDisplay() {
+        const tb = document.getElementById('testTimer');
+        tb.innerText = `00:${timeRemaining < 10 ? '0' : ''}${timeRemaining}`;
+        if (timeRemaining <= 5) { tb.style.background = 'var(--danger)'; tb.style.color = '#fff'; }
+        else { tb.style.background = 'var(--danger-bg)'; tb.style.color = 'var(--danger)'; }
+    }
+
+    function submitAnswer() {
+        clearInterval(testTimerInterval);
+        const q = parsedQuestions[currentQuestionIndex];
+        const inputs = document.querySelectorAll('input[name="q_ans"]:checked');
+        let selectedIdx = Array.from(inputs).map(i => parseInt(i.value));
+
+        let isCorrect = false;
+        let correctIdx = q.answers.map((a, i) => a.isCorrect ? i : -1).filter(i => i !== -1);
+        
+        if (q.type === 'radio') {
+            if (selectedIdx.length > 0 && correctIdx.includes(selectedIdx[0])) isCorrect = true;
+        } else {
+            if (selectedIdx.length === correctIdx.length && selectedIdx.every(val => correctIdx.includes(val))) isCorrect = true;
+        }
+
+        q.userCorrect = isCorrect;
+        
+        currentQuestionIndex++;
+        if (currentQuestionIndex < parsedQuestions.length) {
+            renderQuestion();
+        } else {
+            finishTest();
+        }
+    }
+
+    function finishTest() {
+        isTestActive = false;
+        removeAntiCheat();
+        
+        let correctCount = parsedQuestions.filter(q => q.userCorrect).length;
+        let score = Math.round((correctCount / parsedQuestions.length) * 100);
+        
+        let timeReading = Math.floor((Date.now() - window.theoryEntryTime) / 1000) - window.sessionTotalTime;
+        if(timeReading < 0) timeReading = 0;
+
+        saveOfflineResult(currentUser, getCleanName(currentProductData.product), score, window.sessionTotalTime);
+        if (navigator.onLine) forceRefresh();
+
+        const emoji = document.getElementById('resultEmoji');
+        const title = document.getElementById('resultTitle');
+        const sub = document.getElementById('resultSubtitle');
+        const act = document.getElementById('resultActionContainer');
+
+        if (score >= 80) {
+            emoji.innerText = '🏆';
+            title.innerText = 'Тест складено!';
+            title.style.color = 'var(--success)';
+            sub.innerHTML = `Ви набрали <strong>${score}%</strong> правильних відповідей.`;
+            act.innerHTML = `<button class="btn btn-glow" onclick="openCourse('${escapeHTMLAttr(currentCourseName)}')">ПОВЕРНУТИСЯ</button>`;
+        } else {
+            emoji.innerText = '💔';
+            title.innerText = 'Тест не складено';
+            title.style.color = 'var(--danger)';
+            sub.innerHTML = `Ваш результат <strong>${score}%</strong>. Для проходження потрібно 80%.`;
+            act.innerHTML = `
+                <button class="btn btn-glow" style="margin-bottom:12px;" onclick="startTest()">СПРОБУВАТИ ЩЕ РАЗ</button>
+                <button class="btn btn-secondary" onclick="openCourse('${escapeHTMLAttr(currentCourseName)}')">ПОВЕРНУТИСЯ ДО СПИСКУ</button>
+            `;
+        }
+        
+        switchView('resultView');
     }
 </script>
 </body>
