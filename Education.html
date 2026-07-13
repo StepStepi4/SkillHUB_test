@@ -91,8 +91,8 @@
             z-index: 9999;
         }
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; will-change: transform; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
         
+        @keyframes spin { 100% { transform: rotate(360deg); } }
         @keyframes spinIcon { 100% { transform: rotate(360deg); } }
         .spinning-icon { animation: spinIcon 1s linear infinite; }
 
@@ -176,18 +176,14 @@
         .badge-info { background: var(--info-bg); color: var(--info-text); }
         .badge-purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
 
-        .chart-container { background: var(--chart-bg); border-radius: 20px; border: 1px solid var(--border); padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; height: 250px; width: 100%; }
+        .chart-container { background: var(--chart-bg); border-radius: 20px; border: 1px solid var(--border); padding: 16px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; width: 100%; }
         
         .table-container { width: 100%; overflow-x: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); margin-bottom: 24px; }
-        .stats-table { width: 100%; border-collapse: collapse; min-width: 450px; }
+        .stats-table { width: 100%; border-collapse: collapse; min-width: 100%; }
         .stats-table th { background: var(--input-bg); color: var(--text-muted); font-size: 12px; font-weight: 700; text-transform: uppercase; padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); white-space: nowrap; }
         .stats-table td { padding: 14px 16px; font-size: 14px; font-weight: 600; color: var(--text-main); border-bottom: 1px solid var(--input-bg); }
         .stats-table tr:last-child td { border-bottom: none; }
 
-        .cabinet-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media (min-width: 768px) { .cabinet-grid { grid-template-columns: 2fr 1fr; } }
-
-        /* --- КАРТКИ НАВЧАННЯ --- */
         .list-card { background: var(--card-bg); border-radius: 20px; border: 1.5px solid var(--border); margin-bottom: 14px; padding: 18px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 12px rgba(0,0,0,0.02); }
         .list-card:active { transform: scale(0.97); background: var(--input-bg); }
         .list-card-title { font-size: 16px; font-weight: 700; color: var(--text-main); display: flex; align-items: center; gap: 12px;}
@@ -292,14 +288,6 @@
 
 <div class="drawer-overlay" id="genericModalOverlay" onclick="closeModals()"></div>
 <div class="ach-modal" id="genericModal"></div>
-
-<div class="drawer-overlay" id="compareOverlay" onclick="closeCompare()"></div>
-<div class="ach-modal" id="compareModal" style="max-width: 600px; width: 95%;">
-    <div class="ach-modal-title">Порівняти показники</div>
-    <input type="text" id="compareSearchInput" class="admin-select" style="margin-top: 12px;" placeholder="Введіть ПІБ або Скорочено (мін 2 символи)" oninput="handleCompareSearch(this.value)">
-    <div id="compareDropdown" style="max-height: 200px; overflow-y: auto; background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; margin-top: 8px; display: none; box-shadow: 0 4px 12px rgba(0,0,0,0.1);"></div>
-    <div id="compareResultsArea" class="modal-scrollable" style="margin-top: 20px; text-align: left; display: none;"></div>
-</div>
 
 <div class="container" id="mainContainer">
 
@@ -422,7 +410,7 @@
             <div class="tab-btn" data-target="tab-stats" data-index="2" onclick="switchCabinetTab('tab-stats')">Статистика</div>
         </div>
 
-        <div id="deadlineContainer" style="display:none;">
+        <div id="deadlineContainer" style="display:none; background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.15); border-radius: 16px; padding: 8px 16px; align-items: center; justify-content: center; gap: 10px; margin: 0 auto 24px auto; width: fit-content;">
             <span style="font-size:20px;">⏳</span>
             <span id="deadlineText"></span>
         </div>
@@ -430,11 +418,9 @@
         <!-- Вкладка 1: НАВЧАННЯ -->
         <div id="tab-learning" class="tab-content active">
             <div id="globalStatsContainer"></div>
-            <div id="courseListTitleWrapper" style="display: none;">
-                <div class="section-title" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-                    <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; display: block;" alt="Check" onerror="this.style.display='none'">
-                    <span style="line-height: 1; padding-top: 2px;">Призначені курси</span>
-                </div>
+            <div class="section-title" id="courseListTitle" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px; display: none;">
+                <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; display: block;" alt="Check" onerror="this.style.display='none'">
+                <span style="line-height: 1; padding-top: 2px;">Призначені курси</span>
             </div>
             <div id="courseList"></div>
         </div>
@@ -442,13 +428,35 @@
         <!-- Вкладка 2: ЦІЛІ -->
         <div id="tab-goals" class="tab-content">
             <div id="block-targets"></div>
-            <div id="block-month"></div>
         </div>
 
         <!-- Вкладка 3: СТАТИСТИКА -->
         <div id="tab-stats" class="tab-content">
-            <div id="block-history"></div>
-            <div id="block-compare"></div>
+            <div class="stats-dashboard" style="margin-bottom: 24px;">
+                <div class="stat-item"><div class="stat-val" id="st-plan25">0</div><div class="stat-label">План 2025</div></div>
+                <div class="stat-item"><div class="stat-val" id="st-sold25" style="color:var(--primary);">0</div><div class="stat-label">Продано 25</div></div>
+                <div class="stat-item"><div class="stat-val" id="st-plan26">0</div><div class="stat-label">План 2026</div></div>
+                <div class="stat-item"><div class="stat-val" id="st-sold26" style="color:var(--primary);">0</div><div class="stat-label">Продано 26</div></div>
+            </div>
+            
+            <div class="chart-container" style="height: 250px;">
+                <canvas id="yearlyChart"></canvas>
+            </div>
+            
+            <div class="table-container">
+                <table class="stats-table">
+                    <thead>
+                        <tr>
+                            <th>Місяць</th>
+                            <th>План</th>
+                            <th>Факт</th>
+                            <th>%</th>
+                        </tr>
+                    </thead>
+                    <tbody id="yearlyTableBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
 
     </div>
@@ -549,8 +557,6 @@
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
-    let globalCabinetData = []; 
-    let currentCompareLogin = "";
 
     window.updateFontScale = function(scale) {
         let style = document.getElementById('dynamicFontScale');
@@ -577,7 +583,7 @@
             .ach-title { font-size: calc(22px * ${scale}) !important; }
             .ach-card-title { font-size: calc(15px * ${scale}) !important; }
             .ach-card-desc { font-size: calc(13px * ${scale}) !important; }
-            #deadlineTextInline { font-size: calc(14px * ${scale}) !important; }
+            #deadlineText { font-size: calc(14px * ${scale}) !important; }
             #userWelcome { font-size: calc(13px * ${scale}) !important; }
             .timer-box { font-size: calc(16px * ${scale}) !important; }
         `;
@@ -589,7 +595,7 @@
             document.documentElement.setAttribute('data-theme', currentTheme);
             if(windowViewingEmployee || currentUser) {
                 let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
-                renderCabinetStats(user);
+                renderCourses(user);
             }
         } else if (event.key === 'skillhub_font_scale') {
             window.updateFontScale(event.newValue || "1");
@@ -693,6 +699,7 @@
         return parts[0];
     }
 
+    // --- ПЕРЕМИКАННЯ ТАБІВ ---
     function switchCabinetTab(tabId) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
@@ -703,10 +710,15 @@
             let idx = parseInt(activeBtn.getAttribute('data-index'));
             let slider = document.getElementById('tabSlider');
             slider.style.left = `calc(${idx * 33.333}% + 4px)`;
-            slider.style.width = `calc(33.333% - 8px)`;
         }
 
         document.getElementById(tabId).classList.add('active');
+        
+        // Змушуємо Chart.js перемалювати графік, якщо таб Статистика став активним
+        if (tabId === 'tab-stats' && chartsInstances['yearly']) {
+            chartsInstances['yearly'].resize();
+            chartsInstances['yearly'].update();
+        }
     }
 
     function handleFloatingBack() {
@@ -883,10 +895,10 @@
             return;
         }
 
-        let adminBtn = document.getElementById('btnRefreshAdmin');
         let cabBtn = document.getElementById('btnRefreshCab');
-        if(adminBtn) adminBtn.querySelector('svg').classList.add('spinning-icon');
+        let adminBtn = document.getElementById('btnRefreshAdmin');
         if(cabBtn) cabBtn.querySelector('svg').classList.add('spinning-icon');
+        if(adminBtn) adminBtn.querySelector('svg').classList.add('spinning-icon');
 
         document.getElementById('loaderText').innerText = "Оновлення даних...";
         document.getElementById('loader').style.display = 'flex';
@@ -896,8 +908,8 @@
         document.getElementById('loader').style.display = 'none';
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
 
-        if(adminBtn) adminBtn.querySelector('svg').classList.remove('spinning-icon');
         if(cabBtn) cabBtn.querySelector('svg').classList.remove('spinning-icon');
+        if(adminBtn) adminBtn.querySelector('svg').classList.remove('spinning-icon');
     }
 
     function adaptAllUsers(users, courses) {
@@ -913,18 +925,6 @@
                 }
             }
         });
-    }
-
-    // Допоміжний парсер для нового формату (3651 / 1843 / 50%)
-    function parseCabTargetStr(valStr) {
-        if(!valStr) return { plan:0, sold:0, exec:"0%" };
-        let parts = String(valStr).split('/').map(p => p.trim());
-        if(parts.length >= 3) {
-            return { plan: parseCleanFloat(parts[0]), sold: parseCleanFloat(parts[1]), exec: parts[2] };
-        } else if(parts.length === 1) {
-            return { plan: 0, sold: parseCleanFloat(parts[0]), exec: "0%" };
-        }
-        return { plan: 0, sold: 0, exec: "0%" };
     }
 
     async function fetchFreshDataSilent() {
@@ -950,7 +950,6 @@
                 db = data.educationData;
                 if (db && db.users && db.courses) adaptAllUsers(db.users, db.courses);
                 globalAchievements = data.achievementData || []; 
-                globalCabinetData = data.cabinetData || [];
 
                 if (currentUser) {
                     let user = db && db.users ? db.users.find(u => u.login === currentUser) : null;
@@ -972,13 +971,11 @@
                                     windowViewingEmployee = updatedEmp;
                                     buildCoursesMap(updatedEmp);
                                     renderCourses(updatedEmp);
-                                    renderCabinetStats(updatedEmp);
                                     startDeadlineTimer(); 
                                 }
                             } else {
                                 buildCoursesMap(user);
                                 renderCourses(user);
-                                renderCabinetStats(user);
                                 startDeadlineTimer();
                                 checkNewAchievements(user);
                             }
@@ -1014,7 +1011,6 @@
                     db = parsedDb.educationData;
                     if (db && db.users && db.courses) adaptAllUsers(db.users, db.courses);
                     globalAchievements = parsedDb.achievementData || []; 
-                    globalCabinetData = parsedDb.cabinetData || []; 
                 }
             }
         } catch(e) {}
@@ -1094,10 +1090,8 @@
 
         try {
             switchCabinetTab('tab-learning'); 
-            currentCompareLogin = "";
             buildCoursesMap(user);
             renderCourses(user);
-            renderCabinetStats(user); 
             startDeadlineTimer();
             checkNewAchievements(user);
             switchView('courseView');
@@ -1258,15 +1252,13 @@
             let uIsDirector = uRoleStr.includes('керівник') || uRoleStr.includes('директор') || uRoleStr.includes('manager');
 
             let assignedCount = u.assigned ? u.assigned.length : 0;
+            let tPcs = parseCleanFloat(u.targetPcs); let tUah = parseCleanFloat(u.targetUah);
+            let fPcs = parseCleanFloat(u.execPcs); let fUah = parseCleanFloat(u.execUah);
             
-            let tPcs = parseCleanFloat(u.targetPcs);
-            let tUah = parseCleanFloat(u.targetUah);
-            let fPcs = parseCleanFloat(u.execPcs);
-            let fUah = parseCleanFloat(u.execUah);
-            
+            // Якщо є ключі місяців типу "012025" в results - це означає, що є історія/кабінет
+            let hasCabData = Object.keys(u.results || {}).some(k => /^(0[1-9]|1[0-2])(2025|2026)$/.test(k));
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = assignedCount > 0;
-            let hasCabData = globalCabinetData.some(c => c.login === u.login);
 
             if (isAdmin) {
                 if (uIsOwner) return false;
@@ -1459,327 +1451,61 @@
         document.getElementById('userWelcome').innerHTML = `<strong style="color:var(--text-main); font-size: 18px;">${escapeHTMLAttr(firstName)}</strong>`;
         document.getElementById('courseViewNavActions').style.display = 'none'; 
         
-        currentCompareLogin = ""; 
         switchCabinetTab('tab-learning');
         renderCourses(windowViewingEmployee);
-        renderCabinetStats(windowViewingEmployee);
         startDeadlineTimer(); 
         switchView('courseView');
     }
 
-    // =========================================================================
-    // ОСОБИСТИЙ КАБІНЕТ (ВКЛАДКИ ЦІЛІ ТА СТАТИСТИКА)
-    // =========================================================================
-    function openCompare() {
-        document.getElementById('compareOverlay').style.display = 'block';
-        document.getElementById('compareSearchInput').value = '';
-        document.getElementById('compareDropdown').innerHTML = '';
-        document.getElementById('compareDropdown').style.display = 'none';
-        document.getElementById('compareResultsArea').innerHTML = '';
-        document.getElementById('compareResultsArea').style.display = 'none';
+    // --- ПАРСЕР ДАНИХ ПО МІСЯЦЯХ З ТАБЛИЦІ (01.2025 ...) ---
+    function getMonthlyStats(user) {
+        let stats = [];
+        let totals = { plan2025: 0, sold2025: 0, plan2026: 0, sold2026: 0 };
         
-        document.body.style.overflow = 'hidden'; 
-        document.getElementById('compareModal').classList.add('active');
-    }
-
-    function closeCompare() {
-        document.getElementById('compareModal').classList.remove('active');
-        document.body.style.overflow = ''; 
-        setTimeout(() => document.getElementById('compareOverlay').style.display = 'none', 300);
+        if (!user || !user.results) return { stats, totals };
         
-        // Перемалювати графіки, якщо порівняння активне
-        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
-        renderCabinetStats(user);
-    }
-
-    function handleCompareSearch(val) {
-        let query = val.toLowerCase().trim();
-        let dropdown = document.getElementById('compareDropdown');
+        // Знаходимо ключі, що виглядають як 012025 або 122026 (результат getCleanName)
+        let monthKeys = Object.keys(user.results).filter(k => /^(0[1-9]|1[0-2])(2025|2026)$/.test(k));
         
-        if (query.length < 2) {
-            dropdown.style.display = 'none';
-            return;
-        }
-
-        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
-        
-        let filtered = globalCabinetData.filter(emp => {
-            if (emp.login === user.login) return false;
-            let nameStr = String(emp.pib).toLowerCase();
-            return nameStr.includes(query);
-        });
-
-        if (filtered.length === 0) {
-            dropdown.innerHTML = `<div style="padding: 12px; color: var(--text-muted); font-size: 14px;">Співробітника не знайдено</div>`;
-            dropdown.style.display = 'block';
-            return;
-        }
-
-        let html = filtered.map(emp => {
-            return `<div style="padding: 12px 16px; cursor: pointer; border-bottom: 1px solid var(--input-bg); font-weight: 600; font-size: 14px; transition: background 0.2s;" 
-                         onclick="selectCompareEmployee('${escapeHTMLAttr(emp.login)}')">
-                        ${escapeHTMLAttr(emp.pib)}
-                    </div>`;
-        }).join('');
-
-        dropdown.innerHTML = html;
-        dropdown.style.display = 'block';
-    }
-
-    function selectCompareEmployee(login) {
-        currentCompareLogin = login;
-        document.getElementById('compareDropdown').style.display = 'none';
-        
-        let user = windowViewingEmployee || db.users.find(u => u.login === currentUser);
-        let cabData = globalCabinetData.find(c => c.login === user.login);
-        let compareEmp = globalCabinetData.find(c => c.login === login);
-        
-        if (!cabData || !compareEmp) return;
-
-        let area = document.getElementById('compareResultsArea');
-        area.style.display = 'block';
-
-        let name1 = cabData.pib.split(' ')[0] || "Ви";
-        let name2 = compareEmp.pib.split(' ')[0] || "Колега";
-
-        let tableRows = '';
-        cabData.monthsHistory.forEach(m => {
-            let compM = compareEmp.monthsHistory.find(cm => cm.monthYear === m.monthYear);
-            let compHTML = '';
-            if (compM) {
-                let v = parseInt(compM.execution) || 0;
-                compHTML = `<td><span class="badge ${v >= 100 ? 'badge-success' : 'badge-danger'}">${compM.execution}</span></td>`;
-            } else {
-                compHTML = `<td><span style="color:var(--text-muted);">-</span></td>`;
+        monthKeys.forEach(k => {
+            let monthStr = k.substring(0, 2) + '.' + k.substring(2);
+            let year = k.substring(2);
+            let rawVal = String(user.results[k]).trim();
+            
+            let plan = 0, sold = 0, exec = "0%";
+            if (rawVal && rawVal !== "-" && rawVal !== "0") {
+                let parts = rawVal.split('/').map(p => p.trim());
+                if (parts.length >= 3) {
+                    plan = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
+                    sold = parseFloat(parts[1].replace(/\s+/g, '').replace(',', '.')) || 0;
+                    exec = parts[2];
+                } else if (parts.length === 2) {
+                    plan = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
+                    sold = parseFloat(parts[1].replace(/\s+/g, '').replace(',', '.')) || 0;
+                    exec = plan > 0 ? Math.round((sold/plan)*100) + "%" : "0%";
+                } else {
+                    sold = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
+                    exec = "0%";
+                }
             }
-
-            tableRows += `
-                <tr>
-                    <td><strong>${escapeHTMLAttr(m.monthYear)}</strong></td>
-                    <td><span class="badge ${parseInt(m.execution) >= 100 ? 'badge-success' : 'badge-danger'}">${escapeHTMLAttr(m.execution)}</span></td>
-                    ${compHTML}
-                </tr>
-            `;
+            
+            if (plan > 0 || sold > 0) {
+                stats.push({ monthYear: monthStr, plan: plan, sold: sold, exec: exec });
+                if (year === "2025") { totals.plan2025 += plan; totals.sold2025 += sold; }
+                else if (year === "2026") { totals.plan2026 += plan; totals.sold2026 += sold; }
+            }
         });
-
-        area.innerHTML = `
-            <div style="font-size: 18px; font-weight: 800; color: var(--primary); margin-bottom: 16px; text-align: center;">
-                ${escapeHTMLAttr(name1)} 🆚 ${escapeHTMLAttr(name2)}
-            </div>
-            <div class="table-container" style="margin-bottom: 0;">
-                <table class="stats-table" style="min-width: 100%;">
-                    <thead>
-                        <tr>
-                            <th>Місяць</th>
-                            <th>${escapeHTMLAttr(name1)} (%)</th>
-                            <th>${escapeHTMLAttr(name2)} (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableRows || '<tr><td colspan="3" style="text-align:center;">Немає історії</td></tr>'}
-                    </tbody>
-                </table>
-            </div>
-            <button class="btn btn-glow" style="margin-top: 24px;" onclick="closeCompare()">ЗБЕРЕГТИ І ЗАКРИТИ</button>
-        `;
-    }
-
-    function renderCabinetStats(user) {
-        if (!user || !globalCabinetData) return;
         
-        let cabData = globalCabinetData.find(c => String(c.login).toLowerCase() === String(user.login).toLowerCase());
-        
-        let bMonth = document.getElementById('block-month');
-        let bHist = document.getElementById('block-history');
-        let bComp = document.getElementById('block-compare');
-
-        if (!cabData) {
-            bMonth.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Даних за поточний місяць немає.</div>`;
-            bHist.innerHTML = `<div style="text-align:center; padding: 20px; color:var(--text-muted);">Історія продажів порожня.</div>`;
-            bComp.innerHTML = '';
-            return;
-        }
-
-        // Вкладка ЦІЛІ: Поточний місяць
-        let cm = cabData.currentMonth || {};
-        let curExecStr = formatPercent(cm.execution);
-        let curEffStr = formatPercent(cm.efficiency);
-        let curShareStr = formatPercent(cm.share);
-        let curPctNum = parseFloat(curExecStr) || 0;
-
-        let curMonthHtml = `
-        <div class="cabinet-card" style="margin-bottom: 0;">
-            <div class="cabinet-card-title">📅 ${escapeHTMLAttr(cm.planTitle || 'Поточний місяць')}</div>
-            <div style="font-size: 14px; display: flex; flex-direction: column; gap: 10px;">
-                <div style="display:flex; justify-content:space-between;"><span>План:</span> <strong>${formatNumber(cm.plan)}</strong></div>
-                <div style="display:flex; justify-content:space-between;"><span>Шт:</span> <strong>${cm.pcs || '0'}</strong></div>
-                <div style="display:flex; justify-content:space-between;"><span>Грн:</span> <strong>${formatNumber(cm.grn)}</strong></div>
-                <div style="margin-top: 8px;">
-                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:700; margin-bottom:6px;">
-                        <span>Виконання плану:</span> <span style="color:${curPctNum >= 100 ? 'var(--success)' : 'var(--danger)'};">${curExecStr}</span>
-                    </div>
-                    <div class="progress-track" style="height:10px; border-radius:5px;">
-                        <div class="progress-fill" style="width:${Math.min(curPctNum, 100)}%; background:${curPctNum >= 100 ? 'var(--success)' : 'var(--danger)'}; border-radius:5px;"></div>
-                    </div>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-top: 8px; align-items:center;">
-                    <span>Ефективність:</span> <span class="badge badge-info">${curEffStr}</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span>Доля:</span> <span class="badge badge-purple">${curShareStr}</span>
-                </div>
-            </div>
-        </div>`;
-        bMonth.innerHTML = curMonthHtml;
-
-        // Вкладка СТАТИСТИКА: Історія + Порівняння
-        Object.keys(chartsInstances).forEach(k => {
-            if (k === 'salesHistory' || k.startsWith('history_')) chartsInstances[k].destroy();
-        });
-
-        let compareEmp = currentCompareLogin ? globalCabinetData.find(c => c.login === currentCompareLogin) : null;
-
-        // Сортуємо місяці хронологічно, припускаючи формат MM.YYYY
-        let sortedHistory = [...cabData.monthsHistory].sort((a, b) => {
+        stats.sort((a, b) => {
             let [m1, y1] = a.monthYear.split('.');
             let [m2, y2] = b.monthYear.split('.');
-            if(y1 !== y2) return y1 - y2;
-            return m1 - m2;
+            if (y1 !== y2) return parseInt(y1) - parseInt(y2);
+            return parseInt(m1) - parseInt(m2);
         });
-
-        let tableRows = '';
-        sortedHistory.forEach(m => {
-            let compHTML = '';
-            if (compareEmp) {
-                let compM = compareEmp.monthsHistory.find(cm => cm.monthYear === m.monthYear);
-                if (compM) {
-                    let val = parseInt(compM.execution) || 0;
-                    compHTML = `<td><span class="badge ${val >= 100 ? 'badge-success' : 'badge-danger'}">${escapeHTMLAttr(compM.execution)}</span></td>`;
-                } else {
-                    compHTML = `<td><span style="color:var(--text-muted);">-</span></td>`;
-                }
-            }
-
-            tableRows += `
-                <tr>
-                    <td><strong>${escapeHTMLAttr(m.monthYear)}</strong></td>
-                    <td>${formatNumber(m.plan)}</td>
-                    <td>${formatNumber(m.sold)}</td>
-                    <td><span class="badge ${parseInt(m.execution) >= 100 ? 'badge-success' : 'badge-danger'}">${escapeHTMLAttr(m.execution)}</span></td>
-                    ${compHTML}
-                </tr>
-            `;
-        });
-
-        let histHtml = `
-            <div class="stats-dashboard" style="margin-bottom: 24px;">
-                <div class="stat-item"><div class="stat-val">${formatNumber(cabData.totals.plan2025)}</div><div class="stat-label">План 2025</div></div>
-                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(cabData.totals.sold2025)}</div><div class="stat-label">Продано 2025</div></div>
-                <div class="stat-item"><div class="stat-val">${formatNumber(cabData.totals.plan2026)}</div><div class="stat-label">План 2026</div></div>
-                <div class="stat-item"><div class="stat-val" style="color:var(--primary);">${formatNumber(cabData.totals.sold2026)}</div><div class="stat-label">Продано 2026</div></div>
-            </div>
-
-            <div class="chart-container">
-                <canvas id="salesHistoryChart"></canvas>
-            </div>
-
-            <div class="table-container">
-                <table class="stats-table">
-                    <thead>
-                        <tr>
-                            <th>Місяць</th>
-                            <th>План</th>
-                            <th>Продано</th>
-                            <th>Виконання (%)</th>
-                            ${compareEmp ? `<th>Колега (%)</th>` : ''}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableRows || '<tr><td colspan="5" style="text-align:center;">Немає історії</td></tr>'}
-                    </tbody>
-                </table>
-            </div>
-        `;
-        bHist.innerHTML = histHtml;
-
-        let compHtml = `
-            <button class="btn btn-secondary" style="width: 100%; border-radius: 14px; margin-bottom: 24px; padding: 14px; font-size: 14px; gap: 8px; border: 1px solid var(--primary-light); color: var(--primary); background: rgba(16, 185, 129, 0.05);" onclick="openCompare()">
-                <span style="font-size:18px;">⚖️</span> ${compareEmp ? 'Змінити користувача для порівняння' : 'Порівняти з колегою'}
-            </button>`;
-        bComp.innerHTML = compHtml;
-
-        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-        const tColor = isDark ? '#ffffff' : '#111827';
-        const gridC = isDark ? '#38383a' : '#e5e7eb';
-
-        let canvas = document.getElementById('salesHistoryChart');
-        if (canvas) {
-            const labels = sortedHistory.map(m => m.monthYear);
-            const planData = sortedHistory.map(m => m.plan);
-            const soldData = sortedHistory.map(m => m.sold);
-
-            let datasets = [
-                { 
-                    label: `План`, 
-                    data: planData, 
-                    type: 'bar',
-                    backgroundColor: isDark ? '#38383a' : '#cbd5e1',
-                    borderRadius: 4,
-                    order: 2
-                },
-                { 
-                    label: `Продано (${cabData.pib.split(' ')[0] || "Ви"})`, 
-                    data: soldData, 
-                    type: 'line',
-                    borderColor: '#10b981',
-                    backgroundColor: '#10b981',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    pointRadius: 4,
-                    order: 1
-                }
-            ];
-
-            if (compareEmp) {
-                const compSold = labels.map(l => {
-                    let f = compareEmp.monthsHistory.find(cm => cm.monthYear === l);
-                    return f ? f.sold : 0;
-                });
-                datasets.push({
-                    label: `Продано (${compareEmp.pib.split(' ')[0] || "Колега"})`,
-                    data: compSold,
-                    type: 'line',
-                    borderColor: '#3b82f6',
-                    backgroundColor: '#3b82f6',
-                    borderWidth: 3,
-                    tension: 0.3,
-                    borderDash: [5, 5],
-                    pointRadius: 4,
-                    order: 0
-                });
-            }
-
-            chartsInstances['salesHistory'] = new Chart(canvas, {
-                data: { labels: labels, datasets: datasets },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    interaction: { mode: 'index', intersect: false },
-                    plugins: {
-                        legend: { position: 'top', labels: { color: tColor, font: { family: 'Inter', size: 11 } } }
-                    },
-                    scales: {
-                        x: { grid: { display: false }, ticks: { color: tColor } },
-                        y: { grid: { color: gridC, drawBorder: false }, ticks: { color: tColor } }
-                    }
-                }
-            });
-        }
+        
+        return { stats, totals };
     }
 
-    // =========================================================================
-    // ВІДОБРАЖЕННЯ ЦІЛЕЙ (EDUCATION) ТА НАВЧАННЯ
-    // =========================================================================
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
@@ -1789,6 +1515,7 @@
         let totalAssigned = 0, totalCompleted = 0, totalScoreSum = 0, scoreCount = 0;
         savedCompletedListHtml = ""; 
 
+        // 1. РЕНДЕР КУРСІВ (Вкладка "Навчання")
         if (courseNames.length > 0) {
             Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
                 totalAssigned++;
@@ -1806,14 +1533,12 @@
                         totalCompleted++;
                         let attWord = getAttemptWord(attempts);
                         let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '';
-                        let stColor = 'var(--success)';
-                        let stIcon = '✅';
                         
                         savedCompletedListHtml += `
                             <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                                <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${stIcon} ${escapeHTMLAttr(p.product)}</span>
+                                <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">✅ ${escapeHTMLAttr(p.product)}</span>
                                 <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                    <span style="font-size:16px; font-weight:900; color:${stColor}; line-height:1;">${score}%</span>
+                                    <span style="font-size:16px; font-weight:900; color:var(--success); line-height:1;">${score}%</span>
                                     <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord} ${timeStr ? ' • ' + timeStr : ''}</span>
                                 </div>
                             </div>`;
@@ -1822,7 +1547,79 @@
             });
         }
 
-        // БЛОК ЦІЛЕЙ EDUCATION
+        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
+        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
+        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
+
+        let globCont = document.getElementById('globalStatsContainer');
+        if(globCont) {
+            if (totalAssigned > 0) {
+                globCont.innerHTML = `
+                    <div class="stats-dashboard">
+                        <div class="stat-item clickable" onclick="openCompletedModal()">
+                            <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
+                            <div class="stat-label">Пройдено</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-val">${avgScore}%</div>
+                            <div class="stat-label">Сер. бал</div>
+                        </div>
+                    </div>
+                    <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)'}; border-color: ${isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)'};">
+                        <div class="progress-header">
+                            <div class="progress-title-text">Загальний прогрес</div>
+                            <div class="progress-percent-val" style="color: ${isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)'};">${globalPercent}%</div>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-fill" style="width: ${globalPercent}%;"></div>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('courseListTitle').style.display = 'flex';
+            } else {
+                globCont.innerHTML = '';
+                document.getElementById('courseListTitle').style.display = 'none';
+            }
+        }
+        
+        if (courseNames.length === 0) {
+            if(list) list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
+        } else {
+            let coursesHtml = courseNames.map(name => {
+                let parsed = formatWithCustomEmoji(name, '📘');
+                let safeName = escapeHTMLAttr(name);
+                let courseProducts = coursesMap[name] || [];
+                let cTotal = courseProducts.length;
+                let cPassed = 0;
+
+                courseProducts.forEach(p => {
+                    let cleanP = getCleanName(p.product);
+                    let resStr = userResults[cleanP];
+                    if (resStr) {
+                        let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                        let score = 0;
+                        if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
+                        else { let singleMatch = String(resStr).match(/(\d+)%/); if (singleMatch) score = parseInt(singleMatch[1], 10) || 0; }
+                        if (score >= 80) cPassed++;
+                    }
+                });
+
+                let isCourseDone = (cTotal > 0 && cPassed === cTotal);
+                let cardClass = isCourseDone ? "list-card completed" : "list-card";
+
+                return `
+                <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
+                    <div class="list-card-title" style="flex: 1;"><span style="font-size: 16px;">${parsed.title}</span></div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
+                        <div class="list-card-arrow">❯</div>
+                    </div>
+                </div>`;
+            }).join('');
+            if(list) list.innerHTML = coursesHtml;
+        }
+
+        // 2. РЕНДЕР ТАБУ "ЦІЛІ"
         let tPcs = parseCleanFloat(user.targetPcs);
         let tUah = parseCleanFloat(user.targetUah);
         let fPcs = parseCleanFloat(user.execPcs);
@@ -1867,97 +1664,74 @@
                 </div>`;
         }
         
-        let targetsBlock = targetsHtml ? `
-            <div class="cabinet-card" style="margin-bottom: 24px; border-color: var(--primary-light);">
-                <div class="cabinet-card-title">🎯 Цілі (Навчання)</div>
-                ${targetsHtml}
-            </div>` : '';
-        document.getElementById('block-targets').innerHTML = targetsBlock;
-
-        let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
-        let globalPercent = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
-        
-        let isGlobalCompleted = globalPercent >= 100 && totalAssigned > 0;
-        let globalBg = isGlobalCompleted ? 'rgba(16, 185, 129, 0.15)' : 'var(--card-bg)';
-        let globalBorder = isGlobalCompleted ? 'rgba(16, 185, 129, 0.4)' : 'var(--border)';
-        let globalColor = isGlobalCompleted ? 'var(--rozetka-green-dark)' : 'var(--text-main)';
-
-        let globCont = document.getElementById('globalStatsContainer');
-        let courseListWrapper = document.getElementById('courseListTitleWrapper');
-
-        if(globCont) {
-            if (totalAssigned > 0) {
-                globCont.innerHTML = `
-                    <div class="section-title" style="margin-top: 0; display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
-                        <img src="icons_skillHUB/analytics.svg" style="width: 20px; height: 20px; display: block;" alt="Stats" onerror="this.style.display='none'">
-                        <span style="line-height: 1; padding-top: 2px;">Прогрес навчання</span>
-                    </div>
-                    <div class="stats-dashboard">
-                        <div class="stat-item clickable" onclick="openCompletedModal()">
-                            <div class="stat-val">${totalCompleted}/${totalAssigned}</div>
-                            <div class="stat-label">Пройдено</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-val">${avgScore}%</div>
-                            <div class="stat-label">Сер. бал</div>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-widget" onclick="openCompletedModal()" style="cursor:pointer; margin-bottom: 24px; background: ${globalBg}; border-color: ${globalBorder};">
-                        <div class="progress-header">
-                            <div class="progress-title-text">Загальний прогрес</div>
-                            <div class="progress-percent-val" style="color: ${globalColor};">${globalPercent}%</div>
-                        </div>
-                        <div class="progress-track">
-                            <div class="progress-fill" style="width: ${globalPercent}%;"></div>
-                        </div>
-                    </div>
-                `;
-                if(courseListWrapper) courseListWrapper.style.display = 'block';
+        let targetsBlock = document.getElementById('block-targets');
+        if (targetsBlock) {
+            if(targetsHtml) {
+                targetsBlock.innerHTML = `
+                    <div class="cabinet-card" style="margin-bottom: 24px; border-color: var(--primary-light);">
+                        <div class="cabinet-card-title">🎯 Цілі (Поточний місяць)</div>
+                        ${targetsHtml}
+                    </div>`;
             } else {
-                globCont.innerHTML = '';
-                if(courseListWrapper) courseListWrapper.style.display = 'none';
+                targetsBlock.innerHTML = '<div style="text-align:center; padding: 20px; color:var(--text-muted);">Дані за поточний місяць відсутні.</div>';
             }
         }
+
+        // 3. РЕНДЕР ТАБУ "СТАТИСТИКА"
+        let { stats, totals } = getMonthlyStats(user);
         
-        if (courseNames.length === 0) {
-            if(list) list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
-            return;
+        let stPlan25 = document.getElementById('st-plan25');
+        let stSold25 = document.getElementById('st-sold25');
+        let stPlan26 = document.getElementById('st-plan26');
+        let stSold26 = document.getElementById('st-sold26');
+
+        if(stPlan25) stPlan25.innerText = formatNumber(totals.plan2025);
+        if(stSold25) stSold25.innerText = formatNumber(totals.sold2025);
+        if(stPlan26) stPlan26.innerText = formatNumber(totals.plan2026);
+        if(stSold26) stSold26.innerText = formatNumber(totals.sold2026);
+        
+        let tbody = document.getElementById('yearlyTableBody');
+        if(tbody) {
+            if(stats.length > 0) {
+                tbody.innerHTML = stats.map(m => `
+                    <tr>
+                        <td><strong>${m.monthYear}</strong></td>
+                        <td>${formatNumber(m.plan)}</td>
+                        <td>${formatNumber(m.sold)}</td>
+                        <td><span class="badge ${parseFloat(m.exec) >= 100 ? 'badge-success' : 'badge-danger'}">${m.exec}</span></td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Немає історії продажів</td></tr>';
+            }
         }
 
-        let coursesHtml = courseNames.map(name => {
-            let parsed = formatWithCustomEmoji(name, '📘');
-            let safeName = escapeHTMLAttr(name);
-            let courseProducts = coursesMap[name] || [];
-            let cTotal = courseProducts.length;
-            let cPassed = 0;
+        let canvas = document.getElementById('yearlyChart');
+        if (canvas && stats.length > 0) {
+            const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+            const tColor = isDark ? '#ffffff' : '#111827';
+            const gridC = isDark ? '#38383a' : '#e5e7eb';
 
-            courseProducts.forEach(p => {
-                let cleanP = getCleanName(p.product);
-                let resStr = userResults[cleanP];
-                if (resStr) {
-                    let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                    let score = 0;
-                    if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
-                    else { let singleMatch = String(resStr).match(/(\d+)%/); if (singleMatch) score = parseInt(singleMatch[1], 10) || 0; }
-                    if (score >= 80) cPassed++;
+            if (chartsInstances['yearly']) chartsInstances['yearly'].destroy();
+            
+            chartsInstances['yearly'] = new Chart(canvas, {
+                data: {
+                    labels: stats.map(s => s.monthYear),
+                    datasets: [
+                        { label: 'План', data: stats.map(s => s.plan), type: 'bar', backgroundColor: isDark ? '#38383a' : '#cbd5e1', borderRadius: 4, order: 2 },
+                        { label: 'Продано', data: stats.map(s => s.sold), type: 'line', borderColor: '#10b981', backgroundColor: '#10b981', borderWidth: 3, tension: 0.3, pointRadius: 4, order: 1 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, interaction: { mode: 'index', intersect: false },
+                    plugins: { legend: { position: 'top', labels: { color: tColor, font: { family: 'Inter', size: 11 } } } },
+                    scales: {
+                        x: { grid: { display: false }, ticks: { color: tColor } },
+                        y: { grid: { color: gridC, drawBorder: false }, ticks: { color: tColor } }
+                    }
                 }
             });
-
-            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
-            let cardClass = isCourseDone ? "list-card completed" : "list-card";
-
-            return `
-            <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
-                <div class="list-card-title" style="flex: 1;"><span style="font-size: 16px;">${parsed.title}</span></div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="font-size: 15px; font-weight: 800; color: ${isCourseDone ? 'var(--success)' : 'var(--text-main)'};">${cPassed}<span style="font-size: 12px; font-weight: 600; color: var(--text-muted);"> / ${cTotal}</span></div>
-                    <div class="list-card-arrow">❯</div>
-                </div>
-            </div>`;
-        }).join('');
-
-        requestAnimationFrame(() => { if(list) list.innerHTML = coursesHtml; });
+        }
     }
 
     function openCourse(name) {
@@ -2110,6 +1884,7 @@
             let correctCount = q.answers.filter(a => a.correct).length;
             if (correctCount > 1) q.type = 'checkbox';
         });
+
         return questions;
     }
 
