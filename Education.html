@@ -164,6 +164,7 @@
         .badge-success { background: rgba(16, 185, 129, 0.15); color: var(--success); }
         .badge-danger { background: rgba(239, 68, 68, 0.15); color: var(--danger); }
         .badge-info { background: var(--info-bg); color: var(--info-text); }
+        .badge-purple { background: rgba(139, 92, 246, 0.15); color: #8b5cf6; }
 
         .chart-container { background: var(--chart-bg); border-radius: 20px; border: 1px solid var(--border); padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); position: relative; height: 250px; width: 100%; }
 
@@ -220,7 +221,7 @@
         .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s; }
         .ach-card.zoomed .ach-card-desc { max-height: 200px; opacity: 1; margin-top: 8px; }
 
-        .ach-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-bg); z-index: 10002; width: 90%; border-radius: 28px; padding: 28px 24px; text-align: center; opacity: 0; display: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2); max-height: 85vh; flex-direction: column; will-change: transform, opacity; }
+        .ach-modal { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--card-bg); z-index: 10002; width: 90%; border-radius: 28px; padding: 28px 24px; text-align: left; opacity: 0; display: none; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: 0 24px 48px rgba(0,0,0,0.2); max-height: 85vh; flex-direction: column; will-change: transform, opacity; }
         .ach-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .ach-modal-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; flex-shrink: 0; }
         .notification-dot { position: absolute; top: 4px; right: 4px; width: 14px; height: 14px; background-color: var(--danger); border-radius: 50%; border: 2px solid var(--card-bg); display: none; }
@@ -827,23 +828,17 @@
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
     }
 
-    // --- ГОЛОВНЕ ВИПРАВЛЕННЯ: АДАПТЕР ДЛЯ ДАНИХ З СЕРВЕРА ---
     function adaptAllUsers(users, courses) {
         let validProductKeys = new Set((courses || []).map(c => getCleanName(c.product)));
         
         users.forEach(u => {
-            // Сервер вже надіслав готові об'єкти u.history, u.yearlyStats та u.currentMonth!
-            // Ми беремо u.results (де лежать тільки тести, бо сервер відфільтрував системні колонки)
             let res = u.results || {};
-            
-            // Створюємо окремий об'єкт тільки для тестів
             u.testResults = {}; 
             for (let k in res) {
                 if (validProductKeys.has(k)) {
                     u.testResults[k] = res[k];
                 }
             }
-            // МИ БІЛЬШЕ НЕ ПЕРЕЗАПИСУЄМО ІСТОРІЮ І ПОТОЧНИЙ МІСЯЦЬ! Вони залишаються цілими.
         });
     }
 
@@ -1374,18 +1369,24 @@
         
         let tPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let rPcs = Math.max(0, tPcs - fPcs);
         let pctPcs = tPcs > 0 ? (fPcs / tPcs * 100) : (fPcs > 0 ? 100 : 0);
 
         let tUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let fUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let rUah = Math.max(0, tUah - fUah);
         let pctUah = tUah > 0 ? (fUah / tUah * 100) : (fUah > 0 ? 100 : 0);
         
         let targetsHtml = '';
         if (tPcs > 0 || fPcs > 0) {
             targetsHtml += `
-                <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 20px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">
+                        <span>Ціль: ${formatNumber(tPcs)}</span>
+                        <span>Виконано: ${formatNumber(fPcs)}</span>
+                    </div>
                     <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
-                        <span>ШТ: ${formatNumber(fPcs)} / ${formatNumber(tPcs)}</span>
+                        <span>Залишилось: <strong style="color:var(--text-main);">${formatNumber(rPcs)} шт</strong></span>
                         <span style="color:#0ea5e9;">${pctPcs.toFixed(1)}%</span>
                     </div>
                     <div class="progress-track" style="height:12px; background:var(--input-bg); border-radius:6px;">
@@ -1395,9 +1396,13 @@
         }
         if (tUah > 0 || fUah > 0) {
             targetsHtml += `
-                <div style="margin-bottom: 16px;">
+                <div style="margin-bottom: 12px;">
+                    <div style="display:flex; justify-content:space-between; font-size:12px; font-weight:600; color:var(--text-muted); margin-bottom:4px;">
+                        <span>Ціль: ${formatNumber(tUah)}</span>
+                        <span>Виконано: ${formatNumber(fUah)}</span>
+                    </div>
                     <div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:6px;">
-                        <span>ГРН: ${formatNumber(fUah)} / ${formatNumber(tUah)}</span>
+                        <span>Залишилось: <strong style="color:var(--text-main);">${formatNumber(rUah)} грн</strong></span>
                         <span style="color:#f59e0b;">${pctUah.toFixed(1)}%</span>
                     </div>
                     <div class="progress-track" style="height:12px; background:var(--input-bg); border-radius:6px;">
@@ -1407,7 +1412,7 @@
         }
         let targetsBlock = targetsHtml ? `
             <div class="cabinet-card" style="margin-bottom: 24px; border-color: var(--primary-light);">
-                <div class="cabinet-card-title">🎯 Загальне виконання цілей</div>
+                <div class="cabinet-card-title">🎯 Цілі і їх виконання</div>
                 ${targetsHtml}
             </div>` : '';
 
@@ -1435,8 +1440,14 @@
                             <div class="progress-fill" style="width:${Math.min(curPctNum, 100)}%; background:var(--success); border-radius:5px;"></div>
                         </div>
                     </div>
-                    <div style="display:flex; justify-content:space-between; margin-top: 8px;"><span>Ефективність:</span> <span class="badge badge-info">${curEffStr}</span></div>
-                    <div style="display:flex; justify-content:space-between;"><span>Доля:</span> <strong>${curShareStr}</strong></div>
+                    <div style="display:flex; justify-content:space-between; margin-top: 8px; align-items:center;">
+                        <span>Ефективність:</span> 
+                        <span class="badge badge-info">${curEffStr}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span>Доля:</span> 
+                        <span class="badge badge-purple">${curShareStr}</span>
+                    </div>
                 </div>
             </div>`;
         }
@@ -1619,8 +1630,30 @@
         let allYears = new Set([...Object.keys(myStats), ...Object.keys(oppStats)]);
         let sortedYears = Array.from(allYears).sort();
         
+        let fallbackHtml = `
+            <div style="background:var(--input-bg); border:1px solid var(--border); border-radius:16px; padding:16px; margin-bottom:16px;">
+                <div style="font-size:16px; font-weight:800; margin-bottom:12px; text-align:center;">Поточні показники</div>
+                
+                <div style="display:flex; justify-content:space-between; gap:12px;">
+                    <div style="flex:1; background:var(--card-bg); border-radius:12px; padding:12px; text-align:center; border: 1px solid var(--primary-light);">
+                        <div style="font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:4px; line-height:1.2;">Ви</div>
+                        <div style="font-size:13px;">ШТ: <strong>${formatNumber(myUser.execPcs)} / ${formatNumber(myUser.targetPcs)}</strong></div>
+                        <div style="font-size:13px; margin:4px 0;">Виконання: <strong style="color:var(--success);">${formatPercent(myUser.currentMonth?.execution)}</strong></div>
+                        <div style="font-size:13px;">Ефективність: <strong style="color:var(--info-text);">${formatPercent(myUser.currentMonth?.efficiency)}</strong></div>
+                    </div>
+                    
+                    <div style="flex:1; background:var(--card-bg); border-radius:12px; padding:12px; text-align:center; border: 1px solid var(--border);">
+                        <div style="font-size:12px; color:var(--text-muted); font-weight:700; margin-bottom:4px; line-height:1.2;">${escapeHTMLAttr(oppUser.shortName || oppUser.name)}</div>
+                        <div style="font-size:13px;">ШТ: <strong>${formatNumber(oppUser.execPcs)} / ${formatNumber(oppUser.targetPcs)}</strong></div>
+                        <div style="font-size:13px; margin:4px 0;">Виконання: <strong style="color:var(--success);">${formatPercent(oppUser.currentMonth?.execution)}</strong></div>
+                        <div style="font-size:13px;">Ефективність: <strong style="color:var(--info-text);">${formatPercent(oppUser.currentMonth?.efficiency)}</strong></div>
+                    </div>
+                </div>
+            </div>
+        `;
+
         if (sortedYears.length === 0) {
-            document.getElementById('compareResultsArea').innerHTML = '<div style="padding:20px; text-align:center; color:var(--text-muted);">Дані для порівняння відсутні.</div>';
+            document.getElementById('compareResultsArea').innerHTML = fallbackHtml;
             document.getElementById('compareResultsArea').style.display = 'block';
             return;
         }
@@ -1654,7 +1687,7 @@
             </div>`;
         }).join('');
         
-        document.getElementById('compareResultsArea').innerHTML = html;
+        document.getElementById('compareResultsArea').innerHTML = fallbackHtml + html;
         document.getElementById('compareResultsArea').style.display = 'block';
         
         sortedYears.forEach(year => {
@@ -1717,21 +1750,27 @@
                 let resStr = userResults[cleanP];
                 if (resStr) {
                     let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                    let score = 0, attempts = 0;
-                    if (match) { attempts = match[1]; score = parseInt(match[2], 10) || 0; }
+                    let score = 0, attempts = 0, time = 0;
+                    if (match) { attempts = parseInt(match[1], 10) || 0; score = parseInt(match[2], 10) || 0; time = parseInt(match[3], 10) || 0; }
                     else { let scoreMatch = String(resStr).match(/(\d+)%/); if (scoreMatch) { score = parseInt(scoreMatch[1], 10) || 0; attempts = 1; } }
 
                     totalScoreSum += score;
                     scoreCount++;
-                    if (score >= 80) {
-                        totalCompleted++;
+                    if (score >= 80) totalCompleted++;
+                    
+                    if (attempts > 0) {
+                        let isPass = score >= 80;
+                        let stColor = isPass ? 'var(--success)' : 'var(--danger)';
+                        let stIcon = isPass ? '✅' : '⏳';
                         let attWord = getAttemptWord(attempts);
+                        let timeStr = time > 0 ? `${Math.floor(time/60)}хв ${time%60}с` : '';
+                        
                         savedCompletedListHtml += `
                             <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                                <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${escapeHTMLAttr(p.product)}</span>
+                                <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${stIcon} ${escapeHTMLAttr(p.product)}</span>
                                 <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                    <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
-                                    <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
+                                    <span style="font-size:16px; font-weight:900; color:${stColor}; line-height:1;">${score}%</span>
+                                    <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord} ${timeStr ? ' • ' + timeStr : ''}</span>
                                 </div>
                             </div>`;
                     }
@@ -2252,7 +2291,7 @@
 
         let newVal = `${attempts}/${bestScore}%/${bestTime}`;
         currentUserObj.testResults[cleanP] = newVal;
-        currentUserObj.results[cleanP] = newVal; // Дублюємо в загальний для сумісності з іншими функціями якщо потрібно
+        currentUserObj.results[cleanP] = newVal; 
 
         let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
         fullCache.educationData = db;
@@ -2370,7 +2409,7 @@
         
         let html = `
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 24px;">
-                <div class="ach-modal-title" style="margin:0; flex:1; text-align:left;">Пройдені курси</div>
+                <div class="ach-modal-title" style="margin:0; flex:1; text-align:left;">Статистика курсів</div>
                 <button class="back-btn-sleek" onclick="closeModals()" style="width:32px; height:32px; background:var(--input-bg);">
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
