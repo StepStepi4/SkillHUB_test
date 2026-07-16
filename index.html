@@ -397,6 +397,17 @@
         .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
         .top-search-clear:active { background: var(--danger); }
         .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
+
+        /* СТИЛІ ДЛЯ ПРОДАВЦЯ (NEW) */
+        .seller-badge {
+            font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; 
+            border-radius: 6px; display: inline-flex; align-items: center; line-height: 1.2;
+        }
+        .seller-rozetka { color: var(--rozetka-green-dark); background: rgba(0, 160, 70, 0.1); }
+        [data-theme="dark"] .seller-rozetka { color: var(--primary); background: rgba(16, 185, 129, 0.15); }
+        .seller-market { color: #0057b7; background: rgba(0, 87, 183, 0.1); }
+        [data-theme="dark"] .seller-market { color: #60a5fa; background: rgba(96, 165, 250, 0.15); }
+
     </style>
 </head>
 <body>
@@ -1784,8 +1795,25 @@
             }
 
             let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
-            let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
+            
+            // ДОДАНО/ВІДНОВЛЕНО: Читання гарантії
+            // Підтримка різних варіантів ключа з Google Script (на випадок змін)
+            let rawGarantiya = r.garantiya || r.warranty || r["Гарантія"] || r.Garantiya || "";
+            let gVal = rawGarantiya ? String(rawGarantiya).trim() : "";
+            let garantiyaHtml = gVal ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); font-weight: 600; margin-top: 4px; display: block;">🛡️ Гарантія: ${window.escapeHTML(gVal)}</span>` : "";
+            
             let discountClass = isDiscount ? "discount-card" : "";
+
+            // ДОДАНО: Бейдж продавця (Rozetka / Маркет)
+            let rawSeller = r.seller || r.prodavec || r["Продавець"] || r.Seller || "";
+            let sellerName = rawSeller ? String(rawSeller).trim() : "";
+            let sellerHtml = "";
+            
+            if (sellerName) {
+                let isRozetka = sellerName.toLowerCase().includes('rozetka');
+                let sellerClass = isRozetka ? 'seller-rozetka' : 'seller-market';
+                sellerHtml = `<span class="seller-badge ${sellerClass}">${window.escapeHTML(sellerName)}</span>`;
+            }
 
             return `
             <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
@@ -1793,7 +1821,10 @@
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
+                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
+                        <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top: 0;">${window.escapeHTML(r.cat)}</span>
+                        ${sellerHtml}
+                    </div>
                     ${garantiyaHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
