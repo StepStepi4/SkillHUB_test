@@ -492,7 +492,11 @@
                 <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
             </svg>
         </div>
+        
         <div id="theoryContent" class="theory-box"></div>
+        
+        <!-- БЛОК ПРЕЗЕНТАЦІЙ -->
+        <div id="presentationsContainer" style="display:none; margin-bottom: 24px; flex-direction: column; gap: 10px;"></div>
 
         <div style="background: rgba(239, 68, 68, 0.08); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 16px; padding: 16px; margin-bottom: 24px; text-align: left;" id="testWarningBox">
             <div style="font-size: 14px; font-weight: 800; color: var(--danger); margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
@@ -552,9 +556,10 @@
 </div>
 
 <script>
-    // АКТУАЛЬНИЙ API URL
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwMsnsjQjnKAzBsYaqnbzaHi305PBPkDXlM3NS1B76s4tu9GBIVpbxg8NmpiCYVAZMh3g/exec'; 
+    // НОВИЙ API URL!
+    const API_URL = 'https://script.google.com/macros/s/AKfycbwgzoVCCQMuD2jTSGioQrI9PAusibERRu3y5Xlxzcg160l3smJuOueEI2HfJyXYyJSmyw/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
+    const TIME_PER_QUESTION = 25;
 
     let chartsInstances = {};
 
@@ -619,6 +624,8 @@
 
     let testTimerInterval;
     let timeRemaining = 0;
+    let totalTimeSpent = 0;
+    let currentQuestionIndex = 0;
     let deadlineInterval;
     let sessionCheckInterval;
     window.isDeadlinePassed = false;
@@ -631,7 +638,7 @@
 
     function escapeHTMLAttr(str) {
         if (!str) return "";
-        return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+        return String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
     const ACH_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif'];
@@ -1255,8 +1262,7 @@
             let tPcs = parseCleanFloat(u.targetPcs); let tUah = parseCleanFloat(u.targetUah);
             let fPcs = parseCleanFloat(u.execPcs); let fUah = parseCleanFloat(u.execUah);
             
-            // Якщо є ключі місяців типу "012025" в results - це означає, що є історія/кабінет
-            let hasCabData = Object.keys(u.results || {}).some(k => /^(0[1-9]|1[0-2])(2025|2026)$/.test(k));
+            let hasCabData = u.history && u.history.length > 0;
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = assignedCount > 0;
 
@@ -1457,55 +1463,7 @@
         switchView('courseView');
     }
 
-    // --- ПАРСЕР ДАНИХ ПО МІСЯЦЯХ З ТАБЛИЦІ (01.2025 ...) ---
-    function getMonthlyStats(user) {
-        let stats = [];
-        let totals = { plan2025: 0, sold2025: 0, plan2026: 0, sold2026: 0 };
-        
-        if (!user || !user.results) return { stats, totals };
-        
-        // Знаходимо ключі, що виглядають як 012025 або 122026 (результат getCleanName)
-        let monthKeys = Object.keys(user.results).filter(k => /^(0[1-9]|1[0-2])(2025|2026)$/.test(k));
-        
-        monthKeys.forEach(k => {
-            let monthStr = k.substring(0, 2) + '.' + k.substring(2);
-            let year = k.substring(2);
-            let rawVal = String(user.results[k]).trim();
-            
-            let plan = 0, sold = 0, exec = "0%";
-            if (rawVal && rawVal !== "-" && rawVal !== "0") {
-                let parts = rawVal.split('/').map(p => p.trim());
-                if (parts.length >= 3) {
-                    plan = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
-                    sold = parseFloat(parts[1].replace(/\s+/g, '').replace(',', '.')) || 0;
-                    exec = parts[2];
-                } else if (parts.length === 2) {
-                    plan = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
-                    sold = parseFloat(parts[1].replace(/\s+/g, '').replace(',', '.')) || 0;
-                    exec = plan > 0 ? Math.round((sold/plan)*100) + "%" : "0%";
-                } else {
-                    sold = parseFloat(parts[0].replace(/\s+/g, '').replace(',', '.')) || 0;
-                    exec = "0%";
-                }
-            }
-            
-            if (plan > 0 || sold > 0) {
-                stats.push({ monthYear: monthStr, plan: plan, sold: sold, exec: exec });
-                if (year === "2025") { totals.plan2025 += plan; totals.sold2025 += sold; }
-                else if (year === "2026") { totals.plan2026 += plan; totals.sold2026 += sold; }
-            }
-        });
-        
-        stats.sort((a, b) => {
-            let [m1, y1] = a.monthYear.split('.');
-            let [m2, y2] = b.monthYear.split('.');
-            if (y1 !== y2) return parseInt(y1) - parseInt(y2);
-            return parseInt(m1) - parseInt(m2);
-        });
-        
-        return { stats, totals };
-    }
-
+    // --- РЕНДЕР КУРСІВ ---
     function renderCourses(user) {
         if (!user) user = db.users.find(u => u.login === currentUser);
         const list = document.getElementById('courseList');
@@ -1677,30 +1635,35 @@
             }
         }
 
-        // 3. РЕНДЕР ТАБУ "СТАТИСТИКА"
-        let { stats, totals } = getMonthlyStats(user);
-        
+        // 3. РЕНДЕР ТАБУ "СТАТИСТИКА" (ВИКОРИСТОВУЄМО ГОТОВІ ДАНІ)
+        let y25 = user.yearlyStats && user.yearlyStats['2025'] ? user.yearlyStats['2025'] : {plan:0, fact:0};
+        let y26 = user.yearlyStats && user.yearlyStats['2026'] ? user.yearlyStats['2026'] : {plan:0, fact:0};
+
         let stPlan25 = document.getElementById('st-plan25');
         let stSold25 = document.getElementById('st-sold25');
         let stPlan26 = document.getElementById('st-plan26');
         let stSold26 = document.getElementById('st-sold26');
 
-        if(stPlan25) stPlan25.innerText = formatNumber(totals.plan2025);
-        if(stSold25) stSold25.innerText = formatNumber(totals.sold2025);
-        if(stPlan26) stPlan26.innerText = formatNumber(totals.plan2026);
-        if(stSold26) stSold26.innerText = formatNumber(totals.sold2026);
+        if(stPlan25) stPlan25.innerText = formatNumber(y25.plan);
+        if(stSold25) stSold25.innerText = formatNumber(y25.fact);
+        if(stPlan26) stPlan26.innerText = formatNumber(y26.plan);
+        if(stSold26) stSold26.innerText = formatNumber(y26.fact);
         
+        let stats = user.history || [];
         let tbody = document.getElementById('yearlyTableBody');
+
         if(tbody) {
             if(stats.length > 0) {
-                tbody.innerHTML = stats.map(m => `
+                tbody.innerHTML = stats.map(m => {
+                    let execNum = parseFloat(String(m.execution).replace('%', '')) || 0;
+                    return `
                     <tr>
-                        <td><strong>${m.monthYear}</strong></td>
+                        <td><strong>${m.month}</strong></td>
                         <td>${formatNumber(m.plan)}</td>
-                        <td>${formatNumber(m.sold)}</td>
-                        <td><span class="badge ${parseFloat(m.exec) >= 100 ? 'badge-success' : 'badge-danger'}">${m.exec}</span></td>
+                        <td>${formatNumber(m.fact)}</td>
+                        <td><span class="badge ${execNum >= 100 ? 'badge-success' : 'badge-danger'}">${m.execution}</span></td>
                     </tr>
-                `).join('');
+                `}).join('');
             } else {
                 tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Немає історії продажів</td></tr>';
             }
@@ -1716,10 +1679,10 @@
             
             chartsInstances['yearly'] = new Chart(canvas, {
                 data: {
-                    labels: stats.map(s => s.monthYear),
+                    labels: stats.map(s => s.month),
                     datasets: [
                         { label: 'План', data: stats.map(s => s.plan), type: 'bar', backgroundColor: isDark ? '#38383a' : '#cbd5e1', borderRadius: 4, order: 2 },
-                        { label: 'Продано', data: stats.map(s => s.sold), type: 'line', borderColor: '#10b981', backgroundColor: '#10b981', borderWidth: 3, tension: 0.3, pointRadius: 4, order: 1 }
+                        { label: 'Продано', data: stats.map(s => s.fact), type: 'line', borderColor: '#10b981', backgroundColor: '#10b981', borderWidth: 3, tension: 0.3, pointRadius: 4, order: 1 }
                     ]
                 },
                 options: {
@@ -1855,6 +1818,23 @@
             }).join('');
 
         contentBox.innerHTML = formattedHTML;
+
+        // --- РЕНДЕР ПРЕЗЕНТАЦІЙ ---
+        const presContainer = document.getElementById('presentationsContainer');
+        if (currentProductData.presentations && currentProductData.presentations.length > 0) {
+            let presHtml = currentProductData.presentations.map((link, i) => {
+                let btnText = currentProductData.presentations.length > 1 ? `Відкрити презентацію ${i + 1}` : `Відкрити презентацію`;
+                return `<a href="${escapeHTMLAttr(link)}" target="_blank" class="btn btn-secondary" style="text-decoration: none; color: var(--info-text); border-color: var(--info-text); background: var(--info-bg);">
+                            <span style="font-size: 20px;">📎</span> ${btnText}
+                        </a>`;
+            }).join('');
+            presContainer.innerHTML = presHtml;
+            presContainer.style.display = 'flex';
+        } else {
+            presContainer.innerHTML = '';
+            presContainer.style.display = 'none';
+        }
+
         updateTestButtonState();
         switchView('theoryView');
     }
