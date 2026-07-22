@@ -21,7 +21,7 @@
         }
 
         :root {
-            /* СВІТЛА ТЕМА */
+            /* СВІТЛА ТЕМА (Чистий білий фон за твоїми вимогами) */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #000000; 
@@ -155,14 +155,11 @@
 
         .nav-item {
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            gap: 5px; 
-            flex: 1; 
-            height: 100%;
+            gap: 5px; flex: 1; height: 100%;
             background: transparent; border: none; outline: none;
             color: var(--text-muted); cursor: pointer; 
             transition: all 0.3s cubic-bezier(0.25, 0.1, 0.25, 1);
-            padding: 0;
-            margin: 0;
+            padding: 0; margin: 0;
         }
 
         .nav-icon {
@@ -397,17 +394,6 @@
         .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
         .top-search-clear:active { background: var(--danger); }
         .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
-
-        /* СТИЛІ ДЛЯ ПРОДАВЦЯ (NEW) */
-        .seller-badge {
-            font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 2px 6px; 
-            border-radius: 6px; display: inline-flex; align-items: center; line-height: 1.2;
-        }
-        .seller-rozetka { color: var(--rozetka-green-dark); background: rgba(0, 160, 70, 0.1); }
-        [data-theme="dark"] .seller-rozetka { color: var(--primary); background: rgba(16, 185, 129, 0.15); }
-        .seller-market { color: #0057b7; background: rgba(0, 87, 183, 0.1); }
-        [data-theme="dark"] .seller-market { color: #60a5fa; background: rgba(96, 165, 250, 0.15); }
-
     </style>
 </head>
 <body>
@@ -850,7 +836,10 @@
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
         if (el && el.innerHTML !== newHtml) {
-            el.innerHTML = newHtml;
+            // Використовуємо requestAnimationFrame для плавного оновлення DOM без блокування
+            requestAnimationFrame(() => {
+                el.innerHTML = newHtml;
+            });
         }
     }
 
@@ -871,8 +860,8 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyWsT8dFwxIPTZ_B0hOaWp-ilq0W1okcnkXsM6MwlzS_PxT2sv0b4BI0DZabJ0gUs2Dyw/exec';
-    const CACHE_KEY = 'skillhub_v4_flat'; // ЗМІНЕНО КЛЮЧ КЕШУ ДЛЯ ПРИМУСОВОГО ОНОВЛЕННЯ БАЗИ
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyVC3Gm2zENGjPkco89Y6wbO-EipVG_7b2dgWDvSsBHquQSDKgAZoYEMDe764UPSM7o9A/exec';
+    const CACHE_KEY = 'skillhub_v5_flat'; // Змінено ключ кешу, щоб користувачі отримали нову версію
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1244,20 +1233,20 @@
 
     const normalize = (str) => str ? String(str).toLowerCase().trim().replace(/[‘’'"`]/g, "") : "";
 
-    // ВИПРАВЛЕННЯ: Екранування сутностей за допомогою Unicode, щоб редактор/браузер їх не знищив
+    // Безпечне екранування символів для відображення в HTML
     window.escapeHTML = function(str) {
         if (!str) return '';
         return String(str)
-            .replace(/&/g, '\u0026amp;')
-            .replace(/</g, '\u0026lt;')
-            .replace(/>/g, '\u0026gt;')
-            .replace(/"/g, '\u0026quot;')
-            .replace(/'/g, '\u0026#39;');
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
     }
     
     window.escapeForJS = function(str) {
         if (!str) return '';
-        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\u0026quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
+        return String(str).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/\n/g, '\\n').replace(/\r/g, '');
     }
 
     function normalizeServiceName(s) {
@@ -1488,7 +1477,7 @@
         let totalSpan = document.getElementById('klochTotalSum');
         
         if (window.klochList.length === 0) {
-            container.innerHTML = '<div style="text-align:center; font-size:12px; color:var(--text-muted); padding: 10px;">Список порожній</div>';
+            safeUpdateHTML(container, '<div style="text-align:center; font-size:12px; color:var(--text-muted); padding: 10px;">Список порожній</div>');
             totalSpan.innerText = '0.00 ₴';
             return;
         }
@@ -1509,7 +1498,7 @@
             </div>`;
         }).join('');
 
-        container.innerHTML = html;
+        safeUpdateHTML(container, html);
         totalSpan.innerText = total.toFixed(2) + ' ₴';
     }
 
@@ -1738,6 +1727,7 @@
         }
     }
 
+    // ВИВОД ПРОДАВЦЯ І ГАРАНТІЇ У РЕЗЕРВАХ
     window.renderRezervyList = function() {
         const store = document.getElementById('storeFilter').value;
         const cont = document.getElementById('rezervyList');
@@ -1777,10 +1767,8 @@
             let isDiscount = shortName.toLowerCase().includes('уцінка') || snMatchList !== null;
             let discountIconHtml = isDiscount ? `<img src="icons_skillHUB/Discount.svg" alt="%" class="discount-tag-icon">` : '';
 
-            // ВИПРАВЛЕННЯ: Екрануємо під час створення HTML. 
-            // Використовуємо \u0026quot; замість лапок, щоб уникнути конфліктів у браузері
-            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\u0026quot;');
-            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '\u0026quot;');
+            let safeCatOnClick = String(r.cat).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
+            let safeNameOnClick = String(shortName).replace(/\\/g, '\\\\').replace(/'/g, "\\'").replace(/"/g, '&quot;');
 
             let searchVal = normalize(r.cat); 
             let catExists = false;
@@ -1796,24 +1784,11 @@
 
             let catStyle = catExists ? "" : "color: var(--danger); background: var(--danger-bg); padding: 2px 6px; border-radius: 4px; display: inline-block; width: fit-content; transition: 0.2s ease;";
             
-            // ДОДАНО/ВІДНОВЛЕНО: Читання гарантії
-            // Підтримка різних варіантів ключа з Google Script (на випадок змін)
-            let rawGarantiya = r.garantiya || r.warranty || r["Гарантія"] || r.Garantiya || "";
-            let gVal = rawGarantiya ? String(rawGarantiya).trim() : "";
-            let garantiyaHtml = gVal ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); font-weight: 600; margin-top: 4px; display: block;">🛡️ Гарантія: ${window.escapeHTML(gVal)}</span>` : "";
+            // Включаємо гарантію та продавця в карточку
+            let garantiyaHtml = r.garantiya ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--primary); margin-top: 4px; font-weight: 600;">🛡️ Гарантія: ${window.escapeHTML(r.garantiya)}</span>` : "";
+            let sellerHtml = r.seller ? `<span class="list-item-subtitle" style="font-size: 11px; color: var(--text-muted); margin-top: 2px;">👤 Продавець: <span style="color: var(--text-main); font-weight: 600;">${window.escapeHTML(r.seller)}</span></span>` : "";
             
             let discountClass = isDiscount ? "discount-card" : "";
-
-            // ДОДАНО: Бейдж продавця (Rozetka / Маркет)
-            let rawSeller = r.seller || r.prodavec || r["Продавець"] || r.Seller || "";
-            let sellerName = rawSeller ? String(rawSeller).trim() : "";
-            let sellerHtml = "";
-            
-            if (sellerName) {
-                let isRozetka = sellerName.toLowerCase().includes('rozetka');
-                let sellerClass = isRozetka ? 'seller-rozetka' : 'seller-market';
-                sellerHtml = `<span class="seller-badge ${sellerClass}">${window.escapeHTML(sellerName)}</span>`;
-            }
 
             return `
             <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
@@ -1821,11 +1796,9 @@
                     <div style="display:flex; align-items:center; gap: 4px;">
                         <span class="list-item-title rezervy-name" style="flex:1;">${window.escapeHTML(shortName)}</span>
                     </div>
-                    <div style="display: flex; align-items: center; gap: 8px; margin-top: 6px; flex-wrap: wrap;">
-                        <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top: 0;">${window.escapeHTML(r.cat)}</span>
-                        ${sellerHtml}
-                    </div>
+                    <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
+                    ${sellerHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
                     ${Math.round(r.price).toLocaleString('uk-UA')} ₴
@@ -2049,7 +2022,7 @@
                 let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка')).sort();
                 let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
 
-                let newSiteUrl = "https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BD%D0%BA%D0%B0?authuser=0";
+                let newSiteUrl = "https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BA%D0%B0?authuser=0";
                 
                 discountHtml = `
                 <div id="discountReasonBlock" style="margin-top: 16px; margin-bottom: 8px;">
@@ -2928,11 +2901,9 @@
         window.openModalBase('descModal', name, code, priceLabel);
     }
 
-    // Оновлена функція Changelog для відображення як в Telegram
     window.showChangelogModal = function(version, changelogText) {
         document.getElementById('modalTitle').innerHTML = `Оновлення v${version}`;
         
-        // Розділяємо текст на блоки по символу "--"
         let blocks = String(changelogText).split(/(?:\r?\n)?\s*--\s*(?:\r?\n)?/);
         let html = '<div style="display:flex; flex-direction:column; gap:12px;">';
         
@@ -2948,7 +2919,6 @@
                 
                 let lineStyle = "";
                 
-                // Перевірка маркерів кастомного форматування
                 if (l.startsWith('(AA+)')) {
                     l = l.substring(5).trim().toUpperCase();
                     lineStyle += " font-weight:800;";
@@ -2970,7 +2940,6 @@
                     lineStyle += " font-style:italic; color:var(--danger);";
                 }
 
-                // Збільшення Емодзі
                 l = l.replace(/([\u2000-\u3300]|\ud83c[\ud000-\udfff]|\ud83d[\ud000-\udfff]|\ud83e[\ud000-\udfff])/g, '<span style="font-size: 1.5em; vertical-align: middle; line-height: 1;">$1</span>');
 
                 let margin = blockHtml !== '' ? "margin-top: 6px;" : "";
