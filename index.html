@@ -860,7 +860,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbwt7CT-W9VXTlayNhjAF5vJ9DoFgbV89X1jGj3go8ZhUniU9Dxy56BhuwutFlA3k1xZ-A/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzs2OTLYP1x8qIftBHjXJnA5_r2o9ea6gYfG0dtwLFDa2pzEpSQCffD2v4kGpp9jGMtNg/exec';
     const CACHE_KEY = 'skillhub_v4_flat'; // ЗМІНЕНО КЛЮЧ КЕШУ ДЛЯ ПРИМУСОВОГО ОНОВЛЕННЯ БАЗИ
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
@@ -1626,7 +1626,7 @@
                 if (progress < 90) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
             }, 300);
 
-            const timeoutId = setTimeout(() => controller.abort(), 15000);
+            const timeoutId = setTimeout(() => controller.abort(), 60000);
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
             clearTimeout(timeoutId);
             
