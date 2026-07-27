@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -548,7 +549,7 @@
 </div>
 
 <script>
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz0oOmbZejDZTHUzLGDdHxAgNolzdYHaOasqXgtM150VQ5Z9jhqlqoizg9vyw34PQ8LBA/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxhlxpQrWX6rA-bF30hoY6ob3xCY5GC40yoCu0ec-cOkFlV7asz-xiPZe--wqo_mHjE9g/exec'; 
     const CACHE_KEY = 'skillhub_v4_desc';
 
     let chartsInstances = {};
@@ -968,7 +969,7 @@
         }
     });
 
-    // --- АВТОРИЗАЦИЯ (ИСПРАВЛЕННОЕ КЕШИРОВАНИЕ) ---
+    // --- ОБНОВЛЕННАЯ ФУНКЦИЯ АВТОРИЗАЦИИ (ИСПРАВЛЕНО СРАВНЕНИЕ ЛОГИНА И ПАРОЛЯ) ---
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
@@ -993,13 +994,20 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            let user = db && db.users && db.users.find(u => String(u.login).trim() === l && String(u.pass).trim() === p);
+            // ИСПРАВЛЕНИЕ: Поиск с использованием toLowerCase() для предотвращения ошибок с регистром символов
+            let user = db && db.users && db.users.find(u => 
+                String(u.login).trim().toLowerCase() === l.toLowerCase() && 
+                String(u.pass).trim().toLowerCase() === p.toLowerCase()
+            );
 
-            // ПРИНУДИТЕЛЬНОЕ ОБНОВЛЕНИЕ БАЗЫ, ЕСЛИ ЮЗЕР НЕ НАЙДЕН
+            // ПРИНУДИТЕЛЬНОЕ ОБНОВЛЕНИЕ БАЗЫ, ЕСЛИ ЮЗЕР НЕ НАЙДЕН С ПЕРВОГО РАЗА
             if (!user && navigator.onLine && !isAuto) {
                 if (loginBtn) loginBtn.innerText = "ОНОВЛЕННЯ ДАНИХ...";
                 await fetchFreshDataSilent();
-                user = db && db.users && db.users.find(u => String(u.login).trim() === l && String(u.pass).trim() === p);
+                user = db && db.users && db.users.find(u => 
+                    String(u.login).trim().toLowerCase() === l.toLowerCase() && 
+                    String(u.pass).trim().toLowerCase() === p.toLowerCase()
+                );
             }
 
             if (user) {
