@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="uk">
 <head>
@@ -41,7 +40,6 @@
             --chart-bg: #ffffff;
             --chart-text: #111827;
             
-            /* Цвета для табов */
             --tab-bg: #e5e7eb;
             --tab-active: #ffffff;
         }
@@ -63,7 +61,6 @@
             --chart-bg: #1c1c1e;
             --chart-text: #ffffff;
             
-            /* Цвета для табов (тёмная) */
             --tab-bg: #2c2c2e;
             --tab-active: #1c1c1e;
         }
@@ -276,7 +273,7 @@
     <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно.<br>Захист від списування активовано.</div>
 </div>
 
-<div id="loader" class="loader-overlay">
+<div id="loader" class="loader-overlay" style="display: flex;">
     <div class="spinner"></div>
     <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
@@ -370,7 +367,7 @@
         <div id="adminUsersList"></div>
     </div>
 
-    <!-- CABINET VIEW (Новая структура с табами) -->
+    <!-- CABINET VIEW -->
     <div id="cabinetView" class="view">
         <div class="nav-header">
             <div style="display: flex; gap: 12px; align-items: stretch;">
@@ -414,36 +411,24 @@
             <span id="deadlineText"></span>
         </div>
 
-        <!-- ТАБЫ ПЕРЕКЛЮЧЕНИЯ -->
         <div class="tabs-container">
             <div class="tab-btn active" onclick="switchCabinetTab('stats')">📊 Статистика</div>
             <div class="tab-btn" onclick="switchCabinetTab('courses')">📚 Навчання</div>
         </div>
 
-        <!-- ВКЛАДКА 1: СТАТИСТИКА -->
         <div id="tabStats" class="tab-content active">
-            
             <div class="section-title">📊 Місячна статистика</div>
-            <div class="stats-dashboard" id="monthlyPlanBlock">
-                <!-- Рендерится в JS -->
-            </div>
+            <div class="stats-dashboard" id="monthlyPlanBlock"></div>
 
             <div class="section-title">🎯 Цілі</div>
-            <div id="goalsBlock">
-                <!-- Рендерится в JS -->
-            </div>
+            <div id="goalsBlock"></div>
 
             <div class="section-title">📈 Курси по навчанню</div>
-            <div class="stats-dashboard" id="courseStatsBlock">
-                <!-- Рендерится в JS -->
-            </div>
+            <div class="stats-dashboard" id="courseStatsBlock"></div>
             
-            <table class="mini-table" id="courseMiniTable">
-                <!-- Рендерится в JS -->
-            </table>
+            <table class="mini-table" id="courseMiniTable"></table>
         </div>
 
-        <!-- ВКЛАДКА 2: КУРСЫ -->
         <div id="tabCourses" class="tab-content">
             <div class="section-title" id="courseListTitle" style="display: flex; justify-content: flex-start; align-items: center; gap: 8px;">
                 <img src="icons_skillHUB/Check.svg" style="width: 20px; height: 20px; display: block;" alt="Check" onerror="this.style.display='none'">
@@ -549,8 +534,10 @@
 </div>
 
 <script>
+    // --- НАСТРОЙКИ СИНХРОНИЗАЦИИ ---
+    // Единый API_URL и CACHE_KEY для index.html и Education.html
     const API_URL = 'https://script.google.com/macros/s/AKfycbxhlxpQrWX6rA-bF30hoY6ob3xCY5GC40yoCu0ec-cOkFlV7asz-xiPZe--wqo_mHjE9g/exec'; 
-    const CACHE_KEY = 'skillhub_v4_desc';
+    const CACHE_KEY = 'skillhub_v4_flat'; // Общий ключ с основным приложением
 
     let chartsInstances = {};
 
@@ -586,18 +573,8 @@
         `;
     };
 
-    window.addEventListener('storage', (event) => {
-        if (event.key === 'theme') {
-            let currentTheme = event.newValue || 'light';
-            document.documentElement.setAttribute('data-theme', currentTheme);
-        } else if (event.key === 'skillhub_font_scale') {
-            window.updateFontScale(event.newValue || "1");
-        }
-    });
-
     let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
     window.updateFontScale(savedFontScale);
-    // --------------------------------------
 
     // Базовые переменные
     let db = null;
@@ -708,7 +685,7 @@
         });
     }
 
-    // --- ПЕРЕКЛЮЧЕНИЕ ТАБОВ (СТАТИСТИКА / КУРСЫ) ---
+    // --- ПЕРЕКЛЮЧЕНИЕ ТАБОВ ---
     function switchCabinetTab(tabName) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -841,7 +818,7 @@
         }
     }
 
-    // --- ОБНОВЛЕНИЕ ДАННЫХ ---
+    // --- ФОНОВОЕ ОБНОВЛЕНИЕ ДАННЫХ ---
     async function forceRefresh() {
         if (!navigator.onLine) { alert("Немає підключення до інтернету!"); return; }
         document.getElementById('loaderText').innerText = "Оновлення даних...";
@@ -863,7 +840,9 @@
 
             const data = await response.json();
             if (!data.error) {
+                // Обновляем ГЛОБАЛЬНЫЙ кеш для обоих приложений
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
+                
                 db = data.educationData;
                 globalAchievements = data.achievementData || []; 
 
@@ -914,62 +893,102 @@
         }, 30000);
     }
 
-    // --- ИНИЦИАЛИЗАЦИЯ ---
+    // --- ИНИЦИАЛИЗАЦИЯ (ИДЕАЛЬНО БЫСТРАЯ ЗАГРУЗКА ИЗ КЕША) ---
     document.addEventListener('DOMContentLoaded', async () => {
         let draftL = localStorage.getItem('skillhub_draft_login');
         let draftP = localStorage.getItem('skillhub_draft_pass');
         if (draftL) document.getElementById('loginInput').value = draftL;
         if (draftP) document.getElementById('passInput').value = draftP;
 
+        let hasCache = false;
+
         try {
+            // Читаем общий кэш skillhub_v4_flat
             let cachedData = localStorage.getItem(CACHE_KEY);
             if (cachedData) {
                 let parsedDb = JSON.parse(cachedData);
                 if (parsedDb && parsedDb.educationData) {
                     db = parsedDb.educationData;
                     globalAchievements = parsedDb.achievementData || []; 
+                    hasCache = true;
                 }
             }
         } catch(e) {}
 
-        try {
-            document.getElementById('loader').style.display = 'none';
-            let savedCreds = localStorage.getItem('skillhub_edu_creds');
-            let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
+        let savedCreds = localStorage.getItem('skillhub_edu_creds');
+        let parsedCreds = savedCreds ? JSON.parse(savedCreds) : null;
 
-            if (parsedCreds && parsedCreds.login && parsedCreds.pass) {
-                document.getElementById('loginInput').value = parsedCreds.login;
-                document.getElementById('passInput').value = parsedCreds.pass;
-                document.getElementById('rememberMe').checked = true;
-                
-                if (db && db.users && db.users.length > 0) {
-                    await handleLogin(true);
-                    fetchFreshDataSilent();
-                } else {
-                    document.getElementById('loader').style.display = 'flex';
-                    await fetchFreshDataSilent();
-                    document.getElementById('loader').style.display = 'none';
-                    if (db && db.users && db.users.length > 0) await handleLogin(true); 
-                    else switchView('loginView'); 
-                }
+        if (parsedCreds && parsedCreds.login && parsedCreds.pass) {
+            document.getElementById('loginInput').value = parsedCreds.login;
+            document.getElementById('passInput').value = parsedCreds.pass;
+            document.getElementById('rememberMe').checked = true;
+            
+            if (hasCache) {
+                // БЕСШОВНЫЙ ПЕРЕХОД: Сразу заходим без loader
+                document.getElementById('loader').style.display = 'none';
+                await handleLogin(true); // Мгновенный вход по локальной базе
+                fetchFreshDataSilent();  // Обновляем данные в фоне
             } else {
-                if (!db || !db.users || db.users.length === 0) {
-                    if (navigator.onLine) {
-                        document.getElementById('loader').style.display = 'flex';
-                        await fetchFreshDataSilent();
-                        document.getElementById('loader').style.display = 'none';
-                    }
-                }
-                switchView('loginView');
+                // Если кэша почему-то нет, грузим
+                document.getElementById('loader').style.display = 'flex';
+                await fetchFreshDataSilent();
+                document.getElementById('loader').style.display = 'none';
+                if (db && db.users && db.users.length > 0) await handleLogin(true); 
+                else switchView('loginView'); 
             }
-        } catch (e) {
-            document.querySelector('.spinner').style.display = 'none';
-            document.getElementById('loaderText').innerHTML = `<span style="color: var(--danger)">Помилка: ${e.message}</span>`;
+        } else {
+            if (!hasCache && navigator.onLine) {
+                document.getElementById('loader').style.display = 'flex';
+                await fetchFreshDataSilent();
+                document.getElementById('loader').style.display = 'none';
+            } else {
+                document.getElementById('loader').style.display = 'none';
+            }
             switchView('loginView');
         }
     });
 
-    // --- ОБНОВЛЕННАЯ ФУНКЦИЯ АВТОРИЗАЦИИ (ИСПРАВЛЕНО СРАВНЕНИЕ ЛОГИНА И ПАРОЛЯ) ---
+    // --- ФОНОВАЯ СИНХРОНИЗАЦИЯ С INDEX.HTML ---
+    window.addEventListener('storage', (event) => {
+        if (event.key === 'theme') {
+            let currentTheme = event.newValue || 'light';
+            document.documentElement.setAttribute('data-theme', currentTheme);
+        } else if (event.key === 'skillhub_font_scale') {
+            window.updateFontScale(event.newValue || "1");
+        } else if (event.key === CACHE_KEY) {
+            // Если index.html обновил базу (принудительно или фоново)
+            try {
+                let parsedDb = JSON.parse(event.newValue);
+                if (parsedDb && parsedDb.educationData) {
+                    db = parsedDb.educationData;
+                    globalAchievements = parsedDb.achievementData || [];
+                    
+                    if (currentUser) {
+                        let user = db.users.find(u => u.login === currentUser);
+                        if (user) {
+                            buildCoursesMap(user);
+                            if (document.getElementById('cabinetView').classList.contains('active')) {
+                                if(windowViewingEmployee) {
+                                    let updatedEmp = db.users.find(u => u.login === windowViewingEmployee.login);
+                                    if (updatedEmp) {
+                                        windowViewingEmployee = updatedEmp;
+                                        renderCabinetStatsAndCourses(updatedEmp);
+                                    }
+                                } else {
+                                    renderCabinetStatsAndCourses(user);
+                                    checkNewAchievements(user);
+                                }
+                            } else if (document.getElementById('productView').classList.contains('active')) {
+                                openCourse(currentCourseName);
+                            }
+                        }
+                    }
+                }
+            } catch(e) {}
+        }
+    });
+
+    // --- АВТОРИЗАЦИЯ (РЕГИСТРОНЕЗАВИСИМАЯ) ---
     async function handleLogin(isAuto = false) {
         const loginBtn = document.getElementById('loginSubmitBtn');
         const err = document.getElementById('errorMsg');
@@ -994,13 +1013,11 @@
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
-            // ИСПРАВЛЕНИЕ: Поиск с использованием toLowerCase() для предотвращения ошибок с регистром символов
             let user = db && db.users && db.users.find(u => 
                 String(u.login).trim().toLowerCase() === l.toLowerCase() && 
                 String(u.pass).trim().toLowerCase() === p.toLowerCase()
             );
 
-            // ПРИНУДИТЕЛЬНОЕ ОБНОВЛЕНИЕ БАЗЫ, ЕСЛИ ЮЗЕР НЕ НАЙДЕН С ПЕРВОГО РАЗА
             if (!user && navigator.onLine && !isAuto) {
                 if (loginBtn) loginBtn.innerText = "ОНОВЛЕННЯ ДАНИХ...";
                 await fetchFreshDataSilent();
@@ -1325,7 +1342,7 @@
         switchView('adminView');
     }
 
-    // --- ЛОГИКА КАБИНЕТА СОТРУДНИКА (С ВКАДКАМИ) ---
+    // --- ЛОГИКА КАБИНЕТА СОТРУДНИКА ---
     function buildCoursesMap(user) {
         coursesMap = {}; 
         let currentUserAssigned = user.assigned || [];
@@ -1917,6 +1934,7 @@
 
         currentUserObj.results[cleanP] = `${attempts}/${bestScore}%/${bestTime}`;
 
+        // Сохраняем в общий кэш!
         let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
         fullCache.educationData = db; localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
 
