@@ -190,9 +190,12 @@
         .ach-card.zoomed { padding: 24px 20px; margin: 8px -16px 20px -16px; border-radius: 24px; box-shadow: 0 24px 48px rgba(0,0,0,0.12); border-color: var(--primary-light); background: #ffffff; gap: 20px; z-index: 10; }
         .ach-icon-wrapper { width: 64px; height: 64px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .ach-card.zoomed .ach-icon-wrapper { width: 100px; height: 100px; }
-        /* АЧИВКИ СЕРЫМИ */
-        .ach-icon { width: 100%; height: 100%; object-fit: contain; filter: grayscale(100%); opacity: 0.85; transition: 0.3s; }
-        .ach-card.zoomed .ach-icon { filter: grayscale(0%); opacity: 1; }
+        
+        /* СИСТЕМА СЕРЫХ АЧИВОК */
+        .ach-icon { width: 100%; height: 100%; object-fit: contain; transition: 0.3s; }
+        .ach-card.locked { opacity: 0.7; filter: grayscale(100%); cursor: default; background: var(--input-bg); border-style: dashed; }
+        .ach-card.locked:active { transform: none; background: var(--input-bg); }
+        .ach-card.locked .ach-card-desc { display: none; }
 
         .ach-card-title { font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
         .ach-card.zoomed .ach-card-title { font-size: 20px; }
@@ -227,12 +230,12 @@
 
         /* Обновленные стили блоков статистики */
         .stat-card-modern {
-            background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03);
         }
         .stat-row-modern {
             display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;
         }
-        .stat-label-modern { color: var(--text-muted); font-size: 15px; font-weight: 600; }
+        .stat-label-modern { color: var(--text-muted); font-size: 14px; font-weight: 600; }
         .stat-val-modern { color: var(--text-main); font-size: 15px; font-weight: 800; }
     </style>
 </head>
@@ -507,8 +510,7 @@
     const API_URL = 'https://script.google.com/macros/s/AKfycbxhlxpQrWX6rA-bF30hoY6ob3xCY5GC40yoCu0ec-cOkFlV7asz-xiPZe--wqo_mHjE9g/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; // Общий ключ с основным приложением
 
-    let chartsInstances = {};
-
+    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
         let style = document.getElementById('dynamicFontScale');
         if(!style) { 
@@ -524,7 +526,7 @@
             .section-title { font-size: calc(12px * ${scale}) !important; }
             .input-label { font-size: calc(12px * ${scale}) !important; }
             .stat-val-modern { font-size: calc(15px * ${scale}) !important; }
-            .stat-label-modern { font-size: calc(15px * ${scale}) !important; }
+            .stat-label-modern { font-size: calc(14px * ${scale}) !important; }
             .list-card-title { font-size: calc(16px * ${scale}) !important; }
             .theory-line { font-size: calc(15px * ${scale}) !important; }
             .question-title { font-size: calc(17px * ${scale}) !important; }
@@ -552,7 +554,6 @@
     let currentCourseName = "";
     let currentProductData = null;
     let parsedQuestions = [];
-    let savedCompletedListHtml = ""; 
 
     // Таймеры
     let testTimerInterval;
@@ -578,7 +579,8 @@
             img.setAttribute('data-ext-index', extIdx);
             img.src = `Achievement/${code}${ACH_EXTS[extIdx]}`;
         } else {
-            img.outerHTML = '<span style="font-size:40px; filter: grayscale(100%);">🏅</span>';
+            // Если иконка вообще не найдена
+            img.outerHTML = '<span style="font-size:40px;">🏅</span>';
         }
     }
 
@@ -596,13 +598,6 @@
         }
     }
 
-    function getAttemptWord(count) {
-        let n = parseInt(count) || 0;
-        if (n % 10 === 1 && n % 100 !== 11) return 'спроба';
-        if ([2, 3, 4].includes(n % 10) && ![12, 13, 14].includes(n % 100)) return 'спроби';
-        return 'спроб';
-    }
-
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
         let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
@@ -610,20 +605,18 @@
         return isNaN(n) ? "0" : n.toLocaleString('uk-UA');
     }
 
-    // Форматирование сырых чисел из Гугл Таблиц в правильные проценты
-    function formatSheetPercent(val) {
-        if (!val) return "0%";
+    // Умный парсер процентов для сырых данных из таблицы (0.0438 -> 4.38%)
+    function parsePercentValue(val) {
+        if (!val) return 0;
         let str = String(val).trim().replace(',', '.');
-        if (str.includes('%')) return str;
-        let num = parseFloat(str);
-        if (!isNaN(num)) {
-            // Если гугл таблица отдала дробь (0.0438 -> 4.38%)
-            if (num < 1 && num > -1 && str.startsWith('0.')) {
-                return (num * 100).toFixed(2).replace(/\.00$/, '') + '%';
-            }
-            return num + '%';
+        let isPercent = str.includes('%');
+        let num = parseFloat(str) || 0;
+        
+        // Если это дробь формата 0.XXXX, умножаем на 100
+        if (!isPercent && str.includes('.') && num < 1.1 && num > -1.1) {
+            return parseFloat((num * 100).toFixed(2));
         }
-        return val;
+        return parseFloat(num.toFixed(2));
     }
     
     function formatDeadlineText(deadlineStr) {
@@ -821,6 +814,7 @@
 
             const data = await response.json();
             if (!data.error) {
+                // Обновляем ГЛОБАЛЬНЫЙ кеш для обоих приложений
                 localStorage.setItem(CACHE_KEY, JSON.stringify(data));
                 
                 db = data.educationData;
@@ -883,6 +877,7 @@
         let hasCache = false;
 
         try {
+            // Читаем общий кэш skillhub_v4_flat
             let cachedData = localStorage.getItem(CACHE_KEY);
             if (cachedData) {
                 let parsedDb = JSON.parse(cachedData);
@@ -903,9 +898,10 @@
             document.getElementById('rememberMe').checked = true;
             
             if (hasCache) {
+                // БЕСШОВНЫЙ ПЕРЕХОД: Сразу заходим без loader
                 document.getElementById('loader').style.display = 'none';
                 await handleLogin(true); 
-                fetchFreshDataSilent(); 
+                fetchFreshDataSilent();  // Обновляем данные в фоне
             } else {
                 document.getElementById('loader').style.display = 'flex';
                 await fetchFreshDataSilent();
@@ -1369,89 +1365,89 @@
 
     function renderCabinetStatsAndCourses(user) {
         // --- 1. Вкладка СТАТИСТИКА (Новий сучасний дизайн) ---
-        let planШт = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let planГрн = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let фактШт = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let фактГрн = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let planTotal = parseFloat(user.results && user.results['планнамісяць'] ? user.results['планнамісяць'] : "0") || 0;
+        let factPcs = parseFloat(user.results && user.results['шт'] ? user.results['шт'] : "0") || 0;
+        let factUah = parseFloat(user.results && user.results['грн'] ? user.results['грн'] : "0") || 0;
 
-        let eff = formatSheetPercent(user.results && user.results['ефективність'] ? user.results['ефективність'] : "0");
-        let dolya = formatSheetPercent(user.results && user.results['доля'] ? user.results['доля'] : "0");
-
-        let execPctTotal = 0;
-        let validPctsTotal = [];
-        if (planШт > 0) validPctsTotal.push((фактШт / planШт) * 100);
-        if (planГрн > 0) validPctsTotal.push((фактГрн / planГрн) * 100);
-        if (validPctsTotal.length > 0) execPctTotal = Math.max(...validPctsTotal);
-        execPctTotal = parseFloat(Math.min(execPctTotal, 100).toFixed(1));
+        let planExec = parsePercentValue(user.results && user.results['виконанняплану'] ? user.results['виконанняплану'] : "0");
+        let eff = parsePercentValue(user.results && user.results['ефективність'] ? user.results['ефективність'] : "0");
+        let dolya = parsePercentValue(user.results && user.results['доля'] ? user.results['доля'] : "0");
 
         document.getElementById('monthlyPlanBlock').innerHTML = `
             <div class="stat-row-modern">
                 <span class="stat-label-modern">План:</span>
-                <span class="stat-val-modern">${formatNumber(planГрн)}</span>
+                <span class="stat-val-modern">${formatNumber(planTotal)}</span>
             </div>
             <div class="stat-row-modern">
                 <span class="stat-label-modern">Шт:</span>
-                <span class="stat-val-modern">${formatNumber(фактШт)}</span>
+                <span class="stat-val-modern">${formatNumber(factPcs)}</span>
             </div>
             <div class="stat-row-modern" style="margin-bottom: 20px;">
                 <span class="stat-label-modern">Грн:</span>
-                <span class="stat-val-modern">${formatNumber(фактГрн)}</span>
+                <span class="stat-val-modern">${formatNumber(factUah)}</span>
             </div>
             
             <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
                 <span style="font-size:13px; font-weight:700; color:var(--text-main);">Виконання плану:</span>
-                <span style="font-size:14px; font-weight:800; color:var(--primary);">${execPctTotal}%</span>
+                <span style="font-size:14px; font-weight:800; color:var(--primary);">${planExec}%</span>
             </div>
             <div class="adaptive-progress-bar" style="height:8px; border-radius:4px; margin-bottom:24px; border:none; background:var(--input-bg);">
-                <div class="apb-fill" style="width: ${execPctTotal}%; border-radius:4px;"></div>
+                <div class="apb-fill" style="width: ${Math.min(planExec, 100)}%; border-radius:4px; background:var(--primary);"></div>
             </div>
 
             <div class="stat-row-modern">
                 <span class="stat-label-modern">Ефективність:</span>
-                <span style="color:#3b82f6; background:#eff6ff; padding:2px 8px; border-radius:8px; font-weight:800; font-size:14px;">${eff}</span>
+                <span style="color:#3b82f6; background:#eff6ff; padding:2px 8px; border-radius:8px; font-weight:800; font-size:14px;">${eff}%</span>
             </div>
             <div class="stat-row-modern" style="margin-bottom: 0;">
                 <span class="stat-label-modern">Доля:</span>
-                <span class="stat-val-modern">${dolya}</span>
+                <span class="stat-val-modern">${dolya}%</span>
             </div>
         `;
 
-        let pctШт = planШт > 0 ? Math.round((фактШт/planШт)*100) : (фактШт > 0 ? 100 : 0); if(pctШт>100) pctШт=100;
-        let pctГрн = planГрн > 0 ? Math.round((фактГрн/planГрн)*100) : (фактГрн > 0 ? 100 : 0); if(pctГрн>100) pctГрн=100;
+        // Логика целей (Расчет через остаток)
+        let targetPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let targetUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let remPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0; 
+        let remUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+
+        let donePcs = Math.max(0, targetPcs - remPcs);
+        let doneUah = Math.max(0, targetUah - remUah);
+
+        let pctPcs = targetPcs > 0 ? (donePcs / targetPcs) * 100 : 0;
+        let pctUah = targetUah > 0 ? (doneUah / targetUah) * 100 : 0;
+
+        // Фикс "0 / 0" если цель 0
+        let displayPcsDone = targetPcs > 0 ? donePcs : (factPcs > 0 ? factPcs : 0);
+        let displayUahDone = targetUah > 0 ? doneUah : (factUah > 0 ? factUah : 0);
+        
+        let formatPctPcs = pctPcs > 0 && pctPcs < 100 && pctPcs % 1 !== 0 ? pctPcs.toFixed(1) : Math.round(pctPcs);
+        let formatPctUah = pctUah > 0 && pctUah < 100 && pctUah % 1 !== 0 ? pctUah.toFixed(2) : Math.round(pctUah);
 
         document.getElementById('goalsBlock').innerHTML = `
-            <div class="stats-dashboard" style="margin-bottom: 16px;">
-                <div class="stat-item"><div class="stat-val">${formatNumber(planШт)}</div><div class="stat-label">Ціль (шт)</div></div>
-                <div class="stat-item"><div class="stat-val">${formatNumber(planГрн)}</div><div class="stat-label">Ціль (грн)</div></div>
-            </div>
-            
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Виконання ШТ: ${formatNumber(фактШт)} / ${formatNumber(planШт)}</span>
-                    <span style="font-size:16px; font-weight:900; color:var(--text-main);">${pctШт}%</span>
+                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">ШТ: ${formatNumber(displayPcsDone)} / ${formatNumber(targetPcs)}</span>
+                    <span style="font-size:16px; font-weight:900; color:#0ea5e9;">${formatPctPcs}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${pctШт}%; border-radius:5px; background:#0ea5e9;"></div>
+                    <div class="apb-fill" style="width: ${Math.min(pctPcs, 100)}%; border-radius:5px; background:#0ea5e9;"></div>
                 </div>
             </div>
 
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 24px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Виконання ГРН: ${formatNumber(фактГрн)} / ${formatNumber(planГрн)}</span>
-                    <span style="font-size:16px; font-weight:900; color:var(--text-main);">${pctГрн}%</span>
+                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">ГРН: ${formatNumber(displayUahDone)} / ${formatNumber(targetUah)}</span>
+                    <span style="font-size:16px; font-weight:900; color:#f59e0b;">${formatPctUah}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${pctГрн}%; border-radius:5px; background:#f59e0b;"></div>
+                    <div class="apb-fill" style="width: ${Math.min(pctUah, 100)}%; border-radius:5px; background:#f59e0b;"></div>
                 </div>
             </div>
         `;
 
         let userResults = user.results || {};
         let totalAssigned = 0; let totalCompleted = 0; let totalScoreSum = 0; let scoreCount = 0;
-        let sumAttempts = 0; let startedCourses = 0; let sumTime = 0;
-        let c100 = 0; let c90 = 0; let c80 = 0; let cLess = 0;
-
-        savedCompletedListHtml = ""; 
 
         Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
             totalAssigned++;
@@ -1459,33 +1455,14 @@
             let resStr = userResults[cleanP];
             if (resStr) {
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                let score = 0; let attempts = 0; let time = 0;
-                if (match) { attempts = parseInt(match[1]); score = parseInt(match[2], 10) || 0; time = parseInt(match[3]) || 0; } 
-                else { let sm = String(resStr).match(/(\d+)%/); if (sm) { score = parseInt(sm[1], 10) || 0; attempts = 1; } }
+                let score = 0;
+                if (match) { score = parseInt(match[2], 10) || 0; } 
+                else { let sm = String(resStr).match(/(\d+)%/); if (sm) { score = parseInt(sm[1], 10) || 0; } }
 
-                if (attempts > 0) startedCourses++;
-                sumAttempts += attempts;
-                sumTime += time;
                 totalScoreSum += score;
                 scoreCount++;
 
-                if (score === 100) c100++;
-                else if (score >= 90) c90++;
-                else if (score >= 80) c80++;
-                else if (attempts > 0) cLess++;
-
-                if (score >= 80) {
-                    totalCompleted++;
-                    let attWord = getAttemptWord(attempts);
-                    savedCompletedListHtml += `
-                        <div style="padding:16px 0; border-bottom:1px solid var(--input-bg); display:flex; justify-content:space-between; align-items:center; gap: 16px;">
-                            <span style="flex:1; font-size:15px; font-weight:700; line-height:1.4; color:var(--text-main);">${p.product}</span>
-                            <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
-                                <span style="font-size:16px; font-weight:900; color:var(--text-main); line-height:1;">${score}%</span>
-                                <span style="font-size:11px; font-weight:600; color:var(--text-muted); margin-top:4px;">${attempts} ${attWord}</span>
-                            </div>
-                        </div>`;
-                }
+                if (score >= 80) totalCompleted++;
             }
         });
 
@@ -1733,36 +1710,38 @@
         }
     }
 
+    // ИСПРАВЛЕННАЯ СИСТЕМА АЧИВОК (Отображение всех наград)
     function renderAchievements() {
         let user = db.users.find(u => u.login === currentUser);
         let achListEl = document.getElementById('achList');
 
-        if (!user || !user.achievements) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород. Навчайтесь та отримуйте ачівки!</div>';
+        if (!globalAchievements || globalAchievements.length === 0) {
+            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">Список нагород порожній.</div>';
             return;
         }
 
-        let achCodes = String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "");
-        if (achCodes.length === 0) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">У вас поки немає нагород.</div>';
-            return;
-        }
+        let achCodes = user && user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "") : [];
 
         let html = '';
-        achCodes.forEach(code => {
-            let achInfo = globalAchievements.find(a => String(a.code).trim() === code);
-            let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нова нагорода!";
+        globalAchievements.forEach(achInfo => {
+            let code = String(achInfo.code).trim();
+            let isEarned = achCodes.includes(code);
+            let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нагорода";
             let desc = (achInfo && achInfo.description) ? achInfo.description : "";
             let safeCode = escapeHTMLAttr(code);
 
+            let stateClass = isEarned ? 'earned' : 'locked';
+            let stateText = isEarned ? '<span style="color:var(--success); font-size:12px; font-weight:800;">ОТРИМАНО</span>' : '<span style="color:var(--text-muted); font-size:12px; font-weight:700;">ЗАКРИТО</span>';
+
             html += `
-            <div class="ach-card" onclick="toggleAchZoom(this)">
+            <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
                 <div class="ach-icon-wrapper">
                     <img src="Achievement/${safeCode}.svg" class="ach-icon" alt="${displayName}" data-code="${safeCode}" data-ext-index="0" onerror="handleAchImageError(this)">
                 </div>
                 <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                     <div class="ach-card-title">${displayName}</div>
                     <div class="ach-card-desc">${desc}</div>
+                    <div style="margin-top:6px;">${stateText}</div>
                 </div>
             </div>`;
         });
