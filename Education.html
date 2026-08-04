@@ -382,8 +382,9 @@
         </div>
 
         <div class="tabs-container">
-            <div class="tab-btn active" onclick="switchCabinetTab('stats')">📊 Статистика</div>
-            <div class="tab-btn" onclick="switchCabinetTab('courses')">📚 Навчання</div>
+            <!-- Виправлено: тепер ми передаємо 'this', щоб уникнути помилки event -->
+            <div class="tab-btn active" onclick="switchCabinetTab('stats', this)">📊 Статистика</div>
+            <div class="tab-btn" onclick="switchCabinetTab('courses', this)">📚 Навчання</div>
         </div>
 
         <!-- Вкладка: Статистика -->
@@ -504,7 +505,7 @@
 <!-- СКРИПТИ -->
 <script>
     // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxhlxpQrWX6rA-bF30hoY6ob3xCY5GC40yoCu0ec-cOkFlV7asz-xiPZe--wqo_mHjE9g/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxrQkhX7UXmpb1PCWuTd5qDFZ17zM5NwgcwbjWXxzQX2o_ZdXOicu2w6_2gRfpfJL3XPQ/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; 
     const TIME_PER_QUESTION = 25; 
 
@@ -642,11 +643,22 @@
         });
     }
 
-    function switchCabinetTab(tabName) {
+    // ВИПРАВЛЕНО: тепер функція безпечно приймає event.currentTarget або знаходить вкладку сама
+    function switchCabinetTab(tabName, el = null) {
         document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
         document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
         
-        event.currentTarget.classList.add('active');
+        if (el) {
+            el.classList.add('active');
+        } else {
+            let targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => {
+                if(tabName === 'stats' && b.innerText.includes('Статистика')) return true;
+                if(tabName === 'courses' && b.innerText.includes('Навчання')) return true;
+                return false;
+            });
+            if(targetBtn) targetBtn.classList.add('active');
+        }
+
         if (tabName === 'stats') {
             document.getElementById('tabStats').classList.add('active');
         } else {
@@ -1294,22 +1306,22 @@
             </div>
         `;
 
+        // ВИПРАВЛЕНО: Цілі тепер не віднімаються, а працюють як чисте виконання.
+        // Якщо даних у колонці Виконання немає, система використає дані з Факту.
         let targetPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let targetUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let remPcs = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0; 
-        let remUah = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-
-        let donePcs = Math.max(0, targetPcs - remPcs);
-        let doneUah = Math.max(0, targetUah - remUah);
-
-        let pctPcs = targetPcs > 0 ? (donePcs / targetPcs) * 100 : 0;
-        let pctUah = targetUah > 0 ? (doneUah / targetUah) * 100 : 0;
-
-        let displayPcsDone = targetPcs > 0 ? donePcs : (factPcs > 0 ? factPcs : 0);
-        let displayUahDone = targetUah > 0 ? doneUah : (factUah > 0 ? factUah : 0);
         
-        let formatPctPcs = pctPcs > 0 && pctPcs < 100 && pctPcs % 1 !== 0 ? pctPcs.toFixed(1) : Math.round(pctPcs);
-        let formatPctUah = pctUah > 0 && pctUah < 100 && pctUah % 1 !== 0 ? pctUah.toFixed(2) : Math.round(pctUah);
+        let execPcsVal = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0; 
+        let execUahVal = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+
+        let displayPcsDone = execPcsVal > 0 ? execPcsVal : (factPcs > 0 ? factPcs : 0);
+        let displayUahDone = execUahVal > 0 ? execUahVal : (factUah > 0 ? factUah : 0);
+        
+        let formatPctPcs = targetPcs > 0 ? (displayPcsDone / targetPcs) * 100 : 0;
+        let formatPctUah = targetUah > 0 ? (displayUahDone / targetUah) * 100 : 0;
+
+        formatPctPcs = formatPctPcs > 0 && formatPctPcs < 100 && formatPctPcs % 1 !== 0 ? formatPctPcs.toFixed(1) : Math.round(formatPctPcs);
+        formatPctUah = formatPctUah > 0 && formatPctUah < 100 && formatPctUah % 1 !== 0 ? formatPctUah.toFixed(2) : Math.round(formatPctUah);
 
         document.getElementById('goalsBlock').innerHTML = `
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 12px;">
@@ -1318,7 +1330,7 @@
                     <span style="font-size:16px; font-weight:900; color:#0ea5e9;">${formatPctPcs}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${Math.min(pctPcs, 100)}%; border-radius:5px; background:#0ea5e9;"></div>
+                    <div class="apb-fill" style="width: ${Math.min(formatPctPcs, 100)}%; border-radius:5px; background:#0ea5e9;"></div>
                 </div>
             </div>
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 24px;">
@@ -1327,7 +1339,7 @@
                     <span style="font-size:16px; font-weight:900; color:#f59e0b;">${formatPctUah}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${Math.min(pctUah, 100)}%; border-radius:5px; background:#f59e0b;"></div>
+                    <div class="apb-fill" style="width: ${Math.min(formatPctUah, 100)}%; border-radius:5px; background:#f59e0b;"></div>
                 </div>
             </div>
         `;
@@ -1722,7 +1734,6 @@
         timeRemaining = TIME_PER_QUESTION; 
         updateTimerUI();
         
-        // Очищаємо попередній таймер, щоб не було задвоєння швидкості
         if (testTimerInterval) clearInterval(testTimerInterval);
         
         testTimerInterval = setInterval(() => {
@@ -1759,7 +1770,7 @@
 
         currentQuestionIndex = 0; 
         isTestActive = true; 
-        isCheatingTriggered = false; // Скидаємо запобіжник перед новим тестом
+        isCheatingTriggered = false; 
         
         switchView('testView'); 
         showQuestion(currentQuestionIndex);
@@ -1806,7 +1817,6 @@
 
         currentUserObj.results[cleanP] = `${attempts}/${bestScore}%/${bestTime}`;
 
-        // Зберігаємо в загальний кеш безпечно
         try {
             let fullCache = JSON.parse(localStorage.getItem(CACHE_KEY) || "{}");
             fullCache.educationData = db; 
@@ -1848,7 +1858,6 @@
     });
 
     function triggerAntiCheat() {
-        // Перевіряємо запобіжник, щоб логіка не зациклювалась
         if (!isTestActive || isCheatingTriggered) return; 
         isCheatingTriggered = true;
         isTestActive = false; 
@@ -1859,7 +1868,7 @@
         setTimeout(() => { 
             alert("⛔ Порушення правил! Ви згорнули вікно або відвели фокус. Спробу зараховано з результатом 0%."); 
             document.body.classList.remove('cheating'); 
-            submitTest(true); // Відправляємо примусово 0%
+            submitTest(true); 
         }, 150);
     }
 
@@ -1867,11 +1876,9 @@
     window.addEventListener('pagehide', triggerAntiCheat); 
     document.addEventListener('visibilitychange', () => { if (document.hidden) triggerAntiCheat(); });
     document.addEventListener('touchcancel', triggerAntiCheat); 
-    // Забрав логіку fullscreen-захисту, оскільки на телефонах вона часто спрацьовує хибно через клавіатуру
 
     // --- ІНІЦІАЛІЗАЦІЯ (ГОЛОВНИЙ БЛОК) ---
     document.addEventListener('DOMContentLoaded', async () => {
-        // Перевіряємо чорновики логіну та паролю
         let draftL = localStorage.getItem('skillhub_draft_login');
         let draftP = localStorage.getItem('skillhub_draft_pass');
         if (draftL) document.getElementById('loginInput').value = draftL;
@@ -1899,12 +1906,10 @@
             document.getElementById('rememberMe').checked = true;
 
             if (hasCache) {
-                // Якщо є кеш, одразу логінимось
                 document.getElementById('loader').style.display = 'none';
                 await handleLogin(true);
-                fetchFreshDataSilent(); // Оновлюємо дані у фоні
+                fetchFreshDataSilent(); 
             } else {
-                // Якщо кешу немає, примусово завантажуємо дані
                 document.getElementById('loader').style.display = 'flex';
                 await fetchFreshDataSilent();
                 document.getElementById('loader').style.display = 'none';
@@ -1912,7 +1917,6 @@
                 else switchView('loginView');
             }
         } else {
-            // Якщо збережених даних немає, показуємо вікно входу
             if (!hasCache && navigator.onLine) {
                 document.getElementById('loader').style.display = 'flex';
                 await fetchFreshDataSilent();
