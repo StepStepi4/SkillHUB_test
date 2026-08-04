@@ -10,7 +10,7 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Ініціалізація теми перед завантаженням (щоб не було блимання) -->
+    <!-- Ініціалізація теми перед завантаженням -->
     <script>
         (function() {
             try {
@@ -25,7 +25,6 @@
         *, *::before, *::after { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         :root {
-            /* СВІТЛА ТЕМА */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #111827; 
@@ -44,7 +43,6 @@
         }
 
         [data-theme="dark"] {
-            /* ТЕМНА ТЕМА */
             --bg: #000000; 
             --card-bg: #1c1c1e;
             --text-main: #ffffff; 
@@ -568,7 +566,7 @@
     function getCleanName(str) { return !str ? "" : String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
     function escapeHTMLAttr(str) { return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
     
-    // ЗАХИСТ ВІД ПОМИЛОК ПРИ ОТРИМАННІ ДАНИХ
+    // БЕЗПЕЧНЕ ЗЧИТУВАННЯ ІЗ ВИДАЛЕННЯМ ПРОБІЛІВ
     function getSafeRes(resObj, keyName) {
         return resObj && resObj[keyName] ? String(resObj[keyName]).trim() : "0";
     }
@@ -594,15 +592,18 @@
         return isNaN(n) ? "0" : n.toLocaleString('uk-UA');
     }
 
+    // НОВИЙ ТОЧНИЙ ФІЛЬТР ДЛЯ ВІДСОТКІВ (1.61 -> 161%)
     function parsePercentValue(val) {
-        if (!val) return 0;
-        let str = String(val).trim().replace(',', '.');
-        let isPercent = str.includes('%');
+        if (!val) return "0";
+        let str = String(val).replace(/\s/g, '').replace(',', '.');
         let num = parseFloat(str) || 0;
-        if (!isPercent && str.includes('.') && num < 1.1 && num > -1.1) {
-            return parseFloat((num * 100).toFixed(2));
+        
+        // Якщо таблиця віддала дріб замість відсотка (напр., 1.61 замість 161%)
+        if (!str.includes('%') && num > -5 && num < 5 && str.includes('.')) {
+            num = num * 100;
         }
-        return parseFloat(num.toFixed(2));
+        
+        return (num % 1 !== 0) ? num.toFixed(2) : num.toString();
     }
     
     function formatDeadlineText(deadlineStr) {
@@ -1008,12 +1009,11 @@
             let assignedCount = parseInt((u.tableStats || {}).assigned) || 0;
             let arrAssigned = (u.assigned && u.assigned.length > 0) ? u.assigned.length : 0;
             
-            // В панелі адміна цілі та факти
             let res = u.results || {};
-            let tPcs = parseFloat(String(res['цільшт'] || "0").replace(/,/g, '.')) || 0;
-            let tUah = parseFloat(String(res['цільгрн'] || "0").replace(/,/g, '.')) || 0;
-            let fPcs = parseFloat(String(res['проданошт'] || "0").replace(/,/g, '.')) || 0;
-            let fUah = parseFloat(String(res['проданогрн'] || "0").replace(/,/g, '.')) || 0;
+            let tPcs = parseFloat(getSafeRes(res, 'цільшт').replace(/,/g, '.')) || 0;
+            let tUah = parseFloat(getSafeRes(res, 'цільгрн').replace(/,/g, '.')) || 0;
+            let fPcs = parseFloat(getSafeRes(res, 'проданошт').replace(/,/g, '.')) || 0;
+            let fUah = parseFloat(getSafeRes(res, 'проданогрн').replace(/,/g, '.')) || 0;
             
             let hasGoals = (tPcs > 0 || tUah > 0 || fPcs !== 0 || fUah !== 0);
             let hasCourses = (assignedCount > 0 || arrAssigned > 0);
@@ -1270,13 +1270,12 @@
     }
 
     function renderCabinetStatsAndCourses(user) {
-        // --- ЗАХИЩЕНЕ ЗЧИТУВАННЯ ---
         let res = user.results || {};
 
         // --- 1. ПЛАН НА МІСЯЦЬ ---
-        let planTotal = parseFloat(getSafeRes(res, 'планнамісяць').replace(/,/g, '.')) || 0;
-        let factPcs = parseFloat(getSafeRes(res, 'проданошт').replace(/,/g, '.')) || 0;
-        let factUah = parseFloat(getSafeRes(res, 'проданогрн').replace(/,/g, '.')) || 0;
+        let planTotal = parseFloat(getSafeRes(res, 'планнамісяць').replace(/\s/g, '').replace(',', '.')) || 0;
+        let factPcs = parseFloat(getSafeRes(res, 'проданошт').replace(/\s/g, '').replace(',', '.')) || 0;
+        let factUah = parseFloat(getSafeRes(res, 'проданогрн').replace(/\s/g, '').replace(',', '.')) || 0;
 
         let planExec = parsePercentValue(getSafeRes(res, 'виконанняплану'));
         let eff = parsePercentValue(getSafeRes(res, 'ефективність'));
@@ -1313,56 +1312,50 @@
         `;
 
         // --- 2. ЗАГАЛЬНЕ ВИКОНАННЯ ЦІЛЕЙ ---
-        let targetPcs = parseFloat(getSafeRes(res, 'цільшт').replace(/,/g, '.')) || 0;
-        let targetUah = parseFloat(getSafeRes(res, 'цільгрн').replace(/,/g, '.')) || 0;
+        let targetPcs = parseFloat(getSafeRes(res, 'цільшт').replace(/\s/g, '').replace(',', '.')) || 0;
+        let targetUah = parseFloat(getSafeRes(res, 'цільгрн').replace(/\s/g, '').replace(',', '.')) || 0;
         
-        let startPcs = parseFloat(getSafeRes(res, 'штнапочаток').replace(/,/g, '.')) || 0;
-        let startUah = parseFloat(getSafeRes(res, 'грннапочаток').replace(/,/g, '.')) || 0;
+        let remPcs = parseFloat(getSafeRes(res, 'залишокшт').replace(/\s/g, '').replace(',', '.')) || 0;
+        let remUah = parseFloat(getSafeRes(res, 'залишокгрн').replace(/\s/g, '').replace(',', '.')) || 0;
 
-        let remPcs = parseFloat(getSafeRes(res, 'залишокшт').replace(/,/g, '.')) || 0;
-        let remUah = parseFloat(getSafeRes(res, 'залишокгрн').replace(/,/g, '.')) || 0;
-
-        // Логіка: скільки виконано (від цілі віднімаємо те, що залишилось зробити)
-        let donePcs = targetPcs - remPcs;
-        let doneUah = targetUah - remUah;
+        let donePcs = Math.max(0, targetPcs - remPcs);
+        let doneUah = Math.max(0, targetUah - remUah);
 
         let pctPcs = targetPcs > 0 ? (donePcs / targetPcs) * 100 : 0;
         let pctUah = targetUah > 0 ? (doneUah / targetUah) * 100 : 0;
 
-        // Форматування відсотків: прибрати зайві нулі після коми
         let formatPctPcs = pctPcs > 0 && pctPcs < 100 && pctPcs % 1 !== 0 ? pctPcs.toFixed(1) : Math.round(pctPcs);
         let formatPctUah = pctUah > 0 && pctUah < 100 && pctUah % 1 !== 0 ? pctUah.toFixed(2) : Math.round(pctUah);
 
         document.getElementById('goalsBlock').innerHTML = `
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 12px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span style="font-size:13px; font-weight:800; color:var(--text-main); text-transform:uppercase;">Ціль (шт)</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:13px; font-weight:800; color:var(--text-main); text-transform:uppercase;">Ціль (шт): ${formatNumber(targetPcs)}</span>
                     <span style="font-size:16px; font-weight:900; color:#0ea5e9;">${formatPctPcs}%</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:12px; font-weight:600; color:var(--text-muted);">
-                    <span>Шт на початок: ${formatNumber(startPcs)}</span>
-                    <span>Залишок: ${formatNumber(remPcs)} / ${formatNumber(targetPcs)}</span>
-                </div>
-                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
+                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:8px; border:none; background:var(--input-bg);">
                     <div class="apb-fill" style="width: ${Math.min(Math.max(pctPcs, 0), 100)}%; border-radius:5px; background:#0ea5e9;"></div>
+                </div>
+                <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
+                    Залишок: ${formatNumber(remPcs)} / ${formatNumber(targetPcs)}
                 </div>
             </div>
             
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 24px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
-                    <span style="font-size:13px; font-weight:800; color:var(--text-main); text-transform:uppercase;">Ціль (грн)</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                    <span style="font-size:13px; font-weight:800; color:var(--text-main); text-transform:uppercase;">Ціль (грн): ${formatNumber(targetUah)}</span>
                     <span style="font-size:16px; font-weight:900; color:#f59e0b;">${formatPctUah}%</span>
                 </div>
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; font-size:12px; font-weight:600; color:var(--text-muted);">
-                    <span>Грн на початок: ${formatNumber(startUah)}</span>
-                    <span>Залишок: ${formatNumber(remUah)} / ${formatNumber(targetUah)}</span>
-                </div>
-                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
+                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:8px; border:none; background:var(--input-bg);">
                     <div class="apb-fill" style="width: ${Math.min(Math.max(pctUah, 0), 100)}%; border-radius:5px; background:#f59e0b;"></div>
+                </div>
+                <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
+                    Залишок: ${formatNumber(remUah)} / ${formatNumber(targetUah)}
                 </div>
             </div>
         `;
 
+        // --- 3. СТАТИСТИКА НАВЧАННЯ ---
         let userResults = user.results || {};
         let totalAssigned = 0; let totalCompleted = 0; let totalScoreSum = 0; let scoreCount = 0;
 
@@ -1408,7 +1401,7 @@
             </div>
         `;
 
-        // --- 3. КУРСИ ---
+        // --- 4. КУРСИ ---
         const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
 
