@@ -1362,28 +1362,24 @@
         // --- 2. ЦІЛІ І ВИКОНАННЯ ---
         let targetPcs = safeNum(user.targetPcs);
         let targetUah = safeNum(user.targetUah);
+
+        // Надійний розрахунок! Ми беремо факт, який вже 100% працює (factPcs та factUah),
+        // і математично обчислюємо залишок та відсоток виконання. Це найбільш безвідмовний метод.
+        let donePcs = factPcs;
+        let doneUah = factUah;
         
-        // Беремо залишок прямо із бд (наприклад з "Залишилось в шт"). Якщо пусте — беремо 100% цілі.
-        let leftPcs = user.execPcs !== undefined && String(user.execPcs).trim() !== "" 
-            ? safeNum(user.execPcs) 
-            : targetPcs;
-            
-        let leftUah = user.execUah !== undefined && String(user.execUah).trim() !== "" 
-            ? safeNum(user.execUah) 
-            : targetUah;
+        // Залишок не може бути менше нуля
+        let leftPcs = Math.max(0, targetPcs - donePcs);
+        let leftUah = Math.max(0, targetUah - doneUah);
 
-        // Рахуємо факт, відштовхуючись ВІД цілі та залишку (Факт = Ціль - Залишок)
-        let donePcs = targetPcs - leftPcs;
-        let doneUah = targetUah - leftUah;
-
-        // Рахуємо відсоток прогресу
+        // Відсоток виконання (Факт / Ціль) * 100
         let pctPcs = targetPcs > 0 ? (donePcs / targetPcs) * 100 : 0;
         let pctUah = targetUah > 0 ? (doneUah / targetUah) * 100 : 0;
 
-        let formatPctPcs = pctPcs % 1 !== 0 ? parseFloat(pctPcs.toFixed(1)) : Math.round(pctPcs);
-        let formatPctUah = pctUah % 1 !== 0 ? parseFloat(pctUah.toFixed(1)) : Math.round(pctUah);
+        let formatPctPcs = pctPcs % 1 !== 0 ? parseFloat(pctPcs.toFixed(2)) : Math.round(pctPcs);
+        let formatPctUah = pctUah % 1 !== 0 ? parseFloat(pctUah.toFixed(2)) : Math.round(pctUah);
 
-        // Обрізаємо графік на 100%, щоб він не вилізав за межі контейнера при перевиконанні
+        // Щоб графік не вилазив за межі при перевиконанні (напр. 150%), зупиняємо зелену смужку на 100%
         let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
         let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
 
@@ -1704,7 +1700,7 @@
                 html += `
                 <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
                     <div class="ach-icon-wrapper">
-                        <!-- Звертаємось до папки Achievement у репозиторії -->
+                        <!-- Звертаємось до папки Achievement у репозиторії. Якщо файл не знайдено - покаже базову медаль -->
                         <img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" style="width:40px; height:40px; object-fit:contain;">
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
