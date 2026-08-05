@@ -514,7 +514,7 @@
 <!-- СКРИПТИ -->
 <script>
     // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxrQkhX7UXmpb1PCWuTd5qDFZ17zM5NwgcwbjWXxzQX2o_ZdXOicu2w6_2gRfpfJL3XPQ/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw4S4dG6vWVLePGkbR1NayzEIIAOJiUAJFRhhoh3WKVkXhdHyBZXKujO4mYrMVHBXprBw/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; 
     const TIME_PER_QUESTION = 25; 
 
@@ -604,7 +604,7 @@
     // ВИПРАВЛЕНО: Більш надійна функція перетворення значень процентів з таблиці
     function parsePercentValue(val) {
         if (!val) return 0;
-        let str = String(val).trim().replace(',', '.').replace(/[^\d.-]/g, ''); // Залишаємо тільки цифри, мінус і крапку
+        let str = String(val).trim().replace(',', '.').replace(/[^\d.-]/g, ''); 
         let num = parseFloat(str) || 0;
         let isPercent = String(val).includes('%');
         
@@ -612,7 +612,6 @@
             return parseFloat(num.toFixed(2));
         }
         if (num > -2 && num < 2 && String(val).includes('.')) {
-            // На випадок, якщо з таблиці приходить 0.85 замість 85%
             return parseFloat((num * 100).toFixed(2));
         }
         return parseFloat(num.toFixed(2));
@@ -648,7 +647,6 @@
     }
 
     function switchView(viewId) {
-        // ВИПРАВЛЕНО: Використання requestAnimationFrame для плавності переходів
         requestAnimationFrame(() => {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -660,7 +658,6 @@
     }
 
     function switchCabinetTab(tabName, el = null) {
-        // ВИПРАВЛЕНО: Використання requestAnimationFrame для плавності 
         requestAnimationFrame(() => {
             document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
@@ -1209,7 +1206,6 @@
 
         if(users.length === 0) listHtml = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Співробітників не знайдено.</div>';
         
-        // ВИПРАВЛЕНО: Використання requestAnimationFrame
         requestAnimationFrame(() => {
             document.getElementById('adminStatsContainer').innerHTML = statsHtml;
             document.getElementById('adminUsersList').innerHTML = listHtml;
@@ -1296,7 +1292,7 @@
         let factUah = parseFloat(user.results && user.results['грн'] ? user.results['грн'] : "0") || 0;
 
         let planExec = parsePercentValue(user.results && user.results['виконанняплану'] ? user.results['виконанняплану'] : "0");
-        let safePlanExec = isNaN(planExec) ? 0 : Math.max(0, Math.min(planExec, 100)); // ВИПРАВЛЕНО: надійне обмеження від 0 до 100
+        let safePlanExec = isNaN(planExec) ? 0 : Math.max(0, Math.min(planExec, 100));
         
         let eff = parsePercentValue(user.results && user.results['ефективність'] ? user.results['ефективність'] : "0");
         let dolya = parsePercentValue(user.results && user.results['доля'] ? user.results['доля'] : "0");
@@ -1346,7 +1342,6 @@
         formatPctPcs = formatPctPcs > 0 && formatPctPcs < 100 && formatPctPcs % 1 !== 0 ? parseFloat(formatPctPcs.toFixed(1)) : Math.round(formatPctPcs);
         formatPctUah = formatPctUah > 0 && formatPctUah < 100 && formatPctUah % 1 !== 0 ? parseFloat(formatPctUah.toFixed(2)) : Math.round(formatPctUah);
 
-        // ВИПРАВЛЕНО: безпечне обмеження відсотка для візуального відображення
         let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
         let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
 
@@ -1460,7 +1455,6 @@
             }).join('');
         }
 
-        // ВИПРАВЛЕНО: Використання requestAnimationFrame
         requestAnimationFrame(() => {
             document.getElementById('monthlyPlanBlock').innerHTML = monthlyPlanHtml;
             document.getElementById('goalsBlock').innerHTML = goalsBlockHtml;
