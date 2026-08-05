@@ -205,7 +205,7 @@
         
         .ach-icon { width: 100%; height: 100%; object-fit: contain; transition: 0.3s; }
         
-        /* ВИПРАВЛЕННЯ ДЛЯ НЕОТРИМАНИХ ДОСЯГНЕНЬ (сірий, ледве помітний) */
+        /* СТИЛІЗАЦІЯ НЕЗАРОБЛЕНИХ АЧІВОК (СІРИЙ ТА НАПІВПРОЗОРИЙ) */
         .ach-card.locked { opacity: 0.30; filter: grayscale(100%); cursor: default; background: transparent; border-style: dashed; }
         
         .ach-card.locked:active { transform: none; background: transparent; }
@@ -367,7 +367,6 @@
                     </svg>
                 </button>
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Мої досягнення">
-                    <!-- Заміна емодзі на іконку медалі -->
                     <img src="medal.svg" alt="medal" style="width: 24px; height: 24px; object-fit: contain;">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
@@ -529,7 +528,7 @@
 <!-- СКРИПТИ -->
 <script>
     // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbz7cjvpNvUokt7YrWvj0Dx2ZKC2Mwwh3zBkzht0ItQe0bGhPBoLuD3hivs6E6Y46PDQbw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbw4S4dG6vWVLePGkbR1NayzEIIAOJiUAJFRhhoh3WKVkXhdHyBZXKujO4mYrMVHBXprBw/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; 
     const TIME_PER_QUESTION = 25; 
 
@@ -611,7 +610,6 @@
 
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
-        // Забезпечуємо очищення від усіх пробілів, перетворення коми на крапку
         let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
         let n = parseFloat(str);
         return isNaN(n) ? "0" : n.toLocaleString('uk-UA').replace(/,/g, ' ');
@@ -1129,7 +1127,6 @@
             
             let sum = 0; let count = 0;
             for (let key in (u.results || {})) {
-                // Исключаем все ключи, которые относятся к глобальной статистике, а не к результатам тестов
                 if (['план', 'планнамісяць', 'шт', 'продановшт', 'проданошт', 'грн', 'продановгрн', 'проданогрн', 'виконанняплану', 'ефективність', 'доля'].includes(key)) continue;
 
                 let resStr = u.results[key]; let score = 0;
@@ -1313,10 +1310,8 @@
     function renderCabinetStatsAndCourses(user) {
         let res = user.results || {};
 
-        // Надійна функція для вилучення числових значень
         function safeNum(val) {
             if (val === undefined || val === null || val === "") return 0;
-            // Вирізаємо всі пробіли, замінюємо кому на крапку і залишаємо тільки цифри
             let str = String(val).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
             return parseFloat(str) || 0;
         }
@@ -1368,7 +1363,7 @@
         let targetPcs = safeNum(user.targetPcs);
         let targetUah = safeNum(user.targetUah);
         
-        // Читаємо залишок із БД. Якщо порожньо - беремо саму ціль (значить ще нічого не зроблено).
+        // Беремо залишок прямо із бд (наприклад з "Залишилось в шт"). Якщо пусте — беремо 100% цілі.
         let leftPcs = user.execPcs !== undefined && String(user.execPcs).trim() !== "" 
             ? safeNum(user.execPcs) 
             : targetPcs;
@@ -1377,17 +1372,18 @@
             ? safeNum(user.execUah) 
             : targetUah;
 
-        // Захист від від'ємних значень
-        leftPcs = Math.max(0, leftPcs);
-        leftUah = Math.max(0, leftUah);
+        // Рахуємо факт, відштовхуючись ВІД цілі та залишку (Факт = Ціль - Залишок)
+        let donePcs = targetPcs - leftPcs;
+        let doneUah = targetUah - leftUah;
 
-        // Рахуємо відсоток прогресу (наскільки ми наблизилися до цілі)
-        let pctPcs = targetPcs > 0 ? ((targetPcs - leftPcs) / targetPcs) * 100 : 0;
-        let pctUah = targetUah > 0 ? ((targetUah - leftUah) / targetUah) * 100 : 0;
+        // Рахуємо відсоток прогресу
+        let pctPcs = targetPcs > 0 ? (donePcs / targetPcs) * 100 : 0;
+        let pctUah = targetUah > 0 ? (doneUah / targetUah) * 100 : 0;
 
-        let formatPctPcs = pctPcs > 0 && pctPcs % 1 !== 0 ? parseFloat(pctPcs.toFixed(1)) : Math.round(pctPcs);
-        let formatPctUah = pctUah > 0 && pctUah % 1 !== 0 ? parseFloat(pctUah.toFixed(1)) : Math.round(pctUah);
+        let formatPctPcs = pctPcs % 1 !== 0 ? parseFloat(pctPcs.toFixed(1)) : Math.round(pctPcs);
+        let formatPctUah = pctUah % 1 !== 0 ? parseFloat(pctUah.toFixed(1)) : Math.round(pctUah);
 
+        // Обрізаємо графік на 100%, щоб він не вилізав за межі контейнера при перевиконанні
         let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
         let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
 
@@ -1708,8 +1704,8 @@
                 html += `
                 <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
                     <div class="ach-icon-wrapper">
-                        <!-- Зображення медалі замість емодзі -->
-                        <img src="medal.svg" style="width:40px; height:40px;">
+                        <!-- Звертаємось до папки Achievement у репозиторії -->
+                        <img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" style="width:40px; height:40px; object-fit:contain;">
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                         <div class="ach-card-title">${displayName}</div>
