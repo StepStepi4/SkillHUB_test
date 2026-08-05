@@ -197,21 +197,30 @@
         .ach-drawer.open { right: 0; }
         .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 24px; display: flex; align-items: center; gap: 8px; }
         
-        .ach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 16px; margin-bottom: 14px; display: flex; align-items: center; gap: 16px; cursor: pointer; box-shadow: 0 4px 12px rgba(0,0,0,0.02); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
+        /* КАРТКА АЧІВКИ (БАЗОВА) */
+        .ach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 16px; display: flex; align-items: center; gap: 20px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.03); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
         .ach-card:active:not(.zoomed) { transform: scale(0.96); background: var(--input-bg); } 
         .ach-card.zoomed { padding: 24px 20px; margin: 8px -16px 20px -16px; border-radius: 24px; box-shadow: 0 24px 48px rgba(0,0,0,0.12); border-color: var(--primary-light); background: #ffffff; gap: 20px; z-index: 10; }
-        .ach-icon-wrapper { width: 64px; height: 64px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .ach-card.zoomed .ach-icon-wrapper { width: 100px; height: 100px; }
         
-        .ach-icon { width: 100%; height: 100%; object-fit: contain; transition: 0.3s; }
+        /* РОЗМІРИ ІКОНОК: ЗАРОБЛЕНІ (ВЕЛИКІ) ТА НЕЗАРОБЛЕНІ (МАЛЕНЬКІ) */
+        .ach-icon-wrapper { width: 85px; height: 85px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
+        .ach-card.locked .ach-icon-wrapper { width: 50px; height: 50px; }
+        .ach-card.zoomed .ach-icon-wrapper { width: 120px; height: 120px; }
+        
+        /* САМА КАРТИНКА (МЕДАЛЬ) */
+        .ach-img { width: 100%; height: 100%; object-fit: contain; transition: 0.4s; }
+        .ach-card:not(.locked) .ach-img { filter: drop-shadow(0 6px 12px rgba(0,0,0,0.15)); transform: scale(1.05); } /* Зароблені - об'ємні та кольорові */
         
         /* СТИЛІЗАЦІЯ НЕЗАРОБЛЕНИХ АЧІВОК (СІРИЙ ТА НАПІВПРОЗОРИЙ) */
-        .ach-card.locked { opacity: 0.30; filter: grayscale(100%); cursor: default; background: transparent; border-style: dashed; }
-        
+        .ach-card.locked { opacity: 0.30; filter: grayscale(100%); cursor: default; background: transparent; border-style: dashed; border-color: var(--text-muted); }
         .ach-card.locked:active { transform: none; background: transparent; }
         .ach-card.locked .ach-card-desc { display: none; }
-        .ach-card-title { font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
-        .ach-card.zoomed .ach-card-title { font-size: 20px; }
+        
+        /* ШРИФТИ ДЛЯ АЧІВОК */
+        .ach-card-title { font-size: 18px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
+        .ach-card.locked .ach-card-title { font-size: 15px; } /* Менший шрифт для заблокованих */
+        .ach-card.zoomed .ach-card-title { font-size: 22px; }
+        
         .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s; }
         .ach-card.zoomed .ach-card-desc { max-height: 200px; opacity: 1; margin-top: 8px; }
 
@@ -263,7 +272,7 @@
 <!-- БОКОВЕ МЕНЮ ДОСЯГНЕНЬ -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
-    <div class="ach-title"><img src="medal.svg" style="width:28px; height:28px;"> Мої нагороди</div>
+    <div class="ach-title"><img src="medal.svg" style="width:28px; height:28px; margin-right:8px;"> Мої нагороди</div>
     <div id="achList"></div>
 </div>
 
@@ -1310,8 +1319,10 @@
     function renderCabinetStatsAndCourses(user) {
         let res = user.results || {};
 
+        // Надійна функція для вилучення числових значень
         function safeNum(val) {
             if (val === undefined || val === null || val === "") return 0;
+            // Вирізаємо всі пробіли, замінюємо кому на крапку і залишаємо тільки цифри
             let str = String(val).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
             return parseFloat(str) || 0;
         }
@@ -1363,8 +1374,7 @@
         let targetPcs = safeNum(user.targetPcs);
         let targetUah = safeNum(user.targetUah);
 
-        // Надійний розрахунок! Ми беремо факт, який вже 100% працює (factPcs та factUah),
-        // і математично обчислюємо залишок та відсоток виконання. Це найбільш безвідмовний метод.
+        // Факт
         let donePcs = factPcs;
         let doneUah = factUah;
         
@@ -1701,7 +1711,7 @@
                 <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
                     <div class="ach-icon-wrapper">
                         <!-- Звертаємось до папки Achievement у репозиторії. Якщо файл не знайдено - покаже базову медаль -->
-                        <img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" style="width:40px; height:40px; object-fit:contain;">
+                        <img src="Achievement/${safeCode}.png" onerror="this.src='medal.svg'" class="ach-img">
                     </div>
                     <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
                         <div class="ach-card-title">${displayName}</div>
