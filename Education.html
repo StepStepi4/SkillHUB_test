@@ -190,12 +190,13 @@
         .ach-icon-wrapper { width: 64px; height: 64px; flex-shrink: 0; background: transparent; display: flex; align-items: center; justify-content: center; transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .ach-card.zoomed .ach-icon-wrapper { width: 100px; height: 100px; }
         
-        /* Зображення ачівок: кольорові або сірі */
+        /* Логіка сірих та кольорових ачівок */
         .ach-icon { width: 100%; height: 100%; object-fit: contain; transition: 0.3s; }
-        .ach-card.locked { opacity: 0.7; filter: grayscale(100%); cursor: default; background: var(--input-bg); border-style: dashed; }
-        
+        .ach-card.locked .ach-icon { filter: grayscale(100%); opacity: 0.5; }
+        .ach-card.locked { background: var(--input-bg); border-style: dashed; }
         .ach-card.locked:active { transform: none; background: var(--input-bg); }
         .ach-card.locked .ach-card-desc { display: none; }
+        
         .ach-card-title { font-size: 15px; font-weight: 800; color: var(--text-main); line-height: 1.3; transition: 0.4s; }
         .ach-card.zoomed .ach-card-title { font-size: 20px; }
         .ach-card-desc { font-size: 13px; font-weight: 600; color: var(--success); line-height: 1.4; max-height: 0; opacity: 0; overflow: hidden; margin-top: 0; transition: 0.4s; }
@@ -213,8 +214,6 @@
         .admin-select:focus { background: var(--card-bg); border-color: var(--primary); box-shadow: 0 0 0 4px var(--primary-light); }
 
         .no-select { user-select: none; -webkit-user-select: none; }
-        .watermark-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 9999; display: none; overflow: hidden; opacity: 0.04; }
-        .watermark-text { font-size: 20px; font-weight: 900; color: var(--text-main); position: absolute; transform: rotate(-30deg); white-space: nowrap; }
 
         /* --- АНТИ-СУПЕР-ЧІТ ШИРМА --- */
         #antiCheatScreen {
@@ -503,10 +502,11 @@
 <script>
     // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
     const API_URL = 'https://script.google.com/macros/s/AKfycbxrQkhX7UXmpb1PCWuTd5qDFZ17zM5NwgcwbjWXxzQX2o_ZdXOicu2w6_2gRfpfJL3XPQ/exec'; 
-    // ЗБІЛЬШЕНО ВЕРСІЮ КЕШУ ДЛЯ ПРИМУСОВОГО ОНОВЛЕННЯ ДАНИХ У ВСІХ КОРИСТУВАЧІВ
-    const CACHE_KEY = 'skillhub_v7_flat'; 
+    // НОВИЙ КЛЮЧ КЕШУ ДЛЯ ПРИМУСОВОГО ОНОВЛЕННЯ ДАНИХ
+    const CACHE_KEY = 'skillhub_v8_flat'; 
     const TIME_PER_QUESTION = 25; 
 
+    // Логіка підвантаження зображень для ачівок (якщо SVG немає - ставимо емодзі)
     const ACH_EXTS = ['.svg', '.png', '.jpg', '.jpeg', '.webp', '.gif'];
     function handleAchImageError(img) {
         let extIdx = parseInt(img.getAttribute('data-ext-index')) || 0;
@@ -582,7 +582,6 @@
     function getCleanName(str) { return !str ? "" : String(str).toLowerCase().replace(/[^a-zа-яёієїґ0-9]/g, ''); }
     function escapeHTMLAttr(str) { return !str ? "" : String(str).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;"); }
     
-    // БЕЗПЕЧНИЙ ПОШУК КЛЮЧА
     function findResKey(resObj, keywords) {
         if (!resObj) return null;
         let keys = Object.keys(resObj);
@@ -593,21 +592,22 @@
         return null;
     }
 
-    // БЕЗПЕЧНЕ ЗЧИТУВАННЯ ЧИСЕЛ ІЗ ВИДАЛЕННЯМ ПРОБІЛІВ
+    // БЕЗПЕЧНЕ ЧИТАННЯ З ВИДАЛЕННЯМ ПРОБІЛІВ (Вирішує проблему "Плану на місяць")
     function getSafeNum(resObj, keyName) {
         if (!resObj || !keyName || !resObj[keyName]) return 0;
+        // Замінюємо всі види пробілів та коми
         let str = String(resObj[keyName]).replace(/[\s\u00A0\u202F\u200B]/g, '').replace(',', '.');
         let num = parseFloat(str);
         return isNaN(num) ? 0 : num;
     }
 
-    // БЕЗПЕЧНЕ ЗЧИТУВАННЯ ВІДСОТКІВ
+    // ТОЧНЕ ЧИТАННЯ ВІДСОТКІВ (Вирішує проблему 1.61% замість 161%)
     function parsePercentValue(val) {
         if (!val) return "0";
         let str = String(val).replace(/[\s\u00A0\u202F\u200B]/g, '').replace(',', '.');
         let num = parseFloat(str) || 0;
         
-        // Якщо Google Sheets віддає 1.61 замість 161%
+        // Якщо Google Sheets віддав відсоток як дріб (наприклад 1.61 замість 161%)
         if (!str.includes('%') && num > -10 && num < 10 && str.includes('.')) {
             num = num * 100;
         }
@@ -726,8 +726,10 @@
     }
 
     async function fetchFreshDataSilent() {
-        if (!navigator.onLine) return;
-        processOfflineQueue();
+        if (!navigator.onLine) return false;
+        
+        // Виносимо офлайн-чергу у фон, щоб не блокувати завантаження
+        setTimeout(processOfflineQueue, 1000);
 
         try {
             const controller = new AbortController();
@@ -735,11 +737,18 @@
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { cache: 'no-store', signal: controller.signal });
             clearTimeout(timeoutId);
 
-            const data = await response.json();
-            if (!data.error) {
-                try {
-                    localStorage.setItem(CACHE_KEY, JSON.stringify(data));
-                } catch(e) { console.warn("Не вдалося зберегти в кеш"); }
+            // Читаємо як текст, щоб обробити помилку сервера (якщо він повертає HTML)
+            const text = await response.text();
+            let data;
+            try {
+                data = JSON.parse(text);
+            } catch (err) {
+                console.error("Сервер повернув не JSON. Можливо, помилка Google Apps Script:", text.substring(0, 100));
+                return false;
+            }
+
+            if (!data.error && data.educationData) {
+                try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e){}
                 
                 db = data.educationData;
                 globalAchievements = data.achievementData || []; 
@@ -750,7 +759,7 @@
                         let myToken = localStorage.getItem('skillhub_session_token');
                         if (db.activeSessions && db.activeSessions[currentUser]) {
                             if (myToken && db.activeSessions[currentUser] !== myToken) {
-                                logout(true); return;
+                                logout(true); return false;
                             }
                         }
 
@@ -778,8 +787,10 @@
                         logout();
                     }
                 }
+                return true;
             }
         } catch(e) { console.error("Fetch Error:", e); }
+        return false;
     }
 
     async function forceRefresh() {
@@ -912,7 +923,14 @@
             err.style.display = 'none';
 
             if (!db || !db.users || db.users.length === 0) {
-                if (navigator.onLine) await fetchFreshDataSilent();
+                if (navigator.onLine) {
+                    let fetchOk = await fetchFreshDataSilent();
+                    if(!fetchOk) {
+                        err.innerText = "Сервер недоступний або відповідає задовго. Спробуйте пізніше."; err.style.display = 'block'; 
+                        if (loginBtn) { loginBtn.disabled = false; loginBtn.innerText = "УВІЙТИ"; }
+                        return;
+                    }
+                }
                 else { err.innerText = "База даних порожня. Перевірте інтернет!"; err.style.display = 'block'; return; }
             }
 
@@ -1303,7 +1321,6 @@
         let res = user.results || {};
 
         // --- 1. ПЛАН НА МІСЯЦЬ ---
-        // Використовуємо універсальний пошук ключа, якщо раптом заголовок містить пробіл
         let planTotal = getSafeNum(res, findResKey(res, ['планнамісяць', 'план']));
         let factPcs = getSafeNum(res, findResKey(res, ['проданошт', 'шт']));
         let factUah = getSafeNum(res, findResKey(res, ['проданогрн', 'грн']));
@@ -1342,18 +1359,18 @@
             </div>
         `;
 
-        // --- 2. ЗАГАЛЬНЕ ВИКОНАННЯ ЦІЛЕЙ (100% = Ціль, Залишок = те, що залишилось до 100%) ---
+        // --- 2. ЗАГАЛЬНЕ ВИКОНАННЯ ЦІЛЕЙ (100% = Ціль, Залишок = скільки залишилось) ---
         let targetPcs = getSafeNum(res, findResKey(res, ['цільшт']));
         let targetUah = getSafeNum(res, findResKey(res, ['цільгрн']));
         
         let remPcs = getSafeNum(res, findResKey(res, ['залишокшт']));
         let remUah = getSafeNum(res, findResKey(res, ['залишокгрн']));
 
-        // Розраховуємо скільки вже виконано (Ціль мінус залишок)
+        // Логіка: Виконано = Ціль мінус Залишок
         let donePcs = targetPcs - remPcs;
         let doneUah = targetUah - remUah;
         
-        // Захист від від'ємних значень, якщо виконано більше цілі
+        // Якщо виконали більше, ніж ціль (щоб графік не ламався)
         if (donePcs < 0) donePcs = targetPcs; 
         if (doneUah < 0) doneUah = targetUah;
 
@@ -1373,7 +1390,7 @@
                     <div class="apb-fill" style="width: ${Math.min(Math.max(pctPcs, 0), 100)}%; border-radius:5px; background:#0ea5e9;"></div>
                 </div>
                 <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
-                    Залишок: ${formatNumber(remPcs)}
+                    Залишок: ${formatNumber(remPcs)} / ${formatNumber(targetPcs)}
                 </div>
             </div>
             
@@ -1386,7 +1403,7 @@
                     <div class="apb-fill" style="width: ${Math.min(Math.max(pctUah, 0), 100)}%; border-radius:5px; background:#f59e0b;"></div>
                 </div>
                 <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
-                    Залишок: ${formatNumber(remUah)}
+                    Залишок: ${formatNumber(remUah)} / ${formatNumber(targetUah)}
                 </div>
             </div>
         `;
