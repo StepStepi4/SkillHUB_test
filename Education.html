@@ -141,13 +141,13 @@
         .adaptive-progress-bar { 
             position: relative; width: 100%; overflow: hidden; display: flex; 
             align-items: center; justify-content: flex-start;
-            z-index: 0; isolation: isolate; /* Фіксуємо межі для дочірніх елементів */
-            transform: translateZ(0); /* Апаратне прискорення */
+            z-index: 0; isolation: isolate; 
+            transform: translateZ(0); 
         }
         .apb-fill { 
             position: absolute; left: 0; top: 0; height: 100%; 
             transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            z-index: 1; will-change: width; /* Плавність анімації */
+            z-index: 1; will-change: width; 
         }
         .apb-text { position: relative; z-index: 2; }
 
@@ -595,7 +595,8 @@
 
     function formatNumber(num) {
         if (num === undefined || num === null || num === "") return "0";
-        let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.');
+        // Вырезаем пробелы, меняем запятую на точку и проверяем, число ли это
+        let str = String(num).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
         let n = parseFloat(str);
         return isNaN(n) ? "0" : n.toLocaleString('uk-UA');
     }
@@ -1112,11 +1113,21 @@
             
             let sum = 0; let count = 0;
             for (let key in (u.results || {})) {
+                // Исключаем все ключи, которые относятся к глобальной статистике, а не к результатам тестов
+                if (['план', 'планнамісяць', 'шт', 'продановшт', 'проданошт', 'грн', 'продановгрн', 'проданогрн', 'виконанняплану', 'ефективність', 'доля'].includes(key)) continue;
+
                 let resStr = u.results[key]; let score = 0;
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                if (match) { score = parseInt(match[2], 10) || 0; } 
-                else { let sm = String(resStr).match(/(\d+)%/); if (sm) score = parseInt(sm[1], 10) || 0; }
-                sum += score; count++;
+                if (match) { 
+                    score = parseInt(match[2], 10) || 0; 
+                    sum += score; count++;
+                } else { 
+                    let sm = String(resStr).match(/(\d+)%/); 
+                    if (sm) {
+                        score = parseInt(sm[1], 10) || 0;
+                        sum += score; count++;
+                    }
+                }
             }
             if (count > 0) { groupAvgSum += (sum / count); validAvgs++; }
         });
@@ -1284,16 +1295,26 @@
     }
 
     function renderCabinetStatsAndCourses(user) {
-        // --- 1. СТАТИСТИКА ---
-        let planTotal = parseFloat(user.results && user.results['планнамісяць'] ? user.results['планнамісяць'] : "0") || 0;
-        let factPcs = parseFloat(user.results && user.results['шт'] ? user.results['шт'] : "0") || 0;
-        let factUah = parseFloat(user.results && user.results['грн'] ? user.results['грн'] : "0") || 0;
+        let res = user.results || {};
 
-        let planExec = parsePercentValue(user.results && user.results['виконанняплану'] ? user.results['виконанняплану'] : "0");
+        // Супер-надежная функция для извлечения чисел. Убирает все пробелы и мусор.
+        function safeNum(val) {
+            if (val === undefined || val === null || val === "") return 0;
+            let str = String(val).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.').replace(/[^\d.-]/g, '');
+            return parseFloat(str) || 0;
+        }
+
+        // --- 1. СТАТИСТИКА ---
+        // Ищем данные по всем возможным названиям колонок, на случай если бэкенд закеширован
+        let planTotal = safeNum(res['планнамісяць'] || res['план']);
+        let factPcs = safeNum(res['шт'] || res['продановшт'] || res['проданошт']);
+        let factUah = safeNum(res['грн'] || res['продановгрн'] || res['проданогрн']);
+
+        let planExec = parsePercentValue(res['виконанняплану']);
         let safePlanExec = isNaN(planExec) ? 0 : Math.max(0, Math.min(planExec, 100));
         
-        let eff = parsePercentValue(user.results && user.results['ефективність'] ? user.results['ефективність'] : "0");
-        let dolya = parsePercentValue(user.results && user.results['доля'] ? user.results['доля'] : "0");
+        let eff = parsePercentValue(res['ефективність']);
+        let dolya = parsePercentValue(res['доля']);
 
         let monthlyPlanHtml = `
             <div class="stat-card-modern">
@@ -1327,23 +1348,25 @@
             </div>
         `;
 
-        let targetPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
-        let targetUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        // --- 2. ЦІЛІ І ВИКОНАННЯ ---
+        let targetPcs = safeNum(user.targetPcs);
+        let targetUah = safeNum(user.targetUah);
         
-        let leftPcsRaw = user.execPcs !== undefined && user.execPcs !== "" ? String(user.execPcs).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.') : String(targetPcs);
-        let leftUahRaw = user.execUah !== undefined && user.execUah !== "" ? String(user.execUah).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.') : String(targetUah);
+        // Автоматический расчет остатка. Если бэкенд его не передал, считаем сами (Цель - Факт)
+        let leftPcs = user.execPcs !== undefined && String(user.execPcs).trim() !== "" 
+            ? safeNum(user.execPcs) 
+            : Math.max(0, targetPcs - factPcs);
+            
+        let leftUah = user.execUah !== undefined && String(user.execUah).trim() !== "" 
+            ? safeNum(user.execUah) 
+            : Math.max(0, targetUah - factUah);
 
-        let leftPcs = parseFloat(leftPcsRaw) || 0;
-        let leftUah = parseFloat(leftUahRaw) || 0;
+        // Считаем % выполнения цели
+        let pctPcs = targetPcs > 0 ? (factPcs / targetPcs) * 100 : 0;
+        let pctUah = targetUah > 0 ? (factUah / targetUah) * 100 : 0;
 
-        let formatPctPcs = targetPcs > 0 ? ((targetPcs - leftPcs) / targetPcs) * 100 : 0;
-        let formatPctUah = targetUah > 0 ? ((targetUah - leftUah) / targetUah) * 100 : 0;
-
-        formatPctPcs = Math.max(0, formatPctPcs);
-        formatPctUah = Math.max(0, formatPctUah);
-
-        formatPctPcs = formatPctPcs > 0 && formatPctPcs % 1 !== 0 ? parseFloat(formatPctPcs.toFixed(1)) : Math.round(formatPctPcs);
-        formatPctUah = formatPctUah > 0 && formatPctUah % 1 !== 0 ? parseFloat(formatPctUah.toFixed(1)) : Math.round(formatPctUah);
+        let formatPctPcs = pctPcs > 0 && pctPcs % 1 !== 0 ? parseFloat(pctPcs.toFixed(1)) : Math.round(pctPcs);
+        let formatPctUah = pctUah > 0 && pctUah % 1 !== 0 ? parseFloat(pctUah.toFixed(1)) : Math.round(pctUah);
 
         let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
         let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
@@ -1375,13 +1398,13 @@
             </div>
         `;
 
-        let userResults = user.results || {};
+        // --- 3. ПРОГРЕС КУРСІВ ---
         let totalAssigned = 0; let totalCompleted = 0; let totalScoreSum = 0; let scoreCount = 0;
 
         Object.values(coursesMap).reduce((acc, val) => acc.concat(val), []).forEach(p => {
             totalAssigned++;
             let cleanP = getCleanName(p.product);
-            let resStr = userResults[cleanP];
+            let resStr = res[cleanP];
             if (resStr) {
                 let match = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                 let score = 0;
@@ -1421,7 +1444,7 @@
             </div>
         `;
 
-        // --- 2. КУРСИ ---
+        // --- 4. СПИСОК КУРСІВ ---
         const courseNames = Object.keys(coursesMap);
         let coursesHtml = '';
 
@@ -1437,7 +1460,7 @@
 
                 courseProducts.forEach(p => {
                     let cleanP = getCleanName(p.product);
-                    let resStr = userResults[cleanP];
+                    let resStr = res[cleanP];
                     if (resStr) {
                         let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
                         let score = 0;
