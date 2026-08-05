@@ -149,7 +149,6 @@
             transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
             z-index: 1; will-change: width; /* Плавність анімації */
         }
-        /* Якщо знадобиться текст поверх прогресс-бару, він буде мати z-index: 2 */
         .apb-text { position: relative; z-index: 2; }
 
         .stats-dashboard { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;}
@@ -399,9 +398,9 @@
         <!-- Вкладка: Статистика -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">🗓️ Поточний місяць</div>
-            <div class="stat-card-modern" id="monthlyPlanBlock"></div>
+            <div id="monthlyPlanBlock"></div>
 
-            <div class="section-title">🎯 Загальне виконання цілей</div>
+            <div class="section-title">🎯 Цілі і виконання</div>
             <div id="goalsBlock"></div>
 
             <div class="section-title">📈 Прогрес навчання</div>
@@ -514,7 +513,7 @@
 <!-- СКРИПТИ -->
 <script>
     // --- КОНСТАНТИ ТА НАЛАШТУВАННЯ ---
-    const API_URL = 'https://script.google.com/macros/s/AKfycbw4S4dG6vWVLePGkbR1NayzEIIAOJiUAJFRhhoh3WKVkXhdHyBZXKujO4mYrMVHBXprBw/exec'; 
+    const API_URL = 'https://script.google.com/macros/s/AKfycbz7cjvpNvUokt7YrWvj0Dx2ZKC2Mwwh3zBkzht0ItQe0bGhPBoLuD3hivs6E6Y46PDQbw/exec'; 
     const CACHE_KEY = 'skillhub_v4_flat'; 
     const TIME_PER_QUESTION = 25; 
 
@@ -601,7 +600,6 @@
         return isNaN(n) ? "0" : n.toLocaleString('uk-UA');
     }
 
-    // ВИПРАВЛЕНО: Більш надійна функція перетворення значень процентів з таблиці
     function parsePercentValue(val) {
         if (!val) return 0;
         let str = String(val).trim().replace(',', '.').replace(/[^\d.-]/g, ''); 
@@ -1298,70 +1296,81 @@
         let dolya = parsePercentValue(user.results && user.results['доля'] ? user.results['доля'] : "0");
 
         let monthlyPlanHtml = `
-            <div class="stat-row-modern">
-                <span class="stat-label-modern">План:</span>
-                <span class="stat-val-modern">${formatNumber(planTotal)}</span>
-            </div>
-            <div class="stat-row-modern">
-                <span class="stat-label-modern">Шт:</span>
-                <span class="stat-val-modern">${formatNumber(factPcs)}</span>
-            </div>
-            <div class="stat-row-modern" style="margin-bottom: 20px;">
-                <span class="stat-label-modern">Грн:</span>
-                <span class="stat-val-modern">${formatNumber(factUah)}</span>
-            </div>
-            <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
-                <span style="font-size:13px; font-weight:700; color:var(--text-main);">Виконання плану:</span>
-                <span style="font-size:14px; font-weight:800; color:var(--primary);">${planExec}%</span>
-            </div>
-            <div class="adaptive-progress-bar" style="height:8px; border-radius:4px; margin-bottom:24px; border:none; background:var(--input-bg);">
-                <div class="apb-fill" style="width: ${safePlanExec}%; border-radius:inherit; background:var(--primary);"></div>
-            </div>
-            <div class="stat-row-modern">
-                <span class="stat-label-modern">Ефективність:</span>
-                <span style="color:#3b82f6; background:#eff6ff; padding:2px 8px; border-radius:8px; font-weight:800; font-size:14px;">${eff}%</span>
-            </div>
-            <div class="stat-row-modern" style="margin-bottom: 0;">
-                <span class="stat-label-modern">Доля:</span>
-                <span class="stat-val-modern">${dolya}%</span>
+            <div class="stat-card-modern">
+                <div class="stat-row-modern">
+                    <span class="stat-label-modern">План:</span>
+                    <span class="stat-val-modern">${formatNumber(planTotal)}</span>
+                </div>
+                <div class="stat-row-modern">
+                    <span class="stat-label-modern">Шт:</span>
+                    <span class="stat-val-modern">${formatNumber(factPcs)}</span>
+                </div>
+                <div class="stat-row-modern" style="margin-bottom: 20px;">
+                    <span class="stat-label-modern">Грн:</span>
+                    <span class="stat-val-modern">${formatNumber(factUah)}</span>
+                </div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:8px;">
+                    <span style="font-size:14px; font-weight:700; color:var(--text-main);">Виконання плану:</span>
+                    <span style="font-size:16px; font-weight:800; color:var(--primary);">${planExec}%</span>
+                </div>
+                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:24px; border:none; background:var(--input-bg);">
+                    <div class="apb-fill" style="width: ${safePlanExec}%; border-radius:inherit; background:var(--primary);"></div>
+                </div>
+                <div class="stat-row-modern">
+                    <span class="stat-label-modern">Ефективність:</span>
+                    <span style="color:#3b82f6; font-weight:800; font-size:15px;">${eff}%</span>
+                </div>
+                <div class="stat-row-modern" style="margin-bottom: 0;">
+                    <span class="stat-label-modern">Доля:</span>
+                    <span class="stat-val-modern">${dolya}%</span>
+                </div>
             </div>
         `;
 
         let targetPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let targetUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         
-        let execPcsVal = parseFloat(String(user.execPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0; 
-        let execUahVal = parseFloat(String(user.execUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
+        let leftPcsRaw = user.execPcs !== undefined && user.execPcs !== "" ? String(user.execPcs).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.') : String(targetPcs);
+        let leftUahRaw = user.execUah !== undefined && user.execUah !== "" ? String(user.execUah).replace(/[\s\u00A0\u202F]/g, '').replace(',', '.') : String(targetUah);
 
-        let displayPcsDone = execPcsVal > 0 ? execPcsVal : (factPcs > 0 ? factPcs : 0);
-        let displayUahDone = execUahVal > 0 ? execUahVal : (factUah > 0 ? factUah : 0);
-        
-        let formatPctPcs = targetPcs > 0 ? (displayPcsDone / targetPcs) * 100 : 0;
-        let formatPctUah = targetUah > 0 ? (displayUahDone / targetUah) * 100 : 0;
+        let leftPcs = parseFloat(leftPcsRaw) || 0;
+        let leftUah = parseFloat(leftUahRaw) || 0;
 
-        formatPctPcs = formatPctPcs > 0 && formatPctPcs < 100 && formatPctPcs % 1 !== 0 ? parseFloat(formatPctPcs.toFixed(1)) : Math.round(formatPctPcs);
-        formatPctUah = formatPctUah > 0 && formatPctUah < 100 && formatPctUah % 1 !== 0 ? parseFloat(formatPctUah.toFixed(2)) : Math.round(formatPctUah);
+        let formatPctPcs = targetPcs > 0 ? ((targetPcs - leftPcs) / targetPcs) * 100 : 0;
+        let formatPctUah = targetUah > 0 ? ((targetUah - leftUah) / targetUah) * 100 : 0;
+
+        formatPctPcs = Math.max(0, formatPctPcs);
+        formatPctUah = Math.max(0, formatPctUah);
+
+        formatPctPcs = formatPctPcs > 0 && formatPctPcs % 1 !== 0 ? parseFloat(formatPctPcs.toFixed(1)) : Math.round(formatPctPcs);
+        formatPctUah = formatPctUah > 0 && formatPctUah % 1 !== 0 ? parseFloat(formatPctUah.toFixed(1)) : Math.round(formatPctUah);
 
         let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
         let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
 
         let goalsBlockHtml = `
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 12px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">ШТ: ${formatNumber(displayPcsDone)} / ${formatNumber(targetPcs)}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="font-size:13px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Ціль (шт): <span style="color:var(--text-main); font-size:15px; margin-left:4px;">${formatNumber(targetPcs)}</span></span>
                     <span style="font-size:16px; font-weight:900; color:#0ea5e9;">${formatPctPcs}%</span>
                 </div>
-                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
+                <div class="adaptive-progress-bar" style="height:12px; border-radius:6px; margin-bottom:8px; border:none; background:var(--input-bg);">
                     <div class="apb-fill" style="width: ${safeFormatPctPcs}%; border-radius:inherit; background:#0ea5e9;"></div>
+                </div>
+                <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
+                    Залишилось в шт: <span style="color:var(--text-main); font-size:14px; margin-left:2px;">${formatNumber(leftPcs)}</span>
                 </div>
             </div>
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 24px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
-                    <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">ГРН: ${formatNumber(displayUahDone)} / ${formatNumber(targetUah)}</span>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+                    <span style="font-size:13px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">Ціль (грн): <span style="color:var(--text-main); font-size:15px; margin-left:4px;">${formatNumber(targetUah)}</span></span>
                     <span style="font-size:16px; font-weight:900; color:#f59e0b;">${formatPctUah}%</span>
                 </div>
-                <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
+                <div class="adaptive-progress-bar" style="height:12px; border-radius:6px; margin-bottom:8px; border:none; background:var(--input-bg);">
                     <div class="apb-fill" style="width: ${safeFormatPctUah}%; border-radius:inherit; background:#f59e0b;"></div>
+                </div>
+                <div style="text-align:right; font-size:12px; font-weight:700; color:var(--text-muted);">
+                    Залишилось в грн: <span style="color:var(--text-main); font-size:14px; margin-left:2px;">${formatNumber(leftUah)}</span>
                 </div>
             </div>
         `;
