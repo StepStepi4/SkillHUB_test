@@ -137,9 +137,21 @@
         .tab-content { display: none; animation: fadeIn 0.3s; }
         .tab-content.active { display: block; }
 
-        /* --- ПРОГРЕС-БАР ТА СТАТИСТИКА --- */
-        .adaptive-progress-bar { position: relative; width: 100%; overflow: hidden; display: flex; align-items: center; justify-content: flex-start;}
-        .apb-fill { height: 100%; transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        /* --- ПРОГРЕС-БАР ТА СТАТИСТИКА (ОПТИМІЗОВАНО) --- */
+        .adaptive-progress-bar { 
+            position: relative; width: 100%; overflow: hidden; display: flex; 
+            align-items: center; justify-content: flex-start;
+            z-index: 0; isolation: isolate; /* Фіксуємо межі для дочірніх елементів */
+            transform: translateZ(0); /* Апаратне прискорення */
+        }
+        .apb-fill { 
+            position: absolute; left: 0; top: 0; height: 100%; 
+            transition: width 0.8s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            z-index: 1; will-change: width; /* Плавність анімації */
+        }
+        /* Якщо знадобиться текст поверх прогресс-бару, він буде мати z-index: 2 */
+        .apb-text { position: relative; z-index: 2; }
+
         .stats-dashboard { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;}
         .stat-item { flex: 1 1 45%; background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 14px; text-align: center; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0,0,0,0.02); display: flex; flex-direction: column; justify-content: center; }
         .stat-card-modern { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.03); }
@@ -355,7 +367,6 @@
                     </svg>
                 </button>
                 <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Мої досягнення">
-                    <!-- Заглушка, якщо SVG відсутній -->
                     <span style="font-size:24px;">🏅</span>
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
@@ -375,14 +386,12 @@
             </div>
         </div>
 
-        <!-- Контейнер дедлайну -->
         <div id="deadlineContainer" style="display:none;">
             <span style="font-size:20px;">⏳</span>
             <span id="deadlineText"></span>
         </div>
 
         <div class="tabs-container">
-            <!-- Виправлено: тепер ми передаємо 'this', щоб уникнути помилки event -->
             <div class="tab-btn active" onclick="switchCabinetTab('stats', this)">📊 Статистика</div>
             <div class="tab-btn" onclick="switchCabinetTab('courses', this)">📚 Навчання</div>
         </div>
@@ -562,7 +571,7 @@
     
     window.isDeadlinePassed = false;
     let isTestActive = false; 
-    let isCheatingTriggered = false; // ЗАПОБІЖНИК: щоб захист не спрацьовував двічі
+    let isCheatingTriggered = false;
     
     let currentQuestionIndex = 0;
     let totalTimeSpent = 0;
@@ -592,12 +601,18 @@
         return isNaN(n) ? "0" : n.toLocaleString('uk-UA');
     }
 
+    // ВИПРАВЛЕНО: Більш надійна функція перетворення значень процентів з таблиці
     function parsePercentValue(val) {
         if (!val) return 0;
-        let str = String(val).trim().replace(',', '.');
-        let isPercent = str.includes('%');
+        let str = String(val).trim().replace(',', '.').replace(/[^\d.-]/g, ''); // Залишаємо тільки цифри, мінус і крапку
         let num = parseFloat(str) || 0;
-        if (!isPercent && str.includes('.') && num < 1.1 && num > -1.1) {
+        let isPercent = String(val).includes('%');
+        
+        if (isPercent) {
+            return parseFloat(num.toFixed(2));
+        }
+        if (num > -2 && num < 2 && String(val).includes('.')) {
+            // На випадок, якщо з таблиці приходить 0.85 замість 85%
             return parseFloat((num * 100).toFixed(2));
         }
         return parseFloat(num.toFixed(2));
@@ -633,6 +648,7 @@
     }
 
     function switchView(viewId) {
+        // ВИПРАВЛЕНО: Використання requestAnimationFrame для плавності переходів
         requestAnimationFrame(() => {
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             document.getElementById(viewId).classList.add('active');
@@ -643,27 +659,29 @@
         });
     }
 
-    // ВИПРАВЛЕНО: тепер функція безпечно приймає event.currentTarget або знаходить вкладку сама
     function switchCabinetTab(tabName, el = null) {
-        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-        document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-        
-        if (el) {
-            el.classList.add('active');
-        } else {
-            let targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => {
-                if(tabName === 'stats' && b.innerText.includes('Статистика')) return true;
-                if(tabName === 'courses' && b.innerText.includes('Навчання')) return true;
-                return false;
-            });
-            if(targetBtn) targetBtn.classList.add('active');
-        }
+        // ВИПРАВЛЕНО: Використання requestAnimationFrame для плавності 
+        requestAnimationFrame(() => {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            if (el) {
+                el.classList.add('active');
+            } else {
+                let targetBtn = Array.from(document.querySelectorAll('.tab-btn')).find(b => {
+                    if(tabName === 'stats' && b.innerText.includes('Статистика')) return true;
+                    if(tabName === 'courses' && b.innerText.includes('Навчання')) return true;
+                    return false;
+                });
+                if(targetBtn) targetBtn.classList.add('active');
+            }
 
-        if (tabName === 'stats') {
-            document.getElementById('tabStats').classList.add('active');
-        } else {
-            document.getElementById('tabCourses').classList.add('active');
-        }
+            if (tabName === 'stats') {
+                document.getElementById('tabStats').classList.add('active');
+            } else {
+                document.getElementById('tabCourses').classList.add('active');
+            }
+        });
     }
 
     // --- ОФЛАЙН ЧЕРГА ТА API ---
@@ -1110,7 +1128,7 @@
 
         let groupAvg = validAvgs > 0 ? Math.round(groupAvgSum / validAvgs) : 0;
 
-        document.getElementById('adminStatsContainer').innerHTML = `
+        let statsHtml = `
             <div class="stats-dashboard">
                 <div class="stat-item"><div class="stat-val-modern" style="font-size:20px;">${groupPassed}/${groupAssigned}</div><div class="stat-label-modern" style="font-size:12px;">Пройдено курсів</div></div>
                 <div class="stat-item"><div class="stat-val-modern" style="font-size:20px;">${groupAvg}%</div><div class="stat-label-modern" style="font-size:12px;">Сер. бал групи</div></div>
@@ -1190,7 +1208,12 @@
         }).join('');
 
         if(users.length === 0) listHtml = '<div style="text-align:center; color:var(--text-muted); padding: 20px;">Співробітників не знайдено.</div>';
-        document.getElementById('adminUsersList').innerHTML = listHtml;
+        
+        // ВИПРАВЛЕНО: Використання requestAnimationFrame
+        requestAnimationFrame(() => {
+            document.getElementById('adminStatsContainer').innerHTML = statsHtml;
+            document.getElementById('adminUsersList').innerHTML = listHtml;
+        });
     }
 
     function viewEmployeeDetails(login) {
@@ -1273,10 +1296,12 @@
         let factUah = parseFloat(user.results && user.results['грн'] ? user.results['грн'] : "0") || 0;
 
         let planExec = parsePercentValue(user.results && user.results['виконанняплану'] ? user.results['виконанняплану'] : "0");
+        let safePlanExec = isNaN(planExec) ? 0 : Math.max(0, Math.min(planExec, 100)); // ВИПРАВЛЕНО: надійне обмеження від 0 до 100
+        
         let eff = parsePercentValue(user.results && user.results['ефективність'] ? user.results['ефективність'] : "0");
         let dolya = parsePercentValue(user.results && user.results['доля'] ? user.results['доля'] : "0");
 
-        document.getElementById('monthlyPlanBlock').innerHTML = `
+        let monthlyPlanHtml = `
             <div class="stat-row-modern">
                 <span class="stat-label-modern">План:</span>
                 <span class="stat-val-modern">${formatNumber(planTotal)}</span>
@@ -1294,7 +1319,7 @@
                 <span style="font-size:14px; font-weight:800; color:var(--primary);">${planExec}%</span>
             </div>
             <div class="adaptive-progress-bar" style="height:8px; border-radius:4px; margin-bottom:24px; border:none; background:var(--input-bg);">
-                <div class="apb-fill" style="width: ${Math.min(planExec, 100)}%; border-radius:4px; background:var(--primary);"></div>
+                <div class="apb-fill" style="width: ${safePlanExec}%; border-radius:inherit; background:var(--primary);"></div>
             </div>
             <div class="stat-row-modern">
                 <span class="stat-label-modern">Ефективність:</span>
@@ -1306,8 +1331,6 @@
             </div>
         `;
 
-        // ВИПРАВЛЕНО: Цілі тепер не віднімаються, а працюють як чисте виконання.
-        // Якщо даних у колонці Виконання немає, система використає дані з Факту.
         let targetPcs = parseFloat(String(user.targetPcs || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         let targetUah = parseFloat(String(user.targetUah || "0").replace(/[\s\u00A0\u202F]/g, '').replace(',', '.')) || 0;
         
@@ -1320,17 +1343,21 @@
         let formatPctPcs = targetPcs > 0 ? (displayPcsDone / targetPcs) * 100 : 0;
         let formatPctUah = targetUah > 0 ? (displayUahDone / targetUah) * 100 : 0;
 
-        formatPctPcs = formatPctPcs > 0 && formatPctPcs < 100 && formatPctPcs % 1 !== 0 ? formatPctPcs.toFixed(1) : Math.round(formatPctPcs);
-        formatPctUah = formatPctUah > 0 && formatPctUah < 100 && formatPctUah % 1 !== 0 ? formatPctUah.toFixed(2) : Math.round(formatPctUah);
+        formatPctPcs = formatPctPcs > 0 && formatPctPcs < 100 && formatPctPcs % 1 !== 0 ? parseFloat(formatPctPcs.toFixed(1)) : Math.round(formatPctPcs);
+        formatPctUah = formatPctUah > 0 && formatPctUah < 100 && formatPctUah % 1 !== 0 ? parseFloat(formatPctUah.toFixed(2)) : Math.round(formatPctUah);
 
-        document.getElementById('goalsBlock').innerHTML = `
+        // ВИПРАВЛЕНО: безпечне обмеження відсотка для візуального відображення
+        let safeFormatPctPcs = isNaN(formatPctPcs) ? 0 : Math.max(0, Math.min(formatPctPcs, 100));
+        let safeFormatPctUah = isNaN(formatPctUah) ? 0 : Math.max(0, Math.min(formatPctUah, 100));
+
+        let goalsBlockHtml = `
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 12px;">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
                     <span style="font-size:12px; font-weight:800; color:var(--text-muted); text-transform:uppercase;">ШТ: ${formatNumber(displayPcsDone)} / ${formatNumber(targetPcs)}</span>
                     <span style="font-size:16px; font-weight:900; color:#0ea5e9;">${formatPctPcs}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${Math.min(formatPctPcs, 100)}%; border-radius:5px; background:#0ea5e9;"></div>
+                    <div class="apb-fill" style="width: ${safeFormatPctPcs}%; border-radius:inherit; background:#0ea5e9;"></div>
                 </div>
             </div>
             <div class="stat-card-modern" style="padding: 16px; margin-bottom: 24px;">
@@ -1339,7 +1366,7 @@
                     <span style="font-size:16px; font-weight:900; color:#f59e0b;">${formatPctUah}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${Math.min(formatPctUah, 100)}%; border-radius:5px; background:#f59e0b;"></div>
+                    <div class="apb-fill" style="width: ${safeFormatPctUah}%; border-radius:inherit; background:#f59e0b;"></div>
                 </div>
             </div>
         `;
@@ -1366,8 +1393,9 @@
 
         let avgScore = scoreCount > 0 ? Math.round(totalScoreSum / scoreCount) : 0;
         let percentTotal = totalAssigned > 0 ? Math.round((totalCompleted / totalAssigned) * 100) : 0;
+        let safePercentTotal = Math.max(0, Math.min(percentTotal, 100));
 
-        document.getElementById('courseStatsBlock').innerHTML = `
+        let courseStatsHtml = `
             <div style="display:flex; gap:12px; margin-bottom:16px;">
                 <div style="flex:1; background:var(--card-bg); border:1px solid var(--border); border-radius:16px; padding:16px; text-align:center; box-shadow:0 4px 10px rgba(0,0,0,0.02);">
                     <div style="font-size:24px; font-weight:900; color:var(--text-main); line-height:1;">${totalCompleted}/${totalAssigned}</div>
@@ -1384,56 +1412,61 @@
                     <span style="font-size:22px; font-weight:900; color:var(--text-main); line-height:1;">${percentTotal}%</span>
                 </div>
                 <div class="adaptive-progress-bar" style="height:10px; border-radius:5px; margin-bottom:0; border:none; background:var(--input-bg);">
-                    <div class="apb-fill" style="width: ${percentTotal}%; border-radius:5px; background:var(--text-main);"></div>
+                    <div class="apb-fill" style="width: ${safePercentTotal}%; border-radius:inherit; background:var(--text-main);"></div>
                 </div>
             </div>
         `;
 
         // --- 2. КУРСИ ---
-        const list = document.getElementById('courseList');
         const courseNames = Object.keys(coursesMap);
+        let coursesHtml = '';
 
         if (courseNames.length === 0) {
-            list.innerHTML = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
-            return;
+            coursesHtml = '<div style="text-align:center; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); color: var(--text-muted); padding: 30px 20px; font-weight: 600;">Вам поки не призначено жодного курсу.</div>';
+        } else {
+            coursesHtml = courseNames.map(name => {
+                let parsed = formatWithCustomEmoji(name, '📘');
+                let safeName = escapeHTMLAttr(name);
+                let courseProducts = coursesMap[name] || [];
+                let cTotal = courseProducts.length;
+                let cPassed = 0;
+
+                courseProducts.forEach(p => {
+                    let cleanP = getCleanName(p.product);
+                    let resStr = userResults[cleanP];
+                    if (resStr) {
+                        let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
+                        let score = 0;
+                        if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
+                        else { let singleMatch = String(resStr).match(/(\d+)%/); if (singleMatch) score = parseInt(singleMatch[1], 10) || 0; }
+                        if (score >= 80) cPassed++;
+                    }
+                });
+
+                let isCourseDone = (cTotal > 0 && cPassed === cTotal);
+                let cardClass = isCourseDone ? "list-card completed" : "list-card";
+
+                return `
+                <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
+                    <div class="list-card-title" style="flex: 1;">
+                        <span style="font-size: 16px;">${parsed.title}</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">${cPassed} <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">/ ${cTotal}</span></div>
+                        <div class="list-card-arrow">❯</div>
+                    </div>
+                </div>
+                `;
+            }).join('');
         }
 
-        let coursesHtml = courseNames.map(name => {
-            let parsed = formatWithCustomEmoji(name, '📘');
-            let safeName = escapeHTMLAttr(name);
-            let courseProducts = coursesMap[name] || [];
-            let cTotal = courseProducts.length;
-            let cPassed = 0;
-
-            courseProducts.forEach(p => {
-                let cleanP = getCleanName(p.product);
-                let resStr = userResults[cleanP];
-                if (resStr) {
-                    let scoreMatch = String(resStr).match(/(\d+)\s*\/\s*(\d+)%(?:\/(\d+))?/);
-                    let score = 0;
-                    if (scoreMatch) score = parseInt(scoreMatch[2], 10) || 0;
-                    else { let singleMatch = String(resStr).match(/(\d+)%/); if (singleMatch) score = parseInt(singleMatch[1], 10) || 0; }
-                    if (score >= 80) cPassed++;
-                }
-            });
-
-            let isCourseDone = (cTotal > 0 && cPassed === cTotal);
-            let cardClass = isCourseDone ? "list-card completed" : "list-card";
-
-            return `
-            <div class="${cardClass}" onclick="openCourse(this.getAttribute('data-name'))" data-name="${safeName}">
-                <div class="list-card-title" style="flex: 1;">
-                    <span style="font-size: 16px;">${parsed.title}</span>
-                </div>
-                <div style="display: flex; align-items: center; gap: 10px;">
-                    <div style="font-size: 15px; font-weight: 800; color: var(--text-main);">${cPassed} <span style="font-size: 13px; font-weight: 600; color: var(--text-muted);">/ ${cTotal}</span></div>
-                    <div class="list-card-arrow">❯</div>
-                </div>
-            </div>
-            `;
-        }).join('');
-
-        list.innerHTML = coursesHtml;
+        // ВИПРАВЛЕНО: Використання requestAnimationFrame
+        requestAnimationFrame(() => {
+            document.getElementById('monthlyPlanBlock').innerHTML = monthlyPlanHtml;
+            document.getElementById('goalsBlock').innerHTML = goalsBlockHtml;
+            document.getElementById('courseStatsBlock').innerHTML = courseStatsHtml;
+            document.getElementById('courseList').innerHTML = coursesHtml;
+        });
     }
 
     // --- ДЕТАЛІ КУРСУ ТА ПРОДУКТИ ---
@@ -1442,9 +1475,7 @@
         let parsedCourse = formatWithCustomEmoji(name, '');
         document.getElementById('productViewTitle').innerText = parsedCourse.title;
 
-        const list = document.getElementById('productList');
         const products = coursesMap[name];
-
         let currentUserObj = windowViewingEmployee || db.users.find(u => u.login === currentUser);
         let userResults = currentUserObj.results || {};
 
@@ -1462,11 +1493,12 @@
         });
 
         let percent = products.length > 0 ? Math.round((completedCount / products.length) * 100) : 0;
+        let safePercent = Math.max(0, Math.min(percent, 100));
 
-        document.getElementById('courseProgressContainer').innerHTML = `
-            <div style="position:relative; width:100%; height:36px; background:var(--input-bg); border-radius:12px; overflow:hidden; margin-bottom:24px; border:1px solid var(--border); display:flex; align-items:center; justify-content:center;">
-                <div style="position:absolute; top:0; left:0; height:100%; width:${percent}%; background:var(--primary); transition:width 1s ease;"></div>
-                <div style="position:relative; z-index:2; font-weight:800; font-size:14px; color:var(--text-main); text-shadow:0 0 4px rgba(255,255,255,0.9), 0 0 2px #fff;">Прогрес: ${percent}%</div>
+        let progressHtml = `
+            <div class="adaptive-progress-bar" style="height:36px; border-radius:12px; margin-bottom:24px; border:1px solid var(--border); background:var(--input-bg); justify-content:center;">
+                <div class="apb-fill" style="width:${safePercent}%; background:var(--primary); border-radius:inherit;"></div>
+                <div class="apb-text" style="font-weight:800; font-size:14px; color:var(--text-main); text-shadow:0 0 4px rgba(255,255,255,0.9), 0 0 2px #fff;">Прогрес: ${percent}%</div>
             </div>
         `;
 
@@ -1506,7 +1538,8 @@
         }).join('');
 
         requestAnimationFrame(() => {
-            list.innerHTML = productsHtml;
+            document.getElementById('courseProgressContainer').innerHTML = progressHtml;
+            document.getElementById('productList').innerHTML = productsHtml;
             switchView('productView');
         });
     }
@@ -1514,14 +1547,11 @@
     function openProduct(index) {
         currentProductData = coursesMap[currentCourseName][index];
         let parsed = formatWithCustomEmoji(currentProductData.product, '');
-        document.getElementById('theoryTitle').innerText = parsed.title;
-
+        
         window.sessionTotalTime = 0;
         window.theoryEntryTime = Date.now();
 
-        const contentBox = document.getElementById('theoryContent');
         const rawInfo = currentProductData.info || "Опис відсутній...";
-
         const formattedHTML = rawInfo.split('\n')
             .map(line => line.trim())
             .filter(line => line.length > 0)
@@ -1549,9 +1579,12 @@
                 }
             }).join('');
 
-        contentBox.innerHTML = formattedHTML;
-        updateTestButtonState();
-        switchView('theoryView');
+        requestAnimationFrame(() => {
+            document.getElementById('theoryTitle').innerText = parsed.title;
+            document.getElementById('theoryContent').innerHTML = formattedHTML;
+            updateTestButtonState();
+            switchView('theoryView');
+        });
     }
 
     // --- СИСТЕМА ДОСЯГНЕНЬ ---
@@ -1610,40 +1643,40 @@
 
     function renderAchievements() {
         let user = db.users.find(u => u.login === currentUser);
-        let achListEl = document.getElementById('achList');
+        let achCodes = user && user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "") : [];
+        let html = '';
 
         if (!globalAchievements || globalAchievements.length === 0) {
-            achListEl.innerHTML = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">Список нагород порожній.</div>';
-            return;
+            html = '<div style="text-align:center; color:var(--text-muted); margin-top: 20px;">Список нагород порожній.</div>';
+        } else {
+            globalAchievements.forEach(achInfo => {
+                let code = String(achInfo.code).trim();
+                let isEarned = achCodes.includes(code);
+                let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нагорода";
+                let desc = (achInfo && achInfo.description) ? achInfo.description : "";
+                let safeCode = escapeHTMLAttr(code);
+
+                let stateClass = isEarned ? 'earned' : 'locked';
+                let stateText = isEarned ? '<span style="color:var(--success); font-size:12px; font-weight:800;">ОТРИМАНО</span>' : '<span style="color:var(--text-muted); font-size:12px; font-weight:700;">ЗАКРИТО</span>';
+
+                html += `
+                <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
+                    <div class="ach-icon-wrapper">
+                        <!-- Заглушка емодзі для концепту без SVG файлів -->
+                        <span style="font-size:40px;">🏅</span>
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
+                        <div class="ach-card-title">${displayName}</div>
+                        <div class="ach-card-desc">${desc}</div>
+                        <div style="margin-top:6px;">${stateText}</div>
+                    </div>
+                </div>`;
+            });
         }
-
-        let achCodes = user && user.achievements ? String(user.achievements).split(',').map(s => s.trim()).filter(s => s !== "") : [];
-
-        let html = '';
-        globalAchievements.forEach(achInfo => {
-            let code = String(achInfo.code).trim();
-            let isEarned = achCodes.includes(code);
-            let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : "Нагорода";
-            let desc = (achInfo && achInfo.description) ? achInfo.description : "";
-            let safeCode = escapeHTMLAttr(code);
-
-            let stateClass = isEarned ? 'earned' : 'locked';
-            let stateText = isEarned ? '<span style="color:var(--success); font-size:12px; font-weight:800;">ОТРИМАНО</span>' : '<span style="color:var(--text-muted); font-size:12px; font-weight:700;">ЗАКРИТО</span>';
-
-            html += `
-            <div class="ach-card ${stateClass}" onclick="if('${stateClass}' === 'earned') toggleAchZoom(this)">
-                <div class="ach-icon-wrapper">
-                    <!-- Заглушка емодзі для концепту без SVG файлів -->
-                    <span style="font-size:40px;">🏅</span>
-                </div>
-                <div style="display: flex; flex-direction: column; justify-content: center; flex: 1;">
-                    <div class="ach-card-title">${displayName}</div>
-                    <div class="ach-card-desc">${desc}</div>
-                    <div style="margin-top:6px;">${stateText}</div>
-                </div>
-            </div>`;
+        
+        requestAnimationFrame(() => {
+            document.getElementById('achList').innerHTML = html;
         });
-        achListEl.innerHTML = html;
     }
 
     function closeModals() {
@@ -1711,7 +1744,7 @@
         if (index >= parsedQuestions.length) { submitTest(); return; }
 
         let q = parsedQuestions[index];
-        document.getElementById('testHeaderTitle').innerText = `Питання ${index + 1} з ${parsedQuestions.length}`;
+        let titleText = `Питання ${index + 1} з ${parsedQuestions.length}`;
 
         let answersHtml = q.answers.map((ans, aIndex) => {
             let checkedAttr = ans.selected ? 'checked' : '';
@@ -1724,12 +1757,16 @@
         }).join('');
 
         let hint = q.type === 'checkbox' ? `<span style="font-size:13px; font-weight:500; color:var(--text-muted); display:block; margin-top:6px;">(Множинний вибір)</span>` : '';
+        let containerHtml = `<div class="question-card"><div class="question-title">${q.text} ${hint}</div>${answersHtml}</div>`;
 
-        document.getElementById('testContainer').innerHTML = `<div class="question-card"><div class="question-title">${q.text} ${hint}</div>${answersHtml}</div>`;
+        requestAnimationFrame(() => {
+            document.getElementById('testHeaderTitle').innerText = titleText;
+            document.getElementById('testContainer').innerHTML = containerHtml;
 
-        let btn = document.getElementById('submitTestBtn');
-        if (index === parsedQuestions.length - 1) { btn.innerText = "ЗАВЕРШИТИ ТЕСТ"; btn.onclick = () => submitTest(); } 
-        else { btn.innerText = "НАСТУПНЕ ПИТАННЯ"; btn.onclick = () => nextQuestion(); }
+            let btn = document.getElementById('submitTestBtn');
+            if (index === parsedQuestions.length - 1) { btn.innerText = "ЗАВЕРШИТИ ТЕСТ"; btn.onclick = () => submitTest(); } 
+            else { btn.innerText = "НАСТУПНЕ ПИТАННЯ"; btn.onclick = () => nextQuestion(); }
+        });
 
         timeRemaining = TIME_PER_QUESTION; 
         updateTimerUI();
@@ -1823,17 +1860,18 @@
             localStorage.setItem(CACHE_KEY, JSON.stringify(fullCache));
         } catch(e) { console.warn("Не вдалося оновити кеш після тесту"); }
 
-        document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
-        document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
-        document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
-        document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
-
-        let actionHtml = '';
-        if (passed) actionHtml = `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`;
-        else actionHtml = `<button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button><button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>`;
-        document.getElementById('resultActionContainer').innerHTML = actionHtml;
-
-        switchView('resultView');
+        let actionHtml = passed 
+            ? `<button class="btn btn-glow" onclick="openCourse(this.getAttribute('data-course'))" data-course="${escapeHTMLAttr(currentCourseName)}">ПЕРЕЙТИ ДАЛІ</button>`
+            : `<button class="btn btn-glow" style="margin-bottom: 16px;" onclick="retryTest()">СПРОБУВАТИ ЩЕ РАЗ</button><button class="btn btn-secondary" style="border-radius: 14px;" onclick="repeatTheory()">ПОВТОРИТИ ТЕОРІЮ</button>`;
+        
+        requestAnimationFrame(() => {
+            document.getElementById('resultEmoji').innerText = passed ? '🏆' : '📝';
+            document.getElementById('resultTitle').innerText = passed ? 'Тест складено!' : 'Потрібно повторити';
+            document.getElementById('resultTitle').style.color = passed ? 'var(--success)' : 'var(--danger)';
+            document.getElementById('resultSubtitle').innerHTML = `Твій результат: <strong style="font-size:22px; color: var(--text-main); margin: 0 4px;">${totalScore}%</strong><br><span style="font-size:14px; margin-top: 6px; display:inline-block;">(${correctCount} з ${parsedQuestions.length} правильних)</span>`;
+            document.getElementById('resultActionContainer').innerHTML = actionHtml;
+            switchView('resultView');
+        });
 
         if (navigator.onLine) {
             try {
