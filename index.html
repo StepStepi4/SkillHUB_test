@@ -327,6 +327,20 @@
         
         .discount-tag-icon { position: absolute; bottom: -22px; right: -10px; width: 26px; height: 26px; transform-origin: top center; animation: swayTag 3.5s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 10; pointer-events: none; }
         
+        /* АНИМАЦИЯ ОГНЯ */
+        @keyframes flicker {
+            0%, 100% { transform: scale(1) rotate(-3deg); filter: drop-shadow(0 0 3px rgba(245, 158, 11, 0.6)); }
+            25% { transform: scale(1.15) rotate(3deg); filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.8)); }
+            50% { transform: scale(1.05) rotate(-1deg); filter: drop-shadow(0 0 4px rgba(245, 158, 11, 0.7)); }
+            75% { transform: scale(1.1) rotate(4deg); filter: drop-shadow(0 0 7px rgba(239, 68, 68, 0.9)); }
+        }
+        .animated-fire {
+            display: inline-block;
+            animation: flicker 1.2s infinite alternate ease-in-out;
+            transform-origin: bottom center;
+            margin-right: 4px;
+        }
+
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
         #descModal { z-index: 100030; }
@@ -397,14 +411,6 @@
         .top-search-clear { position: absolute; right: 10px; width: 24px; height: 24px; background: var(--text-muted); color: white; border: none; border-radius: 50%; font-size: 16px; font-weight: bold; line-height: 1; cursor: pointer; display: none; align-items: center; justify-content: center; padding-bottom: 2px; }
         .top-search-clear:active { background: var(--danger); }
         .top-search-close { background: transparent; border: none; color: var(--text-muted); font-weight: 600; font-size: 14px; cursor: pointer; padding: 10px 5px; }
-        
-        /* КНОПКА ВСТАНОВЛЕННЯ PWA */
-        .install-btn-highlight { border: 2px solid var(--rozetka-green-light) !important; background: var(--primary-light) !important; }
-        
-        /* ІНСТРУКЦІЯ ДЛЯ iOS */
-        .ios-install-prompt { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--card-bg); border-radius: 16px; padding: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); z-index: 999999; text-align: center; transition: bottom 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); display: flex; flex-direction: column; align-items: center; border: 1px solid var(--border); }
-        .ios-install-prompt.show { bottom: 20px; }
-        .ios-share-icon { width: 24px; height: 24px; display: inline-block; vertical-align: middle; margin: 0 4px; }
     </style>
 </head>
 <body>
@@ -491,19 +497,7 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
-        
         <div class="list-group">
-            <!-- КНОПКА ВСТАНОВЛЕННЯ PWA (схована за замовчуванням) -->
-            <button class="list-item install-btn-highlight" id="installAppBtn" style="display:none;" onclick="window.triggerPWAInstall()">
-                <div class="list-item-content">
-                    <span class="list-item-title" style="color: var(--rozetka-green-dark);">📱 Встановити додаток</span>
-                    <span class="list-item-subtitle">Швидкий доступ з робочого столу</span>
-                </div>
-                <div class="list-item-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5; color:var(--rozetka-green-dark);"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                </div>
-            </button>
-
             <div class="list-item">
                 <div class="list-item-content">
                     <span class="list-item-title">Темна тема</span>
@@ -595,17 +589,7 @@
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
 </div>
 
-<!-- ПОПАП ІНСТРУКЦІЇ ДЛЯ iOS -->
-<div id="iosInstallPrompt" class="ios-install-prompt">
-    <div style="font-size: 16px; font-weight: 700; color: var(--text-main); margin-bottom: 8px;">Встановити SkillHUB Assistant</div>
-    <div style="font-size: 13px; color: var(--text-muted); line-height: 1.4; margin-bottom: 16px;">
-        Щоб встановити додаток на iPhone, натисніть іконку <svg class="ios-share-icon" viewBox="0 0 50 50" fill="currentColor"><path d="M25 2.148L13.848 13.3l1.414 1.414 8.738-8.738v27.027h2V5.977l8.738 8.738 1.414-1.414L25 2.148zM9 20v26h32V20h-2v24H11V20H9z"/></svg> внизу екрану, а потім оберіть <strong>«На екрані "Початок"»</strong> (Add to Home Screen).
-    </div>
-    <button class="btn btn-primary" style="padding: 10px; font-size: 14px;" onclick="document.getElementById('iosInstallPrompt').classList.remove('show')">Зрозуміло</button>
-</div>
-
 <div id="klochCalcModal" class="modal">
-    <!-- ... (код калькулятора без змін) ... -->
     <div class="modal-content">
         <div class="modal-header" style="align-items: flex-start; margin-bottom: 20px;">
             <div style="display:flex; flex-direction:column;">
@@ -697,7 +681,6 @@
 </div>
 
 <div id="certManualModal" class="modal">
-    <!-- ... (довідка без змін) ... -->
     <div class="modal-content" style="max-height: 90vh;">
         <div class="modal-header">
             <div class="modal-title" style="width: 100%;">Довідка</div>
@@ -754,7 +737,6 @@
 </div>
 
 <div id="sellerModal" class="modal">
-    <!-- ... (форма продавця без змін) ... -->
     <div class="modal-content">
         <div class="modal-header">
             <div class="modal-title" style="color: var(--text-main); width: 100%;">Зміна продавця</div>
@@ -821,52 +803,6 @@
     
     // Тимчасовий масив для калькулятора Клочківської
     window.klochList = [];
-
-    // --- ЛОГІКА ВСТАНОВЛЕННЯ PWA ---
-    let deferredPrompt;
-    window.addEventListener('beforeinstallprompt', (e) => {
-        // Зберігаємо подію, щоб викликати її пізніше
-        e.preventDefault();
-        deferredPrompt = e;
-        // Показуємо кнопку в Налаштуваннях (Android/Chrome)
-        document.getElementById('installAppBtn').style.display = 'flex';
-    });
-
-    window.triggerPWAInstall = async function() {
-        // Логіка для Android
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            const { outcome } = await deferredPrompt.userChoice;
-            if (outcome === 'accepted') {
-                document.getElementById('installAppBtn').style.display = 'none';
-            }
-            deferredPrompt = null;
-            return;
-        }
-        
-        // Логіка для iOS (Safari)
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isStandalone = window.navigator.standalone === true;
-        
-        if (isIOS && !isStandalone) {
-            document.getElementById('iosInstallPrompt').classList.add('show');
-            setTimeout(() => {
-                document.getElementById('iosInstallPrompt').classList.remove('show');
-            }, 6000);
-        } else {
-            alert("Додаток вже встановлено або Ваш браузер не підтримує швидке встановлення. На iOS скористайтеся кнопкою «Поділитися» -> «На екран Початок».");
-        }
-    };
-
-    // Перевіряємо чи це iOS при старті, щоб показати кнопку-інструкцію
-    setTimeout(() => {
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isStandalone = window.navigator.standalone === true;
-        if (isIOS && !isStandalone) {
-            document.getElementById('installAppBtn').style.display = 'flex';
-        }
-    }, 1000);
-    // --------------------------------
 
     // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
@@ -937,7 +873,6 @@
         }
     });
 
-    // ОНОВЛЕНИЙ API URL
     const API_URL = 'https://script.google.com/macros/s/AKfycbxug2dwzvE1ZpypySq6NgTkRor_KjI2nhVw-VwxJFICor2TRivgLbd3zxArqDiI045YMw/exec';
     
     const CACHE_KEY = 'skillhub_v4_flat'; 
@@ -2101,7 +2036,7 @@
                 let discountKeys = db.categories.map(c => c.ua).filter(ua => ua && ua.toLowerCase().startsWith('уцінка')).sort();
                 let optionsHtml = discountKeys.map(k => `<option value="${window.escapeHTML(k)}">${window.escapeHTML(k)}</option>`).join('');
 
-                let newSiteUrl = "https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BD%D0%BA%D0%B0?authuser=0";
+                let newSiteUrl = "https://sites.google.com/view/skillhub-kh-reg/%D0%B3%D0%BE%D0%BB%D0%BE%D0%B2%D0%BD%D0%B0/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%96%D0%BD%D1%81%D1%82%D1%80%D1%83%D0%BA%D1%86%D1%96%D1%97/%D1%83%D1%86%D1%96%D0%BA%D0%B0?authuser=0";
                 
                 discountHtml = `
                 <div id="discountReasonBlock" style="margin-top: 16px; margin-bottom: 8px;">
@@ -2438,7 +2373,7 @@
             
         let descHtml = s.descToggleHTML || '';
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
-        let focusHtml = (s.isFocus && !isSelected) ? `<span style="color:#f59e0b; font-size:16px; flex-shrink:0; line-height:1.2;">🔥</span>` : '';
+        let focusHtml = (s.isFocus && !isSelected) ? `<span class="animated-fire">🔥</span>` : '';
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}">${s.brand}</div>` : '';
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
 
