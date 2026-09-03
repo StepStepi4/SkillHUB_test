@@ -116,23 +116,6 @@
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
         
-        .fav-btn-top {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: 50%;
-            width: 38px;
-            height: 38px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            font-size: 18px;
-            cursor: pointer;
-            transition: 0.2s;
-            flex-shrink: 0;
-        }
-        .fav-btn-top:active { transform: scale(0.85); background: var(--input-bg); }
-
         .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; }
         .status-badge { 
             display: flex; align-items: center; gap: 6px; padding: 6px 10px; 
@@ -373,19 +356,6 @@
             margin-right: 5px;
         }
 
-        /* СТИЛІ ДЛЯ ВИБОРУ ОБРАНОГО */
-        .fav-item-row {
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;
-            border-bottom: 1px solid var(--border); background: var(--card-bg); cursor: pointer;
-        }
-        .fav-item-row:last-child { border-bottom: none; }
-        .fav-checkbox {
-            width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--text-muted);
-            display: flex; align-items: center; justify-content: center; transition: 0.2s;
-        }
-        .fav-checkbox.checked { background: var(--primary); border-color: var(--primary); }
-        .fav-checkbox.checked::after { content: '✓'; color: white; font-size: 14px; font-weight: bold; }
-
         #rezervItemModal { z-index: 100010; }
         #sellerModal { z-index: 100020; }
         #descModal { z-index: 100030; }
@@ -480,11 +450,9 @@
     
     <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch;">
         <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0; flex: 1;">
-            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between;">
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0;">
+            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: flex-start;">
                 <h2 id="headerTitle" style="line-height: 1;">SkillHUB Assistant</h2>
-                <!-- КНОПКА ОБРАНОГО В КУТКУ -->
-                <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">⭐</button>
             </div>
             <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
                 Харківський регіон <span style="font-size: 14px; margin-left: 4px;">🫶</span>
@@ -544,19 +512,7 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
-        
         <div class="list-group">
-            <!-- КНОПКА ВИБОРУ ОБРАНОГО -->
-            <button class="list-item" onclick="window.openFavoritesSelectionModal()">
-                <div class="list-item-content">
-                    <span class="list-item-title" style="color: #f59e0b;">⭐ Обране (Швидке меню)</span>
-                    <span class="list-item-subtitle">Виберіть функції для швидкого доступу</span>
-                </div>
-                <div class="list-item-arrow">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </div>
-            </button>
-
             <div class="list-item">
                 <div class="list-item-content">
                     <span class="list-item-title">Темна тема</span>
@@ -608,14 +564,6 @@
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
                 </div>
             </button>
-
-            <!-- КНОПКА СКИДАННЯ НАЛАШТУВАНЬ -->
-            <button class="list-item" onclick="window.factoryReset()">
-                <div class="list-item-content">
-                    <span class="list-item-title" style="color: var(--danger);">⚠️ Скинути налаштування</span>
-                    <span class="list-item-subtitle">Повернути додаток до заводського стану</span>
-                </div>
-            </button>
         </div>
 
         <div style="text-align: center; color: var(--text-muted); font-size: 12px; margin-top: 20px; display: flex; flex-direction: column; align-items: center; gap: 6px;">
@@ -654,33 +602,6 @@
 
 <div class="floating-top" id="scrollTopBtn">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>
-</div>
-
-<!-- МОДАЛКА: НАЛАШТУВАННЯ ОБРАНОГО -->
-<div id="favSelectModal" class="modal">
-    <div class="modal-content" style="max-height: 85vh;">
-        <div class="modal-header">
-            <div class="modal-title">Вибір обраного</div>
-            <button class="modal-close" onclick="window.closeModalBase('favSelectModal')"></button>
-        </div>
-        <div class="modal-body list-group" id="favSelectBody" style="padding: 0; margin-bottom: 20px;">
-            <!-- Чекбокси завантажуватимуться сюди -->
-        </div>
-        <button class="btn btn-primary" onclick="window.saveFavorites()">Зберегти обране</button>
-    </div>
-</div>
-
-<!-- МОДАЛКА: ШВИДКЕ МЕНЮ (ОБРАНЕ) -->
-<div id="favQuickMenuModal" class="modal">
-    <div class="modal-content" style="max-height: 85vh;">
-        <div class="modal-header">
-            <div class="modal-title">⭐ Швидкий доступ</div>
-            <button class="modal-close" onclick="window.closeModalBase('favQuickMenuModal')"></button>
-        </div>
-        <div class="modal-body list-group" id="favQuickMenuBody" style="padding: 0; margin-bottom: 0;">
-            <!-- Кнопки завантажуватимуться сюди -->
-        </div>
-    </div>
 </div>
 
 <div id="klochCalcModal" class="modal">
@@ -729,7 +650,8 @@
                 <button style="background: transparent; border: none; color: var(--danger); font-size: 12px; font-weight: 600; cursor: pointer; padding: 4px 8px;" onclick="window.clearKlochList()">Очистити</button>
             </div>
 
-            <div id="klochListContainer" style="display: flex; flex-direction: column; gap: 8px;"></div>
+            <div id="klochListContainer" style="display: flex; flex-direction: column; gap: 8px;">
+                </div>
 
             <div style="display: flex; gap: 8px; margin-top: 8px;">
                 <div style="flex: 1; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); padding: 12px 16px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 4px 12px rgba(0,0,0,0.05);">
@@ -889,15 +811,12 @@
 <script>
     window.currentDevicePrice = 0; 
     
-    // Глобальні змінні для роботи з модальним вікном уцінки
     window.currentRezervItem = null;
     window.currentRezervPrice = 0;
     window.currentRezervIsDiscount = false;
     
-    // Тимчасовий масив для калькулятора Клочківської
     window.klochList = [];
 
-    // --- ФУНКЦІЯ МАСШТАБУВАННЯ ШРИФТІВ ---
     window.updateFontScale = function(scale) {
         localStorage.setItem('skillhub_font_scale', scale);
         let style = document.getElementById('dynamicFontScale');
@@ -929,18 +848,15 @@
             .sc-brand { font-size: calc(10px * ${scale}) !important; }
             .status-badge { font-size: calc(11px * ${scale}) !important; }
             .ua-name { font-size: calc(20px * ${scale}) !important; }
-            /* Масштабування нижньої панелі */
             .nav-item span { font-size: calc(11px * ${scale}) !important; }
             .nav-icon { width: calc(24px * ${scale}) !important; height: calc(24px * ${scale}) !important; }
             .nav-icon.icon-bulb { width: calc(28px * ${scale}) !important; height: calc(28px * ${scale}) !important; }
         `;
     };
 
-    // Ініціалізація масштабу шрифтів
     let savedFontScale = localStorage.getItem('skillhub_font_scale') || "1";
     document.getElementById('fontSizeSlider').value = savedFontScale;
     window.updateFontScale(savedFontScale);
-    // --------------------------------------
 
     function safeUpdateHTML(elementOrId, newHtml) {
         let el = typeof elementOrId === 'string' ? document.getElementById(elementOrId) : elementOrId;
@@ -966,7 +882,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxug2dwzvE1ZpypySq6NgTkRor_KjI2nhVw-VwxJFICor2TRivgLbd3zxArqDiI045YMw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbzFxZ5SGIMwirLh4QNgqxnIHYrj1Wmia8G2wTU0lGkJwKVRpC5TDsFlhtbkZzI-yp30rA/exec';
     
     // Обновили ключ кеша, чтобы пользователи сразу получили новую версию без PWA
     const CACHE_KEY = 'skillhub_v5_flat'; 
@@ -1099,7 +1015,6 @@
 
     const brandRegex = /^\[(.*?)\]/;
 
-    // ЗМІНЕНО: Відображення кнопки швидкого меню тільки на головній вкладці
     window.switchTab = function(tabId) {
         document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
@@ -1111,12 +1026,6 @@
 
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
         document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
-        
-        // Показуємо кнопку обраного тільки на сторінці пошуку
-        const topFavBtn = document.getElementById('topFavBtn');
-        if (topFavBtn) {
-            topFavBtn.style.display = (tabId === 'tab-search') ? 'flex' : 'none';
-        }
 
         if (isCompareMode) toggleCompareMode();
         if (isModalCompareMode) toggleModalCompareMode();
@@ -1301,7 +1210,7 @@
             window.scrollTo(0, savedScrollY);
         }
         
-        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal' || modalId === 'klochCalcModal' || modalId === 'favSelectModal' || modalId === 'favQuickMenuModal') {
+        if (modalId === 'descModal' || modalId === 'rezervItemModal' || modalId === 'sellerModal' || modalId === 'certManualModal' || modalId === 'ratingModal' || modalId === 'klochCalcModal') {
             if (isModalCompareMode) {
                 isModalCompareMode = false;
                 modalCompareSelection = [];
@@ -1324,7 +1233,7 @@
     }
 
     function checkOpenModals() {
-        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal', 'favSelectModal', 'favQuickMenuModal'];
+        const modals = ['descModal', 'compareModal', 'rezervItemModal', 'galleryModal', 'sellerModal', 'certManualModal', 'ratingModal', 'klochCalcModal'];
         for (let id of modals) {
             let el = document.getElementById(id);
             if (el && el.classList.contains('show')) return true;
@@ -1452,101 +1361,36 @@
         txt.innerText = text;
     }
 
-    // --- ЛОГІКА ДЛЯ ОБРАНОГО ТА SKILLHUB ---
-    
-    // Функція генерації дії кнопки SkillHUB
-    function getSkillHubActionStr(btn, fromModal = false) {
-        let linkStr = String(btn.link).trim();
-        let nm = String(btn.name).toLowerCase();
-        let prefix = fromModal ? "window.closeModalBase('favQuickMenuModal'); " : "";
-        
-        if (linkStr === "Calculator_kloch") return `onclick="${prefix}window.openKlochCalc()"`;
-        if (linkStr === "--") return `onclick="${prefix}window.openSellerModal()"`;
-        if (linkStr === "%") return `onclick="${prefix}window.openRatingModal()"`;
-        if (linkStr === "@@") return `onclick="${prefix}window.openModalBase('certManualModal')"`;
-        if (linkStr !== "" && linkStr !== "#") return `onclick="${prefix}window.open('${linkStr}', '_blank')"`;
-        
-        if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) return `onclick="${prefix}window.openSellerModal()"`;
-        if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) return `onclick="${prefix}window.openModalBase('certManualModal')"`;
-        if (nm.includes("рейтинг")) return `onclick="${prefix}window.openRatingModal()"`;
-        if (nm.includes("калькулятор") || nm.includes("клочківськ")) return `onclick="${prefix}window.openKlochCalc()"`;
-        
-        return "";
-    }
-
-    window.getFavorites = function() {
-        try { return JSON.parse(localStorage.getItem('skillhub_favs') || '[]'); } 
-        catch(e) { return []; }
-    };
-
-    window.openFavoritesSelectionModal = function() {
-        if (!db.skillHubButtons) return;
-        let favs = window.getFavorites();
-        let html = db.skillHubButtons.map((btn, idx) => {
-            let isChecked = favs.includes(btn.name) ? 'checked' : '';
-            return `
-            <div class="fav-item-row" onclick="this.querySelector('.fav-checkbox').classList.toggle('checked')">
-                <div style="display:flex; align-items:center; gap: 12px;">
-                    <div style="font-size:24px;">${window.renderIcon(btn.emoji)}</div>
-                    <div style="font-size:14px; font-weight:600; color:var(--text-main);">${btn.name}</div>
-                </div>
-                <div class="fav-checkbox ${isChecked}" data-name="${window.escapeForJS(btn.name)}"></div>
-            </div>`;
-        }).join('');
-        
-        safeUpdateHTML('favSelectBody', html);
-        window.openModalBase('favSelectModal');
-    };
-
-    window.saveFavorites = function() {
-        let selected = [];
-        document.querySelectorAll('#favSelectBody .fav-checkbox.checked').forEach(el => {
-            selected.push(el.getAttribute('data-name'));
-        });
-        localStorage.setItem('skillhub_favs', JSON.stringify(selected));
-        window.closeModalBase('favSelectModal');
-        alert("Обране успішно збережено!");
-    };
-
-    window.openFavoritesQuickMenu = function() {
-        if (!db.skillHubButtons) return;
-        let favs = window.getFavorites();
-        
-        if (favs.length === 0) {
-            safeUpdateHTML('favQuickMenuBody', `<div style="padding: 30px 20px; text-align: center; color: var(--text-muted); font-size: 14px; font-weight: 600;">Ви ще не додали жодної функції в обране.<br><br>Зробити це можна у вкладці "Опції" ⚙️</div>`);
-            window.openModalBase('favQuickMenuModal');
-            return;
-        }
-
-        let html = db.skillHubButtons
-            .filter(btn => favs.includes(btn.name))
-            .map(btn => {
-                let actionStr = getSkillHubActionStr(btn, true);
-                return `
-                <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
-                    <div style="font-size: 28px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin-right: 12px;">
-                        ${window.renderIcon(btn.emoji)}
-                    </div>
-                    <div class="list-item-content" style="flex:1; text-align:left;">
-                        <span class="list-item-title">${btn.name}</span>
-                        <span class="list-item-subtitle">${btn.desc}</span>
-                    </div>
-                    <div class="list-item-arrow" style="margin-left: auto;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                    </div>
-                </button>`;
-            }).join('');
-            
-        safeUpdateHTML('favQuickMenuBody', html);
-        window.openModalBase('favQuickMenuModal');
-    };
-
     window.renderSkillHubTab = function() {
         const container = document.getElementById('dynamicSkillHubButtons');
         if (!container || !db.skillHubButtons) return;
 
         let html = db.skillHubButtons.map(btn => {
-            let actionStr = getSkillHubActionStr(btn, false);
+            let actionStr = '';
+            let linkStr = String(btn.link).trim();
+            let nm = String(btn.name).toLowerCase();
+            
+            if (linkStr === "Calculator_kloch") {
+                actionStr = `onclick="window.openKlochCalc()"`;
+            } else if (linkStr === "--") {
+                actionStr = `onclick="window.openSellerModal()"`;
+            } else if (linkStr === "%") {
+                actionStr = `onclick="window.openRatingModal()"`;
+            } else if (linkStr === "@@") {
+                actionStr = `onclick="window.openModalBase('certManualModal')"`;
+            } else if (linkStr !== "" && linkStr !== "#") {
+                actionStr = `onclick="window.open('${linkStr}', '_blank')"`;
+            } else {
+                if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) {
+                    actionStr = `onclick="window.openSellerModal()"`;
+                } else if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) {
+                    actionStr = `onclick="window.openModalBase('certManualModal')"`;
+                } else if (nm.includes("рейтинг")) {
+                    actionStr = `onclick="window.openRatingModal()"`;
+                } else if (nm.includes("калькулятор") || nm.includes("клочківськ")) {
+                    actionStr = `onclick="window.openKlochCalc()"`;
+                }
+            }
 
             return `
             <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
@@ -1564,14 +1408,6 @@
         }).join('');
         
         safeUpdateHTML(container, html);
-    };
-
-    // СКИДАННЯ НАЛАШТУВАНЬ
-    window.factoryReset = function() {
-        if(confirm("Ви впевнені, що хочете повністю скинути всі налаштування, кеш додатку та збережені дані? Це поверне додаток до початкового стану.")) {
-            localStorage.clear();
-            window.location.reload();
-        }
     };
 
     window.openKlochCalc = function() {
@@ -1889,11 +1725,6 @@
         }
         // Моментально ховаємо лоадер
         document.getElementById('appLoader').classList.add('hidden');
-        
-        // Показуємо кнопку обраного якщо ми на головній
-        if (document.getElementById('tab-search').classList.contains('active')) {
-            document.getElementById('topFavBtn').style.display = 'flex';
-        }
     }
 
     window.saveDefaultStore = function() {
