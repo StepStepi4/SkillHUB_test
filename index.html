@@ -111,30 +111,54 @@
         }
         .fav-btn-top:active { transform: scale(0.85); background: var(--input-bg); }
 
-        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; }
-        .status-badge { 
-            display: flex; align-items: center; gap: 6px; padding: 6px 10px; 
-            background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
-            font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; 
-            transition: all 0.3s ease;
+        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; min-height: 30px; align-items: center; }
+        
+        /* КРУГОВИЙ ІНДИКАТОР ЗАВАНТАЖЕННЯ */
+        .progress-ring {
+            width: 26px;
+            height: 26px;
+            position: relative;
         }
-        .dot { width: 8px; height: 8px; border-radius: 50%; }
-        .dot.green { background: #34d399; }
-        .dot.red { background: var(--danger); }
-        .dot.yellow { background: #fbbf24; }
+        .progress-ring svg {
+            width: 100%;
+            height: 100%;
+            transform: rotate(-90deg);
+        }
+        .progress-ring .bg-ring {
+            stroke: var(--border);
+            stroke-width: 3;
+            fill: none;
+        }
+        .progress-ring .fill-ring {
+            stroke: #0ea5e9; /* Блакитний колір, як на скріншоті */
+            stroke-width: 3;
+            fill: none;
+            stroke-dasharray: 81.68; /* 2 * pi * 13 */
+            stroke-linecap: round;
+            transition: stroke-dashoffset 0.2s ease-out;
+        }
+        .progress-ring-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 8px;
+            font-weight: 800;
+            color: #0ea5e9;
+        }
+        
+        .ok-text-pulse {
+            color: var(--primary);
+            font-size: 15px;
+            font-weight: 900;
+            animation: pulse-text-green 2s infinite;
+            letter-spacing: 0.5px;
+        }
 
-        @keyframes pulse-yellow {
-            0% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(251, 191, 36, 0); }
+        @keyframes pulse-text-green {
+            0%, 100% { opacity: 1; transform: scale(1); filter: drop-shadow(0 0 2px rgba(16,185,129,0.5)); }
+            50% { opacity: 0.7; transform: scale(0.95); filter: drop-shadow(0 0 0px rgba(16,185,129,0)); }
         }
-        @keyframes pulse-green {
-            0% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.7); }
-            70% { box-shadow: 0 0 0 6px rgba(52, 211, 153, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(52, 211, 153, 0); }
-        }
-        .dot.yellow.pulse { animation: pulse-yellow 1.5s infinite; }
-        .dot.green.pulse { animation: pulse-green 2s infinite; }
 
         /* ПЛАВАЮЧЕ МЕНЮ */
         .bottom-nav {
@@ -441,8 +465,6 @@
     <button id="closeTopSearchBtn" class="top-search-close">Скасувати</button>
 </div>
 
-<!-- ЗАВАНТАЖУВАЧ ВИДАЛЕНО ДЛЯ МИТТЄВОГО ЗАПУСКУ -->
-
 <div class="container">
     
     <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch;">
@@ -451,7 +473,7 @@
             <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between;">
                 <h2 id="headerTitle" style="line-height: 1;">SkillHUB Assistant</h2>
                 <!-- КНОПКА ОБРАНОГО В КУТКУ З ІКОНКОЮ SVG -->
-                <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
+                <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:flex;">
                     <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
                 </button>
             </div>
@@ -462,10 +484,7 @@
     </div>
     
     <div class="status-container" id="statusContainer">
-        <div class="status-badge">
-            <div id="statusDot" class="dot yellow pulse"></div>
-            <span id="statusText">Підключення</span>
-        </div>
+        <!-- ТУТ БУДЕ ВІДОБРАЖАТИСЬ ПРОГРЕС З КРУЖОЧКОМ -->
     </div>
 
     <div id="tab-search" class="app-tab active">
@@ -515,7 +534,6 @@
     <div id="tab-settings" class="app-tab">
         
         <div class="list-group">
-            <!-- КНОПКА ВИБОРУ ОБРАНОГО БЕЗ КОЛЬОРУ -->
             <button class="list-item" onclick="window.openFavoritesSelectionModal()">
                 <div class="list-item-content">
                     <span class="list-item-title">⭐ Обране (Швидке меню)</span>
@@ -1081,6 +1099,7 @@
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
         document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
         
+        // Показуємо кнопку обраного тільки на сторінці пошуку
         const topFavBtn = document.getElementById('topFavBtn');
         if (topFavBtn) {
             topFavBtn.style.display = (tabId === 'tab-search') ? 'flex' : 'none';
@@ -1401,28 +1420,34 @@
         setTimeout(() => { el.innerHTML = og; el.style.color = ""; }, 1500);
     }
 
-    function setAppStatus(state, text) {
-        const dot = document.getElementById('statusDot');
-        const txt = document.getElementById('statusText');
-        if(!dot || !txt) return;
+    // НОВА ЛОГІКА ІНДИКАТОРА СТАТУСУ (З КРУГОВИМ ПРОГРЕСОМ)
+    function setAppStatus(state, text = '', percent = 0) {
+        const statusCont = document.getElementById('statusContainer');
+        if(!statusCont) return;
         
-        dot.className = 'dot'; 
-        
-        if (state === 'ok') {
-            dot.classList.add('green', 'pulse');
+        if (state === 'loading') {
+            // Радіус = 13, довжина кола = 2 * PI * 13 ≈ 81.68
+            let offset = 81.68 - (percent / 100) * 81.68;
+            statusCont.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform:uppercase;">${text || 'Завантаження'}</span>
+                    <div class="progress-ring">
+                        <svg viewBox="0 0 32 32">
+                            <circle class="bg-ring" cx="16" cy="16" r="13"></circle>
+                            <circle class="fill-ring" cx="16" cy="16" r="13" style="stroke-dashoffset: ${offset};"></circle>
+                        </svg>
+                        <div class="progress-ring-text">${percent}%</div>
+                    </div>
+                </div>
+            `;
+        } else if (state === 'ok') {
+            statusCont.innerHTML = `<div class="ok-text-pulse">ОК</div>`;
         } else if (state === 'error') {
-            dot.classList.add('red');
-        } else if (state === 'loading') {
-            dot.classList.add('yellow', 'pulse');
-        } else {
-            dot.classList.add('yellow');
+            statusCont.innerHTML = `<div style="color: var(--danger); font-weight: 800; font-size: 13px; text-transform:uppercase;">Помилка</div>`;
         }
-        txt.innerText = text;
     }
 
     // --- ЛОГІКА ДЛЯ ОБРАНОГО ТА SKILLHUB ---
-    
-    // Функція генерації дії кнопки SkillHUB
     function getSkillHubActionStr(btn, fromModal = false) {
         let linkStr = String(btn.link).trim();
         let nm = String(btn.name).toLowerCase();
@@ -1746,7 +1771,7 @@
         safeUpdateHTML(container, html);
     };
 
-    // ОПТИМІЗАЦІЯ: Змінено логіку init для моментального завантаження
+    // ОПТИМІЗАЦІЯ: Миттєве завантаження без чорного екрану
     async function init() {
         enableUI(); // Одразу відкриваємо інтерфейс
         let cached = null;
@@ -1758,21 +1783,31 @@
                 window.buildServiceSearchList();
                 window.populateFilters();
                 window.renderSkillHubTab();
-                setAppStatus('ok', 'Готовий до роботи');
-                refreshData(false); // Фонове оновлення
+                setAppStatus('ok');
+                refreshData(false); // Фонове оновлення бази
             } catch(e) { 
-                refreshData(false); 
+                refreshData(true); 
             }
         } else {
-            setAppStatus('loading', 'Завантаження бази...');
-            refreshData(false); // Фонове завантаження для нових
+            refreshData(true); // Завантаження для нових користувачів
         }
     }
     
     window.init = init;
 
-    async function refreshData() {
-        setAppStatus('loading', 'Оновлення...');
+    async function refreshData(isFirstLoad = false) {
+        setAppStatus('loading', 'Завантаження...', 0);
+        
+        let pInt;
+        let progress = 0;
+        pInt = setInterval(() => {
+            if (progress < 90) { 
+                progress += Math.random() * 15; 
+                if (progress > 90) progress = 90;
+                setAppStatus('loading', isFirstLoad ? 'Перший запуск...' : 'Оновлення...', Math.round(progress)); 
+            }
+        }, 300);
+
         try {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -1780,6 +1815,9 @@
             clearTimeout(timeoutId);
             
             const dataStr = await response.text();
+            
+            clearInterval(pInt);
+            setAppStatus('loading', isFirstLoad ? 'Аналіз даних...' : 'Оновлення...', 100);
 
             if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази.");
             let newDb = JSON.parse(dataStr);
@@ -1793,36 +1831,35 @@
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
-            setAppStatus('ok', 'Готовий до роботи');
             
             setTimeout(() => {
+                setAppStatus('ok');
                 if (db.appVersion && savedVersion !== db.appVersion) {
                     if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
                     try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
                 }
-                enableUI(); // Оновлює версію
+                enableUI(); 
                 window.populateFilters();
                 window.renderSkillHubTab();
                 if(currentCategoryData || currentServiceData) renderServices(); 
                 if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
-            }, 400); 
+            }, 500); 
             
         } catch (e) { 
+            if (pInt) clearInterval(pInt);
             console.error("Refresh Error:", e);
             let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
             if (cached) { 
-                setAppStatus('ok', 'Офлайн (З кешу)'); 
+                setAppStatus('ok'); 
             } else { 
-                setAppStatus('error', 'Помилка мережі');
-                alert("Помилка завантаження даних: " + e.message + "\\nПеревірте інтернет та оновіть сторінку.");
+                setAppStatus('error');
             }
         }
     }
 
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
         try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
-        setAppStatus('loading', 'Оновлення бази...');
-        await refreshData(false); 
+        await refreshData(true); 
     });
 
     function enableUI() { 
@@ -1965,7 +2002,7 @@
 
             // --- НОВА ЛОГІКА: ВІДОБРАЖЕННЯ КІЛЬКОСТІ ---
             let qtyHtml = "";
-            if (r.qty) {
+            if (r.qty !== undefined && r.qty !== "") {
                 qtyHtml = `<div style="background: var(--input-bg); color: var(--text-main); font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); margin-top: 6px;">📦 ${window.escapeHTML(r.qty)} шт</div>`;
             }
 
