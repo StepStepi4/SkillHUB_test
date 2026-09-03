@@ -126,10 +126,10 @@
             align-items: center;
             justify-content: center;
             box-shadow: 0 4px 10px rgba(0,0,0,0.05);
-            font-size: 18px;
             cursor: pointer;
             transition: 0.2s;
             flex-shrink: 0;
+            padding: 0;
         }
         .fav-btn-top:active { transform: scale(0.85); background: var(--input-bg); }
 
@@ -374,11 +374,6 @@
         }
 
         /* СТИЛІ ДЛЯ ВИБОРУ ОБРАНОГО */
-        .fav-item-row {
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 16px;
-            border-bottom: 1px solid var(--border); background: var(--card-bg); cursor: pointer;
-        }
-        .fav-item-row:last-child { border-bottom: none; }
         .fav-checkbox {
             width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--text-muted);
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
@@ -483,8 +478,10 @@
         <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0; flex: 1;">
             <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between;">
                 <h2 id="headerTitle" style="line-height: 1;">SkillHUB Assistant</h2>
-                <!-- КНОПКА ОБРАНОГО В КУТКУ -->
-                <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">⭐</button>
+                <!-- КНОПКА ОБРАНОГО В КУТКУ З ІКОНКОЮ SVG -->
+                <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
+                    <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
+                </button>
             </div>
             <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
                 Харківський регіон <span style="font-size: 14px; margin-left: 4px;">🫶</span>
@@ -546,10 +543,10 @@
     <div id="tab-settings" class="app-tab">
         
         <div class="list-group">
-            <!-- КНОПКА ВИБОРУ ОБРАНОГО -->
+            <!-- КНОПКА ВИБОРУ ОБРАНОГО БЕЗ КОЛЬОРУ -->
             <button class="list-item" onclick="window.openFavoritesSelectionModal()">
                 <div class="list-item-content">
-                    <span class="list-item-title" style="color: #f59e0b;">⭐ Обране (Швидке меню)</span>
+                    <span class="list-item-title">⭐ Обране (Швидке меню)</span>
                     <span class="list-item-subtitle">Виберіть функції для швидкого доступу</span>
                 </div>
                 <div class="list-item-arrow">
@@ -663,7 +660,7 @@
             <div class="modal-title">Вибір обраного</div>
             <button class="modal-close" onclick="window.closeModalBase('favSelectModal')"></button>
         </div>
-        <div class="modal-body list-group" id="favSelectBody" style="padding: 0; margin-bottom: 20px;">
+        <div class="modal-body list-group" id="favSelectBody" style="padding: 0; margin-bottom: 20px; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden;">
             <!-- Чекбокси завантажуватимуться сюди -->
         </div>
         <button class="btn btn-primary" onclick="window.saveFavorites()">Зберегти обране</button>
@@ -1485,12 +1482,15 @@
         let html = db.skillHubButtons.map((btn, idx) => {
             let isChecked = favs.includes(btn.name) ? 'checked' : '';
             return `
-            <div class="fav-item-row" onclick="this.querySelector('.fav-checkbox').classList.toggle('checked')">
-                <div style="display:flex; align-items:center; gap: 12px;">
-                    <div style="font-size:24px;">${window.renderIcon(btn.emoji)}</div>
-                    <div style="font-size:14px; font-weight:600; color:var(--text-main);">${btn.name}</div>
+            <div class="list-item" style="cursor:pointer; border-bottom:1px solid var(--border); padding: 12px 16px;" onclick="this.querySelector('.fav-checkbox').classList.toggle('checked')">
+                <div style="font-size: 28px; display: flex; align-items: center; justify-content: center; width: 36px; height: 36px; flex-shrink: 0; margin-right: 12px;">
+                    ${window.renderIcon(btn.emoji)}
                 </div>
-                <div class="fav-checkbox ${isChecked}" data-name="${window.escapeForJS(btn.name)}"></div>
+                <div class="list-item-content" style="flex:1; text-align:left;">
+                    <span class="list-item-title" style="font-size: 15px;">${btn.name}</span>
+                    <span class="list-item-subtitle" style="font-size: 12px;">${btn.desc}</span>
+                </div>
+                <div class="fav-checkbox ${isChecked}" data-name="${window.escapeForJS(btn.name)}" style="margin-left: auto; flex-shrink:0;"></div>
             </div>`;
         }).join('');
         
@@ -1505,7 +1505,6 @@
         });
         localStorage.setItem('skillhub_favs', JSON.stringify(selected));
         window.closeModalBase('favSelectModal');
-        alert("Обране успішно збережено!");
     };
 
     window.openFavoritesQuickMenu = function() {
@@ -1776,7 +1775,6 @@
         safeUpdateHTML(container, html);
     };
 
-    // ОПТИМІЗАЦІЯ: Змінено логіку init для моментального завантаження при наявності кешу
     async function init() {
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
