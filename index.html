@@ -12,9 +12,10 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
-    <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА З КЕШУ -->
+    <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        if (localStorage.getItem('skillhub_v6_flat')) {
+        // Блокуємо відображення екрану завантаження, якщо вже є кеш
+        if (localStorage.getItem('skillhub_v5_flat')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
         }
     </script>
@@ -42,7 +43,7 @@
             --danger-bg: rgba(239, 68, 68, 0.08);
             --modal-overlay: rgba(0, 0, 0, 0.5);
             --nav-height: 76px;
-            --loader-display: flex;
+            --loader-display: flex; /* Керується мікро-скриптом */
 
             --clr-support-bg: #fef9c3; --clr-support-text: #854d0e;
             --clr-ekta-bg: #dbeafe; --clr-ekta-text: #1e40af;
@@ -247,7 +248,7 @@
         .compare-toggle-btn { background: transparent; color: var(--primary); border: 1.5px solid var(--primary); padding: 8px 16px; border-radius: 10px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; display: none; align-items: center; gap: 6px; }
         .compare-toggle-btn.active { background: var(--primary); color: white; }
 
-        .list-group { background: var(--card-bg); border-radius: 16px; margin-bottom: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; overflow: hidden; }
+        .list-group { background: var(--card-bg); border-radius: 16px; overflow: hidden; margin-bottom: 24px; border: 1px solid var(--border); display: flex; flex-direction: column; }
         
         .list-item { padding: 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); text-decoration: none; color: var(--text-main); background: transparent; border-left: none; border-right: none; border-top: none; width: 100%; text-align: left; cursor: pointer; transition: 0.15s; outline: none; font-family: inherit; }
         .list-group > :last-child, #dynamicSkillHubButtons > :last-child { border-bottom: none !important; }
@@ -319,7 +320,7 @@
         .photo-subtitle { font-size: 12px; font-weight: 600; color: var(--primary); }
         .photo-arrow { color: var(--text-muted); font-weight: bold; font-family: monospace; font-size: 18px; }
 
-        .compare-bar { position: fixed; bottom: calc(var(--nav-height) + 26px); left: 0; width: 100%; background: var(--card-bg); border: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; transform: translateY(20px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9980; }
+        .compare-bar { position: fixed; bottom: calc(var(--nav-height) + 26px); left: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border); padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; transform: translateY(20px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 9980; }
         .compare-bar.show { transform: translateY(0); opacity: 1; pointer-events: auto; }
         
         .checkbox { width: 24px; height: 24px; border-radius: 50%; border: 2px solid var(--text-muted); background: transparent; display: inline-flex; align-items: center; justify-content: center; transition: 0.2s; position: absolute; left: -40px; top: 50%; transform: translateY(-50%); pointer-events: none;}
@@ -542,6 +543,7 @@
     <div id="tab-settings" class="app-tab">
         
         <div class="list-group">
+            <!-- КНОПКА ВИБОРУ ОБРАНОГО БЕЗ КОЛЬОРУ -->
             <button class="list-item" onclick="window.openFavoritesSelectionModal()">
                 <div class="list-item-content">
                     <span class="list-item-title">⭐ Обране (Швидке меню)</span>
@@ -658,14 +660,10 @@
             <div class="modal-title">Вибір обраного</div>
             <button class="modal-close" onclick="window.closeModalBase('favSelectModal')"></button>
         </div>
-        <div class="modal-body" style="padding: 0 16px 20px 16px; overflow-y: auto;">
-            <div id="favSelectBody" style="background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column;">
-                <!-- Чекбокси завантажуватимуться сюди -->
-            </div>
+        <div class="modal-body list-group" id="favSelectBody" style="padding: 0; margin-bottom: 20px; background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden;">
+            <!-- Чекбокси завантажуватимуться сюди -->
         </div>
-        <div style="padding: 0 16px 16px 16px;">
-            <button class="btn btn-primary" onclick="window.saveFavorites()">Зберегти обране</button>
-        </div>
+        <button class="btn btn-primary" onclick="window.saveFavorites()">Зберегти обране</button>
     </div>
 </div>
 
@@ -676,10 +674,8 @@
             <div class="modal-title">⭐ Швидкий доступ</div>
             <button class="modal-close" onclick="window.closeModalBase('favQuickMenuModal')"></button>
         </div>
-        <div class="modal-body" style="padding: 0 16px 20px 16px; overflow-y: auto;">
-            <div id="favQuickMenuBody" style="background: var(--card-bg); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; display: flex; flex-direction: column;">
-                <!-- Кнопки завантажуватимуться сюди -->
-            </div>
+        <div class="modal-body list-group" id="favQuickMenuBody" style="padding: 0; margin-bottom: 0;">
+            <!-- Кнопки завантажуватимуться сюди -->
         </div>
     </div>
 </div>
@@ -960,13 +956,17 @@
     };
 
     window.addEventListener('error', function(e) {
-        console.error("Помилка:", e.message);
+        const elLoader = document.getElementById('appLoader');
+        if (elLoader && !elLoader.classList.contains('hidden')) {
+            elLoader.querySelector('.loader-text').innerHTML = "Критична помилка HTML:<br>" + e.message + "<br><br><span style='font-size:10px; opacity:0.7'>Скиньте кеш браузера</span>";
+            elLoader.querySelector('.spinner').style.display = 'none';
+        }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxug2dwzvE1ZpypySq6NgTkRor_KjI2nhVw-VwxJFICor2TRivgLbd3zxArqDiI045YMw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxs1AkRdseYLnfLs6O0H-ZS9uoqhkFflmCeJUP59wYNsYFNkr-wKo5h7P8nVN_DMnGAeQ/exec';
     
-    // ОНОВЛЕНИЙ КЛЮЧ КЕШУ ДЛЯ ЗАВАНТАЖЕННЯ АРТИКУЛІВ І КІЛЬКОСТІ
-    const CACHE_KEY = 'skillhub_v6_flat'; 
+    // Обновили ключ кеша, чтобы пользователи сразу получили новую версию без PWA
+    const CACHE_KEY = 'skillhub_v5_flat'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1096,6 +1096,7 @@
 
     const brandRegex = /^\[(.*?)\]/;
 
+    // ЗМІНЕНО: Відображення кнопки швидкого меню тільки на головній вкладці
     window.switchTab = function(tabId) {
         document.querySelectorAll('.app-tab').forEach(tab => tab.classList.remove('active'));
         document.querySelectorAll('.nav-item').forEach(btn => btn.classList.remove('active'));
@@ -1429,33 +1430,28 @@
         setTimeout(() => { el.innerHTML = og; el.style.color = ""; }, 1500);
     }
 
-    // НОВА ЛОГІКА ІНДИКАТОРА СТАТУСУ (З КРУГОВИМ ПРОГРЕСОМ)
-    function setAppStatus(state, text = '', percent = 0) {
-        const statusCont = document.getElementById('statusContainer');
-        if(!statusCont) return;
+    function setAppStatus(state, text) {
+        const dot = document.getElementById('statusDot');
+        const txt = document.getElementById('statusText');
+        if(!dot || !txt) return;
         
-        if (state === 'loading') {
-            let offset = 81.68 - (percent / 100) * 81.68;
-            statusCont.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <span style="font-size: 11px; font-weight: 700; color: var(--text-muted); text-transform:uppercase;">${text || 'Завантаження'}</span>
-                    <div class="progress-ring">
-                        <svg viewBox="0 0 32 32">
-                            <circle class="bg-ring" cx="16" cy="16" r="13"></circle>
-                            <circle class="fill-ring" cx="16" cy="16" r="13" style="stroke-dashoffset: ${offset};"></circle>
-                        </svg>
-                        <div class="progress-ring-text">${percent}%</div>
-                    </div>
-                </div>
-            `;
-        } else if (state === 'ok') {
-            statusCont.innerHTML = `<div class="ok-text-pulse">ОК</div>`;
+        dot.className = 'dot'; 
+        
+        if (state === 'ok') {
+            dot.classList.add('green', 'pulse');
         } else if (state === 'error') {
-            statusCont.innerHTML = `<div style="color: var(--danger); font-weight: 800; font-size: 13px; text-transform:uppercase;">Помилка</div>`;
+            dot.classList.add('red');
+        } else if (state === 'loading') {
+            dot.classList.add('yellow', 'pulse');
+        } else {
+            dot.classList.add('yellow');
         }
+        txt.innerText = text;
     }
 
     // --- ЛОГІКА ДЛЯ ОБРАНОГО ТА SKILLHUB ---
+    
+    // Функція генерації дії кнопки SkillHUB
     function getSkillHubActionStr(btn, fromModal = false) {
         let linkStr = String(btn.link).trim();
         let nm = String(btn.name).toLowerCase();
@@ -1526,13 +1522,13 @@
             .map(btn => {
                 let actionStr = getSkillHubActionStr(btn, true);
                 return `
-                <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent; padding: 12px 16px;">
+                <button class="list-item" ${actionStr} style="width:100%; border:none; border-bottom:1px solid var(--border); font-family:inherit; outline:none; display:flex; align-items:center; background: transparent;">
                     <div style="font-size: 28px; display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; flex-shrink: 0; margin-right: 12px;">
                         ${window.renderIcon(btn.emoji)}
                     </div>
                     <div class="list-item-content" style="flex:1; text-align:left;">
-                        <span class="list-item-title" style="font-size: 15px;">${btn.name}</span>
-                        <span class="list-item-subtitle" style="font-size: 12px;">${btn.desc}</span>
+                        <span class="list-item-title">${btn.name}</span>
+                        <span class="list-item-subtitle">${btn.desc}</span>
                     </div>
                     <div class="list-item-arrow" style="margin-left: auto;">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" style="width:18px; height:18px; stroke-width: 2.5;"><polyline points="9 18 15 12 9 6"></polyline></svg>
@@ -1779,7 +1775,7 @@
         safeUpdateHTML(container, html);
     };
 
-    // ОПТИМІЗАЦІЯ: Надійна система старту додатку з великим екраном загрузки для нових або з кешем
+    // ОПТИМІЗАЦІЯ: Змінено логіку init для моментального завантаження при наявності кешу
     async function init() {
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
@@ -1788,54 +1784,39 @@
             try {
                 db = sanitizeDb(JSON.parse(cached)); 
                 window.buildServiceSearchList();
-                enableUI(); // Ховає лоадер моментально
+                enableUI(); // Ця функція тепер моментально ховає лоадер
                 window.populateFilters();
                 window.renderSkillHubTab();
-                setAppStatus('ok');
-                refreshData(false); // Фонове оновлення бази, не блокує екран
-            } catch(e) { 
-                await refreshData(true); 
-            }
+                setAppStatus('ok', 'Готовий до роботи');
+                // Фонове оновлення без блокування екрану
+                refreshData(false); 
+            } catch(e) { await refreshData(true); }
         } else {
-            await refreshData(true); // Завантаження для нових користувачів з блокуючим екраном
+            await refreshData(true); 
         }
     }
     
     window.init = init;
 
-    async function refreshData(isFirstLoad = false) {
-        let pInt;
-        
-        if (isFirstLoad) {
-            document.getElementById('appLoader').classList.remove('hidden');
-            document.getElementById('loaderSpinner').style.display = 'block';
-            document.getElementById('progressContainer').style.display = 'block';
-            document.getElementById('progressBar').style.width = '10%';
-            document.getElementById('mainLoaderText').innerText = "Завантаження бази...";
-            
-            let progress = 10;
-            pInt = setInterval(() => {
-                if (progress < 90) { 
-                    progress += Math.random() * 15; 
-                    if(progress > 90) progress = 90;
-                    document.getElementById('progressBar').style.width = progress + '%'; 
-                }
-            }, 300);
-        } else {
-            setAppStatus('loading', 'Оновлення...', 0);
-            
-            let progress = 0;
-            pInt = setInterval(() => {
-                if (progress < 90) { 
-                    progress += Math.random() * 15; 
-                    if(progress > 90) progress = 90;
-                    setAppStatus('loading', 'Оновлення...', Math.round(progress)); 
-                }
-            }, 300);
-        }
-
+    async function refreshData(first = false) {
+        if(first) setAppStatus('loading', 'Підготовка');
+        let pInt; 
         try {
             const controller = new AbortController();
+            
+            const pBar = document.getElementById('progressBar');
+            const pCont = document.getElementById('progressContainer');
+            if (first) {
+                document.getElementById('loaderSpinner').style.display = 'none';
+                pCont.style.display = 'block';
+                pBar.style.width = '10%';
+            }
+
+            let progress = 10;
+            pInt = setInterval(() => {
+                if (progress < 90 && first) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
+            }, 300);
+
             const timeoutId = setTimeout(() => controller.abort(), 60000);
             const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
             clearTimeout(timeoutId);
@@ -1843,14 +1824,9 @@
             const dataStr = await response.text();
             
             if (pInt) clearInterval(pInt);
-            
-            if (isFirstLoad) {
-                document.getElementById('progressBar').style.width = '100%';
-            } else {
-                setAppStatus('loading', 'Аналіз...', 100);
-            }
+            if (first) pBar.style.width = '100%';
 
-            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази.");
+            if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
             let newDb = JSON.parse(dataStr);
             if (newDb.error) throw new Error(newDb.error);
             
@@ -1862,16 +1838,14 @@
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
+            setAppStatus('ok', 'Готовий до роботи');
             
             setTimeout(() => {
-                setAppStatus('ok');
                 if (db.appVersion && savedVersion !== db.appVersion) {
                     if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
                     try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
                 }
-                
-                if (isFirstLoad) enableUI(); 
-                
+                if (first) enableUI(); 
                 window.populateFilters();
                 window.renderSkillHubTab();
                 if(currentCategoryData || currentServiceData) renderServices(); 
@@ -1882,13 +1856,12 @@
             if (pInt) clearInterval(pInt);
             console.error("Refresh Error:", e);
             let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
-            
             if (cached) { 
-                setAppStatus('ok'); // Зміна помилки на ОК, якщо є кеш
-                if (isFirstLoad) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); }
+                setAppStatus('ok', 'Офлайн (З кешу)'); 
+                if (first) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
             } else { 
-                setAppStatus('error');
-                if (isFirstLoad) {
+                setAppStatus('error', 'Помилка');
+                if (first) {
                     document.getElementById('loaderSpinner').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'none';
                     safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
@@ -1900,7 +1873,7 @@
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
         try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
         document.getElementById('appLoader').classList.remove('hidden');
-        document.getElementById('loaderSpinner').style.display = 'block';
+        document.getElementById('loaderSpinner').style.display = 'none';
         document.getElementById('progressContainer').style.display = 'block';
         document.getElementById('progressBar').style.width = '0%';
         document.getElementById('mainLoaderText').innerText = "Оновлення бази...";
@@ -2049,7 +2022,7 @@
 
             // --- НОВА ЛОГІКА: ВІДОБРАЖЕННЯ КІЛЬКОСТІ ---
             let qtyHtml = "";
-            if (r.qty !== undefined && r.qty !== "") {
+            if (r.qty) {
                 qtyHtml = `<div style="background: var(--input-bg); color: var(--text-main); font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); margin-top: 6px;">📦 ${window.escapeHTML(r.qty)} шт</div>`;
             }
 
