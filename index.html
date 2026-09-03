@@ -963,7 +963,7 @@
         }
     });
 
-    const API_URL = 'https://script.google.com/macros/s/AKfycbxug2dwzvE1ZpypySq6NgTkRor_KjI2nhVw-VwxJFICor2TRivgLbd3zxArqDiI045YMw/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbxs1AkRdseYLnfLs6O0H-ZS9uoqhkFflmCeJUP59wYNsYFNkr-wKo5h7P8nVN_DMnGAeQ/exec';
     
     // Обновили ключ кеша, чтобы пользователи сразу получили новую версию без PWA
     const CACHE_KEY = 'skillhub_v5_flat'; 
@@ -1775,6 +1775,7 @@
         safeUpdateHTML(container, html);
     };
 
+    // ОПТИМІЗАЦІЯ: Змінено логіку init для моментального завантаження при наявності кешу
     async function init() {
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
@@ -2019,6 +2020,12 @@
                 }
             }
 
+            // --- НОВА ЛОГІКА: ВІДОБРАЖЕННЯ КІЛЬКОСТІ ---
+            let qtyHtml = "";
+            if (r.qty) {
+                qtyHtml = `<div style="background: var(--input-bg); color: var(--text-main); font-size: 11px; font-weight: 800; padding: 4px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); margin-top: 6px;">📦 ${window.escapeHTML(r.qty)} шт</div>`;
+            }
+
             return `
             <div class="list-item ${discountClass}" onclick="window.openRezervItemModal('${safeCatOnClick}', ${r.price}, '${safeNameOnClick}', ${isDiscount})">
                 <div class="list-item-content">
@@ -2027,10 +2034,11 @@
                     </div>
                     <span class="list-item-subtitle rezervy-cat" style="${catStyle}; margin-top:4px;">${window.escapeHTML(r.cat)}</span>
                     ${garantiyaHtml}
-                    <div style="display: flex; flex-direction: column; gap: 2px;">
+                    <div style="display: flex; flex-wrap: wrap; gap: 6px; align-items: center;">
+                        ${qtyHtml}
                         ${sellerHtml}
-                        ${articleHtml}
                     </div>
+                    ${articleHtml}
                 </div>
                 <div class="list-item-value rezervy-price" style="display:flex; align-items:center;">
                     ${Math.round(r.price).toLocaleString('uk-UA')} ₴
