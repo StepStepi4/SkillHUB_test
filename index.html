@@ -14,8 +14,8 @@
 
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        // Блокуємо відображення екрану завантаження, якщо вже є кеш
-        if (localStorage.getItem('skillhub_v5_flat')) {
+        // Блокуємо відображення екрану завантаження, якщо вже є кеш (версія 6)
+        if (localStorage.getItem('skillhub_v6_flat')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
         }
     </script>
@@ -350,6 +350,14 @@
         .rezervy-name { font-size: 14px; font-weight: 700; white-space: normal; line-height: 1.4;}
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
+        
+        @keyframes swayTag {
+            0% { transform: rotate(-5deg); }
+            50% { transform: rotate(10deg); }
+            100% { transform: rotate(-5deg); }
+        }
+        
+        .discount-tag-icon { position: absolute; bottom: -22px; right: -10px; width: 26px; height: 26px; transform-origin: top center; animation: swayTag 3.5s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 10; pointer-events: none; }
         
         /* АНИМАЦИЯ ОГНЯ ДЛЯ ФОКУСОВ */
         @keyframes burningFire {
@@ -946,8 +954,8 @@
 
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec';
     
-    const CACHE_KEY = 'skillhub_v5_flat'; 
-    const SEEN_VERSION_KEY = 'skillhub_version_flat';
+    const CACHE_KEY = 'skillhub_v6_flat'; 
+    const SEEN_VERSION_KEY = 'skillhub_version_flat_v6';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
     let currentCategoryData = null;
@@ -1113,18 +1121,18 @@
                     priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; background: var(--input-bg); padding: 4px 10px; border-radius: 8px;">${priceLabel}</div>`;
                 }
 
-                // ВЫВОДИМ СКИДКУ ТОЛЬКО В МОДАЛКЕ (в заголовке при детальном просмотре)
                 let discountBadgeHtml = "";
                 if (discount && discount !== "0%" && discount !== "0" && discount !== "" && discount !== "-") {
-                    discountBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">Знижка до ${window.escapeHTML(discount)}</div>`;
+                    let cleanDisc = window.escapeHTML(discount).replace('-', '');
+                    discountBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">До -${cleanDisc}</div>`;
                 }
 
                 document.getElementById('modalTitle').innerHTML = `
                 <div style="display:flex; align-items:center; justify-content:space-between; width:100%; gap:10px;">
                     <span style="line-height:1.2; flex:1;">${title}</span>
-                    <div style="display:flex; align-items:center; gap:6px; flex-shrink:0;">
-                        ${discountBadgeHtml}
+                    <div style="display:flex; flex-direction:column; align-items:flex-end; gap:4px; flex-shrink:0;">
                         ${priceLabelHtml}
+                        ${discountBadgeHtml}
                     </div>
                 </div>`;
                 
@@ -2587,14 +2595,15 @@
         // ВЫВОДИМ СКИДКУ ТОЛЬКО ЕСЛИ ЭТО ВНУТРИ МОДАЛКИ (isModalCtx === true), БЕЗ ОГНЯ, РАЗМЕР МЕНЬШЕ
         let discountHtml = '';
         if (isModalCtx && s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
-            discountHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">Знижка до ${window.escapeHTML(s.discount)}</div>`;
+            let cleanDisc = window.escapeHTML(s.discount).replace('-', '');
+            discountHtml = `<div style="font-size: 10px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap; margin-top: 4px; text-align: right; width: fit-content; margin-left: auto;">До -${cleanDisc}</div>`;
         }
 
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}" style="margin-bottom:0;">${s.brand}</div>` : '';
         
         let tagsHtml = '';
-        if (brandHtml || discountHtml) {
-            tagsHtml = `<div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">${brandHtml}${discountHtml}</div>`;
+        if (brandHtml) {
+            tagsHtml = `<div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">${brandHtml}</div>`;
         }
 
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
@@ -2602,12 +2611,15 @@
         return `
         <div class="${cardClass}" ${clickHandler}>
             ${checkboxHtml}
-            <div class="sc-header" style="align-items: center;">
+            <div class="sc-header" style="align-items: flex-start;">
                 <div style="display:flex; flex-direction:column; align-items:flex-start; flex:1; padding-right:10px;">
                     ${tagsHtml}
                     <div class="sc-title">${focusHtml} <span style="flex:1;">${s.title}</span></div>
                 </div>
-                <div class="sc-price">${s.label}</div>
+                <div style="display:flex; flex-direction:column; align-items:flex-end; flex-shrink:0;">
+                    <div class="sc-price">${s.label}</div>
+                    ${discountHtml}
+                </div>
             </div>
             ${availHtml}
             ${descHtml}
@@ -3105,7 +3117,6 @@
                         }
                     }
 
-                    // Достаем скидку
                     let discountVal = m.discount ? m.discount : "";
 
                     let cls = 'brand-settings'; let uName = String(m.service).toUpperCase();
