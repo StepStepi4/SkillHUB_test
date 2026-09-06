@@ -14,7 +14,7 @@
 
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        // Блокуємо відображення екрану завантаження, якщо вже є кеш (версія 6)
+        // Блокуємо відображення екрану завантаження, якщо вже є кеш
         if (localStorage.getItem('skillhub_v6_flat')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
         }
@@ -1124,7 +1124,7 @@
                 let discountBadgeHtml = "";
                 if (discount && discount !== "0%" && discount !== "0" && discount !== "" && discount !== "-") {
                     let cleanDisc = window.escapeHTML(discount).replace('-', '');
-                    discountBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">До -${cleanDisc}</div>`;
+                    discountBadgeHtml = `<div style="font-size: 10px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">До -${cleanDisc}</div>`;
                 }
 
                 document.getElementById('modalTitle').innerHTML = `
