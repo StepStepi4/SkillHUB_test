@@ -1121,10 +1121,10 @@
                     priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; background: var(--input-bg); padding: 4px 10px; border-radius: 8px;">${priceLabel}</div>`;
                 }
 
-                // ДОБАВЛЕН БЕЙДЖИК СО СКИДКОЙ
+                // ВЫВОДИМ СКИДКУ ТОЛЬКО В МОДАЛКЕ, БЕЗ ОГНЯ, РАЗМЕР МЕНЬШЕ
                 let discountBadgeHtml = "";
                 if (discount && discount !== "0%" && discount !== "0" && discount !== "" && discount !== "-") {
-                    discountBadgeHtml = `<div style="font-size: 13px; font-weight: 800; color: #d32f2f; background: #ffebee; padding: 4px 8px; border-radius: 8px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">🔥 Знижка до ${discount}</div>`;
+                    discountBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">Знижка до ${discount}</div>`;
                 }
 
                 document.getElementById('modalTitle').innerHTML = `
@@ -2557,7 +2557,6 @@
             else if (isPackage || uName.includes('НАЛАШТУВАННЯ')) cls = 'brand-settings'; 
             else if (uName.includes('МОНТАЖ') || uName.includes('ПІДКЛЮЧЕННЯ') || uName.includes('ВСТАНОВЛЕННЯ')) cls = 'brand-install';
             
-            // Забираем скидку из объекта тарифа (если она есть)
             let discountVal = t && t.discount ? t.discount : "";
 
             return { name, brand, title, numCost, label, cls, isFocus, code: serviceCode, isPackage, descToggleHTML: '', discount: discountVal };
@@ -2593,18 +2592,12 @@
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
         let focusHtml = (s.isFocus && !isSelected) ? `<span class="animated-fire">🔥</span>` : '';
         
-        // Генерация блока со скидкой
-        let discountHtml = '';
-        if (s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
-            discountHtml = `<div style="font-size: 10px; font-weight: 800; color: #d32f2f; background: #ffebee; padding: 4px 8px; border-radius: 6px; display: inline-block; white-space: nowrap; border: 1px solid rgba(211, 47, 47, 0.2);">🔥 Знижка до ${s.discount}</div>`;
-        }
-
+        // УБРАНА ЛОГИКА ДОБАВЛЕНИЯ СКИДКИ В HTML КАРТОЧКИ (ТЕПЕРЬ ТОЛЬКО БРЕНД)
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}" style="margin-bottom:0;">${s.brand}</div>` : '';
         
-        // Объединяем бренд и скидку в один ряд
         let tagsHtml = '';
-        if (brandHtml || discountHtml) {
-            tagsHtml = `<div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">${brandHtml}${discountHtml}</div>`;
+        if (brandHtml) {
+            tagsHtml = `<div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">${brandHtml}</div>`;
         }
 
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
