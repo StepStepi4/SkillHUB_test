@@ -351,14 +351,6 @@
         .rezervy-cat { font-size: 12px; color: var(--text-muted); text-transform: uppercase; margin-top: 4px;}
         .rezervy-price { position: relative; font-size: 15px; font-weight: 800; color: var(--primary); background: var(--input-bg); padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); white-space: nowrap;}
         
-        @keyframes swayTag {
-            0% { transform: rotate(-5deg); }
-            50% { transform: rotate(10deg); }
-            100% { transform: rotate(-5deg); }
-        }
-        
-        .discount-tag-icon { position: absolute; bottom: -22px; right: -10px; width: 26px; height: 26px; transform-origin: top center; animation: swayTag 3.5s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 10; pointer-events: none; }
-        
         /* АНИМАЦИЯ ОГНЯ ДЛЯ ФОКУСОВ */
         @keyframes burningFire {
             0%, 100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0px 0px 4px rgba(255, 100, 0, 0.6)); }
@@ -1121,10 +1113,10 @@
                     priceLabelHtml = `<div style="font-size: 16px; font-weight: 800; color: var(--primary); white-space: nowrap; background: var(--input-bg); padding: 4px 10px; border-radius: 8px;">${priceLabel}</div>`;
                 }
 
-                // ВЫВОДИМ СКИДКУ ТОЛЬКО В МОДАЛКЕ, БЕЗ ОГНЯ, РАЗМЕР МЕНЬШЕ
+                // ВЫВОДИМ СКИДКУ ТОЛЬКО В МОДАЛКЕ (в заголовке при детальном просмотре)
                 let discountBadgeHtml = "";
                 if (discount && discount !== "0%" && discount !== "0" && discount !== "" && discount !== "-") {
-                    discountBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">Знижка до ${discount}</div>`;
+                    discountBadgeHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">Знижка до ${window.escapeHTML(discount)}</div>`;
                 }
 
                 document.getElementById('modalTitle').innerHTML = `
@@ -2592,12 +2584,17 @@
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
         let focusHtml = (s.isFocus && !isSelected) ? `<span class="animated-fire">🔥</span>` : '';
         
-        // УБРАНА ЛОГИКА ДОБАВЛЕНИЯ СКИДКИ В HTML КАРТОЧКИ (ТЕПЕРЬ ТОЛЬКО БРЕНД)
+        // ВЫВОДИМ СКИДКУ ТОЛЬКО ЕСЛИ ЭТО ВНУТРИ МОДАЛКИ (isModalCtx === true), БЕЗ ОГНЯ, РАЗМЕР МЕНЬШЕ
+        let discountHtml = '';
+        if (isModalCtx && s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
+            discountHtml = `<div style="font-size: 11px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 3px 6px; border-radius: 6px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap;">Знижка до ${window.escapeHTML(s.discount)}</div>`;
+        }
+
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}" style="margin-bottom:0;">${s.brand}</div>` : '';
         
         let tagsHtml = '';
-        if (brandHtml) {
-            tagsHtml = `<div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">${brandHtml}</div>`;
+        if (brandHtml || discountHtml) {
+            tagsHtml = `<div style="display:flex; gap:6px; margin-bottom:8px; flex-wrap:wrap; align-items:center;">${brandHtml}${discountHtml}</div>`;
         }
 
         let checkboxHtml = (compareModeActive && !s.isPackage) ? `<div class="checkbox"></div>` : '';
@@ -2963,22 +2960,29 @@
             matches.forEach(s => {
                  let availability = s.availability[city] || ""; let isUnavailable = (!availability || String(availability).toLowerCase().includes("немає") || availability === "-" || availability === "✖");
                  let displayProv = ""; let matchProv = String(s.name).match(/^\[(.*?)\]/); if (matchProv) displayProv = matchProv[1].trim(); 
+                 
                  let price = s.price;
-                 if (!price) {
-                     let nameClean = normalizeServiceName(s.name); const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean));
-                     if (t && t.cost) price = t.cost;
+                 let discountVal = "";
+                 
+                 let nameClean = normalizeServiceName(s.name); 
+                 const t = db.tariffs.find(x => normalizeServiceName(x.service) === nameClean || (x.serviceRu && normalizeServiceName(x.serviceRu) === nameClean));
+                 if (t) {
+                     if (!price && t.cost) price = t.cost;
+                     if (t.discount) discountVal = t.discount;
                  }
+
                  let cleanCost = String(price).replace(/\s+/g, '').replace(/[^\d.,]/g, '').replace(',', '.'); let priceVal = parseFloat(cleanCost) || 0;
                  let priceText = isNaN(priceVal) || cleanCost === '' ? price : priceVal.toLocaleString('uk-UA') + " ₴";
                  let descToggleHTML = generateDescToggleHTML(window.findInDb(db.descriptions, s.name), window.findInDb(db.serviceCodes, s.name));
-                 renderItems.push({ isUnavailable, priceVal, displayProv, serviceName: s.name, priceText, descToggleHTML, availability, code: s.code });
+                 
+                 renderItems.push({ isUnavailable, priceVal, displayProv, serviceName: s.name, priceText, descToggleHTML, availability, code: s.code, discount: discountVal });
             });
 
             renderItems.sort((a, b) => { if (a.isUnavailable !== b.isUnavailable) return a.isUnavailable ? 1 : -1; return b.priceVal - a.priceVal; });
             window.lastModalServices = renderItems.map(item => {
                 let cls = 'brand-other'; let pUpper = String(item.displayProv).toUpperCase();
                 if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
-                return { name: item.serviceName, title: String(item.serviceName).replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls, priceText: item.priceText, code: item.code };
+                return { name: item.serviceName, title: String(item.serviceName).replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls, priceText: item.priceText, code: item.code, discount: item.discount };
             });
 
             let modalCompBtn = document.getElementById('montazhCompareBtn'); let availableCount = renderItems.filter(item => !item.isUnavailable).length;
@@ -2988,7 +2992,7 @@
             renderItems.forEach(item => {
                 let cls = 'brand-other'; let pUpper = String(item.displayProv).toUpperCase();
                 if (pUpper === 'ЕКТА' || pUpper === 'EKTA') cls = "brand-ekta"; else if (pUpper === 'НАШ СЕРВІС' || pUpper === 'SUPPORT' || pUpper === 'МІЙ СЕРВІС') cls = "brand-support";
-                let obj = { name: item.serviceName, title: String(item.serviceName).replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls, label: item.priceText, descToggleHTML: item.descToggleHTML, isPackage: false, code: item.code };
+                let obj = { name: item.serviceName, title: String(item.serviceName).replace(/^\[.*?\]\s*/, ''), brand: item.displayProv, cls, label: item.priceText, descToggleHTML: item.descToggleHTML, isPackage: false, code: item.code, discount: item.discount };
                 
                 if (item.isUnavailable) {
                     if (!seenUnavailable.has(pUpper) && item.displayProv) {
@@ -3035,7 +3039,6 @@
                     }
                 }
                 
-                // Достаем скидку напрямую из m
                 let discountVal = m.discount ? m.discount : "";
 
                 let cls = 'brand-settings'; let uName = String(m.service).toUpperCase();
