@@ -14,7 +14,6 @@
 
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        // Блокуємо відображення екрану завантаження, якщо вже є кеш
         if (localStorage.getItem('skillhub_v6_flat')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
         }
@@ -29,7 +28,6 @@
         }
 
         :root {
-            /* СВІТЛА ТЕМА */
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
             --text-main: #000000; 
@@ -43,7 +41,7 @@
             --danger-bg: rgba(239, 68, 68, 0.08);
             --modal-overlay: rgba(0, 0, 0, 0.5);
             --nav-height: 76px;
-            --loader-display: flex; /* Керується мікро-скриптом */
+            --loader-display: flex;
 
             --clr-support-bg: #fef9c3; --clr-support-text: #854d0e;
             --clr-ekta-bg: #dbeafe; --clr-ekta-text: #1e40af;
@@ -58,7 +56,6 @@
         }
 
         [data-theme="dark"] {
-            /* ТЕМНА ТЕМА */
             --bg: #000000; 
             --card-bg: #1c1c1e;
             --text-main: #ffffff; 
@@ -89,7 +86,6 @@
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
         }
 
-        /* ЗАВАНТАЖУВАЧ */
         .app-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: var(--loader-display); flex-direction: column; justify-content: center; align-items: center;
@@ -112,7 +108,6 @@
         .app-tab.active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* ШАПКА ТА СТАТУС */
         .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
         
@@ -158,7 +153,6 @@
         .dot.yellow.pulse { animation: pulse-yellow 1.5s infinite; }
         .dot.green.pulse { animation: pulse-green 2s infinite; }
 
-        /* ПЛАВАЮЧЕ МЕНЮ */
         .bottom-nav {
             position: fixed; 
             bottom: calc(env(safe-area-inset-bottom) + 16px); 
@@ -219,7 +213,6 @@
         .nav-item.active span { font-weight: 800; transform: translateY(-1px); text-shadow: 0px 2px 6px rgba(0, 160, 70, 0.2); }
         [data-theme="dark"] .nav-item.active span { text-shadow: 0px 2px 6px rgba(16, 185, 129, 0.2); }
 
-        /* ЕЛЕМЕНТИ ВВОДУ ТА ФОРМИ */
         .input-group { position: relative; margin-bottom: 16px; }
         input[type="text"], input[type="number"], select, textarea { 
             width: 100%; padding: 16px 20px; border-radius: 12px; 
@@ -274,6 +267,29 @@
         .sc-brand { font-size: 10px; font-weight: 800; text-transform: uppercase; padding: 4px 8px; border-radius: 6px; display: inline-block; width: max-content; margin-bottom: 8px; }
         .sc-price { font-size: 15px; font-weight: 700; color: var(--primary); flex-shrink: 0; background: var(--input-bg); padding: 6px 12px; border-radius: 10px; border: 1px solid var(--border); height: fit-content; text-align: right;}
         .sc-title { font-size: 15px; font-weight: 600; line-height: 1.4; color: var(--text-main); display: flex; align-items: center; gap: 6px;}
+
+        /* СТИЛЬ СКИДКИ: по умолчанию скрыта, при разворачивании карточки становится видимой */
+        .sc-discount-badge {
+            display: none;
+            font-size: 10px;
+            font-weight: 700;
+            color: #d32f2f;
+            background: #ffebee;
+            padding: 2px 6px;
+            border-radius: 4px;
+            border: 1px solid rgba(211, 47, 47, 0.2);
+            white-space: nowrap;
+            margin-top: 4px;
+            text-align: right;
+            width: fit-content;
+            margin-left: auto;
+        }
+
+        /* Показываем скидку только тогда, когда карточка раскрыта (.desc-content.show) */
+        .service-card:has(.desc-content.show) .sc-discount-badge {
+            display: block !important;
+            animation: fadeIn 0.2s ease;
+        }
         
         .brand-support { background: var(--clr-support-bg); color: var(--clr-support-text); }
         .brand-ekta { background: var(--clr-ekta-bg); color: var(--clr-ekta-text); }
@@ -359,7 +375,6 @@
         
         .discount-tag-icon { position: absolute; bottom: -22px; right: -10px; width: 26px; height: 26px; transform-origin: top center; animation: swayTag 3.5s ease-in-out infinite; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2)); z-index: 10; pointer-events: none; }
         
-        /* АНИМАЦИЯ ОГНЯ ДЛЯ ФОКУСОВ */
         @keyframes burningFire {
             0%, 100% { transform: scale(1) rotate(-2deg); filter: drop-shadow(0px 0px 4px rgba(255, 100, 0, 0.6)); }
             25% { transform: scale(1.15) rotate(4deg); filter: drop-shadow(0px 2px 6px rgba(255, 50, 0, 0.8)); }
@@ -373,7 +388,6 @@
             margin-right: 5px;
         }
 
-        /* СТИЛІ ДЛЯ ВИБОРУ ОБРАНОГО */
         .fav-checkbox {
             width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--text-muted);
             display: flex; align-items: center; justify-content: center; transition: 0.2s;
@@ -420,7 +434,6 @@
         .brace-highlight { position: relative; display: inline-block; padding-bottom: 6px; font-weight: 600; white-space: nowrap; }
         .brace-highlight::after { content: ''; position: absolute; left: 0; bottom: 0; width: 100%; height: 8px; background-image: url("data:image/svg+xml,%3Csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='none' viewBox='0 0 100 20'%3E%3Cpath d='M0,0 Q0,10 10,10 L45,10 Q50,10 50,20 Q50,10 55,10 L90,10 Q100,10 100,0' fill='none' stroke='%23dc2626' stroke-width='2' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E"); background-size: 100% 100%; background-repeat: no-repeat; }
         
-        /* БЛІДІ КОЛЬОРИ ТА СТРУКТУРА РЕЙТИНГУ */
         .rating-group { margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid rgba(0,0,0,0.06); }
         [data-theme="dark"] .rating-group { border-bottom: 1px solid rgba(255,255,255,0.08); }
         .rating-group:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
@@ -440,7 +453,6 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        /* ВЕРХНЯ ПАНЕЛЬ ПОШУКУ */
         .reserves-search-trigger { width: 53px; height: 53px; flex-shrink: 0; background: var(--primary); color: white; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
         .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
         .top-search-panel { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100000; padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border); transform: translateY(-150%) scale(0.85); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; }
@@ -540,7 +552,6 @@
     </div>
 
     <div id="tab-settings" class="app-tab">
-        
         <div class="list-group">
             <button class="list-item" onclick="window.openFavoritesSelectionModal()">
                 <div class="list-item-content">
@@ -1235,7 +1246,6 @@
                             }).join('');
 
                             let sumHtml = comboObj.sum.toLocaleString('uk-UA');
-                            
                             let certCount = comboObj.combo.length;
                             let certWord = (certCount >= 2 && certCount <= 4) ? "сертифікати" : "сертифікатів";
                             let variantTitle = `Варіант ${vIdx + 1} (${certCount} ${certWord})`;
@@ -1735,9 +1745,7 @@
 
         let html = "";
         for (let nom in groups) {
-            
             html += `<div class="rating-group">`;
-            
             let sorted = groups[nom].sort((a, b) => {
                 let valA = parseFloat(String(a.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
                 let valB = parseFloat(String(b.result).replace(/[^\d.,-]/g, '').replace(',', '.')) || 0;
@@ -1761,7 +1769,6 @@
                     </div>
                 </div>`;
             });
-            
             html += `</div>`;
         }
         safeUpdateHTML(container, html);
@@ -2342,7 +2349,6 @@
     function selectItem(item) {
         if(item.searchType === 'service') {
             currentCategoryData = null;
-            
             currentServiceData = { name: item.name, origName: item.origName, icon: item.icon };
             
             elCatInput.value = item.name;
@@ -2492,7 +2498,18 @@
 
         return `
             <div style="margin-top: 4px;">
-                <div class="desc-toggle-wrapper" onclick="const c = this.nextElementSibling; const a = this.querySelector('svg'); c.classList.toggle('show'); if(c.classList.contains('show')){a.style.transform='rotate(180deg)';}else{a.style.transform='rotate(0deg)';}">
+                <div class="desc-toggle-wrapper" onclick="
+                    const c = this.nextElementSibling; 
+                    const a = this.querySelector('svg'); 
+                    c.classList.toggle('show'); 
+                    if(c.classList.contains('show')){
+                        a.style.transform='rotate(180deg)';
+                    } else {
+                        a.style.transform='rotate(0deg)';
+                    }
+                    const badge = this.closest('.service-card').querySelector('.sc-discount-badge');
+                    if(badge) badge.style.display = c.classList.contains('show') ? 'block' : 'none';
+                ">
                     <span>Детальніше</span>
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
                 </div>
@@ -2592,11 +2609,11 @@
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
         let focusHtml = (s.isFocus && !isSelected) ? `<span class="animated-fire">🔥</span>` : '';
         
-        // ВЫВОДИМ СКИДКУ ТОЛЬКО ЕСЛИ ЭТО ВНУТРИ МОДАЛКИ (isModalCtx === true), БЕЗ ОГНЯ, РАЗМЕР МЕНЬШЕ
+        // Скидка в карточке по умолчанию скрыта (появится только при открытии через селектор/JS)
         let discountHtml = '';
-        if (isModalCtx && s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
+        if (s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
             let cleanDisc = window.escapeHTML(s.discount).replace('-', '');
-            discountHtml = `<div style="font-size: 10px; font-weight: 700; color: #d32f2f; background: #ffebee; padding: 2px 6px; border-radius: 4px; border: 1px solid rgba(211, 47, 47, 0.2); white-space: nowrap; margin-top: 4px; text-align: right; width: fit-content; margin-left: auto;">До -${cleanDisc}</div>`;
+            discountHtml = `<div class="sc-discount-badge">До -${cleanDisc}</div>`;
         }
 
         let brandHtml = s.brand ? `<div class="sc-brand ${s.cls}" style="margin-bottom:0;">${s.brand}</div>` : '';
@@ -2629,7 +2646,7 @@
     function renderServices() {
         try {
             const p = parseFloat(elPriceInput.value) || 0; 
-            window.currentDevicePrice = p; // Зберігаємо ціну
+            window.currentDevicePrice = p;
             
             if (currentCategoryData && currentCategoryData.service) {
                 renderTechInfo(); 
@@ -3218,7 +3235,6 @@
         window.openModalBase('descModal');
     };
 
-    /* ЛОГІКА ДЛЯ ФОРМИ ЗМІНИ ПРОДАВЦЯ */
     const SELLER_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyMDkyDEPQ9FpeBvRdLxoVm7qUlEEs2ksJSALjv11gZX1-6jNckZvdayvnNahQfcWG8Ig/exec";
 
     window.openSellerModal = function() {
