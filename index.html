@@ -33,7 +33,7 @@
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #000000; 
+            --text-main: #164f58; /* Оновлений фірмовий колір тексту */
             --text-muted: #8e8e93; 
             --primary: #10b981; 
             --primary-light: #d1fae5;
@@ -61,7 +61,7 @@
         [data-theme="dark"] {
             --bg: #000000; 
             --card-bg: #1c1c1e;
-            --text-main: #ffffff; 
+            --text-main: #f5f5f5; 
             --text-muted: #98989d; 
             --primary: #10b981;
             --primary-light: rgba(16, 185, 129, 0.2);
@@ -87,7 +87,7 @@
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; transition: background 0.3s ease, color 0.3s ease; 
-            animation: seamlessEnter 0.25s ease-out; /* Анімація для безшовного переходу */
+            animation: seamlessEnter 0.25s ease-out; 
         }
 
         @keyframes seamlessEnter {
@@ -107,6 +107,13 @@
         .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
 
+        .inline-loader {
+            display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
+            font-size: 13px; font-weight: 600; color: var(--text-muted);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
         .container { 
             position: relative; width: 100%; max-width: 480px; 
             padding: 20px 16px; margin-bottom: calc(var(--nav-height) + 40px); 
@@ -117,7 +124,7 @@
         .app-tab.active { display: block; }
         @keyframes fade { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0; }
         h2 { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.5px; }
         
         .fav-btn-top {
@@ -137,7 +144,7 @@
         }
         .fav-btn-top:active { transform: scale(0.85); background: var(--input-bg); }
 
-        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; }
+        .status-container { display: flex; justify-content: flex-end; margin-bottom: 15px; min-height: 28px; }
         .status-badge { 
             display: flex; align-items: center; gap: 6px; padding: 6px 10px; 
             background: var(--card-bg); border-radius: 20px; border: 1px solid var(--border);
@@ -460,8 +467,14 @@
         .rating-score { font-size: 15px; font-weight: 800; color: var(--primary); }
         .rating-desc { font-size: 12px; font-weight: 500; color: var(--text-muted); }
 
-        .reserves-search-trigger { width: 53px; height: 53px; flex-shrink: 0; background: var(--primary); color: white; border: none; border-radius: 12px; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
-        .reserves-search-trigger:active { transform: scale(0.95); opacity: 0.9; }
+        .reserves-search-trigger { 
+            width: 52px; height: 52px; flex-shrink: 0; background: var(--input-bg); 
+            color: var(--text-main); border: 1px solid var(--border); border-radius: 12px; 
+            display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+        }
+        .reserves-search-trigger:active { background: var(--border); transform: scale(0.95); }
+        
         .top-search-panel { position: fixed; top: 0; left: 0; width: 100%; background: var(--nav-bg); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); z-index: 100000; padding: calc(env(safe-area-inset-top) + 16px) 16px 16px 16px; box-shadow: 0 4px 30px rgba(0,0,0,0.15); display: flex; gap: 10px; align-items: center; border-bottom: 1px solid var(--border); transform: translateY(-150%) scale(0.85); opacity: 0; pointer-events: none; transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease; }
         [data-theme="dark"] .top-search-panel { box-shadow: 0 4px 30px rgba(0,0,0,0.6); border-bottom-color: rgba(255,255,255,0.1); }
         .top-search-panel.show { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
@@ -492,30 +505,34 @@
 
 <div class="container">
     
-    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch;">
+    <!-- Шапка з фіксованою висотою (height: 48px), щоб текст та жовто-синя лінія не стрибали -->
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch; height: 48px;">
         <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-        <div style="display: flex; flex-direction: column; justify-content: center; gap: 4px; padding: 2px 0; flex: 1;">
-            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between;">
-                <h2 id="headerTitle" style="line-height: 1;">SkillHUB Assistant</h2>
+        <div style="display: flex; flex-direction: column; justify-content: space-between; padding: 2px 0; flex: 1;">
+            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between; align-items: center;">
+                <h2 id="headerTitle" style="line-height: 1; font-size: 24px;">Пошук</h2>
                 <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
                     <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
                 </button>
             </div>
-            <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center;">
+            <div style="font-size: 13px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; line-height: 1;">
                 Харківський регіон <span style="font-size: 14px; margin-left: 4px;">🫶</span>
             </div>
         </div>
     </div>
-    
-    <div class="status-container" id="statusContainer">
-        <div class="status-badge">
-            <div id="statusDot" class="dot yellow pulse"></div>
-            <span id="statusText">Підключення</span>
-        </div>
-    </div>
 
-    <!-- ВАЖЛИВО: за замовчуванням клас active тут видалено, керує скрипт, щоб не було блимання -->
+    <!-- Вкладка Пошук. Блок статусів тепер ТІЛЬКИ тут, тому не переходить на інші сторінки -->
     <div id="tab-search" class="app-tab">
+        <div class="status-container" id="statusContainer">
+            <div class="status-badge" id="mainStatusBadge">
+                <div id="statusDot" class="dot yellow pulse"></div>
+                <span id="statusText">Підключення</span>
+            </div>
+            <div class="inline-loader" id="inlineLoader" style="display: none;">
+                <span id="inlineLoaderText">завантаження... (0%)</span>
+            </div>
+        </div>
+
         <div class="input-group">
             <input type="text" id="catInput" placeholder="Яку техніку чи послугу шукаємо?" autocomplete="off" disabled>
             <button id="clearAllBtn" class="clear-btn">×</button>
@@ -642,7 +659,6 @@
 </div>
 
 <nav class="bottom-nav">
-    <!-- Для навігації теж видалив клас active, він буде призначений скриптом -->
     <button class="nav-item" onclick="window.switchTab('tab-search')">
         <div class="nav-icon icon-search"></div>
         <span>Пошук</span>
@@ -907,16 +923,12 @@
         if (navBtn) navBtn.classList.add('active');
         
         const titles = {
-            'tab-search': 'SkillHUB Assistant',
+            'tab-search': 'Пошук',
             'tab-reserves': 'Активні резерви',
             'tab-skillhub': 'SkillHUB',
             'tab-settings': 'Налаштування'
         };
-        document.getElementById('headerTitle').innerText = titles[initialTab] || 'SkillHUB Assistant';
-        
-        if(initialTab !== 'tab-search') {
-            document.getElementById('statusContainer').style.display = 'none';
-        }
+        document.getElementById('headerTitle').innerText = titles[initialTab] || 'Пошук';
     })();
 
     window.currentDevicePrice = 0; 
@@ -1087,7 +1099,7 @@
     }
 
     const tabTitles = {
-        'tab-search': 'SkillHUB Assistant',
+        'tab-search': 'Пошук',
         'tab-reserves': 'Активні резерви',
         'tab-skillhub': 'SkillHUB',
         'tab-settings': 'Налаштування'
@@ -1134,7 +1146,6 @@
         if (activeNavBtn) activeNavBtn.classList.add('active');
 
         document.getElementById('headerTitle').innerText = tabTitles[tabId];
-        document.getElementById('statusContainer').style.display = (tabId === 'tab-search') ? 'flex' : 'none';
         
         const topFavBtn = document.getElementById('topFavBtn');
         if (topFavBtn) {
@@ -1150,7 +1161,6 @@
         
         window.scrollTo(0, 0);
 
-        // ПАМ'ЯТЬ ВКЛАДКИ ДЛЯ БЕЗШОВНОГО ПОВЕРНЕННЯ
         sessionStorage.setItem('skillhub_active_tab', tabId);
     }
 
@@ -1493,14 +1503,7 @@
         if (linkStr === "--") return `onclick="${prefix}window.openSellerModal()"`;
         if (linkStr === "%") return `onclick="${prefix}window.openRatingModal()"`;
         if (linkStr === "@@") return `onclick="${prefix}window.openModalBase('certManualModal')"`;
-        
-        if (linkStr !== "" && linkStr !== "#") {
-            // Якщо посилання на внутрішню сторінку (наприклад, Навчання), відкриваємо в цій же вкладці для безшовного переходу
-            if (!linkStr.startsWith('http') || linkStr.toLowerCase().includes('education')) {
-                return `onclick="${prefix}window.location.href='${linkStr}'"`;
-            }
-            return `onclick="${prefix}window.open('${linkStr}', '_blank')"`;
-        }
+        if (linkStr !== "" && linkStr !== "#") return `onclick="${prefix}window.open('${linkStr}', '_blank')"`;
         
         if (nm.includes("замін") || nm.includes("замен") || nm.includes("продавц")) return `onclick="${prefix}window.openSellerModal()"`;
         if (nm.includes("об'єдн") || nm.includes("объед") || nm.includes("сертиф")) return `onclick="${prefix}window.openModalBase('certManualModal')"`;
@@ -1736,7 +1739,7 @@
         let text = "🧮 Розрахунок бонусів:\n\n";
         let total = 0;
         window.klochList.forEach((item, index) => {
-            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт\n`;
+            text += `${index + 1}. Вартість: ${item.price} ₴ \vert{} Кіл-ть: ${item.qty} шт\n`;
             text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
             total += item.result;
         });
@@ -1815,6 +1818,8 @@
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
         
+        let isSessionActive = sessionStorage.getItem('skillhub_session_active');
+
         if (cached) { 
             try {
                 db = sanitizeDb(JSON.parse(cached)); 
@@ -1822,25 +1827,33 @@
                 enableUI(); 
                 window.populateFilters();
                 window.renderSkillHubTab();
-                setAppStatus('ok', 'Готовий до роботи');
-                refreshData(false); 
+                
+                if (isSessionActive) {
+                    setAppStatus('ok', 'Готовий до роботи');
+                } else {
+                    sessionStorage.setItem('skillhub_session_active', 'true');
+                    setAppStatus('ok', 'Готовий до роботи');
+                    refreshData(false); 
+                }
             } catch(e) { await refreshData(true); }
         } else {
+            sessionStorage.setItem('skillhub_session_active', 'true');
             await refreshData(true); 
         }
     }
     
     window.init = init;
 
-    async function refreshData(first = false) {
-        if(first) setAppStatus('loading', 'Підготовка');
+    async function refreshData(first = false, isManual = false) {
+        if(first && !isManual) setAppStatus('loading', 'Підготовка');
         let pInt; 
         try {
             const controller = new AbortController();
             
             const pBar = document.getElementById('progressBar');
             const pCont = document.getElementById('progressContainer');
-            if (first) {
+            
+            if (first && !isManual) {
                 document.getElementById('loaderSpinner').style.display = 'none';
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
@@ -1848,7 +1861,16 @@
 
             let progress = 10;
             pInt = setInterval(() => {
-                if (progress < 90 && first) { progress += Math.random() * 15; pBar.style.width = progress + '%'; }
+                if (progress < 90 && first) { 
+                    progress += Math.random() * 15; 
+                    if (progress > 90) progress = 90;
+                    
+                    if (!isManual) {
+                        pBar.style.width = progress + '%'; 
+                    } else {
+                        document.getElementById('inlineLoaderText').innerText = `завантаження... (${Math.round(progress)}%)`;
+                    }
+                }
             }, 300);
 
             const timeoutId = setTimeout(() => controller.abort(), 60000);
@@ -1858,7 +1880,11 @@
             const dataStr = await response.text();
             
             if (pInt) clearInterval(pInt);
-            if (first) pBar.style.width = '100%';
+            
+            if (first) {
+                if (!isManual) pBar.style.width = '100%';
+                else document.getElementById('inlineLoaderText').innerText = `завантаження... (100%)`;
+            }
 
             if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
             let newDb = JSON.parse(dataStr);
@@ -1872,14 +1898,23 @@
             
             db = sanitizeDb(newDb);
             window.buildServiceSearchList();
-            setAppStatus('ok', 'Готовий до роботи');
+            
+            if (isManual) {
+                setTimeout(() => {
+                    document.getElementById('inlineLoader').style.display = 'none';
+                    document.getElementById('mainStatusBadge').style.display = 'flex';
+                    setAppStatus('ok', 'Готовий до роботи');
+                }, 500);
+            } else {
+                setAppStatus('ok', 'Готовий до роботи');
+            }
             
             setTimeout(() => {
                 if (db.appVersion && savedVersion !== db.appVersion) {
                     if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
                     try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
                 }
-                if (first) enableUI(); 
+                if (first && !isManual) enableUI(); 
                 window.populateFilters();
                 window.renderSkillHubTab();
                 if(currentCategoryData || currentServiceData) renderServices(); 
@@ -1891,11 +1926,15 @@
             console.error("Refresh Error:", e);
             let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
             if (cached) { 
+                if (isManual) {
+                    document.getElementById('inlineLoader').style.display = 'none';
+                    document.getElementById('mainStatusBadge').style.display = 'flex';
+                }
                 setAppStatus('ok', 'Офлайн (З кешу)'); 
-                if (first) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
+                if (first && !isManual) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
             } else { 
                 setAppStatus('error', 'Помилка');
-                if (first) {
+                if (first && !isManual) {
                     document.getElementById('loaderSpinner').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'none';
                     safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
@@ -1906,12 +1945,12 @@
 
     document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
         try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
-        document.getElementById('appLoader').classList.remove('hidden');
-        document.getElementById('loaderSpinner').style.display = 'none';
-        document.getElementById('progressContainer').style.display = 'block';
-        document.getElementById('progressBar').style.width = '0%';
-        document.getElementById('mainLoaderText').innerText = "Оновлення бази...";
-        await refreshData(true); 
+        
+        document.getElementById('mainStatusBadge').style.display = 'none';
+        document.getElementById('inlineLoader').style.display = 'inline-flex';
+        document.getElementById('inlineLoaderText').innerText = "завантаження... (0%)";
+        
+        await refreshData(true, true); 
     });
 
     function enableUI() { 
@@ -2644,7 +2683,6 @@
         let availHtml = s.availabilityHTML ? `<div style="margin-top:8px;">${s.availabilityHTML}</div>` : '';
         let focusHtml = (s.isFocus && !isSelected) ? `<span class="animated-fire">🔥</span>` : '';
         
-        // Скидка в карточке по умолчанию скрыта (появится только при открытии через селектор/JS)
         let discountHtml = '';
         if (s.discount && s.discount !== "0%" && s.discount !== "0" && s.discount !== "" && s.discount !== "-") {
             let cleanDisc = window.escapeHTML(s.discount).replace('-', '');
@@ -3326,16 +3364,6 @@
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
     }
-
-    // --- ДОБАВЛЕНО ДЛЯ БЕЗШОВНОГО ПОВЕРНЕННЯ ЧЕРЕЗ BFCache ---
-    window.addEventListener('pageshow', function(event) {
-        if (event.persisted) {
-            // Якщо сторінка відновлена з кешу (користувач повернувся з Education.html)
-            document.documentElement.style.setProperty('--loader-display', 'none');
-            const loader = document.getElementById('appLoader');
-            if (loader) loader.classList.add('hidden');
-        }
-    });
 </script>
 </body>
 </html>
