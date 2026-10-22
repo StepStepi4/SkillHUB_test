@@ -19,8 +19,8 @@
                 var theme = localStorage.getItem('theme') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
                 
-                // Якщо є кеш та дані входу - миттєво показуємо кабінет без жодних лоадерів
-                if (localStorage.getItem('skillhub_v6_education') && localStorage.getItem('skillhub_edu_creds')) {
+                // Перевіряємо ЄДИНИЙ спільний кеш
+                if (localStorage.getItem('skillhub_v6_cache') && localStorage.getItem('skillhub_edu_creds')) {
                     document.documentElement.style.setProperty('--edu-loader-display', 'none');
                     document.documentElement.classList.add('fast-boot');
                 }
@@ -616,7 +616,8 @@
 <!-- СКРИПТИ -->
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
-    const CACHE_KEY = 'skillhub_v6_education'; 
+    // ЄДИНИЙ КЛЮЧ КЕШУ ДЛЯ ОБОХ ФАЙЛІВ
+    const CACHE_KEY = 'skillhub_v6_cache'; 
     const TIME_PER_QUESTION = 25; 
 
     const CONFIG = {
@@ -884,7 +885,11 @@
 
             const data = await response.json();
             if (!data.error && data.educationData) {
-                try { localStorage.setItem(CACHE_KEY, JSON.stringify(data)); } catch(e) {}
+                try { 
+                    // ЗБЕРІГАЄМО ПОВНИЙ ОБ'ЄКТ У СПІЛЬНИЙ КЕШ
+                    localStorage.setItem(CACHE_KEY, JSON.stringify(data)); 
+                } catch(e) {}
+                
                 db = data.educationData;
                 globalAchievements = data.achievementData || [];
 
