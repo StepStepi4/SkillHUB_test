@@ -12,16 +12,17 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
 
-    <!-- Ініціалізація теми та миттєве приховання лоадера при наявності кешу -->
+    <!-- Ініціалізація теми та МИТТЄВИЙ запуск (безшовність) -->
     <script>
         (function() {
             try {
                 var theme = localStorage.getItem('theme') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
                 
-                // Якщо є кеш та дані входу - ховаємо лоадер ще до рендеру DOM
-                if (localStorage.getItem('skillhub_v5_education') && localStorage.getItem('skillhub_edu_creds')) {
+                // Якщо є кеш та дані входу - миттєво показуємо кабінет без лоадерів
+                if (localStorage.getItem('skillhub_v6_education') && localStorage.getItem('skillhub_edu_creds')) {
                     document.documentElement.style.setProperty('--edu-loader-display', 'none');
+                    document.documentElement.classList.add('fast-boot');
                 }
             } catch (e) {}
         })();
@@ -75,6 +76,10 @@
             --tab-active: #1c1c1e;
         }
 
+        /* --- ПРАВИЛА ДЛЯ МИТТЄВОГО ВХОДУ --- */
+        html.fast-boot body .view { display: none !important; animation: none !important; }
+        html.fast-boot body #cabinetView { display: block !important; opacity: 1 !important; transform: none !important; animation: none !important; }
+
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
@@ -111,7 +116,7 @@
         h1 { font-size: 26px; font-weight: 800; margin: 0 0 22px 0; text-align: center; letter-spacing: -0.5px; }
         p.subtitle { font-size: 14px; color: var(--text-muted); text-align: center; margin-bottom: 24px; font-weight: 500; }
         .section-title { font-size: 12px; font-weight: 800; margin: 24px 0 12px 0; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: flex-start; gap: 8px; }
-        .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; }
+        .big-emoji { text-align: center; font-size: 64px; margin-bottom: 16px; line-height: 1; display: flex; justify-content: center; }
 
         /* --- ЕКРАН АВТОРИЗАЦІЇ --- */
         .login-wrapper { display: flex; flex-direction: column; justify-content: center; min-height: 80vh; }
@@ -150,12 +155,12 @@
         .back-btn-sleek:active { transform: scale(0.92); background: var(--input-bg); }
         .back-btn-sleek.active-nav { border-color: var(--primary); background: var(--primary-light); }
 
-        /* Швидкі кнопки ролі (📚Навчання / 📊Статистика співробітників) */
+        /* Швидкі кнопки ролі */
         .role-action-bar { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 18px; }
         .role-action-btn { background: var(--card-bg); border: 1.5px solid var(--border); border-radius: 14px; padding: 11px 12px; font-size: 13px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 7px; cursor: pointer; transition: all 0.2s; box-shadow: 0 3px 10px rgba(0,0,0,0.02); }
         .role-action-btn:active { transform: scale(0.96); }
-        .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--rozetka-green-dark); }
-        [data-theme="dark"] .role-action-btn.active { color: #3a9c9f; }
+        .role-action-btn.active { border-color: var(--primary); background: var(--primary-light); color: var(--primary); }
+        [data-theme="dark"] .role-action-btn.active { color: var(--primary); }
 
         @keyframes pulse-ring { 0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
         .ach-btn.has-new { animation: pulse-ring 2s infinite; border-radius: 50%; }
@@ -237,7 +242,7 @@
         .drawer-overlay.active { display: block; opacity: 1; }
         .ach-drawer { position: fixed; top: 0; right: -100%; width: 100%; max-width: 370px; height: 100%; background: var(--bg); z-index: 10001; transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); box-shadow: -8px 0 32px rgba(0,0,0,0.15); overflow-y: auto; padding: 24px; }
         .ach-drawer.open { right: 0; }
-        .ach-title { font-size: 22px; font-weight: 800; color: var(--text-main); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .ach-title { font-size: 22px; font-weight: 800; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
         
         .ach-card { background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 14px; display: flex; align-items: center; gap: 18px; cursor: pointer; box-shadow: 0 4px 16px rgba(0,0,0,0.03); transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1); position: relative; z-index: 1; }
         .ach-card:active:not(.zoomed) { transform: scale(0.96); background: var(--input-bg); } 
@@ -274,14 +279,14 @@
         }
         .stats-modal.active { opacity: 1; transform: translate(-50%, -50%) scale(1); display: flex; }
         .stats-modal-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; flex-shrink: 0; }
-        .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+        .stats-modal-title { font-size: 20px; font-weight: 800; color: var(--primary); display: flex; align-items: center; gap: 8px; }
         .modal-close-btn { background: var(--card-bg); border: 1px solid var(--border); width: 36px; height: 36px; border-radius: 12px; font-size: 18px; font-weight: 800; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
         .search-box-wrap { position: relative; margin-bottom: 14px; flex-shrink: 0; }
         .search-input-modern {
             width: 100%; padding: 14px 40px 14px 42px !important; border-radius: 14px !important;
             background: var(--card-bg) !important; border: 1.5px solid var(--border) !important;
-            font-size: 15px !important; font-weight: 600 !important; color: var(--text-main) !important;
+            font-size: 15px !important; font-weight: 600 !important; color: var(--primary) !important;
         }
         .search-icon-left { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); font-size: 16px; color: var(--text-muted); pointer-events: none; }
         .search-clear-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 16px; color: var(--text-muted); cursor: pointer; display: none; }
@@ -350,9 +355,9 @@
 <!-- БОКОВЕ МЕНЮ 🏆 АЧІВКИ -->
 <div class="drawer-overlay" id="achOverlay" onclick="toggleAchievements()"></div>
 <div class="ach-drawer" id="achDrawer">
-    <div class="ach-title">
+    <div class="ach-title" style="color: var(--primary);">
         <div style="display:flex; align-items:center; gap:8px;">
-            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> Ачівки
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" onerror="this.style.display='none'"> Зароблені відзнаки
         </div>
         <button class="modal-close-btn" onclick="toggleAchievements()">✕</button>
     </div>
@@ -391,7 +396,7 @@
                 <div class="big-emoji">
                     <img src="Achievement/17.png" alt="SkillHUB Logo" style="width: 80px; height: 80px; object-fit: contain; display: block; margin: 0 auto 16px auto; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));" onerror="this.style.display='none'">
                 </div>
-                <h1>Вхід у Навчання</h1>
+                <h1>Вхід в академію</h1>
 
                 <div id="errorMsg">Невірний логін або пароль!</div>
 
@@ -421,14 +426,14 @@
             <div style="display: flex; gap: 12px; align-items: stretch;">
                 <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
                 <div style="display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 2px 0;">
-                    <h2 id="cabinetTitle">Особистий кабінет</h2>
+                    <h2 id="cabinetTitle" style="color: var(--primary);">Особистий кабінет</h2>
                     <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center;" id="userWelcome"></div>
                 </div>
             </div>
 
             <!-- Верхні кнопки -->
             <div class="nav-actions" id="cabinetNavActions">
-                <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Ачівки">
+                <button id="achBtn" class="back-btn-sleek ach-btn" onclick="toggleAchievements()" title="Зароблені відзнаки">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
@@ -464,7 +469,7 @@
 
         <!-- Блок дедлайну -->
         <div id="deadlineContainer" style="display:none;">
-            <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon" style="width:22px; height:22px;"></span>
+            <span id="deadlineIcon"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Time.svg" class="ui-icon"></span>
             <span id="deadlineText"></span>
         </div>
 
@@ -481,7 +486,7 @@
         <!-- ВКЛАДКА 1: ПЕРСОНАЛЬНА СТАТИСТИКА -->
         <div id="tabStats" class="tab-content active">
             <div class="section-title">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon" style="width:20px; height:20px;"> <span>Діаграма проходження курсів</span>
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Statistic.svg" class="ui-icon"> <span>Діаграма проходження курсів</span>
             </div>
             
             <div class="chart-wrapper" id="chartContainerBox">
@@ -492,12 +497,12 @@
             <div id="learningAnalyticsBlock"></div>
 
             <div id="employeeEarnedAchievementsSection" style="display: none;">
-                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon" style="width:20px; height:20px;"> Зароблені ачівки співробітника</div>
+                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon"> Зароблені відзнаки</div>
                 <div id="employeeEarnedAchievementsList"></div>
             </div>
 
             <div id="employeeTestsResultsSection" style="display: none;">
-                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon" style="width:20px; height:20px;"> Список тестів та результати</div>
+                <div class="section-title"><img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon"> Список тестів та результати</div>
                 <div id="employeeTestsResultsList"></div>
             </div>
         </div>
@@ -505,7 +510,7 @@
         <!-- ВКЛАДКА 2: ПРИЗНАЧЕНІ КУРСИ -->
         <div id="tabCourses" class="tab-content">
             <div class="section-title" id="courseListTitle">
-                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon" style="width: 20px; height: 20px;">
+                <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Test.svg" class="ui-icon">
                 <span>Призначені курси за напрямками</span>
             </div>
             <div id="courseList"></div>
@@ -538,10 +543,7 @@
         </div>
 
         <div class="big-emoji" id="theoryEmoji">
-            <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="display: block; margin: 0 auto;">
-                <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-            </svg>
+            <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Course.svg" style="width: 60px; height: 60px; object-fit: contain; margin: 0 auto; display: block;">
         </div>
         <div id="theoryContent" class="theory-box"></div>
 
@@ -608,7 +610,7 @@
 <!-- СКРИПТИ -->
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
-    const CACHE_KEY = 'skillhub_v5_education'; 
+    const CACHE_KEY = 'skillhub_v6_education'; // Оновив ключ кешу, щоб уникнути конфліктів 
     const TIME_PER_QUESTION = 25; 
 
     const CONFIG = {
@@ -798,6 +800,9 @@
 
     function switchView(viewId) {
         requestAnimationFrame(() => {
+            // Знімаємо клас fast-boot, щоб увімкнути звичайні анімації після першого завантаження
+            document.documentElement.classList.remove('fast-boot');
+            
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             let target = document.getElementById(viewId);
             if (target) target.classList.add('active');
@@ -1061,16 +1066,15 @@
     }
 
     // --- АВТОРИЗАЦІЯ ТА СЕСІЇ ---
-    function handleLoginSync() {
-        const l = document.getElementById('loginInput').value.trim();
-        const p = document.getElementById('passInput').value.trim();
-        
+    
+    // Синхронна перевірка логіну без читання DOM елементів
+    function handleLoginSync(l, p) {
         let user = null;
         if (db && db.users) {
             user = db.users.find(u => {
-                let isLoginMatch = String(u.login || "").trim().toLowerCase() === l.toLowerCase();
+                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
                 let dbPass = String(u.pass || "").trim().toLowerCase();
-                let isPassMatch = (dbPass === "") || (dbPass === p.toLowerCase());
+                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
                 return isLoginMatch && isPassMatch;
             });
         }
@@ -1106,6 +1110,7 @@
             switchToMyCabinet();
             startSessionMonitor();
         } else {
+            document.documentElement.classList.remove('fast-boot');
             document.getElementById('loader').style.display = 'none';
             switchView('loginView');
         }
@@ -1436,7 +1441,7 @@
             return `
                 <div class="list-card" style="border-color: ${borderCol}; padding: 14px 16px;" onclick="selectEmployeeFromModal('${escapeHTMLAttr(u.login)}')">
                     <div style="flex: 1; padding-right: 10px;">
-                        <div style="font-size: 15px; font-weight: 800; color: var(--text-main); margin-bottom: 4px;">${escapeHTMLAttr(u.name)}</div>
+                        <div style="font-size: 15px; font-weight: 800; color: var(--primary); margin-bottom: 4px;">${escapeHTMLAttr(u.name)}</div>
                         <div style="font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; flex-direction: column; gap: 2px;">
                             ${storeTxt ? `<span>${storeTxt}</span>` : ''}
                             ${mgrTxt ? `<span>${mgrTxt}</span>` : ''}
@@ -1601,13 +1606,13 @@
                         const yArc = yCenter + outerRadius * Math.sin(middleAngle);
 
                         // Злам лінії
-                        const offset = 18; 
+                        const offset = 8; 
                         const xBreak = xCenter + (outerRadius + offset) * Math.cos(middleAngle);
                         const yBreak = yCenter + (outerRadius + offset) * Math.sin(middleAngle);
 
                         // Кінець лінії
                         const isRight = Math.cos(middleAngle) >= 0;
-                        const xEnd = xBreak + (isRight ? 15 : -15); 
+                        const xEnd = xBreak + (isRight ? 10 : -10); 
                         const yEnd = yBreak;
 
                         // Малюємо лінію
@@ -1624,7 +1629,7 @@
                         ctx.font = 'bold 13px Inter, sans-serif';
                         ctx.textAlign = isRight ? 'left' : 'right';
                         ctx.textBaseline = 'middle';
-                        const textX = isRight ? xEnd + 6 : xEnd - 6;
+                        const textX = isRight ? xEnd + 4 : xEnd - 4;
                         ctx.fillText(percentage, textX, yEnd);
                     }
                 });
@@ -1651,15 +1656,15 @@
             options: {
                 layout: {
                     padding: {
-                        left: 40,
-                        right: 40,
-                        top: 20,
-                        bottom: 20
+                        left: 60,
+                        right: 60,
+                        top: 25,
+                        bottom: 25
                     }
                 },
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '50%', // Трохи більший виріз виглядає краще з виносними лініями
+                cutout: '45%', 
                 plugins: {
                     legend: {
                         position: 'bottom',
@@ -1787,11 +1792,11 @@
 
         let achCodes = emp.achievements ? String(emp.achievements).split(',').map(s => s.trim()).filter(Boolean) : [];
         if (achCodes.length === 0) {
-            achContainer.innerHTML = `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600;">У співробітника поки немає зароблених ачівок</div>`;
+            achContainer.innerHTML = `<div style="background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; text-align: center; color: var(--text-muted); font-size: 13px; font-weight: 600;">У співробітника поки немає зароблених відзнак</div>`;
         } else {
             let earnedHtml = achCodes.map(code => {
                 let achInfo = (globalAchievements || []).find(a => String(a.code).trim() === code);
-                let title = achInfo && achInfo.name ? achInfo.name : `Ачівка #${code}`;
+                let title = achInfo && achInfo.name ? achInfo.name : `Відзнака #${code}`;
                 let desc = achInfo && achInfo.description ? achInfo.description : "";
                 let safeCode = escapeHTMLAttr(code);
 
@@ -2016,7 +2021,7 @@
             globalAchievements.forEach(achInfo => {
                 let code = String(achInfo.code).trim();
                 let isEarned = isGuest || achCodes.includes(code);
-                let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Ачівка #${code}`;
+                let displayName = (achInfo && achInfo.name) ? achInfo.name.replace(/\.(svg|png|jpg|jpeg|webp|gif)$/i, '') : `Відзнака #${code}`;
                 let desc = (achInfo && achInfo.description) ? achInfo.description : "";
                 let safeCode = escapeHTMLAttr(code);
 
@@ -2369,6 +2374,57 @@
     });
 
     // --- ІНІЦІАЛІЗАЦІЯ ---
+    
+    function handleLoginSync(l, p) {
+        let user = null;
+        if (db && db.users) {
+            user = db.users.find(u => {
+                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
+                let dbPass = String(u.pass || "").trim().toLowerCase();
+                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
+                return isLoginMatch && isPassMatch;
+            });
+        }
+
+        if (user) {
+            currentUser = user.login;
+            let userKeyLow = String(currentUser).toLowerCase().trim();
+            
+            let myToken = localStorage.getItem('skillhub_session_token');
+            let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
+            
+            if (serverToken && myToken && serverToken !== myToken) {
+                logout(true, false);
+                return;
+            }
+            if (!myToken) {
+                myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
+                localStorage.setItem('skillhub_session_token', myToken);
+            }
+            
+            if (navigator.onLine) {
+                try {
+                    fetch(API_URL, {
+                        method: 'POST', cache: 'no-store', mode: 'no-cors',
+                        body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken })
+                    });
+                } catch(e) {}
+            }
+
+            windowUserRole = detectRoleGroup(user.role);
+            windowViewingEmployee = null;
+
+            switchToMyCabinet();
+            startSessionMonitor();
+        } else {
+            // Якщо не знайшли користувача, знімаємо швидкий запуск і повертаємо на логін
+            document.documentElement.classList.remove('fast-boot');
+            document.documentElement.style.setProperty('--edu-loader-display', 'flex');
+            document.getElementById('loader').style.display = 'none';
+            switchView('loginView');
+        }
+    }
+
     document.addEventListener('DOMContentLoaded', async () => {
         let hasCache = false;
         try {
@@ -2393,9 +2449,9 @@
             document.getElementById('rememberMe').checked = true;
 
             if (hasCache && db && db.users && db.users.length > 0) {
-                // Якщо є кеш, миттєво запускаємо синхронний вхід
+                // Якщо є кеш, миттєво запускаємо синхронний вхід і ховаємо лоадер
                 document.getElementById('loader').style.display = 'none';
-                handleLoginSync();
+                handleLoginSync(parsedCreds.login, parsedCreds.pass);
                 fetchFreshDataSilent();
             } else {
                 document.getElementById('loader').style.display = 'flex';
@@ -2405,6 +2461,8 @@
                 else switchView('loginView');
             }
         } else {
+            document.documentElement.classList.remove('fast-boot');
+            document.documentElement.style.setProperty('--edu-loader-display', 'flex');
             if (!hasCache && navigator.onLine) {
                 document.getElementById('loader').style.display = 'flex';
                 await fetchFreshDataSilent();
@@ -2417,10 +2475,14 @@
     });
 
     window.addEventListener('pageshow', function(event) {
+        // Миттєве повернення по історії (bfcache)
         if (event.persisted) {
             document.documentElement.style.setProperty('--edu-loader-display', 'none');
             const loader = document.getElementById('loader');
             if (loader) loader.style.display = 'none';
+            
+            // Якщо миттєво повертаємось на екран, де потрібно скинути fast-boot
+            document.documentElement.classList.remove('fast-boot');
         }
     });
 </script>
