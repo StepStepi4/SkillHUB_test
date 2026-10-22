@@ -22,8 +22,11 @@
 
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        if (localStorage.getItem('skillhub_v6_flat')) {
+        // Перевіряємо ЄДИНИЙ спільний кеш
+        if (localStorage.getItem('skillhub_v6_cache')) {
             document.documentElement.style.setProperty('--loader-display', 'none');
+            document.documentElement.classList.add('fast-boot');
+            sessionStorage.setItem('skillhub_session_active', 'true');
         }
     </script>
 
@@ -98,12 +101,17 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
+        /* --- ПРАВИЛА ДЛЯ МИТТЄВОГО ВХОДУ --- */
+        html.fast-boot body { animation: none !important; }
+        html.fast-boot .app-loader { display: none !important; opacity: 0; pointer-events: none; }
+        html.fast-boot .app-tab { animation: none !important; }
+
         .app-loader {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: var(--loader-display); flex-direction: column; justify-content: center; align-items: center;
             z-index: 999999; transition: opacity 0.2s ease, visibility 0.2s ease;
         }
-        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
+        .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; display: none; }
         
         .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; text-align: center; padding: 0 20px; line-height: 1.4;}
         .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; margin-bottom: 15px; }
@@ -1006,7 +1014,8 @@
 
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec';
     
-    const CACHE_KEY = 'skillhub_v6_flat'; 
+    // ЄДИНИЙ КЛЮЧ КЕШУ ДЛЯ ОБОХ ФАЙЛІВ
+    const CACHE_KEY = 'skillhub_v6_cache'; 
     const SEEN_VERSION_KEY = 'skillhub_version_flat_v6';
     
     let db = { categories: [], descriptions: {}, tariffs: [], appVersion: "", changelog: "", montazhData: {cities:[], services:[]}, serviceCodes: {}, rezervyData: [], rezervyDate: "", serviceBrands: {}, trainingData: [], skillHubButtons: [], sellerRatings: [], klochCalcData: { rules: [], relevance: "" } };
@@ -1739,7 +1748,7 @@
         let text = "🧮 Розрахунок бонусів:\n\n";
         let total = 0;
         window.klochList.forEach((item, index) => {
-            text += `${index + 1}. Вартість: ${item.price} ₴ \vert{} Кіл-ть: ${item.qty} шт\n`;
+            text += `${index + 1}. Вартість: ${item.price} ₴ | Кіл-ть: ${item.qty} шт\n`;
             text += `   Бонус: ${item.result.toFixed(2)} ₴\n`;
             total += item.result;
         });
@@ -1817,9 +1826,6 @@
     async function init() {
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
-        
-        // Змінна сесії для безшовного переходу
-        let isSessionActive = sessionStorage.getItem('skillhub_session_active');
 
         if (cached) { 
             try {
@@ -1829,14 +1835,13 @@
                 window.populateFilters();
                 window.renderSkillHubTab();
                 
-                if (isSessionActive) {
-                    setAppStatus('ok', 'Готовий до роботи');
-                } else {
+                // Перевірка сесії більше не показує "Підготовка", 
+                // вона відразу прибирає лоадер, а дані оновляться мовчки в фоні
+                if (!sessionStorage.getItem('skillhub_session_active')) {
                     sessionStorage.setItem('skillhub_session_active', 'true');
-                    setAppStatus('ok', 'Готовий до роботи');
-                    // Оновлення у фоні
                     refreshData(false, false); 
                 }
+                setAppStatus('ok', 'Готовий до роботи');
             } catch(e) { await refreshData(true, false); }
         } else {
             sessionStorage.setItem('skillhub_session_active', 'true');
@@ -1848,7 +1853,7 @@
 
     // isManual = ручне натискання кнопки
     async function refreshData(first = false, isManual = false) {
-        if(first && !isManual) setAppStatus('loading', 'Підготовка');
+        if(first && !isManual && !localStorage.getItem(CACHE_KEY)) setAppStatus('loading', 'Підготовка');
         let pInt; 
         try {
             const controller = new AbortController();
@@ -1856,15 +1861,16 @@
             const pBar = document.getElementById('progressBar');
             const pCont = document.getElementById('progressContainer');
             
-            if (first && !isManual) {
+            if (first && !isManual && !document.documentElement.classList.contains('fast-boot')) {
                 document.getElementById('appLoader').classList.remove('hidden');
+                document.getElementById('appLoader').style.display = 'flex';
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
             }
 
             let progress = 10;
             pInt = setInterval(() => {
-                if (progress < 90 && first) { 
+                if (progress < 90 && first && !document.documentElement.classList.contains('fast-boot')) { 
                     progress += Math.random() * 15; 
                     if (progress > 90) progress = 90;
                     
@@ -1884,7 +1890,7 @@
             
             if (pInt) clearInterval(pInt);
             
-            if (first) {
+            if (first && !document.documentElement.classList.contains('fast-boot')) {
                 if (!isManual) pBar.style.width = '100%';
                 else document.getElementById('inlineLoaderText').innerText = `завантаження... (100%)`;
             }
@@ -1896,6 +1902,7 @@
             let savedVersion = null;
             try {
                 savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
+                // ЗБЕРІГАЄМО ПОВНИЙ КЕШ
                 localStorage.setItem(CACHE_KEY, dataStr);
             } catch (e) {}
             
@@ -1962,6 +1969,7 @@
             document.getElementById('appVersionDisp').style.display = 'inline-block';
         }
         document.getElementById('appLoader').classList.add('hidden');
+        document.getElementById('appLoader').style.display = 'none';
         
         if (document.getElementById('tab-search').classList.contains('active')) {
             document.getElementById('topFavBtn').style.display = 'flex';
