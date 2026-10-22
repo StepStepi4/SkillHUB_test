@@ -19,7 +19,7 @@
                 var theme = localStorage.getItem('theme') || 'light';
                 document.documentElement.setAttribute('data-theme', theme);
                 
-                // Якщо є кеш та дані входу - миттєво показуємо кабінет без лоадерів
+                // Якщо є кеш та дані входу - миттєво показуємо кабінет без жодних лоадерів
                 if (localStorage.getItem('skillhub_v6_education') && localStorage.getItem('skillhub_edu_creds')) {
                     document.documentElement.style.setProperty('--edu-loader-display', 'none');
                     document.documentElement.classList.add('fast-boot');
@@ -35,14 +35,14 @@
         :root {
             --bg: #f2f2f7; 
             --card-bg: #ffffff;
-            --text-main: #111827; 
-            --text-muted: #6b7280; 
+            --text-main: #164f58; /* Збігається з Index */
+            --text-muted: #8e8e93; 
             
             /* КОРПОРАТИВНИЙ КОЛІР */
             --primary: #164f58; 
             --primary-light: rgba(22, 79, 88, 0.15);
             
-            --border: #e5e7eb;
+            --border: #e5e5ea;
             --input-bg: #f9fafb;
             --danger: #ef4444;
             --danger-bg: rgba(239, 68, 68, 0.08);
@@ -60,7 +60,7 @@
         [data-theme="dark"] {
             --bg: #000000; 
             --card-bg: #1c1c1e;
-            --text-main: #ffffff; 
+            --text-main: #f5f5f5; 
             --text-muted: #98989d; 
             
             /* КОРПОРАТИВНИЙ КОЛІР (ДЛЯ ТЕМНОЇ ТЕМИ) */
@@ -80,16 +80,21 @@
         html.fast-boot body .view { display: none !important; animation: none !important; }
         html.fast-boot body #cabinetView { display: block !important; opacity: 1 !important; transform: none !important; animation: none !important; }
 
+        /* Стилі фону та контейнеру синхронізовані з Index.html */
         body { 
             font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text-main); 
             margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; 
             min-height: 100vh; -webkit-font-smoothing: antialiased; 
-            padding-bottom: 85px; transition: background 0.3s ease, color 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
         
-        .container { width: 100%; max-width: 480px; padding: 24px 16px; margin: 0 auto; position: relative; }
+        .container { 
+            position: relative; width: 100%; max-width: 480px; 
+            padding: 20px 16px; margin-bottom: 85px; 
+            display: flex; flex-direction: column;
+        }
 
-        /* Єдиний клас для всіх іконок у кнопках та меню (+20% розміру) */
+        /* Єдиний клас для всіх іконок у кнопках та меню */
         .ui-icon {
             width: 24px;
             height: 24px;
@@ -107,7 +112,7 @@
         .loader-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--bg); display: var(--edu-loader-display); flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999;
+            z-index: 9999; transition: opacity 0.2s ease, visibility 0.2s ease;
         }
         .spinner { width: 44px; height: 44px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 16px; }
         @keyframes spin { 100% { transform: rotate(360deg); } }
@@ -340,8 +345,8 @@
     <div style="font-size: 14px; font-weight: 500; color: #98989d; margin-top: 12px;">Виконано спробу згорнути вікно або згорнути браузер.<br>Захист від списування активовано.</div>
 </div>
 
-<!-- ЕКРАН ЗАВАНТАЖЕННЯ -->
-<div id="loader" class="loader-overlay">
+<!-- ЕКРАН ЗАВАНТАЖЕННЯ (Тепер тільки по факту необхідності) -->
+<div id="loader" class="loader-overlay" style="display: none;">
     <div class="spinner"></div>
     <div style="font-weight: 600; color: var(--text-muted);" id="loaderText">Синхронізація з базою...</div>
 </div>
@@ -423,11 +428,11 @@
     <!-- ЕКРАН 2: КАБІНЕТ ТА СТАТИСТИКА -->
     <div id="cabinetView" class="view">
         <div class="nav-header">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; gap: 3px; padding: 2px 0;">
-                    <h2 id="cabinetTitle" style="color: var(--primary);">Особистий кабінет</h2>
-                    <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center;" id="userWelcome"></div>
+            <div style="display: flex; gap: 12px; align-items: stretch; height: 48px;">
+                <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+                    <h2 id="cabinetTitle" style="color: var(--primary); line-height: 1; font-size: 24px; margin-bottom: 4px;">Особистий кабінет</h2>
+                    <div style="font-size: 14px; font-weight: 700; color: var(--text-muted); display: flex; align-items: center; line-height: 1;" id="userWelcome"></div>
                 </div>
             </div>
 
@@ -437,6 +442,7 @@
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Achievement.svg" class="ui-icon">
                     <div class="notification-dot" id="achNotificationDot"></div>
                 </button>
+                <!-- Ручне оновлення даних -->
                 <button class="back-btn-sleek" onclick="forceRefresh()" title="Оновлення">
                     <img src="https://raw.githubusercontent.com/StepStepi4/SkillHUB-Assistant/main/education/Update.svg" class="ui-icon">
                 </button>
@@ -520,10 +526,10 @@
     <!-- ЕКРАН 3: СПИСОК ТЕМ КУРСУ -->
     <div id="productView" class="view">
         <div class="nav-header">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
-                    <h2 id="productViewTitle"></h2>
+            <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
+                <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+                    <h2 id="productViewTitle" style="line-height: 1; font-size: 24px; margin: 0;"></h2>
                 </div>
             </div>
         </div>
@@ -534,10 +540,10 @@
     <!-- ЕКРАН 4: ТЕОРІЯ -->
     <div id="theoryView" class="view">
         <div class="nav-header">
-            <div style="display: flex; gap: 12px; align-items: stretch;">
-                <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-                <div style="display: flex; flex-direction: column; justify-content: center; padding: 2px 0;">
-                    <h2 id="theoryTitle"></h2>
+            <div style="display: flex; gap: 12px; align-items: center; height: 48px;">
+                <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+                    <h2 id="theoryTitle" style="line-height: 1; font-size: 24px; margin: 0;"></h2>
                 </div>
             </div>
         </div>
@@ -585,7 +591,7 @@
         <div class="nav-header" style="align-items: center;">
             <div style="display: flex; align-items: center; gap: 12px;">
                 <span style="font-size: 26px;">⏱</span>
-                <h2 id="testHeaderTitle">Тестування</h2>
+                <h2 id="testHeaderTitle" style="font-size: 24px !important;">Тестування</h2>
             </div>
             <div id="testTimer" class="timer-box">00:00</div>
         </div>
@@ -610,7 +616,7 @@
 <!-- СКРИПТИ -->
 <script>
     const API_URL = 'https://script.google.com/macros/s/AKfycbyeoKV6uQRE_h0jy_QjkbQI7k_Py_UOYMvckWhHmGITT-q-Ai832__GWVxbdjxBgQ6zqA/exec'; 
-    const CACHE_KEY = 'skillhub_v6_education'; // Оновив ключ кешу, щоб уникнути конфліктів 
+    const CACHE_KEY = 'skillhub_v6_education'; 
     const TIME_PER_QUESTION = 25; 
 
     const CONFIG = {
@@ -676,7 +682,6 @@
     let testTimerInterval = null;
     let timeRemaining = 0;
     let deadlineInterval = null;
-    let sessionCheckInterval = null;
     
     window.isDeadlinePassed = false;
     let isTestActive = false; 
@@ -799,17 +804,17 @@
     }
 
     function switchView(viewId) {
-        requestAnimationFrame(() => {
-            // Знімаємо клас fast-boot, щоб увімкнути звичайні анімації після першого завантаження
-            document.documentElement.classList.remove('fast-boot');
-            
-            document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
-            let target = document.getElementById(viewId);
-            if (target) target.classList.add('active');
-            window.scrollTo(0, 0);
+        document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
+        let target = document.getElementById(viewId);
+        if (target) target.classList.add('active');
+        window.scrollTo(0, 0);
 
-            const exitBtn = document.getElementById('floatingExitBtn');
-            exitBtn.style.display = (viewId === 'testView') ? 'none' : 'flex';
+        const exitBtn = document.getElementById('floatingExitBtn');
+        exitBtn.style.display = (viewId === 'testView') ? 'none' : 'flex';
+
+        // Знімаємо fast-boot після відображення контенту, щоб зберегти безшовність
+        requestAnimationFrame(() => {
+            document.documentElement.classList.remove('fast-boot');
         });
     }
 
@@ -867,7 +872,7 @@
         return false;
     }
 
-    async function fetchFreshDataSilent() {
+    async function fetchFreshDataSilent(isManual = false) {
         if (!navigator.onLine) return;
         processOfflineQueue();
 
@@ -914,20 +919,14 @@
         } catch(e) { console.error("Fetch Error:", e); }
     }
 
+    // Ручне оновлення з відображенням завантаження
     async function forceRefresh() {
         if (!navigator.onLine) { alert("Немає підключення до інтернету!"); return; }
         document.getElementById('loaderText').innerText = "Оновлення даних...";
         document.getElementById('loader').style.display = 'flex';
-        await fetchFreshDataSilent();
+        await fetchFreshDataSilent(true);
         document.getElementById('loader').style.display = 'none';
         document.getElementById('loaderText').innerText = "Синхронізація з базою...";
-    }
-
-    function startSessionMonitor() {
-        clearInterval(sessionCheckInterval);
-        sessionCheckInterval = setInterval(() => {
-            if (currentUser && navigator.onLine && !isTestActive) fetchFreshDataSilent();
-        }, 12000); 
     }
 
     // --- ЛОГІКА ДЕДЛАЙНУ ---
@@ -1108,7 +1107,6 @@
             windowViewingEmployee = null;
 
             switchToMyCabinet();
-            startSessionMonitor();
         } else {
             document.documentElement.classList.remove('fast-boot');
             document.getElementById('loader').style.display = 'none';
@@ -1195,7 +1193,6 @@
                 windowViewingEmployee = null;
 
                 switchToMyCabinet();
-                startSessionMonitor();
             } else {
                 err.innerText = "Невірний логін або пароль!";
                 err.style.display = 'block';
@@ -1225,7 +1222,6 @@
         }
 
         if (deadlineInterval) clearInterval(deadlineInterval);
-        if (sessionCheckInterval) clearInterval(sessionCheckInterval);
         closeStatsModal();
 
         currentUser = null;
@@ -2375,56 +2371,6 @@
 
     // --- ІНІЦІАЛІЗАЦІЯ ---
     
-    function handleLoginSync(l, p) {
-        let user = null;
-        if (db && db.users) {
-            user = db.users.find(u => {
-                let isLoginMatch = String(u.login || "").trim().toLowerCase() === String(l || "").toLowerCase();
-                let dbPass = String(u.pass || "").trim().toLowerCase();
-                let isPassMatch = (dbPass === "") || (dbPass === String(p || "").toLowerCase());
-                return isLoginMatch && isPassMatch;
-            });
-        }
-
-        if (user) {
-            currentUser = user.login;
-            let userKeyLow = String(currentUser).toLowerCase().trim();
-            
-            let myToken = localStorage.getItem('skillhub_session_token');
-            let serverToken = db.activeSessions ? (db.activeSessions[userKeyLow] || db.activeSessions[currentUser]) : null;
-            
-            if (serverToken && myToken && serverToken !== myToken) {
-                logout(true, false);
-                return;
-            }
-            if (!myToken) {
-                myToken = Date.now().toString() + "_" + Math.random().toString(36).substring(2, 10);
-                localStorage.setItem('skillhub_session_token', myToken);
-            }
-            
-            if (navigator.onLine) {
-                try {
-                    fetch(API_URL, {
-                        method: 'POST', cache: 'no-store', mode: 'no-cors',
-                        body: JSON.stringify({ action: 'set_session', login: userKeyLow, token: myToken })
-                    });
-                } catch(e) {}
-            }
-
-            windowUserRole = detectRoleGroup(user.role);
-            windowViewingEmployee = null;
-
-            switchToMyCabinet();
-            startSessionMonitor();
-        } else {
-            // Якщо не знайшли користувача, знімаємо швидкий запуск і повертаємо на логін
-            document.documentElement.classList.remove('fast-boot');
-            document.documentElement.style.setProperty('--edu-loader-display', 'flex');
-            document.getElementById('loader').style.display = 'none';
-            switchView('loginView');
-        }
-    }
-
     document.addEventListener('DOMContentLoaded', async () => {
         let hasCache = false;
         try {
@@ -2449,13 +2395,14 @@
             document.getElementById('rememberMe').checked = true;
 
             if (hasCache && db && db.users && db.users.length > 0) {
-                // Якщо є кеш, миттєво запускаємо синхронний вхід і ховаємо лоадер
+                // Миттєвий вхід без завантажень та фонових запитів, які гальмують роботу
                 document.getElementById('loader').style.display = 'none';
                 handleLoginSync(parsedCreds.login, parsedCreds.pass);
-                fetchFreshDataSilent();
             } else {
+                document.documentElement.classList.remove('fast-boot');
+                document.documentElement.style.setProperty('--edu-loader-display', 'flex');
                 document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent();
+                await fetchFreshDataSilent(true);
                 document.getElementById('loader').style.display = 'none';
                 if (db && db.users && db.users.length > 0) await handleLogin(true);
                 else switchView('loginView');
@@ -2465,11 +2412,9 @@
             document.documentElement.style.setProperty('--edu-loader-display', 'flex');
             if (!hasCache && navigator.onLine) {
                 document.getElementById('loader').style.display = 'flex';
-                await fetchFreshDataSilent();
-                document.getElementById('loader').style.display = 'none';
-            } else {
-                document.getElementById('loader').style.display = 'none';
+                await fetchFreshDataSilent(true);
             }
+            document.getElementById('loader').style.display = 'none';
             switchView('loginView');
         }
     });
