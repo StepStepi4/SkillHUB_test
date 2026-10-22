@@ -12,6 +12,11 @@
     <meta name="apple-mobile-web-app-title" content="SkillHUB_Assistant">
     <link rel="apple-touch-icon" href="icon-192.png">
 
+    <!-- Оптимізація завантаження шрифтів як у Education -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
     <!-- ВАЖЛИВО ДЛЯ БЕЗШОВНОГО ПЕРЕХОДУ -->
     <meta name="view-transition" content="same-origin">
 
@@ -23,8 +28,6 @@
     </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-        
         *, *::before, *::after { 
             box-sizing: border-box; 
             -webkit-tap-highlight-color: transparent; 
@@ -101,10 +104,9 @@
             z-index: 999999; transition: opacity 0.2s ease, visibility 0.2s ease;
         }
         .app-loader.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-        .spinner { width: 40px; height: 40px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 15px; }
-        @keyframes spin { 100% { transform: rotate(360deg); } }
+        
         .loader-text { font-size: 14px; font-weight: 600; color: var(--text-muted); margin-bottom: 15px; text-align: center; padding: 0 20px; line-height: 1.4;}
-        .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; }
+        .progress-container { width: 220px; height: 6px; background: var(--border); border-radius: 4px; overflow: hidden; display: none; margin-bottom: 15px; }
         .progress-bar { height: 100%; width: 0%; background: var(--primary); transition: width 0.3s ease; }
 
         .inline-loader {
@@ -496,7 +498,6 @@
 </div>
 
 <div id="appLoader" class="app-loader">
-    <div class="spinner" id="loaderSpinner"></div>
     <div class="loader-text" id="mainLoaderText">Підготовка</div>
     <div class="progress-container" id="progressContainer">
         <div class="progress-bar" id="progressBar"></div>
@@ -506,11 +507,11 @@
 <div class="container">
     
     <!-- Шапка з фіксованою висотою (height: 48px), щоб текст та жовто-синя лінія не стрибали -->
-    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: stretch; height: 48px;">
-        <div style="width: 4px; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
-        <div style="display: flex; flex-direction: column; justify-content: space-between; padding: 2px 0; flex: 1;">
-            <div class="header-row" id="mainHeader" style="margin-bottom: 0; justify-content: space-between; align-items: center;">
-                <h2 id="headerTitle" style="line-height: 1; font-size: 24px;">Пошук</h2>
+    <div style="display: flex; gap: 12px; margin-bottom: 16px; align-items: center; height: 48px;">
+        <div style="width: 4px; height: 100%; background: linear-gradient(to bottom, #0057b7 50%, #ffd700 50%); border-radius: 2px; flex-shrink: 0;"></div>
+        <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; flex: 1;">
+            <div class="header-row" id="mainHeader" style="margin-bottom: 4px; justify-content: space-between; align-items: center;">
+                <h2 id="headerTitle" style="line-height: 1; font-size: 24px; margin: 0;">Пошук</h2>
                 <button id="topFavBtn" class="fav-btn-top" onclick="window.openFavoritesQuickMenu()" style="display:none;">
                     <img src="icons_skillHUB/Favorite.svg" alt="Fav" style="width: 20px; height: 20px; object-fit: contain;">
                 </button>
@@ -1000,7 +1001,6 @@
         const elLoader = document.getElementById('appLoader');
         if (elLoader && !elLoader.classList.contains('hidden')) {
             elLoader.querySelector('.loader-text').innerHTML = "Критична помилка HTML:<br>" + e.message + "<br><br><span style='font-size:10px; opacity:0.7'>Скиньте кеш браузера</span>";
-            elLoader.querySelector('.spinner').style.display = 'none';
         }
     });
 
@@ -1818,6 +1818,7 @@
         let cached = null;
         try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
         
+        // Змінна сесії для безшовного переходу
         let isSessionActive = sessionStorage.getItem('skillhub_session_active');
 
         if (cached) { 
@@ -1833,17 +1834,19 @@
                 } else {
                     sessionStorage.setItem('skillhub_session_active', 'true');
                     setAppStatus('ok', 'Готовий до роботи');
-                    refreshData(false); 
+                    // Оновлення у фоні
+                    refreshData(false, false); 
                 }
-            } catch(e) { await refreshData(true); }
+            } catch(e) { await refreshData(true, false); }
         } else {
             sessionStorage.setItem('skillhub_session_active', 'true');
-            await refreshData(true); 
+            await refreshData(true, false); 
         }
     }
     
     window.init = init;
 
+    // isManual = ручне натискання кнопки
     async function refreshData(first = false, isManual = false) {
         if(first && !isManual) setAppStatus('loading', 'Підготовка');
         let pInt; 
@@ -1854,7 +1857,7 @@
             const pCont = document.getElementById('progressContainer');
             
             if (first && !isManual) {
-                document.getElementById('loaderSpinner').style.display = 'none';
+                document.getElementById('appLoader').classList.remove('hidden');
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
             }
@@ -1935,7 +1938,6 @@
             } else { 
                 setAppStatus('error', 'Помилка');
                 if (first && !isManual) {
-                    document.getElementById('loaderSpinner').style.display = 'none';
                     document.getElementById('progressContainer').style.display = 'none';
                     safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
                 }
