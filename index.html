@@ -22,12 +22,13 @@
 
     <!-- МИКРО-СКРИПТ ДЛЯ МОМЕНТАЛЬНОГО ЗАПУСКА -->
     <script>
-        // Перевіряємо ЄДИНИЙ спільний кеш
-        if (localStorage.getItem('skillhub_v6_cache')) {
-            document.documentElement.style.setProperty('--loader-display', 'none');
-            document.documentElement.classList.add('fast-boot');
-            sessionStorage.setItem('skillhub_session_active', 'true');
-        }
+        // Маленький прапорець у localStorage: "кеш є" (сам кеш лежить в IndexedDB)
+        try {
+            if (localStorage.getItem('skillhub_has_cache') === '1') {
+                document.documentElement.style.setProperty('--loader-display', 'none');
+                document.documentElement.classList.add('fast-boot');
+            }
+        } catch (e) {}
     </script>
 
     <style>
@@ -1823,154 +1824,241 @@
         safeUpdateHTML(container, html);
     };
 
-    async function init() {
-        let cached = null;
-        try { cached = localStorage.getItem(CACHE_KEY); } catch (e) {}
+    // ====================== СХОВИЩЕ (IndexedDB + localStorage як запасний) ======================
+    const IDB_NAME = 'skillhub_store';
+    const IDB_STORE = 'kv';
+    let _idbPromise = null;
 
-        if (cached) { 
+    function openIDB() {
+        if (_idbPromise) return _idbPromise;
+        _idbPromise = new Promise((resolve, reject) => {
             try {
-                db = sanitizeDb(JSON.parse(cached)); 
-                window.buildServiceSearchList();
-                enableUI(); 
-                window.populateFilters();
-                window.renderSkillHubTab();
-                
-                // Перевірка сесії більше не показує "Підготовка", 
-                // вона відразу прибирає лоадер, а дані оновляться мовчки в фоні
-                if (!sessionStorage.getItem('skillhub_session_active')) {
-                    sessionStorage.setItem('skillhub_session_active', 'true');
-                    refreshData(false, false); 
-                }
-                setAppStatus('ok', 'Готовий до роботи');
-            } catch(e) { await refreshData(true, false); }
+                if (!window.indexedDB) return reject(new Error('no idb'));
+                const req = indexedDB.open(IDB_NAME, 1);
+                req.onupgradeneeded = () => { req.result.createObjectStore(IDB_STORE); };
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+                req.onblocked = () => reject(new Error('idb blocked'));
+            } catch (e) { reject(e); }
+        });
+        _idbPromise.catch(() => { _idbPromise = null; });
+        return _idbPromise;
+    }
+
+    async function idbGet(key) {
+        const idb = await openIDB();
+        return new Promise((resolve, reject) => {
+            const tx = idb.transaction(IDB_STORE, 'readonly');
+            const rq = tx.objectStore(IDB_STORE).get(key);
+            rq.onsuccess = () => resolve(rq.result);
+            rq.onerror = () => reject(rq.error);
+        });
+    }
+
+    async function idbSet(key, value) {
+        const idb = await openIDB();
+        return new Promise((resolve, reject) => {
+            const tx = idb.transaction(IDB_STORE, 'readwrite');
+            tx.objectStore(IDB_STORE).put(value, key);
+            tx.oncomplete = () => resolve(true);
+            tx.onerror = () => reject(tx.error);
+            tx.onabort = () => reject(tx.error);
+        });
+    }
+
+    function isUsableDb(obj) {
+        return !!obj && typeof obj === 'object' && !obj.error &&
+            ((Array.isArray(obj.categories) && obj.categories.length > 0) ||
+             (Array.isArray(obj.tariffs) && obj.tariffs.length > 0) ||
+             (Array.isArray(obj.skillHubButtons) && obj.skillHubButtons.length > 0));
+    }
+
+    // Зберігаємо у ВСІ доступні сховища; успіх, якщо хоча б в одне
+    async function saveCache(dataStr) {
+        let ok = false;
+        try { await idbSet(CACHE_KEY, dataStr); ok = true; } catch (e) { console.warn('IDB save failed', e); }
+        try { localStorage.setItem(CACHE_KEY, dataStr); ok = true; } catch (e) { /* квота - ігноруємо, є IDB */ }
+        if (ok) { try { localStorage.setItem('skillhub_has_cache', '1'); } catch (e) {} }
+        return ok;
+    }
+
+    // Читаємо: спочатку IDB, потім localStorage. Повертаємо ТІЛЬКИ валідний кеш.
+    async function loadCache() {
+        let candidates = [];
+        try { const v = await idbGet(CACHE_KEY); if (v) candidates.push(v); } catch (e) {}
+        try { const v = localStorage.getItem(CACHE_KEY); if (v) candidates.push(v); } catch (e) {}
+        for (const str of candidates) {
+            try {
+                const parsed = JSON.parse(str);
+                if (isUsableDb(parsed)) return parsed;
+            } catch (e) {}
+        }
+        return null;
+    }
+
+    // Просимо браузер не чистити сховище автоматично
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist(); } catch (e) {}
+
+    // ====================== ІНІЦІАЛІЗАЦІЯ ======================
+    let _refreshing = false;
+
+    function showBlockingLoader() {
+        document.documentElement.classList.remove('fast-boot');
+        const l = document.getElementById('appLoader');
+        l.classList.remove('hidden');
+        l.style.display = 'flex';
+        l.style.opacity = '1';
+        l.style.pointerEvents = 'auto';
+    }
+
+    function renderAllFromDb() {
+        window.buildServiceSearchList();
+        enableUI();
+        window.populateFilters();
+        window.renderSkillHubTab();
+        if (currentCategoryData || currentServiceData) renderServices();
+        if (document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
+    }
+
+    async function init() {
+        const cached = await loadCache();
+
+        if (cached) {
+            db = sanitizeDb(cached);
+            renderAllFromDb();
+            setAppStatus('ok', 'Готовий до роботи');
+            // Тихе оновлення у фоні (якщо є інтернет). Кеш не чіпаємо до успіху.
+            if (navigator.onLine !== false) refreshData(false, false);
+            else setAppStatus('ok', 'Офлайн (З кешу)');
         } else {
-            sessionStorage.setItem('skillhub_session_active', 'true');
-            await refreshData(true, false); 
+            // Кешу немає (або він пошкоджений) - показуємо лоадер і вантажимо
+            try { localStorage.removeItem('skillhub_has_cache'); } catch (e) {}
+            showBlockingLoader();
+            await refreshData(true, false);
         }
     }
-    
+
     window.init = init;
 
-    // isManual = ручне натискання кнопки
+    // first = перше завантаження без кешу (блокуючий лоадер), isManual = натиснута кнопка оновлення
     async function refreshData(first = false, isManual = false) {
-        if(first && !isManual && !localStorage.getItem(CACHE_KEY)) setAppStatus('loading', 'Підготовка');
-        let pInt; 
+        if (_refreshing) return;
+        _refreshing = true;
+
+        const hasData = isUsableDb(db);
+        const blocking = first && !hasData;
+        const pBar = document.getElementById('progressBar');
+        const pCont = document.getElementById('progressContainer');
+        let pInt = null;
+
         try {
-            const controller = new AbortController();
-            
-            const pBar = document.getElementById('progressBar');
-            const pCont = document.getElementById('progressContainer');
-            
-            if (first && !isManual && !document.documentElement.classList.contains('fast-boot')) {
-                document.getElementById('appLoader').classList.remove('hidden');
-                document.getElementById('appLoader').style.display = 'flex';
+            if (hasData && !isManual) setAppStatus('loading', 'Оновлення...');
+            if (blocking) {
+                setAppStatus('loading', 'Підготовка');
+                safeUpdateHTML('mainLoaderText', 'Підготовка');
                 pCont.style.display = 'block';
                 pBar.style.width = '10%';
             }
 
+            if (navigator.onLine === false) throw new Error('Немає підключення до інтернету');
+
             let progress = 10;
             pInt = setInterval(() => {
-                if (progress < 90 && first && !document.documentElement.classList.contains('fast-boot')) { 
-                    progress += Math.random() * 15; 
+                if (progress < 90) {
+                    progress += Math.random() * 15;
                     if (progress > 90) progress = 90;
-                    
-                    if (!isManual) {
-                        pBar.style.width = progress + '%'; 
-                    } else {
-                        document.getElementById('inlineLoaderText').innerText = `завантаження... (${Math.round(progress)}%)`;
-                    }
+                    if (blocking) pBar.style.width = progress + '%';
+                    else if (isManual) document.getElementById('inlineLoaderText').innerText = `завантаження... (${Math.round(progress)}%)`;
                 }
             }, 300);
 
+            const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 60000);
-            const response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
-            clearTimeout(timeoutId);
-            
+            let response;
+            try {
+                response = await fetch(API_URL + '?nocache=' + Date.now(), { signal: controller.signal });
+            } finally { clearTimeout(timeoutId); }
+
+            if (!response.ok) throw new Error('Сервер повернув помилку ' + response.status);
             const dataStr = await response.text();
-            
-            if (pInt) clearInterval(pInt);
-            
-            if (first && !document.documentElement.classList.contains('fast-boot')) {
-                if (!isManual) pBar.style.width = '100%';
-                else document.getElementById('inlineLoaderText').innerText = `завантаження... (100%)`;
-            }
+            clearInterval(pInt); pInt = null;
 
             if (dataStr.trim().startsWith('<')) throw new Error("Помилка доступу до бази. Перевірте Google Apps Script.");
-            let newDb = JSON.parse(dataStr);
+            const newDb = JSON.parse(dataStr);
             if (newDb.error) throw new Error(newDb.error);
-            
+            if (!isUsableDb(newDb)) throw new Error("Сервер повернув порожні дані");
+
+            if (blocking) pBar.style.width = '100%';
+            else if (isManual) document.getElementById('inlineLoaderText').innerText = 'завантаження... (100%)';
+
+            // Старий кеш перезаписуємо ТІЛЬКИ після успішного отримання валідних даних
+            await saveCache(dataStr);
+
             let savedVersion = null;
-            try {
-                savedVersion = localStorage.getItem(SEEN_VERSION_KEY);
-                // ЗБЕРІГАЄМО ПОВНИЙ КЕШ
-                localStorage.setItem(CACHE_KEY, dataStr);
-            } catch (e) {}
-            
+            try { savedVersion = localStorage.getItem(SEEN_VERSION_KEY); } catch (e) {}
+
             db = sanitizeDb(newDb);
-            window.buildServiceSearchList();
-            
+            renderAllFromDb();
+            setAppStatus('ok', 'Готовий до роботи');
+
+            if (db.appVersion && savedVersion !== db.appVersion) {
+                if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog);
+                try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch (e) {}
+            }
+        } catch (e) {
+            if (pInt) clearInterval(pInt);
+            console.error('Refresh Error:', e);
+
+            if (isUsableDb(db)) {
+                // Є що показувати: просто працюємо з кешу
+                enableUI();
+                setAppStatus('ok', isManual ? 'Не оновлено (з кешу)' : 'Офлайн (З кешу)');
+            } else {
+                // Нічого немає: показуємо помилку з кнопкою повтору
+                showBlockingLoader();
+                pCont.style.display = 'none';
+                setAppStatus('error', 'Помилка');
+                safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + window.escapeHTML(e.message) + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
+            }
+        } finally {
+            _refreshing = false;
             if (isManual) {
                 setTimeout(() => {
                     document.getElementById('inlineLoader').style.display = 'none';
                     document.getElementById('mainStatusBadge').style.display = 'flex';
-                    setAppStatus('ok', 'Готовий до роботи');
                 }, 500);
-            } else {
-                setAppStatus('ok', 'Готовий до роботи');
-            }
-            
-            setTimeout(() => {
-                if (db.appVersion && savedVersion !== db.appVersion) {
-                    if (savedVersion !== null) window.showChangelogModal(db.appVersion, db.changelog); 
-                    try { localStorage.setItem(SEEN_VERSION_KEY, db.appVersion); } catch(e){}
-                }
-                if (first && !isManual) enableUI(); 
-                window.populateFilters();
-                window.renderSkillHubTab();
-                if(currentCategoryData || currentServiceData) renderServices(); 
-                if(document.getElementById('tab-reserves').classList.contains('active')) window.renderRezervyList();
-            }, 400); 
-            
-        } catch (e) { 
-            if (pInt) clearInterval(pInt);
-            console.error("Refresh Error:", e);
-            let cached = null; try { cached = localStorage.getItem(CACHE_KEY); } catch (err) {}
-            if (cached) { 
-                if (isManual) {
-                    document.getElementById('inlineLoader').style.display = 'none';
-                    document.getElementById('mainStatusBadge').style.display = 'flex';
-                }
-                setAppStatus('ok', 'Офлайн (З кешу)'); 
-                if (first && !isManual) { enableUI(); window.populateFilters(); window.renderSkillHubTab(); } 
-            } else { 
-                setAppStatus('error', 'Помилка');
-                if (first && !isManual) {
-                    document.getElementById('progressContainer').style.display = 'none';
-                    safeUpdateHTML('mainLoaderText', "Помилка завантаження.<br><span style='color:var(--danger)'>" + e.message + "</span><br><button onclick='window.init()' class='btn btn-primary' style='margin-top:20px; padding: 10px; font-size:14px; width:fit-content; margin-left:auto; margin-right:auto;'>Спробувати ще раз</button>");
-                }
             }
         }
     }
 
-    document.getElementById('forceUpdateBtn').addEventListener('click', async function() { 
-        try { localStorage.removeItem(CACHE_KEY); } catch(e){} 
-        
+    // Ручне оновлення: кеш НЕ видаляємо - він замінюється лише новими валідними даними
+    document.getElementById('forceUpdateBtn').addEventListener('click', async function() {
+        if (_refreshing) return;
         document.getElementById('mainStatusBadge').style.display = 'none';
         document.getElementById('inlineLoader').style.display = 'inline-flex';
         document.getElementById('inlineLoaderText').innerText = "завантаження... (0%)";
-        
-        await refreshData(true, true); 
+        window.switchTab('tab-search');
+        await refreshData(false, true);
     });
 
-    function enableUI() { 
-        elCatInput.disabled = false; 
-        if (db.appVersion && !db.appVersion.startsWith("Error")) {
+    // Коли повертається інтернет - тихо оновлюємо
+    window.addEventListener('online', () => { if (isUsableDb(db)) refreshData(false, false); else init(); });
+    window.addEventListener('offline', () => { if (isUsableDb(db)) setAppStatus('ok', 'Офлайн (З кешу)'); });
+    // При поверненні в застосунок (iOS PWA тримає сторінку у фоні) - оновлюємо дані
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible' && isUsableDb(db) && navigator.onLine !== false) refreshData(false, false);
+    });
+
+    function enableUI() {
+        elCatInput.disabled = false;
+        if (db.appVersion && !String(db.appVersion).startsWith("Error")) {
             safeUpdateHTML('appVersionDisp', `Версія ${db.appVersion}`);
             document.getElementById('appVersionDisp').style.display = 'inline-block';
         }
-        document.getElementById('appLoader').classList.add('hidden');
-        document.getElementById('appLoader').style.display = 'none';
-        
+        const l = document.getElementById('appLoader');
+        l.classList.add('hidden');
+        l.style.display = 'none';
+
         if (document.getElementById('tab-search').classList.contains('active')) {
             document.getElementById('topFavBtn').style.display = 'flex';
         }
@@ -3372,7 +3460,7 @@
     init();
 
     if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js').catch(console.error); });
+        window.addEventListener('load', () => { navigator.serviceWorker.register('./sw.js', { updateViaCache: 'none' }).catch(() => {}); /* sw.js необов'язковий: додаток працює і без нього */ });
     }
 </script>
 </body>
